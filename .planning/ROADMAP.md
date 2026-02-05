@@ -29,7 +29,7 @@ None
 **Goal**: Establish the core design tokens, color palette (grey + orange), typography scale, and base Tailwind configuration
 **Depends on**: Nothing (first phase)
 **Research**: Unlikely (established patterns)
-**Plans**: TBD
+**Plans**: 3 plans
 
 Plans:
 - [ ] 01-01: Color palette and CSS custom properties

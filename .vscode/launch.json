@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug (Chrome)",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/claude-code-masterkurs"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug (Chrome) mit Dev-Server",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/claude-code-masterkurs",
+            "preLaunchTask": "npm: dev - claude-code-masterkurs"
+        }
+    ]
+}

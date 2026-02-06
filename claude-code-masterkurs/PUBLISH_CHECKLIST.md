@@ -504,13 +504,13 @@ Hosting Backend:       Railway
 
 | # | Aufgabe | Aufwand | Priorität | Status |
 |---|---------|---------|-----------|--------|
-| 22 | Railway Service "Claude-Code-Masterkurs" löschen | 5 min | Hoch | ⏳ Offen |
-| 23 | E-Mail-Service (Resend) für Passwort-Reset | 2-3 h | Mittel | ⏳ Offen |
-| 24 | Error Monitoring (Sentry) | 1 h | Hoch | ⏳ Offen |
-| 25 | Web Analytics (Plausible/Umami) | 1 h | Mittel | ⏳ Offen |
+| 22 | Railway Service "Claude-Code-Masterkurs" löschen | 5 min | Hoch | ✅ Erledigt |
+| 23 | E-Mail-Service (Resend) für Passwort-Reset | 2-3 h | Mittel | ✅ Erledigt |
+| 24 | Error Monitoring (Sentry) | 1 h | Hoch | ⏸️ Zurückgestellt |
+| 25 | Web Analytics (Plausible/Umami) | 1 h | Mittel | ⏸️ Zurückgestellt |
 | 26 | Tests schreiben | 1-2 Wochen | Mittel | ⏳ Offen |
 | 27 | Performance Audit & Optimierung | 2-3 h | Mittel | ⏳ Offen |
-| 28 | Custom Domain für Backend-API | 30 min | Nice-to-have | ⏳ Offen |
+| 28 | Custom Domain für Backend-API | 30 min | Nice-to-have | 📝 In Arbeit |
 
 ---
 
@@ -545,7 +545,7 @@ Hosting Backend:       Railway
 ---
 
 *Erstellt am: 2026-02-06*
-*Letzte Aktualisierung: 2026-02-06 17:15 – Phase C komplett abgeschlossen! Frontend auf Vercel deployed mit Backend-Integration. Nächster Schritt: Phase D (Polish & Monitoring).*
+*Letzte Aktualisierung: 2026-02-06 17:45 – Phase D teilweise abgeschlossen: Railway Service aufgeräumt, Resend E-Mail-Service implementiert, Password-Reset funktioniert. Custom Backend-Domain in Arbeit.*
 
 ---
 
@@ -593,5 +593,66 @@ railway variable set CORS_ORIGIN="https://claude-code-masterkurs.de,https://www.
 - Vercel Dashboard → Domains → Add Domain
 - Domain: `claude-code-masterkurs.de`
 - DNS-Einträge bei Domain-Provider aktualisieren (Vercel zeigt Anleitung)
+
+---
+
+## Wichtige nächste Schritte
+
+### 1. Resend API Key setzen (KRITISCH für E-Mail-Versand)
+
+Du musst deinen **echten Resend API Key** in Railway setzen:
+
+1. **Resend Account erstellen** (falls noch nicht geschehen):
+   - Gehe zu https://resend.com/signup
+   - Verifiziere deine E-Mail
+   - Erstelle einen API Key im Dashboard
+
+2. **API Key in Railway setzen**:
+   ```bash
+   cd claude-code-masterkurs/server
+   railway variables --service backend --set RESEND_API_KEY="re_DEIN_ECHTER_KEY"
+   ```
+
+3. **Domain für E-Mail-Versand verifizieren**:
+   - In Resend: Domain `claude-code-masterkurs.de` hinzufügen
+   - DNS-Records (SPF, DKIM) beim Domain-Provider eintragen
+   - Oder: Erst mit Resend-Test-Domain (`onboarding.resend.dev`) testen
+
+**Aktuell gesetzter Wert**: `PLACEHOLDER_SET_YOUR_KEY` (funktioniert NICHT!)
+
+### 2. Custom Backend-Domain (Optional, empfohlen)
+
+**Subdomain einrichten**: `api.claude-code-masterkurs.de`
+
+1. **Im Railway Dashboard**:
+   - Service "backend" öffnen
+   - Settings → Networking → Custom Domains
+   - "Add Domain" → `api.claude-code-masterkurs.de`
+
+2. **DNS bei deinem Domain-Provider**:
+   ```
+   Type:  CNAME
+   Name:  api
+   Value: backend-production-9d7c.up.railway.app
+   TTL:   3600
+   ```
+
+3. **VITE_API_URL in Vercel aktualisieren** (nachdem DNS propagiert ist):
+   ```bash
+   cd claude-code-masterkurs
+   vercel env rm VITE_API_URL production
+   printf "N\nhttps://api.claude-code-masterkurs.de\n" | vercel env add VITE_API_URL production
+   vercel --prod --yes
+   ```
+
+### 3. Password-Reset testen
+
+Nachdem Resend API Key gesetzt ist:
+
+1. Gehe zu https://claude-code-masterkurs.de/password-reset
+2. Gib eine registrierte E-Mail ein
+3. Prüfe E-Mail-Posteingang (auch Spam)
+4. Klicke auf Reset-Link
+5. Setze neues Passwort
 
 ---

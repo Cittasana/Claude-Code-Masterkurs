@@ -1,0 +1,6 @@
+# Claude Code Masterkurs - robots.txt
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://claude-code-masterkurs.de/sitemap.xml

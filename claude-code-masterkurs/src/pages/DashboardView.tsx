@@ -1,10 +1,21 @@
+import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
+import { useSRSStore } from '../store/srsStore';
+import { useLeaderboardStore } from '../store/leaderboardStore';
 import { lessons } from '../data/lessons';
 import { quizzes } from '../data/quizzes';
+import { challenges } from '../data/challenges';
+import { liveCodingChallenges } from '../data/liveCodingChallenges';
+import { useChallengeStore } from '../store/challengeStore';
+
+const totalChallengesCount = challenges.length + liveCodingChallenges.length;
+import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 
 const DashboardView = () => {
+  const { t } = useTranslation();
   const {
     lessonsCompleted,
     quizzesCompleted,
@@ -13,8 +24,35 @@ const DashboardView = () => {
     timeInvested,
     skillProgress,
   } = useUserProgress();
+  const challengeResults = useChallengeStore((s) => s.results);
+  const challengesCompleted = Object.values(challengeResults).filter((r) => r.completed).length;
+  const challengePoints = Object.values(challengeResults).reduce((s, r) => s + r.score, 0);
+  const srsItems = useSRSStore((s) => s.items);
+  const srsDueCount = useMemo(() => {
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+    const iso = endOfToday.toISOString();
+    return Object.values(srsItems).filter((item) => item.nextReviewAt <= iso).length;
+  }, [srsItems]);
 
-  // Calculate progress
+  // Leaderboard integration
+  const lbInit = useLeaderboardStore((s) => s.init);
+  const lbSync = useLeaderboardStore((s) => s.syncCurrentUser);
+  const lbGetSorted = useLeaderboardStore((s) => s.getSorted);
+  const lbGetRank = useLeaderboardStore((s) => s.getCurrentUserRank);
+  useEffect(() => { lbInit(); }, [lbInit]);
+  useEffect(() => {
+    lbSync({
+      totalPoints: useUserProgress.getState().totalPoints,
+      lessonsCompleted: lessonsCompleted.length,
+      quizzesCompleted: quizzesCompleted.filter(q => q.completed).length,
+      projectsCompleted: projectsCompleted.length,
+      streak,
+    });
+  }, [lessonsCompleted, quizzesCompleted, projectsCompleted, streak, lbSync]);
+  const lbTop5 = useMemo(() => lbGetSorted('all', 'points').slice(0, 5), [lbGetSorted]);
+  const lbRank = useMemo(() => lbGetRank('all', 'points'), [lbGetRank]);
+
   const totalLessons = lessons.length;
   const overallProgress = Math.round((lessonsCompleted.length / totalLessons) * 100);
 
@@ -32,11 +70,10 @@ const DashboardView = () => {
     lessons.find((l) => l.id === id && l.level === 3)
   ).length;
 
-  const level1Progress = Math.round((level1Completed / level1Lessons) * 100);
-  const level2Progress = Math.round((level2Completed / level2Lessons) * 100);
-  const level3Progress = Math.round((level3Completed / level3Lessons) * 100);
+  const level1Progress = level1Lessons > 0 ? Math.round((level1Completed / level1Lessons) * 100) : 0;
+  const level2Progress = level2Lessons > 0 ? Math.round((level2Completed / level2Lessons) * 100) : 0;
+  const level3Progress = level3Lessons > 0 ? Math.round((level3Completed / level3Lessons) * 100) : 0;
 
-  // Quiz stats
   const totalQuizzes = quizzes.length;
   const completedQuizzes = quizzesCompleted.filter((q) => q.completed).length;
   const averageQuizScore =
@@ -46,159 +83,122 @@ const DashboardView = () => {
         )
       : 0;
 
-  // Certification progress
   const quizRequirement = Math.round(totalQuizzes * 0.8);
   const projectRequirement = 6;
-  const quizProgress = Math.round((completedQuizzes / quizRequirement) * 100);
-  const projectProgress = Math.round((projectsCompleted.length / projectRequirement) * 100);
-  const certificationProgress = Math.round((quizProgress + projectProgress) / 2);
+  const quizProgress = Math.min(100, Math.round((completedQuizzes / quizRequirement) * 100));
+  const projectProgress = Math.min(100, Math.round((projectsCompleted.length / projectRequirement) * 100));
+  const certificationProgress = Math.min(100, Math.round((quizProgress + projectProgress) / 2));
 
-  // Format time
   const hours = Math.floor(timeInvested / 60);
   const minutes = timeInvested % 60;
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <h1 className="text-4xl font-bold text-github-text mb-2">
-          🎓 Claude Code Masterkurs Dashboard
-        </h1>
-        <p className="text-github-muted">
-          Dein Fortschritt auf dem Weg zum Claude Code Profi
+    <div className="space-y-8 animate-fade-in-up">
+      {/* Header with pixel-style logo */}
+      <div className="text-center py-6 sm:py-8">
+        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-4">
+          {t('dashboard.title')}
+        </p>
+        <ClaudeCodeLogo size="lg" showSubtitle className="mb-4" />
+        <p className="text-apple-textSecondary text-lg max-w-md mx-auto">
+          {t('dashboard.subtitle')}
         </p>
       </div>
 
       {/* Overall Progress */}
-      <div className="lesson-card">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-2xl font-bold text-github-text">Gesamtfortschritt</h2>
-          <span className="text-3xl font-bold text-github-emphasis">{overallProgress}%</span>
+      <div className="apple-card accent-glow">
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="text-xl font-bold text-apple-text">{t('dashboard.overallProgress')}</h2>
+          <span className="text-3xl font-bold text-apple-accent font-mono">{overallProgress}%</span>
         </div>
-        <div className="w-full bg-github-border rounded-full h-4 overflow-hidden">
+        <div className="progress-bar h-3">
           <div
-            className="bg-github-emphasis h-full transition-all duration-500"
+            className="progress-bar-fill h-3"
             style={{ width: `${overallProgress}%` }}
           />
         </div>
-        <p className="text-github-muted mt-2 text-sm">
-          {lessonsCompleted.length} von {totalLessons} Lektionen abgeschlossen
+        <p className="text-apple-textSecondary mt-3 text-sm">
+          {t('dashboard.lessonsCompleted', { count: lessonsCompleted.length, total: totalLessons })}
         </p>
       </div>
 
       {/* Level Breakdown */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-3">
-            <BookOpen className="text-green-400" size={24} />
-            <h3 className="text-lg font-semibold text-github-text">Level 1: Grundlagen</h3>
-          </div>
-          <div className="w-full bg-github-border rounded-full h-3 overflow-hidden">
-            <div
-              className="bg-green-400 h-full transition-all duration-500"
-              style={{ width: `${level1Progress}%` }}
-            />
-          </div>
-          <p className="text-github-muted mt-2 text-sm">
-            {level1Completed}/{level1Lessons} Lektionen ({level1Progress}%)
-          </p>
-        </div>
-
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-3">
-            <TrendingUp className="text-yellow-400" size={24} />
-            <h3 className="text-lg font-semibold text-github-text">Level 2: Fortgeschritten</h3>
-          </div>
-          <div className="w-full bg-github-border rounded-full h-3 overflow-hidden">
-            <div
-              className="bg-yellow-400 h-full transition-all duration-500"
-              style={{ width: `${level2Progress}%` }}
-            />
-          </div>
-          <p className="text-github-muted mt-2 text-sm">
-            {level2Completed}/{level2Lessons} Lektionen ({level2Progress}%)
-          </p>
-        </div>
-
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-3">
-            <Trophy className="text-purple-400" size={24} />
-            <h3 className="text-lg font-semibold text-github-text">Level 3: Expert</h3>
-          </div>
-          <div className="w-full bg-github-border rounded-full h-3 overflow-hidden">
-            <div
-              className="bg-purple-400 h-full transition-all duration-500"
-              style={{ width: `${level3Progress}%` }}
-            />
-          </div>
-          <p className="text-github-muted mt-2 text-sm">
-            {level3Completed}/{level3Lessons} Lektionen ({level3Progress}%)
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <LevelCard
+          icon={<BookOpen className="text-apple-success" size={22} />}
+          title={t('dashboard.level1')}
+          completed={level1Completed}
+          total={level1Lessons}
+          progress={level1Progress}
+          color="from-green-500/20 to-green-500/5"
+          barColor="bg-apple-success"
+        />
+        <LevelCard
+          icon={<TrendingUp className="text-apple-warning" size={22} />}
+          title={t('dashboard.level2')}
+          completed={level2Completed}
+          total={level2Lessons}
+          progress={level2Progress}
+          color="from-yellow-500/20 to-yellow-500/5"
+          barColor="bg-apple-warning"
+        />
+        <LevelCard
+          icon={<Trophy className="text-purple-400" size={22} />}
+          title={t('dashboard.level3')}
+          completed={level3Completed}
+          total={level3Lessons}
+          progress={level3Progress}
+          color="from-purple-500/20 to-purple-500/5"
+          barColor="bg-purple-400"
+        />
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-2">
-            <CheckCircle2 className="text-github-emphasis" size={20} />
-            <h4 className="text-sm font-semibold text-github-muted">Quiz Performance</h4>
-          </div>
-          <p className="text-2xl font-bold text-github-text">
-            {completedQuizzes}/{totalQuizzes}
-          </p>
-          <p className="text-sm text-github-muted">
-            Durchschnitt: {averageQuizScore}% {averageQuizScore >= 80 && '🎉'}
-          </p>
-        </div>
-
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-2">
-            <Trophy className="text-yellow-400" size={20} />
-            <h4 className="text-sm font-semibold text-github-muted">Projekte</h4>
-          </div>
-          <p className="text-2xl font-bold text-github-text">{projectsCompleted.length}/6</p>
-          <p className="text-sm text-github-muted">Abgeschlossen</p>
-        </div>
-
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-2">
-            <Clock className="text-blue-400" size={20} />
-            <h4 className="text-sm font-semibold text-github-muted">Lernzeit</h4>
-          </div>
-          <p className="text-2xl font-bold text-github-text">
-            {hours}h {minutes}m
-          </p>
-          <p className="text-sm text-github-muted">Insgesamt investiert</p>
-        </div>
-
-        <div className="lesson-card">
-          <div className="flex items-center space-x-3 mb-2">
-            <span className="text-2xl">🔥</span>
-            <h4 className="text-sm font-semibold text-github-muted">Streak</h4>
-          </div>
-          <p className="text-2xl font-bold text-github-text">{streak} Tage</p>
-          <p className="text-sm text-github-muted">
-            {streak >= 7 ? 'Fantastisch!' : 'Weiter so!'}
-          </p>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <StatCard
+          icon={<CheckCircle2 className="text-apple-accent" size={20} />}
+          label={t('dashboard.quizPerformance')}
+          value={`${completedQuizzes}/${totalQuizzes}`}
+          detail={`${t('dashboard.average')}: ${averageQuizScore}%${averageQuizScore >= 80 ? ' 🎉' : ''}`}
+        />
+        <StatCard
+          icon={<Trophy className="text-apple-warning" size={20} />}
+          label={t('dashboard.projects')}
+          value={`${projectsCompleted.length}/6`}
+          detail={t('dashboard.completed')}
+        />
+        <StatCard
+          icon={<Clock className="text-apple-info" size={20} />}
+          label={t('dashboard.learningTime')}
+          value={`${hours}h ${minutes}m`}
+          detail={t('dashboard.totalInvested')}
+        />
+        <StatCard
+          icon={<span className="text-xl">🔥</span>}
+          label={t('nav.streak')}
+          value={t('dashboard.streakDays', { count: streak })}
+          detail={streak >= 7 ? t('dashboard.streakGreat') : t('dashboard.streakKeep')}
+        />
       </div>
 
       {/* Skill Progress */}
-      <div className="lesson-card">
-        <h3 className="text-xl font-bold text-github-text mb-4">🎯 Skill Progress</h3>
-        <div className="space-y-4">
+      <div className="apple-card">
+        <h3 className="text-lg font-bold text-apple-text mb-5 flex items-center space-x-2">
+          <span className="text-apple-accent font-mono text-sm">{'//>'}</span>
+          <span>{t('dashboard.skillProgress')}</span>
+        </h3>
+        <div className="space-y-5">
           {Object.entries(skillProgress).map(([skill, progress]) => (
             <div key={skill}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-github-text capitalize">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-apple-text text-sm font-medium capitalize">
                   {skill.replace(/([A-Z])/g, ' $1').trim()}
                 </span>
-                <span className="text-github-muted text-sm">{progress}%</span>
+                <span className="text-apple-muted text-xs font-mono">{progress}%</span>
               </div>
-              <div className="w-full bg-github-border rounded-full h-2 overflow-hidden">
+              <div className="progress-bar h-1.5">
                 <div
-                  className="bg-github-emphasis h-full transition-all duration-500"
+                  className="progress-bar-fill h-1.5"
                   style={{ width: `${progress}%` }}
                 />
               </div>
@@ -208,77 +208,274 @@ const DashboardView = () => {
       </div>
 
       {/* Certification Progress */}
-      <div className="lesson-card bg-gradient-to-r from-github-canvas to-github-bg border-2 border-github-emphasis">
-        <h3 className="text-xl font-bold text-github-text mb-4">🏆 Zertifizierungs-Fortschritt</h3>
-        <div className="space-y-4">
+      <div className="apple-card border-apple-accent/30 accent-glow">
+        <h3 className="text-lg font-bold text-apple-text mb-5 flex items-center space-x-2">
+          <Trophy className="text-apple-accent" size={20} />
+          <span>{t('dashboard.certificationProgress')}</span>
+        </h3>
+        <div className="space-y-5">
           <div>
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-github-text">Gesamt-Fortschritt</span>
-              <span className="text-2xl font-bold text-github-emphasis">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-apple-textSecondary text-sm">{t('dashboard.totalProgress')}</span>
+              <span className="text-2xl font-bold text-apple-accent font-mono">
                 {certificationProgress}%
               </span>
             </div>
-            <div className="w-full bg-github-border rounded-full h-4 overflow-hidden">
+            <div className="progress-bar h-3">
               <div
-                className="bg-github-emphasis h-full transition-all duration-500"
+                className="progress-bar-fill h-3"
                 style={{ width: `${certificationProgress}%` }}
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-            <div>
-              <p className="text-sm text-github-muted mb-1">Quiz Anforderung</p>
-              <p className="text-github-text">
-                {completedQuizzes}/{quizRequirement} Quizzes (80%+)
+            <div className="bg-apple-bg rounded-apple p-4 border border-apple-border">
+              <p className="text-xs text-apple-muted font-mono uppercase tracking-wider mb-1">
+                {t('dashboard.quizRequirement')}
+              </p>
+              <p className="text-apple-text font-medium">
+                {t('dashboard.quizzesCount', { completed: completedQuizzes, required: quizRequirement })}
               </p>
             </div>
-            <div>
-              <p className="text-sm text-github-muted mb-1">Projekt Anforderung</p>
-              <p className="text-github-text">
-                {projectsCompleted.length}/{projectRequirement} Projekte
+            <div className="bg-apple-bg rounded-apple p-4 border border-apple-border">
+              <p className="text-xs text-apple-muted font-mono uppercase tracking-wider mb-1">
+                {t('dashboard.projectRequirement')}
+              </p>
+              <p className="text-apple-text font-medium">
+                {t('dashboard.projectsCount', { completed: projectsCompleted.length, required: projectRequirement })}
               </p>
             </div>
           </div>
 
           {certificationProgress >= 80 ? (
-            <div className="mt-4 p-4 bg-green-900/20 border border-green-400 rounded-md">
-              <p className="text-green-400 font-semibold">
-                🎉 Herzlichen Glückwunsch! Du hast das Zertifikat freigeschaltet!
+            <div className="mt-4 p-4 bg-apple-success/10 border border-apple-success/30 rounded-apple">
+              <p className="text-apple-success font-semibold text-sm">
+                🎉 {t('dashboard.certUnlocked')}
               </p>
             </div>
           ) : (
-            <div className="mt-4 p-4 bg-github-bg border border-github-border rounded-md">
-              <p className="text-github-muted text-sm">
-                Noch {80 - certificationProgress}% bis zum Zertifikat. Du schaffst das! 💪
+            <div className="mt-4 p-4 bg-apple-bg border border-apple-border rounded-apple">
+              <p className="text-apple-textSecondary text-sm">
+                {t('dashboard.certRemaining', { percent: 80 - certificationProgress })}
               </p>
             </div>
           )}
         </div>
       </div>
 
+      {/* Leaderboard Widget */}
+      <div className="apple-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-apple-text flex items-center space-x-2">
+            <Trophy className="text-apple-accent" size={20} />
+            <span>{t('dashboard.leaderboard')}</span>
+          </h3>
+          <Link to="/leaderboard" className="text-sm text-apple-accent hover:text-apple-accentHover font-medium transition-colors">
+            {t('dashboard.showAll')}
+          </Link>
+        </div>
+        <div className="flex items-center justify-between mb-4 p-3 bg-apple-accent/8 rounded-apple border border-apple-accent/20">
+          <span className="text-sm text-apple-textSecondary">{t('dashboard.yourRank')}</span>
+          <span className="text-xl font-bold text-apple-accent font-mono">#{lbRank}</span>
+        </div>
+        <div className="space-y-2">
+          {lbTop5.map((entry, i) => (
+            <div
+              key={entry.id}
+              className={`flex items-center gap-3 px-3 py-2 rounded-apple transition-colors ${
+                entry.isCurrentUser ? 'bg-apple-accent/8 border border-apple-accent/20' : 'hover:bg-apple-hover/50'
+              }`}
+            >
+              <span className="w-6 text-center font-mono text-sm font-bold text-apple-muted">
+                {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
+              </span>
+              <span className="text-base">{entry.avatarEmoji}</span>
+              <span className={`flex-1 text-sm font-medium truncate ${entry.isCurrentUser ? 'text-apple-accent' : 'text-apple-text'}`}>
+                {entry.displayName}
+                {entry.isCurrentUser && <span className="text-xs text-apple-accent/70 ml-1">{t('dashboard.you')}</span>}
+              </span>
+              <span className="text-sm font-mono font-semibold text-apple-textSecondary">
+                {entry.totalPoints.toLocaleString('de-DE')}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Challenges Widget */}
+      <div className="apple-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-apple-text flex items-center space-x-2">
+            <Zap className="text-apple-accent" size={20} />
+            <span>{t('dashboard.challengesTitle')}</span>
+          </h3>
+          <Link to="/challenges" className="text-sm text-apple-accent hover:text-apple-accentHover font-medium transition-colors">
+            {t('dashboard.showAll')}
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="bg-apple-bg rounded-apple p-3 border border-apple-border text-center">
+            <p className="text-2xl font-bold text-apple-text font-mono">{challengesCompleted}/{totalChallengesCount}</p>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider mt-1">{t('dashboard.completedLabel')}</p>
+          </div>
+          <div className="bg-apple-bg rounded-apple p-3 border border-apple-border text-center">
+            <p className="text-2xl font-bold text-apple-accent font-mono">{challengePoints}</p>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider mt-1">{t('dashboard.pointsLabel')}</p>
+          </div>
+          <div className="bg-apple-bg rounded-apple p-3 border border-apple-border text-center">
+            <p className="text-2xl font-bold text-apple-text font-mono">{totalChallengesCount - challengesCompleted}</p>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider mt-1">{t('dashboard.openLabel')}</p>
+          </div>
+        </div>
+        {challengesCompleted < totalChallengesCount && (
+          <Link
+            to="/challenges"
+            className="flex items-center justify-between p-3 bg-apple-accent/8 border border-apple-accent/20 rounded-apple hover:bg-apple-accent/12 transition-all duration-200 group"
+          >
+            <div className="flex items-center space-x-2">
+              <Zap size={16} className="text-apple-accent" />
+              <span className="text-sm text-apple-text font-medium">
+                {t('dashboard.nextChallenge')}
+              </span>
+            </div>
+            <span className="text-apple-accent group-hover:translate-x-1 transition-transform duration-200">→</span>
+          </Link>
+        )}
+      </div>
+
       {/* Next Steps */}
-      <div className="lesson-card">
-        <h3 className="text-xl font-bold text-github-text mb-4">🚀 Nächste Schritte</h3>
+      <div className="apple-card">
+        <h3 className="text-lg font-bold text-apple-text mb-4 flex items-center space-x-2">
+          <span className="text-apple-accent">→</span>
+          <span>{t('dashboard.nextSteps')}</span>
+        </h3>
         <div className="space-y-3">
-          {lessonsCompleted.length < totalLessons && (
+          {srsDueCount > 0 && (
             <Link
-              to={`/lesson/${lessonsCompleted.length}`}
-              className="flex items-center justify-between p-4 bg-github-bg rounded-md hover:border-github-emphasis border border-github-border transition-colors"
+              to="/review"
+              className="flex items-center justify-between p-4 bg-apple-accent/10 border border-apple-accent/30 rounded-apple hover:bg-apple-accent/15 hover:border-apple-accent/50 transition-all duration-200 group"
             >
               <div className="flex items-center space-x-3">
-                <BookOpen className="text-github-emphasis" size={20} />
-                <span className="text-github-text">
-                  Nächste Lektion: {lessons[lessonsCompleted.length]?.title}
+                <Repeat className="text-apple-accent" size={20} />
+                <span className="text-apple-text font-medium">
+                  {t('dashboard.reviewDue_other', { count: srsDueCount })}
                 </span>
               </div>
-              <span className="text-github-emphasis">→</span>
+              <span className="text-apple-accent group-hover:translate-x-1 transition-transform duration-200">→</span>
             </Link>
           )}
+          {(() => {
+            const nextLesson = lessons.find((l) => !lessonsCompleted.includes(l.id));
+            return nextLesson ? (
+              <Link
+                to={`/lesson/${nextLesson.id}`}
+                className="flex items-center justify-between p-4 bg-apple-bg rounded-apple hover:bg-apple-hover border border-apple-border hover:border-apple-accent/40 transition-all duration-200 group"
+              >
+                <div className="flex items-center space-x-3">
+                  <BookOpen className="text-apple-accent" size={20} />
+                  <span className="text-apple-text font-medium">
+                    {t('dashboard.nextLesson')}: <span className="text-apple-textSecondary">{nextLesson.title}</span>
+                  </span>
+                </div>
+                <span className="text-apple-accent group-hover:translate-x-1 transition-transform duration-200">→</span>
+              </Link>
+            ) : null;
+          })()}
+          <Link
+            to="/analytics"
+            className="flex items-center justify-between p-4 bg-apple-bg rounded-apple hover:bg-apple-hover border border-apple-border hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <div className="flex items-center space-x-3">
+              <Activity className="text-apple-accent" size={20} />
+              <span className="text-apple-text font-medium">
+                {t('dashboard.analyticsLink')} <span className="text-apple-textSecondary">{t('dashboard.analyticsLinkDetail')}</span>
+              </span>
+            </div>
+            <span className="text-apple-accent group-hover:translate-x-1 transition-transform duration-200">→</span>
+          </Link>
+          <Link
+            to="/report"
+            className="flex items-center justify-between p-4 bg-apple-bg rounded-apple hover:bg-apple-hover border border-apple-border hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <div className="flex items-center space-x-3">
+              <BarChart3 className="text-apple-info" size={20} />
+              <span className="text-apple-text font-medium">
+                {t('report.title')} <span className="text-apple-textSecondary">{t('dashboard.exportReport')}</span>
+              </span>
+            </div>
+            <span className="text-apple-accent group-hover:translate-x-1 transition-transform duration-200">→</span>
+          </Link>
         </div>
       </div>
     </div>
   );
 };
+
+/* === Sub-Components === */
+
+function LevelCard({
+  icon,
+  title,
+  completed,
+  total,
+  progress,
+  color,
+  barColor,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  completed: number;
+  total: number;
+  progress: number;
+  color: string;
+  barColor: string;
+}) {
+  return (
+    <div className="apple-card-hover">
+      <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-apple-lg opacity-50 pointer-events-none`} />
+      <div className="relative">
+        <div className="flex items-center space-x-3 mb-4">
+          {icon}
+          <h3 className="text-sm font-semibold text-apple-text">{title}</h3>
+        </div>
+        <div className="w-full bg-apple-border rounded-full h-2 overflow-hidden">
+          <div
+            className={`${barColor} h-full transition-all duration-700 rounded-full`}
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-apple-textSecondary mt-2.5 text-xs font-mono">
+          {completed}/{total} Lektionen ({progress}%)
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({
+  icon,
+  label,
+  value,
+  detail,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string;
+  detail: string;
+}) {
+  return (
+    <div className="apple-card">
+      <div className="flex items-center space-x-3 mb-3">
+        {icon}
+        <h4 className="text-xs font-medium text-apple-muted uppercase tracking-wider font-mono">
+          {label}
+        </h4>
+      </div>
+      <p className="text-2xl font-bold text-apple-text font-mono">{value}</p>
+      <p className="text-sm text-apple-textSecondary mt-1">{detail}</p>
+    </div>
+  );
+}
 
 export default DashboardView;

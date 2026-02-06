@@ -3,84 +3,246 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    /* Background scale */
-    --color-bg: #1a1a1a;
-    --color-surface: #2d2d2d;
-    --color-elevated: #3d3d3d;
-    --color-border: #404040;
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3a3a3a #1a1a1a;
+  }
 
-    /* Text scale */
-    --color-text: #f5f5f7;
-    --color-text-secondary: #a1a1a6;
-    --color-muted: #8e8e93;
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-    /* Accent */
-    --color-accent: #ff9500;
-    --color-accent-hover: #ffaa33;
-    --color-accent-muted: #cc7700;
+  *::-webkit-scrollbar-track {
+    background: #1a1a1a;
+  }
 
-    /* Semantic */
-    --color-success: #30d158;
-    --color-error: #ff453a;
-    --color-warning: #ffd60a;
+  *::-webkit-scrollbar-thumb {
+    background: #3a3a3a;
+    border-radius: 3px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: #4a4a4a;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-apple-bg text-apple-text antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #f5f5f7;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
     margin: 0;
     min-height: 100vh;
   }
 
-  code {
-    @apply font-mono text-sm;
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'SF Mono', Consolas, Monaco, monospace;
+  }
+
+  ::selection {
+    background-color: rgba(255, 149, 0, 0.3);
+    color: #f5f5f7;
   }
 }
 
 @layer components {
+  /* === Card Styles === */
+  .apple-card {
+    @apply bg-apple-surface border border-apple-border rounded-apple-lg p-6;
+    @apply transition-all duration-300 ease-out;
+    @apply shadow-apple;
+  }
+
+  .apple-card-hover {
+    @apply apple-card;
+    @apply hover:border-apple-borderLight hover:shadow-apple-hover;
+    @apply hover:-translate-y-0.5;
+  }
+
+  /* === Code Block === */
   .code-block {
-    @apply bg-apple-surface border border-apple-border rounded-xl p-4 overflow-x-auto;
+    @apply bg-apple-bg border border-apple-border rounded-apple p-4 overflow-x-auto;
+    @apply font-mono text-sm;
   }
 
+  /* === Legacy class mappings === */
   .lesson-card {
-    @apply bg-apple-surface border border-apple-border rounded-xl p-6 hover:border-apple-accent transition-colors;
+    @apply apple-card-hover;
   }
 
+  /* === Button Styles === */
   .btn-primary {
-    @apply bg-apple-accent text-white px-4 py-2 rounded-xl hover:bg-apple-accentHover transition-colors;
+    @apply bg-apple-accent text-white font-semibold;
+    @apply px-5 py-2.5 rounded-apple;
+    @apply hover:bg-apple-accentHover active:scale-[0.98];
+    @apply transition-all duration-200 ease-out;
+    @apply shadow-sm hover:shadow-apple-glow;
   }
 
+  .btn-secondary {
+    @apply bg-apple-elevated text-apple-text font-medium;
+    @apply px-5 py-2.5 rounded-apple;
+    @apply border border-apple-border;
+    @apply hover:bg-apple-hover hover:border-apple-borderLight;
+    @apply transition-all duration-200 ease-out;
+  }
+
+  /* === Highlight Box (legacy) === */
   .highlight-box {
-    @apply border-l-4 border-apple-accent bg-apple-surface/50 p-4 my-4 rounded-r-xl;
+    @apply border-l-4 border-apple-accent bg-apple-accentSubtle;
+    @apply p-4 my-4 rounded-r-apple;
+  }
+
+  /* === Lesson Content Flow === */
+  .lesson-content-flow {
+    @apply space-y-7;
+  }
+
+  .lesson-content-flow .lesson-section-heading {
+    @apply mt-12 mb-2;
+  }
+
+  .lesson-content-flow .lesson-section-heading:first-child {
+    @apply mt-0;
+  }
+
+  .lesson-content-flow .lesson-text-block {
+    @apply my-0;
+  }
+
+  .lesson-content-flow .lesson-code-block {
+    @apply my-2;
+  }
+
+  .lesson-content-flow .lesson-highlight-block {
+    @apply my-2;
+  }
+
+  .lesson-content-flow .lesson-list-block {
+    @apply my-1;
+  }
+
+  .lesson-content-flow .lesson-grouped-list {
+    @apply my-2;
+  }
+
+  /* === Progress Bar === */
+  .progress-bar {
+    @apply w-full bg-apple-border rounded-full overflow-hidden;
+  }
+
+  .progress-bar-fill {
+    @apply h-full bg-gradient-to-r from-apple-accentMuted to-apple-accent;
+    @apply transition-all duration-700 ease-out;
+    @apply rounded-full;
+  }
+
+  /* === Glass Effect === */
+  .glass {
+    @apply bg-apple-surface/80 backdrop-blur-xl;
+    @apply border border-white/5;
+  }
+
+  /* === Subtle Glow === */
+  .accent-glow {
+    box-shadow: 0 0 30px rgba(255, 149, 0, 0.08);
   }
 }
 
-/* Prism.js Dark Theme - Apple Style */
+/* === Prism.js Dark Theme - Apple/Claude Code Style === */
 pre[class*="language-"] {
-  @apply bg-apple-surface border border-apple-border rounded-xl;
+  @apply bg-apple-bg border border-apple-border rounded-apple;
+  @apply !font-mono;
 }
 
 code[class*="language-"] {
-  @apply text-apple-text;
+  @apply text-apple-text !font-mono;
 }
 
-.token.comment {
-  @apply text-apple-muted;
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #6e6e73;
+  font-style: italic;
 }
 
-.token.keyword {
-  color: #ff79c6; /* Pink - good contrast on dark */
+.token.keyword,
+.token.tag {
+  color: #ff7eb6;
 }
 
-.token.string {
-  color: #8be9fd; /* Cyan - readable */
+.token.string,
+.token.attr-value {
+  color: #78dce8;
 }
 
 .token.function {
-  color: #bd93f9; /* Purple */
+  color: #be95ff;
 }
 
-.token.number {
-  color: #ff9500; /* Orange accent */
+.token.number,
+.token.boolean {
+  color: #ff9500;
+}
+
+.token.operator,
+.token.punctuation {
+  color: #a1a1a6;
+}
+
+.token.property,
+.token.class-name,
+.token.constant {
+  color: #82cfff;
+}
+
+.token.variable {
+  color: #f5f5f7;
+}
+
+.token.attr-name {
+  color: #ffab70;
+}
+
+/* === Smooth scroll anchors === */
+[data-section-id] {
+  scroll-margin-top: 6rem;
+}
+
+/* === Animations === */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 149, 0, 0.06) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
 }

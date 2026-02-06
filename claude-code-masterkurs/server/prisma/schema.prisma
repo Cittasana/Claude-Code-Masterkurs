@@ -1,0 +1,213 @@
+// ─────────────────────────────────────────────────────────────
+// Claude Code Masterkurs - Database Schema
+// Mapped from the existing Frontend TypeScript types
+// ─────────────────────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ── Users & Auth ─────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  displayName   String   @default("Lernender")
+  avatarEmoji   String   @default("🧑‍💻") @map("avatar_emoji")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  progress         UserProgress?
+  quizResults      QuizResult[]
+  projectResults   ProjectResult[]
+  challengeResults ChallengeResult[]
+  forumThreads     ForumThread[]
+  forumReplies     ForumReply[]
+  patterns         CommunityPattern[]
+  srsItems         SRSItem[]
+  analyticsEvents  AnalyticsEvent[]
+
+  @@map("users")
+}
+
+// ── User Progress ────────────────────────────────────────────
+// Maps to: UserProgress interface + SkillProgress
+
+model UserProgress {
+  id                String   @id @default(cuid())
+  userId            String   @unique @map("user_id")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lessonsCompleted  Int[]    @default([]) @map("lessons_completed")
+  currentLesson     Int      @default(0) @map("current_lesson")
+  totalPoints       Int      @default(0) @map("total_points")
+  streak            Int      @default(0)
+  lastSessionDate   DateTime @default(now()) @map("last_session_date")
+  timeInvested      Int      @default(0) @map("time_invested") // minutes
+  videosWatched     Json     @default("{}") @map("videos_watched") // Record<string, boolean>
+
+  // Skill Progress (flattened from SkillProgress interface)
+  skillInstallation    Int @default(0) @map("skill_installation")
+  skillClaudeMd        Int @default(0) @map("skill_claude_md")
+  skillMcpIntegration  Int @default(0) @map("skill_mcp_integration")
+  skillCustomAgents    Int @default(0) @map("skill_custom_agents")
+  skillProductionReady Int @default(0) @map("skill_production_ready")
+
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("user_progress")
+}
+
+// ── Quiz Results ─────────────────────────────────────────────
+// Maps to: QuizResult interface
+
+model QuizResult {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  quizId    String   @map("quiz_id")
+  lessonId  Int      @map("lesson_id")
+  score     Int      @default(0)
+  attempts  Int      @default(1)
+  completed Boolean  @default(false)
+  timestamp DateTime @default(now())
+
+  @@unique([userId, quizId])
+  @@map("quiz_results")
+}
+
+// ── Project Results ──────────────────────────────────────────
+// Maps to: ProjectResult interface
+
+model ProjectResult {
+  id                String   @id @default(cuid())
+  userId            String   @map("user_id")
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId         String   @map("project_id")
+  completed         Boolean  @default(false)
+  score             Int      @default(0)
+  timestamp         DateTime @default(now())
+  validationResults Json     @default("[]") @map("validation_results")
+  // JSON: Array<{ testName: string; passed: boolean; points: number }>
+
+  @@unique([userId, projectId])
+  @@map("project_results")
+}
+
+// ── Challenge Results ────────────────────────────────────────
+// Maps to: ChallengeResult interface
+
+model ChallengeResult {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  challengeId String   @map("challenge_id")
+  completed   Boolean  @default(false)
+  score       Int      @default(0)
+  maxScore    Int      @default(0) @map("max_score")
+  timeUsed    Int      @default(0) @map("time_used") // seconds
+  attempts    Int      @default(1)
+  completedAt DateTime? @map("completed_at")
+
+  @@unique([userId, challengeId])
+  @@map("challenge_results")
+}
+
+// ── Forum ────────────────────────────────────────────────────
+// Maps to: ForumThread + ForumReply interfaces
+
+model ForumThread {
+  id             String   @id @default(cuid())
+  categoryId     String   @map("category_id") // 'allgemein' | 'lektionen' | 'projekte' | 'tipps' | 'feedback'
+  title          String
+  body           String
+  authorId       String   @map("author_id")
+  author         User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now()) @map("created_at")
+  lastActivityAt DateTime @default(now()) @map("last_activity_at")
+  pinned         Boolean  @default(false)
+
+  replies ForumReply[]
+
+  @@index([categoryId])
+  @@index([lastActivityAt])
+  @@map("forum_threads")
+}
+
+model ForumReply {
+  id        String   @id @default(cuid())
+  threadId  String   @map("thread_id")
+  thread    ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  body      String
+  authorId  String   @map("author_id")
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([threadId])
+  @@map("forum_replies")
+}
+
+// ── Community Patterns ───────────────────────────────────────
+// Maps to: CommunityPattern interface
+
+model CommunityPattern {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String   // 'Prompts' | 'CLAUDE.md' | 'Workflows' | 'MCP' | 'Skills' | 'Sonstige'
+  authorId    String   @map("author_id")
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  snippet     String
+  language    String?
+  tags        String[] @default([])
+  useCase     String?  @map("use_case")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([category])
+  @@map("community_patterns")
+}
+
+// ── Spaced Repetition (SRS) ──────────────────────────────────
+// Maps to: SRSItem interface
+
+model SRSItem {
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  lessonId       Int      @map("lesson_id")
+  nextReviewAt   DateTime @map("next_review_at")
+  intervalIndex  Int      @default(0) @map("interval_index") // 0..3 → [1, 3, 7, 14] days
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+  timesReviewed  Int      @default(0) @map("times_reviewed")
+
+  @@unique([userId, lessonId])
+  @@map("srs_items")
+}
+
+// ── Analytics Events ─────────────────────────────────────────
+// Maps to: ActivityEvent interface from analyticsStore
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type      String   // 'lesson_complete' | 'quiz_complete' | 'project_complete' | 'session_start' | 'review_complete'
+  timestamp DateTime @default(now())
+  metadata  Json?    // { lessonId?, quizId?, projectId?, score?, duration? }
+
+  @@index([userId, timestamp])
+  @@index([type])
+  @@map("analytics_events")
+}

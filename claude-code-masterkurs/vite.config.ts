@@ -1,10 +1,31 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    visualizer({
+      open: false,
+      filename: 'dist/stats.html',
+      gzipSize: true,
+      brotliSize: true,
+    }),
+  ],
   build: {
+    // Minify & Optimize
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true, // Remove console.log in production
+        drop_debugger: true,
+      },
+    },
+    // CSS Code-Splitting
+    cssCodeSplit: true,
+    // Sourcemaps für Production (optional, nur bei Debugging)
+    sourcemap: false,
     rollupOptions: {
       output: {
         manualChunks: {

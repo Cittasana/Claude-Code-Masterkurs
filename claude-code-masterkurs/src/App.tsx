@@ -2,14 +2,15 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import Navigation from './components/Navigation/Navigation';
-import LessonView from './pages/LessonView';
-import DashboardView from './pages/DashboardView';
-import CertificateView from './pages/CertificateView';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import { useUserProgress } from './store/userProgress';
 import { useAnalyticsStore } from './store/analyticsStore';
 import { useAuthStore } from './store/authStore';
 
+// Lazy load all views for better initial load performance
+const LessonView = lazy(() => import('./pages/LessonView'));
+const DashboardView = lazy(() => import('./pages/DashboardView'));
+const CertificateView = lazy(() => import('./pages/CertificateView'));
 const FeatureReferenceView = lazy(() => import('./pages/FeatureReferenceView'));
 const ProgressReportView = lazy(() => import('./pages/ProgressReportView'));
 const PlaygroundView = lazy(() => import('./pages/PlaygroundView'));

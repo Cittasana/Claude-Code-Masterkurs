@@ -119,6 +119,12 @@ export const authApi = {
     api.put<{ user: AuthUser }>('/api/auth/profile', data),
 
   deleteAccount: () => api.delete<{ message: string }>('/api/auth/account'),
+
+  requestPasswordReset: (email: string) =>
+    api.post<{ message: string }>('/api/auth/password-reset-request', { email }),
+
+  confirmPasswordReset: (token: string, newPassword: string) =>
+    api.post<{ message: string }>('/api/auth/password-reset-confirm', { token, newPassword }),
 };
 
 // ── Progress API ────────────────────────────────────────────

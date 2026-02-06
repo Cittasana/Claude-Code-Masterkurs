@@ -33,8 +33,26 @@ model User {
   patterns         CommunityPattern[]
   srsItems         SRSItem[]
   analyticsEvents  AnalyticsEvent[]
+  passwordResets   PasswordReset[]
 
   @@map("users")
+}
+
+// ── Password Reset Tokens ────────────────────────────────────────
+
+model PasswordReset {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([token])
+  @@index([userId])
+  @@map("password_resets")
 }
 
 // ── User Progress ────────────────────────────────────────────

@@ -163,11 +163,13 @@
 - [x] Pagination für Listen-Endpoints
 
 #### 4e. E-Mail-Service (für Auth-Flows)
-- [ ] E-Mail-Provider wählen:
+- [ ] **TODO:** E-Mail-Provider wählen und integrieren:
   - **Resend** (Empfohlen - modernes API, 100 Mails/Tag kostenlos)
   - **Mailgun** (Klassisch)
   - **SendGrid** (Enterprise)
-- [ ] E-Mail-Templates erstellen (Verifizierung, Passwort-Reset)
+- [ ] **TODO:** E-Mail-Templates erstellen (Verifizierung, Passwort-Reset)
+- [ ] **TODO:** Passwort-Reset-Flow implementieren (Backend-Route + Frontend-UI)
+- [ ] **TODO:** E-Mail-Verifizierung bei Registrierung (optional, erhöht Sicherheit)
 
 #### 4f. Frontend-Integration
 - [x] API-Client erstellen (fetch Wrapper mit Auth-Header) – `src/lib/api.ts`
@@ -259,8 +261,45 @@ Hosting Backend:       Railway
 - [x] Health Check verifiziert: `/health` → `{"status":"ok","database":"connected"}` ✅
 - [x] API-Endpoints getestet: Leaderboard, Forum, Auth ✅
 - [x] Frontend `.env` mit `VITE_API_URL=https://backend-production-9d7c.up.railway.app` ✅
+- [x] GitHub-Repo mit Railway verbunden (Auto-Deploy bei Push) ✅
+- [x] Root Directory gesetzt: `claude-code-masterkurs/server` ✅
+- [x] Erfolgreicher Deploy vom GitHub-Repo (Commit 672ddbe) ✅
+- [ ] **TODO:** Service "Claude-Code-Masterkurs" aufräumen (FAILED, nicht benötigt - Frontend läuft über Vercel)
 - [ ] Optional: Custom Domain für API (z.B. `api.claude-code-masterkurs.de`)
 - [ ] Optional: Frontend ebenfalls auf Railway deployen (Static Site)
+
+---
+
+## 5a. Offene Railway/Backend-Aufgaben
+
+**Status:** Backend läuft stabil, kleinere Aufräumarbeiten ausstehend
+
+### Kritisch
+- [ ] **Service "Claude-Code-Masterkurs" aufräumen**
+  - Status: FAILED (Railpack-Fehler, kein Root Directory)
+  - Aktive Deployments: 0
+  - Aktion: Service im Railway Dashboard löschen (wird nicht benötigt, Frontend läuft über Vercel)
+  - CLI: `railway service link "Claude-Code-Masterkurs" && railway delete`
+
+### Nice-to-Have
+- [ ] **Custom Domain für Backend-API** (z.B. `api.claude-code-masterkurs.de`)
+  - DNS CNAME: `api.claude-code-masterkurs.de` → `backend-production-9d7c.up.railway.app`
+  - Im Railway Dashboard unter Service → Settings → Domains hinzufügen
+  - Vorteil: Kürzere, professionellere API-URL
+  
+- [ ] **E-Mail-Service integrieren** (für Passwort-Reset)
+  - Provider: Resend (100 Mails/Tag kostenlos)
+  - Backend-Route: `POST /api/auth/password-reset-request`
+  - Backend-Route: `POST /api/auth/password-reset-confirm`
+  - Frontend-Seiten: PasswordResetRequest, PasswordResetConfirm
+  - Environment Variable: `RESEND_API_KEY`
+
+- [ ] **Monitoring & Logs verbessern**
+  - Railway bietet eingebautes Logging (via `railway logs`)
+  - Optional: Error Tracking mit Sentry (Backend-Integration)
+  - Optional: Uptime Monitoring (UptimeRobot für `/health` Endpoint)
+
+**Aufwand:** ~1-2 Stunden (Service löschen + optional Custom Domain)
 
 ---
 
@@ -285,8 +324,8 @@ Hosting Backend:       Railway
   NODE_ENV=production
   ```
 - [x] `.env` in `.gitignore` sicherstellen
-- [ ] Environment Variables in Railway Dashboard hinterlegen (Backend)
-- [ ] Environment Variables in Vercel hinterlegen (Frontend: `VITE_API_URL`)
+- [x] Environment Variables in Railway Dashboard hinterlegen (Backend) ✅
+- [ ] **TODO:** Environment Variables in Vercel hinterlegen (Frontend: `VITE_API_URL`)
 
 **Aufwand:** ~15 Minuten
 
@@ -449,17 +488,29 @@ Hosting Backend:       Railway
 | 16 | Backend auf Railway deployen | 1 h | Kritisch | ✅ Live |
 | 17 | DSGVO-konforme Datenschutzerklärung | 2-3 h | Hoch | ✅ Vorhanden |
 
-### Phase C: Polish & Monitoring
+### Phase C: Vercel Frontend-Deployment
+> Frontend mit Backend verbinden und auf Vercel deployen
+
+| # | Aufgabe | Aufwand | Priorität | Status |
+|---|---------|---------|-----------|--------|
+| 17 | Vercel-Projekt mit GitHub-Repo verbinden | 15 min | Kritisch | ✅ Erledigt |
+| 18 | Environment Variable setzen: `VITE_API_URL` | 5 min | Kritisch | ✅ Erledigt |
+| 19 | Build & Deploy testen | 15 min | Kritisch | ✅ Erledigt |
+| 20 | Custom Domain auf Vercel setzen | 10 min | Hoch | ✅ Erledigt |
+| 21 | CORS im Backend für Vercel-Domain prüfen | 5 min | Kritisch | ✅ Erledigt |
+
+### Phase D: Polish & Monitoring
 > Qualität sichern und überwachen
 
-| # | Aufgabe | Aufwand | Priorität |
-|---|---------|---------|-----------|
-| 18 | Error Monitoring (Sentry) | 1 h | Hoch |
-| 19 | Web Analytics (Plausible/Umami) | 1 h | Mittel |
-| 20 | Tests schreiben | 1-2 Wochen | Mittel |
-| 21 | Performance Audit & Optimierung | 2-3 h | Mittel |
-| 22 | Custom Domain | 30 min | Nice-to-have |
-| 23 | CI/CD Pipeline (Railway macht Auto-Deploy) | 30 min | Nice-to-have |
+| # | Aufgabe | Aufwand | Priorität | Status |
+|---|---------|---------|-----------|--------|
+| 22 | Railway Service "Claude-Code-Masterkurs" löschen | 5 min | Hoch | ⏳ Offen |
+| 23 | E-Mail-Service (Resend) für Passwort-Reset | 2-3 h | Mittel | ⏳ Offen |
+| 24 | Error Monitoring (Sentry) | 1 h | Hoch | ⏳ Offen |
+| 25 | Web Analytics (Plausible/Umami) | 1 h | Mittel | ⏳ Offen |
+| 26 | Tests schreiben | 1-2 Wochen | Mittel | ⏳ Offen |
+| 27 | Performance Audit & Optimierung | 2-3 h | Mittel | ⏳ Offen |
+| 28 | Custom Domain für Backend-API | 30 min | Nice-to-have | ⏳ Offen |
 
 ---
 
@@ -486,11 +537,61 @@ Hosting Backend:       Railway
 | Tests | Fehlt | NEIN (aber empfohlen) |
 | CI/CD | Fehlt | NEIN |
 
-**Phase A:** ✅ Abgeschlossen – App ist live auf Vercel.
-**Phase B:** ✅ Abgeschlossen – Backend auf Railway deployed, DB geseeded, API getestet.
-**Komplett fertig (Phase A+B+C):** Noch Phase C (Polish & Monitoring) offen.
+**Phase A:** ✅ Abgeschlossen – Initiales Deployment (Vercel, statisch).
+**Phase B:** ✅ Abgeschlossen – Backend auf Railway deployed, DB geseeded, API getestet, GitHub Auto-Deploy aktiv.
+**Phase C:** ✅ **ABGESCHLOSSEN** – Frontend mit Backend-API auf Vercel deployed. CORS konfiguriert, Environment Variables gesetzt.
+**Phase D:** ⏳ **NÄCHSTER SCHRITT** – Polish & Monitoring (Service aufräumen, E-Mail, Analytics, Tests).
 
 ---
 
 *Erstellt am: 2026-02-06*
-*Letzte Aktualisierung: 2026-02-06 – Phase B komplett: Backend auf Railway deployed, PostgreSQL geseeded, alle API-Endpoints getestet*
+*Letzte Aktualisierung: 2026-02-06 17:15 – Phase C komplett abgeschlossen! Frontend auf Vercel deployed mit Backend-Integration. Nächster Schritt: Phase D (Polish & Monitoring).*
+
+---
+
+## Nächste Schritte: Vercel Frontend-Deployment (Phase C)
+
+### 1. Vercel-Projekt mit GitHub verbinden
+```bash
+# Option 1: Via Vercel Dashboard
+# - Gehe zu https://vercel.com/new
+# - Wähle das GitHub-Repo "Cittasana/Claude-Code-Masterkurs"
+# - Root Directory: "claude-code-masterkurs" (wichtig!)
+# - Framework: Vite
+# - Build Command: npm run build
+# - Output Directory: dist
+
+# Option 2: Via Vercel CLI
+cd claude-code-masterkurs
+npm i -g vercel
+vercel login
+vercel --prod
+```
+
+### 2. Environment Variables in Vercel setzen
+Im Vercel Dashboard → Settings → Environment Variables:
+```
+VITE_API_URL=https://backend-production-9d7c.up.railway.app
+```
+
+### 3. Backend CORS für Vercel-Domain prüfen
+```bash
+# Checken ob vercel.app Domain in CORS_ORIGIN ist
+railway variable list --service backend | grep CORS_ORIGIN
+
+# Falls nötig, Vercel-Domain hinzufügen:
+railway variable set CORS_ORIGIN="https://claude-code-masterkurs.de,https://www.claude-code-masterkurs.de,https://claude-code-masterkurs.vercel.app,https://[DEINE-VERCEL-APP].vercel.app,http://localhost:5173"
+```
+
+### 4. Deployment testen
+- Frontend aufrufen (z.B. https://claude-code-masterkurs.vercel.app)
+- Login/Register testen
+- Browser DevTools → Network: API-Calls zu Railway Backend prüfen
+- Leaderboard/Forum prüfen (echte Daten vom Backend)
+
+### 5. Custom Domain auf Vercel setzen
+- Vercel Dashboard → Domains → Add Domain
+- Domain: `claude-code-masterkurs.de`
+- DNS-Einträge bei Domain-Provider aktualisieren (Vercel zeigt Anleitung)
+
+---

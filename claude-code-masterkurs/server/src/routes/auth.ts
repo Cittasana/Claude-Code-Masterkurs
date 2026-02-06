@@ -1,9 +1,11 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { z } from 'zod';
 import { prisma, logger } from '../index.js';
 import { signToken, requireAuth } from '../middleware/auth.js';
 import { authRateLimit } from '../middleware/rateLimit.js';
+import { sendPasswordResetEmail } from '../lib/email.js';
 
 export const authRouter = Router();
 
@@ -191,5 +193,123 @@ authRouter.delete('/account', requireAuth, async (req, res) => {
   } catch (error) {
     logger.error(error, 'Account deletion error');
     res.status(500).json({ error: 'Account konnte nicht gelöscht werden' });
+  }
+});
+
+// ── POST /api/auth/password-reset-request ────────────────────
+// Request password reset email
+
+const passwordResetRequestSchema = z.object({
+  email: z.string().email('Ungültige E-Mail-Adresse'),
+});
+
+authRouter.post('/password-reset-request', authRateLimit, async (req, res) => {
+  try {
+    const data = passwordResetRequestSchema.parse(req.body);
+
+    const user = await prisma.user.findUnique({
+      where: { email: data.email },
+      select: { id: true, email: true, displayName: true },
+    });
+
+    // Always return success (don't leak user existence)
+    if (!user) {
+      logger.warn({ email: data.email }, 'Password reset requested for non-existent user');
+      res.json({ message: 'Falls ein Account mit dieser E-Mail existiert, wurde eine E-Mail versendet.' });
+      return;
+    }
+
+    // Generate secure reset token
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+    // Delete old reset tokens for this user
+    await prisma.passwordReset.deleteMany({
+      where: { userId: user.id },
+    });
+
+    // Create new reset token
+    await prisma.passwordReset.create({
+      data: {
+        userId: user.id,
+        token,
+        expiresAt,
+      },
+    });
+
+    // Send email
+    await sendPasswordResetEmail(user.email, token, user.displayName);
+
+    logger.info({ userId: user.id }, 'Password reset email sent');
+    res.json({ message: 'Falls ein Account mit dieser E-Mail existiert, wurde eine E-Mail versendet.' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors[0].message });
+      return;
+    }
+    logger.error(error, 'Password reset request error');
+    res.status(500).json({ error: 'Fehler beim Anfordern des Passwort-Resets' });
+  }
+});
+
+// ── POST /api/auth/password-reset-confirm ────────────────────
+// Confirm password reset with token
+
+const passwordResetConfirmSchema = z.object({
+  token: z.string().min(1, 'Token erforderlich'),
+  newPassword: z.string().min(8, 'Passwort muss mindestens 8 Zeichen haben'),
+});
+
+authRouter.post('/password-reset-confirm', authRateLimit, async (req, res) => {
+  try {
+    const data = passwordResetConfirmSchema.parse(req.body);
+
+    // Find valid reset token
+    const resetToken = await prisma.passwordReset.findUnique({
+      where: { token: data.token },
+      include: { user: true },
+    });
+
+    if (!resetToken) {
+      res.status(400).json({ error: 'Ungültiger oder abgelaufener Reset-Link' });
+      return;
+    }
+
+    // Check if token is expired
+    if (resetToken.expiresAt < new Date()) {
+      res.status(400).json({ error: 'Reset-Link ist abgelaufen' });
+      return;
+    }
+
+    // Check if token was already used
+    if (resetToken.usedAt) {
+      res.status(400).json({ error: 'Reset-Link wurde bereits verwendet' });
+      return;
+    }
+
+    // Hash new password
+    const passwordHash = await bcrypt.hash(data.newPassword, 12);
+
+    // Update password and mark token as used
+    await prisma.$transaction([
+      prisma.user.update({
+        where: { id: resetToken.userId },
+        data: { passwordHash },
+      }),
+      prisma.passwordReset.update({
+        where: { id: resetToken.id },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+
+    logger.info({ userId: resetToken.userId }, 'Password reset successful');
+    res.json({ message: 'Passwort erfolgreich zurückgesetzt' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors[0].message });
+      return;
+    }
+    logger.error(error, 'Password reset confirm error');
+    res.status(500).json({ error: 'Fehler beim Zurücksetzen des Passworts' });
   }
 });

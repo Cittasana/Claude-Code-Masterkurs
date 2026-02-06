@@ -25,6 +25,8 @@ const DatenschutzView = lazy(() => import('./pages/DatenschutzView'));
 const LoginView = lazy(() => import('./pages/LoginView'));
 const RegisterView = lazy(() => import('./pages/RegisterView'));
 const ProfileView = lazy(() => import('./pages/ProfileView'));
+const PasswordResetRequestView = lazy(() => import('./views/PasswordResetRequestView'));
+const PasswordResetConfirmView = lazy(() => import('./views/PasswordResetConfirmView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -65,6 +67,8 @@ function App() {
               <Route path="/login" element={<LoginView />} />
               <Route path="/register" element={<RegisterView />} />
               <Route path="/profile" element={<ProfileView />} />
+              <Route path="/password-reset" element={<PasswordResetRequestView />} />
+              <Route path="/password-reset/:token" element={<PasswordResetConfirmView />} />
               <Route path="/impressum" element={<ImpressumView />} />
               <Route path="/datenschutz" element={<DatenschutzView />} />
               <Route path="*" element={<NotFoundPage />} />

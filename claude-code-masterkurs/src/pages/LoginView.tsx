@@ -87,9 +87,17 @@ const LoginView = () => {
 
             {/* Passwort */}
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-apple-textSecondary mb-1.5">
-                {t('auth.password', 'Passwort')}
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label htmlFor="password" className="block text-sm font-medium text-apple-textSecondary">
+                  {t('auth.password', 'Passwort')}
+                </label>
+                <Link
+                  to="/password-reset"
+                  className="text-xs text-apple-accent hover:text-apple-accentHover transition-colors"
+                >
+                  {t('auth.forgotPassword', 'Passwort vergessen?')}
+                </Link>
+              </div>
               <div className="relative">
                 <Lock size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-apple-muted" />
                 <input

@@ -6,58 +6,320 @@
 
     <!-- SEO -->
     <title>Claude Code Masterkurs – Lerne KI-gestütztes Programmieren</title>
-    <meta name="description" content="Interaktiver Masterkurs für Claude Code: Lerne KI-gestütztes Programmieren mit Anthropics Coding-Agent. 19+ Lektionen, Quizzes, Projekte und Live-Playground." />
-    <meta name="keywords" content="Claude Code, Masterkurs, KI Programmieren, Anthropic, AI Coding, Tutorial, Deutsch" />
+    <meta name="description" content="Interaktiver Masterkurs für Claude Code: Lerne KI-gestütztes Programmieren mit Anthropics Coding-Agent. 27 Lektionen, Quizzes, Projekte und Live-Playground auf Deutsch." />
+    <meta name="keywords" content="Claude Code, Masterkurs, KI Programmieren, Anthropic, AI Coding, Tutorial, Deutsch, Kurs, Lernen, Terminal, MCP Server, Agentic Coding" />
     <meta name="author" content="Claude Code Masterkurs" />
-    <meta name="robots" content="index, follow" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <link rel="canonical" href="https://claude-code-masterkurs.de/" />
+    <meta name="generator" content="Vite + React" />
+    <meta name="rating" content="general" />
+    <meta name="revisit-after" content="7 days" />
+    <meta http-equiv="content-language" content="de" />
 
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Claude Code Masterkurs – Lerne KI-gestütztes Programmieren" />
-    <meta property="og:description" content="Interaktiver Masterkurs für Claude Code: 19+ Lektionen, Quizzes, Projekte und Live-Playground. Kostenlos lernen." />
+    <meta property="og:description" content="Interaktiver Masterkurs für Claude Code: 27 Lektionen, Quizzes, Projekte und Live-Playground auf Deutsch." />
     <meta property="og:url" content="https://claude-code-masterkurs.de/" />
     <meta property="og:image" content="https://claude-code-masterkurs.de/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Claude Code Masterkurs – Interaktiver Kurs für KI-gestütztes Programmieren" />
     <meta property="og:locale" content="de_DE" />
     <meta property="og:site_name" content="Claude Code Masterkurs" />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Claude Code Masterkurs – Lerne KI-gestütztes Programmieren" />
-    <meta name="twitter:description" content="Interaktiver Masterkurs für Claude Code: 19+ Lektionen, Quizzes, Projekte und Live-Playground." />
+    <meta name="twitter:description" content="Interaktiver Masterkurs für Claude Code: 27 Lektionen, Quizzes, Projekte und Live-Playground." />
     <meta name="twitter:image" content="https://claude-code-masterkurs.de/og-image.png" />
+    <meta name="twitter:image:alt" content="Claude Code Masterkurs – Interaktiver Kurs für KI-gestütztes Programmieren" />
 
     <!-- Favicon & Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#1a1a2e" />
+    <meta name="msapplication-TileColor" content="#1a1a2e" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CC Masterkurs" />
+
+    <!-- GEO: LLMs.txt für AI-Crawler-Discoverability -->
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM-optimierte Kursbeschreibung" />
+    <link rel="alternate" type="text/markdown" href="/llms-full.txt" title="LLM-optimierte Kursbeschreibung (vollständig)" />
 
     <!-- Preconnect für externe Ressourcen -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="dns-prefetch" href="https://api.claude-code-masterkurs.de">
+
+    <!-- Preload: Kritische Fonts (display=swap sorgt für sofortiges Rendering) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Orbitron:wght@700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" as="style">
+
+    <!-- Preload: Kritische Assets (Favicon & App-Entry) -->
+    <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml">
+    <link rel="preload" href="/src/main.tsx" as="script" crossorigin>
     
     <!-- Claude Code inspired fonts -->
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Orbitron:wght@700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
-    <!-- Structured Data (Schema.org) -->
+    <!-- Structured Data: Course (Schema.org JSON-LD) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Course",
       "name": "Claude Code Masterkurs",
-      "description": "Interaktiver Masterkurs für Claude Code – KI-gestütztes Programmieren mit Anthropics Coding-Agent lernen.",
+      "description": "Interaktiver Masterkurs für Claude Code – KI-gestütztes Programmieren mit Anthropics Coding-Agent lernen. 27 Lektionen von Grundlagen bis Experte.",
+      "url": "https://claude-code-masterkurs.de/",
+      "image": "https://claude-code-masterkurs.de/og-image.png",
       "provider": {
         "@type": "Organization",
-        "name": "Claude Code Masterkurs"
+        "name": "Claude Code Masterkurs",
+        "url": "https://claude-code-masterkurs.de/"
       },
       "educationalLevel": "Anfänger bis Fortgeschrittene",
       "inLanguage": "de",
-      "isAccessibleForFree": true,
-      "teaches": ["Claude Code", "KI-gestütztes Programmieren", "Anthropic AI", "Terminal Workflows"],
-      "numberOfLessons": 19
+      "isAccessibleForFree": false,
+      "teaches": [
+        "Claude Code",
+        "KI-gestütztes Programmieren",
+        "Anthropic AI",
+        "Terminal Workflows",
+        "MCP Server Integration",
+        "Agentic Coding",
+        "CLAUDE.md Context Management",
+        "Git Automation"
+      ],
+      "numberOfLessons": 27,
+      "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "courseWorkload": "PT20H"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: WebSite (für Sitelinks-Suchbox) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Claude Code Masterkurs",
+      "url": "https://claude-code-masterkurs.de/",
+      "description": "Interaktiver Masterkurs für KI-gestütztes Programmieren mit Claude Code",
+      "inLanguage": "de",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://claude-code-masterkurs.de/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+
+    <!-- Structured Data: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Startseite",
+          "item": "https://claude-code-masterkurs.de/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Lektionen",
+          "item": "https://claude-code-masterkurs.de/lesson/0"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Playground",
+          "item": "https://claude-code-masterkurs.de/playground"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Challenges",
+          "item": "https://claude-code-masterkurs.de/challenges"
+        }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: FAQPage (häufige Fragen für Rich Snippets & GEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Was ist Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claude Code ist ein autonomer KI-gesteuerter Coding-Agent von Anthropic, der im Terminal läuft. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv: Es versteht ganze Projekte, liest und schreibt Dateien, führt Shell-Befehle und Git-Operationen aus und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie unterscheidet sich Claude Code von GitHub Copilot?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claude Code ist ein autonomer Agent, der ganze Aufgaben eigenständig erledigt – von der Dateianalyse über das Code-Schreiben bis zum Git-Commit. Copilot ist ein Autocomplete-Tool für Inline-Code-Vorschläge. Claude Code hat Zugriff auf das gesamte Projekt, kann Shell-Befehle ausführen, Tests starten und über MCP-Server mit externen Tools kommunizieren. Copilot arbeitet primär innerhalb des Editors."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Abo-Modelle gibt es?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Der Claude Code Masterkurs bietet drei Abo-Modelle: Monatlich (24 EUR/Monat, flexibel kündbar), Jährlich (229 EUR/Jahr, spare 20%), und Lifetime (499 EUR einmalig, lebenslanger Zugriff). Alle Modelle beinhalten Zugang zu allen 27 Lektionen, Quizzes, dem Live-Playground und Community-Features."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Wie installiert man Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claude Code wird über npm installiert: 1) Node.js 18+ installieren, 2) 'npm install -g @anthropic-ai/claude-code' im Terminal ausführen, 3) 'claude' starten und den Anthropic API-Key eingeben oder OAuth-Authentifizierung nutzen. Es läuft auf macOS, Linux und Windows (WSL2 empfohlen)."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was ist das Model Context Protocol (MCP)?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools und Services zu kommunizieren. Über MCP Server kann Claude Code auf Datenbanken (PostgreSQL, SQLite), APIs (GitHub, Jira, Slack), Dateisysteme und weitere Services zugreifen. Es erweitert die Fähigkeiten von Claude Code über das lokale Dateisystem hinaus."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was kostet Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claude Code erfordert einen Anthropic API-Key. Die Kosten richten sich nach dem Tokenverbrauch: Claude Sonnet 4 kostet ca. $3/$15 pro Million Input/Output Tokens, Claude Opus 4 ca. $15/$75. Ein typischer Entwicklungstag kostet je nach Nutzungsintensität $1–20. Alternativ gibt es den Max Plan mit monatlicher Pauschale."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Welche Programmiersprachen unterstützt Claude Code?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Claude Code ist sprachunabhängig und unterstützt alle gängigen Programmiersprachen: Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin und viele weitere. Da es im Terminal arbeitet, ist es nicht an eine bestimmte IDE oder Sprache gebunden."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Was ist eine CLAUDE.md Datei?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code Kontext über das Projekt gibt. Sie enthält Projektbeschreibung, Architektur, Coding-Konventionen, Tech Stack und spezielle Anweisungen. Claude Code liest diese Datei automatisch beim Start und nutzt den Inhalt, um kontextbezogener und projektspezifischer zu arbeiten."
+          }
+        }
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: EducationalOrganization (GEO-Signal) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Claude Code Masterkurs",
+      "url": "https://claude-code-masterkurs.de/",
+      "description": "Deutschsprachige Lernplattform für Claude Code – Anthropics KI-gestützten Coding-Agent",
+      "sameAs": [],
+      "knowsAbout": [
+        "Claude Code",
+        "Anthropic",
+        "KI-gestütztes Programmieren",
+        "Model Context Protocol",
+        "Agentic Coding",
+        "AI Coding Agents",
+        "Large Language Models",
+        "Prompt Engineering",
+        "Context Engineering",
+        "MCP Server",
+        "Git Automation",
+        "CI/CD mit KI"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Kurse und Abo-Modelle",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Course",
+              "name": "Claude Code Masterkurs - Monatlich",
+              "url": "https://claude-code-masterkurs.de/"
+            },
+            "price": "24",
+            "priceCurrency": "EUR"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Course",
+              "name": "Claude Code Masterkurs - Jährlich",
+              "url": "https://claude-code-masterkurs.de/"
+            },
+            "price": "229",
+            "priceCurrency": "EUR"
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Course",
+              "name": "Claude Code Masterkurs - Lifetime",
+              "url": "https://claude-code-masterkurs.de/"
+            },
+            "price": "499",
+            "priceCurrency": "EUR"
+          }
+        ]
+      }
+    }
+    </script>
+
+    <!-- Structured Data: SoftwareApplication (für "Claude Code" als Software-Kontext) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Claude Code",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "macOS, Linux, Windows (WSL2)",
+      "description": "Autonomer KI-gesteuerter Coding-Agent von Anthropic für das Terminal. Ermöglicht KI-gestütztes Programmieren durch natürliche Sprache.",
+      "creator": {
+        "@type": "Organization",
+        "name": "Anthropic",
+        "url": "https://anthropic.com"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Kostenlos nutzbar mit Anthropic API-Key (Token-basierte Abrechnung)"
+      },
+      "featureList": [
+        "Autonome Code-Generierung",
+        "Gesamtes Projektverständnis",
+        "Git-Integration (Commits, PRs, Reviews)",
+        "MCP Server Integration",
+        "Multi-Agent Orchestration",
+        "Custom Skills & Workflows",
+        "Shell-Befehlsausführung",
+        "Plan & Thinking Mode"
+      ]
     }
     </script>
   </head>

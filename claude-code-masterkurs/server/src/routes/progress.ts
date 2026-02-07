@@ -8,6 +8,70 @@ export const progressRouter = Router();
 // All progress routes require authentication
 progressRouter.use(requireAuth);
 
+// ── Helper: Calculate Total Points ──────────────────────────────
+async function calculateTotalPoints(userId: string): Promise<number> {
+  const [quizResults, projectResults, challengeResults] = await Promise.all([
+    prisma.quizResult.findMany({ where: { userId } }),
+    prisma.projectResult.findMany({ where: { userId } }),
+    prisma.challengeResult.findMany({ where: { userId } }),
+  ]);
+
+  const quizPoints = quizResults.reduce((sum, r) => sum + r.score, 0);
+  const projectPoints = projectResults.reduce((sum, r) => sum + r.score, 0);
+  const challengePoints = challengeResults.reduce((sum, r) => sum + r.score, 0);
+
+  return quizPoints + projectPoints + challengePoints;
+}
+
+// ── Helper: Calculate Completed Lessons ─────────────────────────
+async function calculateCompletedLessons(userId: string): Promise<number[]> {
+  const [quizResults, projectResults] = await Promise.all([
+    prisma.quizResult.findMany({
+      where: { userId, completed: true },
+      select: { lessonId: true }
+    }),
+    prisma.projectResult.findMany({
+      where: { userId, completed: true },
+      select: { lessonId: true }
+    }),
+  ]);
+
+  const completedLessons = new Set<number>();
+  quizResults.forEach(r => r.lessonId && completedLessons.add(r.lessonId));
+  projectResults.forEach(r => r.lessonId && completedLessons.add(r.lessonId));
+
+  return Array.from(completedLessons).sort((a, b) => a - b);
+}
+
+// ── Helper: Calculate Streak ────────────────────────────────────
+async function calculateStreak(userId: string): Promise<number> {
+  const progress = await prisma.userProgress.findUnique({
+    where: { userId },
+    select: { lastSessionDate: true }
+  });
+
+  if (!progress?.lastSessionDate) return 0;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const lastSession = new Date(progress.lastSessionDate);
+  lastSession.setHours(0, 0, 0, 0);
+
+  const diffDays = Math.floor((today.getTime() - lastSession.getTime()) / (1000 * 60 * 60 * 24));
+
+  // Streak broken if more than 1 day gap
+  if (diffDays > 1) return 1; // Reset to 1 (today counts)
+
+  // Same day or consecutive day
+  const currentStreak = await prisma.userProgress.findUnique({
+    where: { userId },
+    select: { streak: true }
+  });
+
+  return diffDays === 0 ? (currentStreak?.streak || 1) : (currentStreak?.streak || 0) + 1;
+}
+
 // ── GET /api/progress ────────────────────────────────────────
 // Returns the full user progress (lessons, quizzes, projects, skills, etc.)
 
@@ -50,10 +114,8 @@ progressRouter.get('/', async (req, res) => {
 // Updates the user progress (partial update)
 
 const progressUpdateSchema = z.object({
-  lessonsCompleted: z.array(z.number()).optional(),
+  // Note: lessonsCompleted, totalPoints, streak are calculated server-side
   currentLesson: z.number().optional(),
-  totalPoints: z.number().optional(),
-  streak: z.number().optional(),
   timeInvested: z.number().optional(),
   videosWatched: z.record(z.boolean()).optional(),
   skillProgress: z
@@ -70,16 +132,12 @@ const progressUpdateSchema = z.object({
 progressRouter.put('/', async (req, res) => {
   try {
     const data = progressUpdateSchema.parse(req.body);
+    const userId = req.user!.userId;
 
     const updateData: Record<string, unknown> = {};
 
-    if (data.lessonsCompleted !== undefined)
-      updateData.lessonsCompleted = data.lessonsCompleted;
     if (data.currentLesson !== undefined)
       updateData.currentLesson = data.currentLesson;
-    if (data.totalPoints !== undefined)
-      updateData.totalPoints = data.totalPoints;
-    if (data.streak !== undefined) updateData.streak = data.streak;
     if (data.timeInvested !== undefined)
       updateData.timeInvested = data.timeInvested;
     if (data.videosWatched !== undefined)
@@ -99,8 +157,19 @@ progressRouter.put('/', async (req, res) => {
 
     updateData.lastSessionDate = new Date();
 
+    // Calculate server-side values
+    const [totalPoints, lessonsCompleted, streak] = await Promise.all([
+      calculateTotalPoints(userId),
+      calculateCompletedLessons(userId),
+      calculateStreak(userId),
+    ]);
+
+    updateData.totalPoints = totalPoints;
+    updateData.lessonsCompleted = lessonsCompleted;
+    updateData.streak = streak;
+
     const progress = await prisma.userProgress.update({
-      where: { userId: req.user!.userId },
+      where: { userId },
       data: updateData,
     });
 
@@ -131,11 +200,12 @@ const quizResultSchema = z.object({
 progressRouter.post('/quiz', async (req, res) => {
   try {
     const data = quizResultSchema.parse(req.body);
+    const userId = req.user!.userId;
 
     const result = await prisma.quizResult.upsert({
       where: {
         userId_quizId: {
-          userId: req.user!.userId,
+          userId,
           quizId: data.quizId,
         },
       },
@@ -146,8 +216,23 @@ progressRouter.post('/quiz', async (req, res) => {
         timestamp: new Date(),
       },
       create: {
-        userId: req.user!.userId,
+        userId,
         ...data,
+      },
+    });
+
+    // Recalculate progress after quiz completion
+    const [totalPoints, lessonsCompleted] = await Promise.all([
+      calculateTotalPoints(userId),
+      calculateCompletedLessons(userId),
+    ]);
+
+    await prisma.userProgress.update({
+      where: { userId },
+      data: {
+        totalPoints,
+        lessonsCompleted,
+        lastSessionDate: new Date(),
       },
     });
 
@@ -181,11 +266,12 @@ const projectResultSchema = z.object({
 progressRouter.post('/project', async (req, res) => {
   try {
     const data = projectResultSchema.parse(req.body);
+    const userId = req.user!.userId;
 
     const result = await prisma.projectResult.upsert({
       where: {
         userId_projectId: {
-          userId: req.user!.userId,
+          userId,
           projectId: data.projectId,
         },
       },
@@ -196,8 +282,23 @@ progressRouter.post('/project', async (req, res) => {
         timestamp: new Date(),
       },
       create: {
-        userId: req.user!.userId,
+        userId,
         ...data,
+      },
+    });
+
+    // Recalculate progress after project completion
+    const [totalPoints, lessonsCompleted] = await Promise.all([
+      calculateTotalPoints(userId),
+      calculateCompletedLessons(userId),
+    ]);
+
+    await prisma.userProgress.update({
+      where: { userId },
+      data: {
+        totalPoints,
+        lessonsCompleted,
+        lastSessionDate: new Date(),
       },
     });
 

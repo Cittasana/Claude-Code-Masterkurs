@@ -166,8 +166,9 @@ subscriptionRouter.post('/create-checkout-session', requireAuth, async (req, res
 
 // ── POST /api/subscription/validate-promo-code ──────────────
 // Validiert einen Aktionscode vor dem Checkout
+// WICHTIG: Kein requireAuth, damit nicht-eingeloggte User Codes validieren können
 
-subscriptionRouter.post('/validate-promo-code', requireAuth, async (req, res) => {
+subscriptionRouter.post('/validate-promo-code', async (req, res) => {
   try {
     const data = validatePromoCodeSchema.parse(req.body);
 

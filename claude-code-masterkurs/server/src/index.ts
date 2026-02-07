@@ -40,6 +40,9 @@ export const prisma = new PrismaClient({
 const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
+// Trust proxy - Required for Railway/Vercel (behind reverse proxy)
+app.set('trust proxy', 1);
+
 // ── Global Middleware ────────────────────────────────────────
 app.use(
   helmet({

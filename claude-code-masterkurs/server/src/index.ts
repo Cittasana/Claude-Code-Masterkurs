@@ -12,7 +12,9 @@ import { challengesRouter } from './routes/challenges.js';
 import { patternsRouter } from './routes/patterns.js';
 import { srsRouter } from './routes/srs.js';
 import { analyticsRouter } from './routes/analytics.js';
+import { subscriptionRouter } from './routes/subscription.js';
 import { globalRateLimit } from './middleware/rateLimit.js';
+import { initSentry, Sentry } from './lib/sentry.js';
 
 // ── Logger ───────────────────────────────────────────────────
 export const logger = pino({
@@ -22,6 +24,9 @@ export const logger = pino({
       ? { target: 'pino-pretty', options: { colorize: true } }
       : undefined,
 });
+
+// ── Sentry (Error Tracking) ─────────────────────────────────
+initSentry();
 
 // ── Prisma ───────────────────────────────────────────────────
 export const prisma = new PrismaClient({
@@ -36,13 +41,51 @@ const app = express();
 const PORT = parseInt(process.env.PORT || '3000', 10);
 
 // ── Global Middleware ────────────────────────────────────────
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", 'data:', 'blob:'],
+        connectSrc: ["'self'"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        frameSrc: ["'none'"],
+        frameAncestors: ["'none'"],
+        baseUri: ["'self'"],
+        formAction: ["'self'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+    // HSTS: Erzwingt HTTPS für 1 Jahr
+    strictTransportSecurity: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true,
+    },
+    // Verhindert Clickjacking
+    frameguard: { action: 'deny' },
+    // Referrer-Policy
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+    // Permissions Policy (ehem. Feature-Policy)
+    permittedCrossDomainPolicies: { permittedPolicies: 'none' },
+  })
+);
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
     credentials: true,
   })
 );
+
+// Stripe Webhook benötigt raw body - muss VOR express.json() stehen
+app.use(
+  '/api/subscription/webhook',
+  express.raw({ type: 'application/json' })
+);
+
 app.use(express.json({ limit: '1mb' }));
 app.use(globalRateLimit);
 
@@ -55,6 +98,9 @@ app.get('/health', async (_req, res) => {
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),
       database: 'connected',
+      sentry: process.env.SENTRY_DSN ? 'enabled' : 'disabled',
+      environment: process.env.NODE_ENV || 'development',
+      version: process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7) || 'local',
     });
   } catch {
     res.status(503).json({
@@ -74,11 +120,15 @@ app.use('/api/challenges', challengesRouter);
 app.use('/api/patterns', patternsRouter);
 app.use('/api/srs', srsRouter);
 app.use('/api/analytics', analyticsRouter);
+app.use('/api/subscription', subscriptionRouter);
 
 // ── 404 Handler ──────────────────────────────────────────────
 app.use((_req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
+
+// ── Sentry Error Handler (muss VOR dem eigenen Error Handler stehen) ─
+Sentry.setupExpressErrorHandler(app);
 
 // ── Global Error Handler ─────────────────────────────────────
 app.use(

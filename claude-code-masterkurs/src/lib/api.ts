@@ -98,6 +98,7 @@ export interface AuthUser {
   email: string;
   displayName: string;
   avatarEmoji: string;
+  emailVerified?: boolean;
   createdAt?: string;
 }
 
@@ -125,6 +126,12 @@ export const authApi = {
 
   confirmPasswordReset: (token: string, newPassword: string) =>
     api.post<{ message: string }>('/api/auth/password-reset-confirm', { token, newPassword }),
+
+  verifyEmail: (token: string) =>
+    api.post<{ message: string }>('/api/auth/verify-email', { token }),
+
+  resendVerification: () =>
+    api.post<{ message: string }>('/api/auth/resend-verification'),
 };
 
 // ── Progress API ────────────────────────────────────────────
@@ -258,6 +265,54 @@ export const analyticsApi = {
     api.post<{ created: number }>('/api/analytics/events/batch', events),
 
   getSummary: () => api.get<Record<string, unknown>>('/api/analytics/summary'),
+};
+
+// ── Subscription API ────────────────────────────────────────
+
+export interface PromoCodeValidation {
+  valid: boolean;
+  code?: string;
+  description?: string;
+  durationMonths?: number;
+  error?: string;
+}
+
+export interface SubscriptionStatus {
+  hasSubscription: boolean;
+  status: string;
+  isLifetime?: boolean;
+  lifetimePurchasedAt?: string;
+  currentPeriodStart?: string;
+  currentPeriodEnd?: string;
+  cancelAtPeriodEnd?: boolean;
+  promoCode?: {
+    code: string;
+    description?: string;
+    expiresAt?: string;
+  };
+}
+
+export interface AccessStatus {
+  hasAccess: boolean;
+  isLifetime?: boolean;
+  status?: string;
+}
+
+export const subscriptionApi = {
+  createCheckoutSession: (priceId: string, promoCode?: string) =>
+    api.post<{ url: string; sessionId: string }>('/api/subscription/create-checkout-session', {
+      priceId,
+      promoCode,
+    }),
+
+  validatePromoCode: (code: string) =>
+    api.post<PromoCodeValidation>('/api/subscription/validate-promo-code', { code }),
+
+  getStatus: () => api.get<SubscriptionStatus>('/api/subscription/status'),
+
+  hasAccess: () => api.get<AccessStatus>('/api/subscription/has-access'),
+
+  cancel: () => api.post<{ message: string }>('/api/subscription/cancel'),
 };
 
 // ── Health Check ────────────────────────────────────────────

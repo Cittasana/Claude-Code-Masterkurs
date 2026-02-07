@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma, logger } from '../index.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { writeRateLimit } from '../middleware/rateLimit.js';
+import { sanitizeUserInput } from '../lib/sanitize.js';
 
 export const patternsRouter = Router();
 
@@ -90,9 +91,19 @@ patternsRouter.post('/', requireAuth, writeRateLimit, async (req, res) => {
   try {
     const data = createPatternSchema.parse(req.body);
 
+    // XSS-Schutz: Benutzereingaben sanitizen
+    const safeData = {
+      ...data,
+      title: sanitizeUserInput(data.title),
+      description: sanitizeUserInput(data.description),
+      // snippet bleibt unverändert – enthält Code-Inhalte
+      useCase: data.useCase ? sanitizeUserInput(data.useCase) : undefined,
+      tags: data.tags.map((tag) => sanitizeUserInput(tag)),
+    };
+
     const pattern = await prisma.communityPattern.create({
       data: {
-        ...data,
+        ...safeData,
         authorId: req.user!.userId,
       },
       include: {

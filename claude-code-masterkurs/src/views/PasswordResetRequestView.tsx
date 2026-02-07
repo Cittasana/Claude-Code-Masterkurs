@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Mail, ArrowLeft, AlertCircle, KeyRound } from 'lucide-react';
 import { authApi, ApiError } from '../lib/api';
+import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 
 export default function PasswordResetRequestView() {
   const [email, setEmail] = useState('');
@@ -31,22 +33,22 @@ export default function PasswordResetRequestView() {
     return (
       <div className="min-h-[80vh] flex items-center justify-center px-4">
         <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="apple-card text-center">
+            <div className="w-16 h-16 bg-apple-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-3xl">✉️</span>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            <h2 className="text-2xl font-bold text-apple-text mb-4">
               E-Mail versendet!
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-apple-textSecondary mb-6 text-sm leading-relaxed">
               Falls ein Account mit dieser E-Mail-Adresse existiert, haben wir dir einen Link zum Zurücksetzen deines Passworts gesendet.
             </p>
-            <p className="text-sm text-gray-500 mb-6">
+            <p className="text-sm text-apple-muted mb-6">
               Prüfe auch deinen Spam-Ordner, falls du keine E-Mail erhältst.
             </p>
             <Link
               to="/login"
-              className="inline-block px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all"
+              className="btn-primary inline-flex items-center gap-2"
             >
               Zurück zum Login
             </Link>
@@ -60,56 +62,66 @@ export default function PasswordResetRequestView() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-3xl">🔐</span>
+          <ClaudeCodeLogo size="md" showSubtitle={false} className="mb-6" />
+          <div className="w-16 h-16 bg-apple-accent/15 rounded-full flex items-center justify-center mx-auto mb-4">
+            <KeyRound size={28} className="text-apple-accent" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-2xl font-bold text-apple-text mb-2">
             Passwort vergessen?
           </h1>
-          <p className="text-gray-600">
+          <p className="text-apple-muted text-sm">
             Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="apple-card">
+          <form onSubmit={handleSubmit} className="space-y-5">
             {error && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                {error}
+              <div className="flex items-center gap-3 p-3 rounded-apple bg-apple-error/10 border border-apple-error/20 text-sm text-apple-error">
+                <AlertCircle size={18} className="shrink-0" />
+                <span>{error}</span>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-medium text-apple-textSecondary mb-1.5">
                 E-Mail-Adresse
               </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                placeholder="deine@email.de"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                disabled={loading}
-              />
+              <div className="relative">
+                <Mail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-apple-muted" />
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="name@example.com"
+                  className="w-full pl-11 pr-4 py-3 rounded-apple bg-apple-bg border border-apple-border text-apple-text placeholder:text-apple-muted/50 focus:outline-none focus:border-apple-accent focus:ring-1 focus:ring-apple-accent/30 transition-colors text-sm"
+                  disabled={loading}
+                />
+              </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Wird gesendet...' : 'Reset-Link senden'}
+              {loading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                'Reset-Link senden'
+              )}
             </button>
           </form>
 
           <div className="mt-6 text-center">
             <Link
               to="/login"
-              className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              className="inline-flex items-center gap-2 text-sm text-apple-accent hover:text-apple-accentHover font-medium transition-colors"
             >
-              ← Zurück zum Login
+              <ArrowLeft size={16} />
+              Zurück zum Login
             </Link>
           </div>
         </div>

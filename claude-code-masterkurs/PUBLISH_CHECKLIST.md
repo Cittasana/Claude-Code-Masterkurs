@@ -163,13 +163,16 @@
 - [x] Pagination für Listen-Endpoints
 
 #### 4e. E-Mail-Service (für Auth-Flows)
-- [ ] **TODO:** E-Mail-Provider wählen und integrieren:
-  - **Resend** (Empfohlen - modernes API, 100 Mails/Tag kostenlos)
-  - **Mailgun** (Klassisch)
-  - **SendGrid** (Enterprise)
-- [ ] **TODO:** E-Mail-Templates erstellen (Verifizierung, Passwort-Reset)
-- [ ] **TODO:** Passwort-Reset-Flow implementieren (Backend-Route + Frontend-UI)
-- [ ] **TODO:** E-Mail-Verifizierung bei Registrierung (optional, erhöht Sicherheit)
+- [x] E-Mail-Provider: **Resend** integriert (`server/src/lib/email.ts`)
+- [x] E-Mail-Templates erstellen (Verifizierung + Passwort-Reset) – `server/src/lib/email.ts`
+- [x] Passwort-Reset-Flow implementiert:
+  - Backend: `POST /api/auth/password-reset-request` + `POST /api/auth/password-reset-confirm`
+  - Frontend: `PasswordResetRequestView.tsx` + `PasswordResetConfirmView.tsx`
+  - DB: `PasswordReset` Model mit Token, Ablaufzeit, Wiederverwendungsschutz
+- [x] E-Mail-Verifizierung bei Registrierung implementiert:
+  - Backend: `POST /api/auth/verify-email` + `POST /api/auth/resend-verification`
+  - Frontend: `EmailVerifyView.tsx` + Verifizierungs-Hinweis in `RegisterView.tsx`
+  - DB: `EmailVerification` Model + `emailVerified` Feld im User-Model
 
 #### 4f. Frontend-Integration
 - [x] API-Client erstellen (fetch Wrapper mit Auth-Header) – `src/lib/api.ts`
@@ -294,10 +297,17 @@ Hosting Backend:       Railway
   - Frontend-Seiten: PasswordResetRequest, PasswordResetConfirm
   - Environment Variable: `RESEND_API_KEY`
 
-- [ ] **Monitoring & Logs verbessern**
-  - Railway bietet eingebautes Logging (via `railway logs`)
-  - Optional: Error Tracking mit Sentry (Backend-Integration)
-  - Optional: Uptime Monitoring (UptimeRobot für `/health` Endpoint)
+- [x] **Monitoring & Logs verbessern**
+  - ✅ Railway Logging funktioniert (`railway logs`, `railway logs --lines 50`, `railway logs --filter "@level:error"`)
+  - ✅ Sentry Error Tracking integriert (`server/src/lib/sentry.ts`)
+    - Aktivierung: `SENTRY_DSN` in Railway setzen → `railway variable set SENTRY_DSN=https://...@sentry.io/...`
+    - Sensitive Daten (Passwörter, Tokens) werden automatisch gefiltert
+    - Performance Monitoring: 10% Sampling in Produktion
+  - ✅ Health-Endpoint erweitert (`/health` zeigt jetzt: status, uptime, database, sentry, environment, version)
+  - 📋 UptimeRobot einrichten (manuell, kostenlos):
+    1. Account erstellen auf https://uptimerobot.com
+    2. Neuen Monitor anlegen: HTTP(s) → URL: `https://api.claude-code-masterkurs.de/health`
+    3. Intervall: 5 Minuten, Alert bei Downtime per E-Mail
 
 **Aufwand:** ~1-2 Stunden (Service löschen + optional Custom Domain)
 
@@ -333,44 +343,111 @@ Hosting Backend:       Railway
 
 ## 7. Rechtliches & DSGVO
 
-**Status:** Komplett fehlend - zwingend nötig für eine öffentliche Website in der EU
+**Status:** ✅ Implementiert - Platzhalter-Daten müssen noch durch echte Angaben ersetzt werden
 
-- [ ] **Impressum** erstellen (Pflicht in DE/AT/CH)
-  - Name, Anschrift, Kontaktdaten
-  - Verantwortlicher
-- [ ] **Datenschutzerklärung** erstellen
+- [x] **Impressum** erstellen (Pflicht in DE/AT/CH) → `/impressum`
+  - Name, Anschrift, Kontaktdaten (Platzhalter vorhanden)
+  - Verantwortlicher (Platzhalter vorhanden)
+- [x] **Datenschutzerklärung** erstellen → `/datenschutz`
   - Welche Daten werden erhoben?
   - Cookies & LocalStorage
-  - Hosting-Provider (Vercel/Railway Datenweitergabe)
+  - Hosting-Provider (Vercel Datenweitergabe)
   - Rechte der Nutzer (Auskunft, Löschung, etc.)
-- [ ] **Cookie-Banner / Consent-Manager** implementieren
-  - Nur nötig wenn Tracking/Analytics eingesetzt wird
-- [ ] **Nutzungsbedingungen / AGB** (optional aber empfohlen)
-- [ ] **Account-Löschung** ermöglichen (Recht auf Löschung, DSGVO Art. 17)
-- [ ] Impressum & Datenschutz als eigene Seiten/Routen hinzufügen
+  - Cookie-Einstellungen zurücksetzen Button
+- [x] **Cookie-Banner / Consent-Manager** implementieren → `CookieConsent.tsx`
+  - 3 Kategorien: Notwendig (immer aktiv), Analyse, Marketing
+  - Alle akzeptieren / Auswahl bestätigen / Nur notwendige
+  - Consent wird in LocalStorage gespeichert
+  - Hilfsfunktionen: `getCookieConsent()`, `hasConsent()`, `resetCookieConsent()`
+- [x] **Nutzungsbedingungen / AGB** → `/nutzungsbedingungen`
+  - 12 Abschnitte (Geltungsbereich, Leistung, Konto, Rechte, etc.)
+  - Verlinkung zu Datenschutz & Profil
+- [x] **Account-Löschung** ermöglichen (DSGVO Art. 17) → Profilseite
+  - Bestätigungsdialog mit 2-Schritt-Löschung
+- [x] Impressum, Datenschutz & AGB als eigene Seiten/Routen + Footer-Links
 
-**Aufwand:** ~2-4 Stunden (mit Generatoren wie e-recht24.de oder IT-Recht Kanzlei)
+**Verbleibend:** Platzhalter [eckige Klammern] in Impressum, Datenschutz & AGB mit echten Daten ersetzen
 
 ---
 
 ## 8. SEO & Meta-Tags
 
-**Status:** Minimal (Standard Vite Template)
+**Status:** ✅ Vollständig implementiert
 
-- [ ] `index.html` Meta-Tags optimieren:
-  - `<title>` mit Keyword
-  - `<meta name="description" ...>`
-  - `<meta name="keywords" ...>`
-- [ ] Open Graph Tags (für Social Media Sharing):
-  - `og:title`, `og:description`, `og:image`, `og:url`
-- [ ] Twitter Card Tags
-- [ ] `robots.txt` erstellen
-- [ ] `sitemap.xml` generieren
-- [ ] Favicon & Apple Touch Icon erstellen
-- [ ] Strukturierte Daten (Schema.org JSON-LD) für Kursseite
-- [ ] Canonical URLs setzen
+- [x] `index.html` Meta-Tags optimieren:
+  - `<title>` mit Keyword ✅
+  - `<meta name="description" ...>` ✅
+  - `<meta name="keywords" ...>` ✅
+  - `<meta name="robots" ...>` mit erweiterten Direktiven ✅
+  - `<meta http-equiv="content-language" ...>` ✅
+- [x] Open Graph Tags (für Social Media Sharing):
+  - `og:title`, `og:description`, `og:image`, `og:url` ✅
+  - `og:image:width`, `og:image:height`, `og:image:alt` ✅
+  - `og:locale`, `og:site_name` ✅
+- [x] Twitter Card Tags (`summary_large_image` + `twitter:image:alt`) ✅
+- [x] `robots.txt` erstellen (inkl. Crawl-Delay, AI-Crawler erlaubt, Disallow für Auth-Seiten) ✅
+- [x] `sitemap.xml` generieren (alle 27 Lektionen + Hauptseiten mit `lastmod`) ✅
+- [x] Favicon & Apple Touch Icon erstellen ✅
+  - `favicon.svg` (SVG, modern)
+  - `favicon.ico` (Fallback)
+  - `favicon-16x16.png`, `favicon-32x32.png`
+  - `apple-touch-icon.png` (180x180)
+  - `android-chrome-192x192.png`, `android-chrome-512x512.png`
+  - `og-image.png` (1200x630, Social Media Preview)
+  - `manifest.json` (Web App Manifest)
+- [x] Strukturierte Daten (Schema.org JSON-LD) für Kursseite ✅
+  - `Course` mit Provider, Rating, CourseInstance
+  - `WebSite` mit SearchAction (Sitelinks)
+  - `BreadcrumbList` für Navigation
+  - `FAQPage` für Rich Snippets
+- [x] Canonical URLs setzen ✅
 
-**Aufwand:** ~1-2 Stunden
+**Aufwand:** ✅ Erledigt (Generierungsskript: `npm run generate:seo`)
+
+---
+
+## 8b. GEO – Generative Engine Optimization (AI-Sichtbarkeit)
+
+**Status:** ✅ Vollständig implementiert
+
+**Ziel:** In AI-Suchergebnissen von ChatGPT, Perplexity, Gemini, Claude, Copilot etc. zitiert werden.
+
+- [x] `llms.txt` erstellt (Markdown-Kurzbeschreibung für AI-Crawler) ✅
+  - Strukturierte Kursübersicht mit allen 27 Lektionen
+  - FAQ-Bereich mit den wichtigsten Fragen
+  - Links zu allen Features und Seiten
+- [x] `llms-full.txt` erstellt (ausführliche Version für Deep-Indexing) ✅
+  - Detaillierte Beschreibung aller Lektionen mit Inhalten
+  - Schlüsselkonzepte erklärt (CLAUDE.md, MCP, Agentic Coding, Context Engineering)
+  - Vergleichstabelle: Claude Code vs. Copilot vs. Cursor vs. Windsurf
+  - Technische Details und Systemanforderungen
+- [x] `robots.txt` für AI-Crawler optimiert ✅
+  - GPTBot, OAI-SearchBot (OpenAI/ChatGPT) → erlaubt
+  - ClaudeBot, anthropic-ai (Anthropic/Claude) → erlaubt
+  - Google-Extended (Gemini/AI Overviews) → erlaubt
+  - PerplexityBot → erlaubt
+  - Meta-ExternalAgent, FacebookBot (Meta AI) → erlaubt
+  - CCBot (Common Crawl / LLM-Training) → erlaubt
+  - Amazonbot, Bytespider, Diffbot, cohere-ai → erlaubt
+- [x] Schema.org JSON-LD GEO-optimiert ✅
+  - 8 erweiterte FAQ-Einträge (häufige "Was ist..."-Fragen für AI-Antworten)
+  - `EducationalOrganization` mit `knowsAbout` (Expertise-Signale)
+  - `SoftwareApplication` für "Claude Code" als Software-Kontext
+  - `Course` mit detaillierten Lehrinhalten und Rating
+- [x] `<link rel="alternate">` für llms.txt in index.html ✅
+- [x] Autoritative, zitierbare Inhalte in llms.txt ✅
+  - Klare Definitionen für Schlüsselbegriffe
+  - Statistiken und Fakten (27 Lektionen, 4 Levels, ~20h Lernzeit)
+  - Konkrete Installationsanweisungen
+  - Preis- und Kosteninformationen
+
+**Dateien:**
+- `public/llms.txt` – Kurzversion für AI-Crawler
+- `public/llms-full.txt` – Ausführliche Version
+- `public/robots.txt` – AI-Crawler-Regeln
+- `index.html` – Schema.org + Meta-Tags
+
+**Aufwand:** ✅ Erledigt
 
 ---
 
@@ -395,22 +472,23 @@ Hosting Backend:       Railway
 
 ## 10. Performance & Sicherheit
 
-**Status:** Grundlegend (Vite optimiert bereits)
+**Status:** Implementiert
 
 ### Performance
-- [ ] Build-Analyse: `npx vite-bundle-visualizer`
-- [ ] Bilder optimieren (WebP, komprimiert)
-- [ ] Lazy Loading für Routen prüfen (`React.lazy()`)
-- [ ] Preload für kritische Assets
-- [ ] Lighthouse-Audit durchführen (Ziel: 90+ in allen Kategorien)
+- [x] Build-Analyse: `npm run analyze` (rollup-plugin-visualizer konfiguriert)
+- [x] Bilder optimieren (WebP, komprimiert) – `npm run optimize:images` (75.5 KB eingespart, OG-Image -61.8%)
+- [x] Lazy Loading für Routen prüfen (`React.lazy()`) – Alle 20 Views nutzen lazy loading + Suspense
+- [x] Preload für kritische Assets – Fonts, Favicon & App-Entry preloaded in index.html
+- [x] Lighthouse-Audit vorbereitet: `npm run lighthouse` (Vite-Build optimiert: terser 2-pass, asset-inlining, optimierte Chunk-Dateinamen)
 
 ### Sicherheit
-- [ ] Content Security Policy (CSP) Header setzen
-- [ ] HTTPS erzwingen (bei Vercel/Netlify automatisch)
-- [ ] XSS-Schutz in Forum-/Freitext-Eingaben
-- [ ] Rate Limiting für API-Endpoints
-- [ ] Input-Validierung server-seitig
-- [ ] Dependency Audit: `npm audit`
+- [x] Content Security Policy (CSP) Header – vercel.json + Helmet-CSP im Server konfiguriert
+- [x] HTTPS erzwingen – Vercel automatisch + HSTS Header (max-age=31536000, includeSubDomains, preload)
+- [x] XSS-Schutz in Forum-/Freitext-Eingaben – `sanitizeUserInput()` in Forum, Patterns & Auth-Routes
+- [x] Rate Limiting für API-Endpoints – globalRateLimit (200/min), authRateLimit (10/15min), writeRateLimit (30/min)
+- [x] Input-Validierung server-seitig – Zod-Schemas auf allen POST/PUT-Routes
+- [x] Dependency Audit: `npm audit` – 0 Schwachstellen (Frontend + Server)
+- [x] Zusätzlich: Permissions-Policy, X-Frame-Options: DENY, Referrer-Policy, X-Content-Type-Options
 
 **Aufwand:** ~2-3 Stunden
 
@@ -436,22 +514,32 @@ Hosting Backend:       Railway
 
 ## 12. CI/CD Pipeline
 
-**Status:** Nicht vorhanden
+**Status:** ✅ Implementiert (Konfiguration vorhanden, Verbindung mit Hosting-Diensten manuell)
 
 ### Railway (Backend) - Automatisches Deployment
-- [ ] GitHub-Repo mit Railway verbinden → Auto-Deploy bei Push auf `main`
-- [ ] Railway übernimmt: Build → Deploy → Health Check
-- [ ] Kein GitHub Actions nötig für Backend-Deployment
+- [x] `railway.toml` konfiguriert (Docker Build, Health Check, Restart Policy)
+- [x] `Dockerfile` vorhanden (Multi-Stage Build, Node 22 Alpine)
+- [ ] GitHub-Repo mit Railway verbinden → Auto-Deploy bei Push auf `main` *(manuell im Railway Dashboard)*
 
 ### Vercel (Frontend) - Automatisches Deployment
-- [ ] GitHub-Repo mit Vercel verbinden → Auto-Deploy bei Push auf `main`
-- [ ] Preview Deployments für Pull Requests (automatisch)
+- [x] `vercel.json` konfiguriert (Build, Rewrites, Security-Header, Cache)
+- [ ] GitHub-Repo mit Vercel verbinden → Auto-Deploy bei Push auf `main` *(manuell im Vercel Dashboard)*
+- [x] Preview Deployments für Pull Requests (automatisch nach Verbindung)
 
-### Optional: GitHub Actions (für Tests & Quality)
-- [ ] Workflow erstellen: `npm ci` → `npm run lint` → `npm test` → `npm run build`
-- [ ] Nur als Quality-Gate, nicht zum Deployen
+### GitHub Actions (Quality Gate)
+- [x] Workflow erstellen: `.github/workflows/ci.yml`
+- [x] Frontend-Job: `npm ci` → `npm run lint` → `tsc --noEmit` → `npm run build`
+- [x] Backend-Job: `npm ci` → `prisma generate` → `npm run lint` → `tsc --noEmit` → `npm run build`
+- [x] Security Audit Job für Dependency-Checks
+- [x] Concurrency-Control (keine doppelten Runs)
+- [x] Zusammenfassungs-Job für Status-Übersicht
+- [x] Nur als Quality-Gate, nicht zum Deployen
 
-**Aufwand:** ~30 Minuten (Railway + Vercel verbinden), ~1 Stunde (mit GitHub Actions Tests)
+### Deployment-Dokumentation
+- [x] `DEPLOYMENT.md` erstellt mit komplettem Setup-Guide
+
+**Aufwand:** ~30 Minuten (Railway + Vercel im Dashboard verbinden)
+**Siehe:** `DEPLOYMENT.md` für Schritt-für-Schritt-Anleitung
 
 ---
 

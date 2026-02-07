@@ -20,20 +20,23 @@ model User {
   passwordHash  String   @map("password_hash")
   displayName   String   @default("Lernender")
   avatarEmoji   String   @default("🧑‍💻") @map("avatar_emoji")
+  emailVerified Boolean  @default(false) @map("email_verified")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
   // Relations
-  progress         UserProgress?
-  quizResults      QuizResult[]
-  projectResults   ProjectResult[]
-  challengeResults ChallengeResult[]
-  forumThreads     ForumThread[]
-  forumReplies     ForumReply[]
-  patterns         CommunityPattern[]
-  srsItems         SRSItem[]
-  analyticsEvents  AnalyticsEvent[]
-  passwordResets   PasswordReset[]
+  progress           UserProgress?
+  quizResults        QuizResult[]
+  projectResults     ProjectResult[]
+  challengeResults   ChallengeResult[]
+  forumThreads       ForumThread[]
+  forumReplies       ForumReply[]
+  patterns           CommunityPattern[]
+  srsItems           SRSItem[]
+  analyticsEvents    AnalyticsEvent[]
+  passwordResets     PasswordReset[]
+  emailVerifications EmailVerification[]
+  subscription       Subscription?
 
   @@map("users")
 }
@@ -53,6 +56,23 @@ model PasswordReset {
   @@index([token])
   @@index([userId])
   @@map("password_resets")
+}
+
+// ── Email Verification Tokens ────────────────────────────────────
+
+model EmailVerification {
+  id        String   @id @default(cuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([token])
+  @@index([userId])
+  @@map("email_verifications")
 }
 
 // ── User Progress ────────────────────────────────────────────
@@ -228,4 +248,63 @@ model AnalyticsEvent {
   @@index([userId, timestamp])
   @@index([type])
   @@map("analytics_events")
+}
+
+// ── Stripe Subscriptions ─────────────────────────────────────
+// Manages user subscriptions with Stripe integration
+
+model Subscription {
+  id                   String    @id @default(cuid())
+  userId               String    @unique @map("user_id")
+  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stripeCustomerId     String    @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?   @unique @map("stripe_subscription_id")
+  stripePriceId        String?   @map("stripe_price_id")
+  
+  status               String    @default("incomplete") // 'incomplete' | 'active' | 'canceled' | 'past_due' | 'trialing' | 'paused' | 'lifetime'
+  isLifetime           Boolean   @default(false) @map("is_lifetime") // Lifetime Access gekauft?
+  lifetimePurchasedAt  DateTime? @map("lifetime_purchased_at")
+  
+  currentPeriodStart   DateTime? @map("current_period_start")
+  currentPeriodEnd     DateTime? @map("current_period_end")
+  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
+  
+  promoCodeId          String?   @map("promo_code_id")
+  promoCode            PromoCode? @relation(fields: [promoCodeId], references: [id])
+  promoAppliedAt       DateTime? @map("promo_applied_at")
+  promoExpiresAt       DateTime? @map("promo_expires_at")
+  
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@index([stripeCustomerId])
+  @@index([isLifetime])
+  @@map("subscriptions")
+}
+
+// ── Promo Codes ──────────────────────────────────────────────
+// Promo codes that can provide free subscription periods
+
+model PromoCode {
+  id            String   @id @default(cuid())
+  code          String   @unique
+  description   String?
+  
+  durationMonths Int     @default(6) @map("duration_months") // How many months of free access
+  maxUses       Int?    @map("max_uses") // null = unlimited
+  timesUsed     Int     @default(0) @map("times_used")
+  
+  active        Boolean  @default(true)
+  expiresAt     DateTime? @map("expires_at")
+  
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  
+  subscriptions Subscription[]
+
+  @@index([code])
+  @@index([active])
+  @@map("promo_codes")
 }

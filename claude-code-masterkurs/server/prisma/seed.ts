@@ -91,6 +91,11 @@ function daysAgoDate(days: number): Date {
 }
 
 async function main() {
+  if (process.env.NODE_ENV === 'production') {
+    console.error('ERROR: Seeding is not allowed in production environment!');
+    process.exit(1);
+  }
+
   console.log('🌱 Seeding database...\n');
 
   // All seed users share the same demo password
@@ -205,11 +210,49 @@ async function main() {
   }
   console.log(`  ✅ ${SEED_REPLIES.length} Replies`);
 
+  // ── Promo Codes ────────────────────────────────────────────
+  console.log('\n🎟️  Seeding promo codes...');
+  
+  const promoCodes = [
+    {
+      code: 'WELCOME2024',
+      description: 'Willkommensangebot - 6 Monate kostenlos',
+      durationMonths: 6,
+      maxUses: 100,
+      active: true,
+    },
+    {
+      code: 'EARLYBIRD',
+      description: 'Early Bird Special - 12 Monate kostenlos',
+      durationMonths: 12,
+      maxUses: 50,
+      active: true,
+    },
+    {
+      code: 'TEST2024',
+      description: 'Test-Code für Entwicklung',
+      durationMonths: 6,
+      maxUses: null, // Unbegrenzt
+      active: true,
+    },
+  ];
+
+  for (const promo of promoCodes) {
+    await prisma.promoCode.upsert({
+      where: { code: promo.code },
+      update: {},
+      create: promo,
+    });
+    console.log(`  ✅ Promo Code: ${promo.code} (${promo.durationMonths} Monate)`);
+  }
+
   console.log('\n✅ Seed complete!');
   console.log(`   ${SEED_USERS.length} Users + Progress`);
   console.log(`   ${SEED_THREADS.length} Forum Threads`);
   console.log(`   ${SEED_REPLIES.length} Forum Replies`);
+  console.log(`   ${promoCodes.length} Promo Codes`);
   console.log('\n   Demo-Login: beliebige-email@demo.local / demo1234');
+  console.log('   Test Promo-Codes: WELCOME2024, EARLYBIRD, TEST2024');
 }
 
 main()

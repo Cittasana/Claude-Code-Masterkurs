@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-/** Logo colors from reference: salmon blocks + lighter orange outline (circuit/cable effect) */
-const LOGO_FILL = '#e09b85';
-const LOGO_OUTLINE = '#e8a977';
+/** Logo colors: Apple-Style Orange mit dunklerer Outline für Tiefe */
+const LOGO_FILL = '#ff9500';
+const LOGO_OUTLINE = '#cc7700';
 /* Crisp outline: multiple 0-blur shadows in all directions (no spread in text-shadow) */
 const LOGO_OUTLINE_SHADOW = [
   '1px 0 0 ' + LOGO_OUTLINE,

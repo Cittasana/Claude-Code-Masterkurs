@@ -136,10 +136,10 @@ function generateHeatmapWeeks(activityMap: Record<string, number>, weeks: number
 
 function heatmapColor(count: number): string {
   if (count === 0) return 'bg-apple-elevated';
-  if (count === 1) return 'bg-orange-900/50';
-  if (count === 2) return 'bg-orange-700/60';
-  if (count <= 4) return 'bg-orange-500/70';
-  return 'bg-orange-400';
+  if (count === 1) return 'bg-apple-accentMuted/50';
+  if (count === 2) return 'bg-apple-accent/40';
+  if (count <= 4) return 'bg-apple-accent/60';
+  return 'bg-apple-accent';
 }
 
 // ── Main Component ─────────────────────────────────────────────────
@@ -422,7 +422,7 @@ const LearningAnalyticsView = () => {
       {/* ── KPI Cards ─────────────────────────────────────────── */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KPICard
-          icon={<Flame className="text-orange-400" size={20} />}
+          icon={<Flame className="text-apple-accent" size={20} />}
           label={t('analytics.currentStreak')}
           value={`${streak}`}
           suffix={t('analytics.daysSuffix')}
@@ -441,7 +441,7 @@ const LearningAnalyticsView = () => {
           suffix={t('analytics.totalSuffix')}
         />
         <KPICard
-          icon={<Clock className="text-purple-400" size={20} />}
+          icon={<Clock className="text-apple-info" size={20} />}
           label={t('analytics.learningTime')}
           value={hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
           suffix={t('analytics.investedSuffix')}
@@ -539,10 +539,10 @@ const LearningAnalyticsView = () => {
         <div className="flex items-center justify-end gap-1.5 mt-3 text-[10px] text-apple-muted font-mono">
           <span>{t('analytics.less')}</span>
           <div className="h-[10px] w-[10px] rounded-[2px] bg-apple-elevated" />
-          <div className="h-[10px] w-[10px] rounded-[2px] bg-orange-900/50" />
-          <div className="h-[10px] w-[10px] rounded-[2px] bg-orange-700/60" />
-          <div className="h-[10px] w-[10px] rounded-[2px] bg-orange-500/70" />
-          <div className="h-[10px] w-[10px] rounded-[2px] bg-orange-400" />
+          <div className="h-[10px] w-[10px] rounded-[2px] bg-apple-accentMuted/50" />
+          <div className="h-[10px] w-[10px] rounded-[2px] bg-apple-accent/40" />
+          <div className="h-[10px] w-[10px] rounded-[2px] bg-apple-accent/60" />
+          <div className="h-[10px] w-[10px] rounded-[2px] bg-apple-accent" />
           <span>{t('analytics.more')}</span>
         </div>
       </div>
@@ -654,7 +654,7 @@ const LearningAnalyticsView = () => {
         {/* Completion Breakdown */}
         <div className="apple-card">
           <h3 className="text-base font-bold text-apple-text mb-1 flex items-center space-x-2">
-            <Activity className="text-purple-400" size={18} />
+            <Activity className="text-apple-info" size={18} />
             <span>{t('analytics.completionOverview')}</span>
           </h3>
           <p className="text-apple-muted text-xs mb-4 font-mono">

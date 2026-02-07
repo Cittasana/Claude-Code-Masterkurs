@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogIn, Mail, Lock, AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { Mail, Lock, AlertCircle, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/authStore';
+import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 
 const LoginView = () => {
   const { t } = useTranslation();
@@ -41,11 +42,9 @@ const LoginView = () => {
   return (
     <div className="flex items-center justify-center min-h-[70vh]">
       <div className="w-full max-w-md">
-        {/* Header */}
+        {/* Claude Code Masterkurs Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-apple-xl bg-apple-accent/10 border border-apple-accent/20 mb-5">
-            <LogIn size={28} className="text-apple-accent" />
-          </div>
+          <ClaudeCodeLogo size="md" showSubtitle className="mb-6" />
           <h1 className="text-2xl font-bold text-apple-text mb-2">
             {t('auth.loginTitle', 'Willkommen zurück')}
           </h1>

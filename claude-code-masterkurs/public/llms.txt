@@ -1,0 +1,89 @@
+# Claude Code Masterkurs
+
+> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 27 kostenlose Lektionen von Grundlagen bis Experten-Level mit interaktivem Playground, Quizzes und Community-Features.
+
+## Über diesen Kurs
+
+Der Claude Code Masterkurs ist ein interaktiver Online-Kurs, der Entwicklern beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv einsetzen. Der Kurs ist vollständig kostenlos, auf Deutsch verfügbar und deckt alle Aspekte von der Installation bis hin zu fortgeschrittenen Themen wie Multi-Agent Orchestration und Production Best Practices ab.
+
+- Sprache: Deutsch
+- Preis: Kostenlos
+- Umfang: 27 Lektionen, ca. 20 Stunden
+- Zielgruppe: Entwickler (Anfänger bis Fortgeschrittene)
+- Website: https://claude-code-masterkurs.de/
+
+## Was ist Claude Code?
+
+Claude Code ist ein autonomer KI-Coding-Agent von Anthropic, der im Terminal läuft. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv: Es versteht ganze Projekte, liest Dateien, schreibt Code, erstellt Tests, führt Git-Operationen durch und kommuniziert über MCP-Server mit externen Services. Es wird durch natürliche Sprache gesteuert und kann komplexe Entwicklungsaufgaben eigenständig lösen.
+
+## Kursstruktur
+
+### Level 1: Grundlagen (Lektionen 0–5)
+
+- [Lektion 0: Was ist Claude Code?](https://claude-code-masterkurs.de/lesson/0): Einführung in Claude Code, Kernfunktionalitäten, Unterschiede zu Copilot/Cursor/Windsurf
+- [Lektion 1: Installation & Setup](https://claude-code-masterkurs.de/lesson/1): Node.js, npm, Claude Code installieren und konfigurieren
+- [Lektion 2: Authentifizierung & Model-Auswahl](https://claude-code-masterkurs.de/lesson/2): API-Keys, OAuth, Sonnet/Opus/Haiku Modelle, Kostenkontrolle
+- [Lektion 3: Erste Schritte & Befehle](https://claude-code-masterkurs.de/lesson/3): Grundlegende Befehle, Slash Commands, effektive Prompts schreiben
+- [Lektion 4: CLAUDE.md Mastery](https://claude-code-masterkurs.de/lesson/4): Projekt-Kontext definieren, CLAUDE.md Best Practices, Konventionen dokumentieren
+- [Lektion 5: Context Management](https://claude-code-masterkurs.de/lesson/5): Token-Fenster verstehen, .claudeignore, Kontext-Effizienz optimieren
+
+### Level 2: Fortgeschritten (Lektionen 6–11)
+
+- [Lektion 6: MCP Server Integration](https://claude-code-masterkurs.de/lesson/6): Model Context Protocol, externe Tools anbinden, Datenbanken/APIs verbinden
+- [Lektion 7: Skills & Workflows erstellen](https://claude-code-masterkurs.de/lesson/7): Custom Skills entwickeln, wiederverwendbare Workflows, Automatisierung
+- [Lektion 8: Subagents Deep Dive](https://claude-code-masterkurs.de/lesson/8): Spezialisierte Sub-Agents erstellen, Task-Delegation, dynamische Modellwahl
+- [Lektion 9: Custom Agents erstellen](https://claude-code-masterkurs.de/lesson/9): Eigene Agents bauen, Agent-Architektur, System-Prompts
+- [Lektion 10: Agent Personality & Configuration](https://claude-code-masterkurs.de/lesson/10): Agent-Persönlichkeit designen, Tone of Voice, Konfigurationsprofile
+- [Lektion 11: Git-Integration Profi](https://claude-code-masterkurs.de/lesson/11): Automatische Commits, PR-Erstellung, Code Reviews mit Claude Code
+
+### Level 3: Experte (Lektionen 12–26)
+
+- [Lektion 12: Hooks & Automation](https://claude-code-masterkurs.de/lesson/12): Pre/Post-Hooks, Event-Trigger, automatisierte Workflows
+- [Lektion 13: Custom Slash Commands](https://claude-code-masterkurs.de/lesson/13): Eigene Commands erstellen, Prompt-Templates, Team-Standards
+- [Lektion 14: Advanced Prompting Techniques](https://claude-code-masterkurs.de/lesson/14): Chain-of-Thought, Few-Shot, Meta-Prompting, Constraint-Prompting
+- [Lektion 15: Plan & Thinking Mode](https://claude-code-masterkurs.de/lesson/15): Planungsmodus nutzen, komplexe Aufgaben strukturieren, Think-before-Act
+- [Lektion 16: Agent Orchestration](https://claude-code-masterkurs.de/lesson/16): Multi-Agent Systeme, Agent-Koordination, parallele Aufgabenverteilung
+- [Lektion 17: Production Best Practices](https://claude-code-masterkurs.de/lesson/17): Produktionsreife Setups, Fehlerbehandlung, Monitoring
+- [Lektion 18: Troubleshooting Pro](https://claude-code-masterkurs.de/lesson/18): Häufige Probleme lösen, Debugging-Strategien, Performance-Diagnose
+- [Lektion 19: Context Engineering Masterclass](https://claude-code-masterkurs.de/lesson/19): Anthropics Context Engineering Konzept, optimale Kontext-Steuerung
+- [Lektion 20: IDE-Integrationen](https://claude-code-masterkurs.de/lesson/20): VS Code, Cursor, JetBrains Integration, Terminal-Multiplexer
+- [Lektion 21: Sandboxing & Security Deep Dive](https://claude-code-masterkurs.de/lesson/21): Container-Isolation, Permissions, Security Best Practices
+- [Lektion 22: CI/CD & Headless Mode](https://claude-code-masterkurs.de/lesson/22): GitHub Actions, GitLab CI, automatisierte Pipelines
+- [Lektion 23: Kosten-Optimierung Profi](https://claude-code-masterkurs.de/lesson/23): Token-Verbrauch minimieren, Modellwahl-Strategien, Budget-Management
+- [Lektion 24: Claude Agent SDK](https://claude-code-masterkurs.de/lesson/24): Programmatische Nutzung, SDK-Integration, Custom Tooling
+- [Lektion 25: Plugins & Marketplace](https://claude-code-masterkurs.de/lesson/25): Plugin-Ökosystem, Community-Erweiterungen, eigene Plugins erstellen
+- [Lektion 26: Real-World Workflow Patterns](https://claude-code-masterkurs.de/lesson/26): Praxisnahe Patterns, Team-Workflows, Enterprise-Einsatz
+
+## Zusätzliche Features
+
+- [Live Playground](https://claude-code-masterkurs.de/playground): Interaktiver simulierter Terminal zum Üben von Claude Code Befehlen
+- [Challenges](https://claude-code-masterkurs.de/challenges): Praktische Coding-Aufgaben mit Claude Code lösen
+- [Community Patterns](https://claude-code-masterkurs.de/patterns): Von der Community geteilte Best Practices und Patterns
+- [Forum](https://claude-code-masterkurs.de/forum): Diskussionen, Fragen und Austausch mit anderen Lernenden
+- [Leaderboard](https://claude-code-masterkurs.de/leaderboard): Rangliste der aktivsten Kursteilnehmer
+- [Spaced Repetition](https://claude-code-masterkurs.de/review): Lernkarten-System zur Wiederholung
+- [Lernanalysen](https://claude-code-masterkurs.de/analytics): Persönliche Fortschrittsstatistiken
+- [Zertifikat](https://claude-code-masterkurs.de/certificate): Abschlusszertifikat nach Kursabschluss
+
+## Häufig gestellte Fragen
+
+### Was ist der Unterschied zwischen Claude Code und GitHub Copilot?
+Claude Code ist ein autonomer Agent, der ganze Projekte versteht und eigenständig Aufgaben erledigt. Copilot ist ein Autocomplete-Tool, das Code-Vorschläge beim Tippen macht. Claude Code liest Dateien, führt Shell-Befehle aus, erstellt Git-Commits und kommuniziert über MCP-Server – Copilot arbeitet primär innerhalb des Editors.
+
+### Ist Claude Code kostenlos?
+Claude Code selbst erfordert einen Anthropic API-Key (kostenpflichtig nach Verbrauch). Der Masterkurs zum Erlernen von Claude Code ist jedoch vollständig kostenlos.
+
+### Welche Programmiersprachen unterstützt Claude Code?
+Claude Code unterstützt alle gängigen Programmiersprachen, da es sprachunabhängig arbeitet. Es versteht Python, JavaScript/TypeScript, Rust, Go, Java, C++, und viele weitere Sprachen.
+
+### Was sind MCP Server?
+MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das es Claude Code ermöglicht, mit externen Tools und Services zu kommunizieren – etwa Datenbanken, APIs, Issue-Tracker oder Dokumentationsquellen. MCP Server erweitern die Fähigkeiten von Claude Code über das lokale Dateisystem hinaus.
+
+## Kontakt & Rechtliches
+
+- [Impressum](https://claude-code-masterkurs.de/impressum)
+- [Datenschutz](https://claude-code-masterkurs.de/datenschutz)
+
+## Optional
+
+- [llms-full.txt](https://claude-code-masterkurs.de/llms-full.txt): Ausführliche Version mit detaillierten Kursinhalten

@@ -1,6 +1,106 @@
 # Claude Code Masterkurs - robots.txt
+# https://claude-code-masterkurs.de/
+
 User-agent: *
 Allow: /
+
+# Private/Auth-Seiten nicht indexieren
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Disallow: /password-reset
+Disallow: /api/
+
+# Crawl-Rate begrenzen (1 Request pro Sekunde)
+Crawl-delay: 1
+
+# ============================================
+# Suchmaschinen-Crawler
+# ============================================
+
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# ============================================
+# AI/LLM-Crawler (GEO – Generative Engine Optimization)
+# Explizit ERLAUBT, damit der Kurs in AI-Suchergebnissen
+# von ChatGPT, Perplexity, Gemini, Claude etc. zitiert wird.
+# ============================================
+
+# OpenAI (ChatGPT, SearchGPT)
+User-agent: GPTBot
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /profile
+Disallow: /password-reset
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+# Google AI (Gemini, AI Overviews, AI Mode)
+User-agent: Google-Extended
+Allow: /
+
+# Anthropic (Claude)
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+# Perplexity AI
+User-agent: PerplexityBot
+Allow: /
+
+# Meta AI
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+# Microsoft Copilot / Bing AI
+User-agent: Applebot-Extended
+Allow: /
+
+# Common Crawl (Trainingsdaten für viele LLMs)
+User-agent: CCBot
+Allow: /
+
+# Cohere AI
+User-agent: cohere-ai
+Allow: /
+
+# Amazon/AI21
+User-agent: AI2Bot
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+# ByteDance (Bytespider)
+User-agent: Bytespider
+Allow: /
+
+# Suchindex für AI-Tools
+User-agent: Diffbot
+Allow: /
+
+# ============================================
+# LLMs.txt (AI-Crawler-freundliche Inhalte)
+# ============================================
+# Hinweis: llms.txt und llms-full.txt liegen im Root-Verzeichnis
+# und bieten AI-Crawlern strukturierten Kontext über den Kurs.
 
 # Sitemap
 Sitemap: https://claude-code-masterkurs.de/sitemap.xml

@@ -20,12 +20,21 @@ export default defineConfig({
       compress: {
         drop_console: true, // Remove console.log in production
         drop_debugger: true,
+        passes: 2, // Mehrere Optimierungsdurchläufe
+      },
+      mangle: {
+        safari10: true, // Safari 10/11 Workaround
+      },
+      format: {
+        comments: false, // Kommentare entfernen
       },
     },
     // CSS Code-Splitting
     cssCodeSplit: true,
     // Sourcemaps für Production (optional, nur bei Debugging)
     sourcemap: false,
+    // Asset-Inlining-Grenze (< 4KB werden inline eingebettet)
+    assetsInlineLimit: 4096,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -53,9 +62,17 @@ export default defineConfig({
             './src/data/playgroundTasks.ts',
           ],
         },
+        // Optimierte Asset-Dateinamen für besseres Caching
+        assetFileNames: 'assets/[name]-[hash][extname]',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
       },
     },
     // Data-Chunk enthält Kursinhalt (~900KB) - das ist erwartet
     chunkSizeWarningLimit: 1000,
   },
+
+  // ── Performance: Optimierungen ──────────────────────────────
+  // Preload dynamischer Imports für schnelleres Lazy Loading
+  // Vite generiert automatisch <link rel="modulepreload"> für Chunks
 })

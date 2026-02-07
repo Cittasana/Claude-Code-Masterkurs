@@ -327,23 +327,23 @@ function PodiumCard({
 }) {
   const rankConfig = {
     1: {
-      icon: <Crown size={28} className="text-yellow-400" />,
-      border: 'border-yellow-500/40',
-      bg: 'from-yellow-500/10 to-yellow-500/0',
+      icon: <Crown size={28} className="text-apple-warning" />,
+      border: 'border-apple-warning/40',
+      bg: 'from-apple-warning/10 to-apple-warning/0',
       height: 'pt-2',
       medal: '🥇',
     },
     2: {
-      icon: <Medal size={24} className="text-gray-300" />,
-      border: 'border-gray-400/30',
-      bg: 'from-gray-400/10 to-gray-400/0',
+      icon: <Medal size={24} className="text-apple-textSecondary" />,
+      border: 'border-apple-borderLight/30',
+      bg: 'from-apple-borderLight/10 to-apple-borderLight/0',
       height: 'pt-8',
       medal: '🥈',
     },
     3: {
-      icon: <Medal size={24} className="text-amber-600" />,
-      border: 'border-amber-600/30',
-      bg: 'from-amber-700/10 to-amber-700/0',
+      icon: <Medal size={24} className="text-apple-accentMuted" />,
+      border: 'border-apple-accentMuted/30',
+      bg: 'from-apple-accentMuted/10 to-apple-accentMuted/0',
       height: 'pt-12',
       medal: '🥉',
     },
@@ -415,16 +415,16 @@ function RankingRow({
     // Simulated trend based on weeklyPoints vs. average
     const ratio = entry.weeklyPoints / Math.max(entry.totalPoints * 0.1, 1);
     if (ratio > 1.2) return { icon: <ChevronUp size={16} className="text-apple-success" />, label: t('leaderboard.trendRising') };
-    if (ratio < 0.8) return { icon: <ChevronDown size={16} className="text-red-400" />, label: t('leaderboard.trendFalling') };
+    if (ratio < 0.8) return { icon: <ChevronDown size={16} className="text-apple-error" />, label: t('leaderboard.trendFalling') };
     return { icon: <Minus size={16} className="text-apple-muted" />, label: t('leaderboard.stable') };
   };
 
   const trend = getTrend();
 
   const levelColors: Record<number, string> = {
-    1: 'text-green-400 bg-green-400/10 border-green-400/30',
-    2: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30',
-    3: 'text-purple-400 bg-purple-400/10 border-purple-400/30',
+    1: 'text-apple-success bg-apple-success/10 border-apple-success/30',
+    2: 'text-apple-accent bg-apple-accent/10 border-apple-accent/30',
+    3: 'text-apple-info bg-apple-info/10 border-apple-info/30',
   };
 
   return (

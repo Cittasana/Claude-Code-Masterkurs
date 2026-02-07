@@ -256,33 +256,33 @@ const SimulatedTerminal = ({ scenario, onComplete }: Props) => {
       <div
         ref={terminalRef}
         onClick={() => inputRef.current?.focus()}
-        className="flex-1 bg-[#0d1117] p-4 font-mono text-sm overflow-y-auto cursor-text min-h-[350px] max-h-[500px]"
+        className="flex-1 bg-apple-bg p-4 font-mono text-sm overflow-y-auto cursor-text min-h-[350px] max-h-[500px]"
       >
         {/* Terminal Lines */}
         {lines.map((line, idx) => (
           <div key={idx} className="leading-relaxed">
             {line.type === 'system' && (
-              <span className="text-[#8b949e]">{line.text}</span>
+              <span className="text-apple-muted">{line.text}</span>
             )}
             {line.type === 'prompt' && (
-              <span className="text-[#58a6ff]">
+              <span className="text-apple-info">
                 {'> '}{line.text}
               </span>
             )}
             {line.type === 'input' && (
-              <span className="text-[#f0f6fc]">{line.text}</span>
+              <span className="text-apple-text">{line.text}</span>
             )}
             {line.type === 'output' && (
-              <span className="text-[#c9d1d9]">{line.text}</span>
+              <span className="text-apple-textSecondary">{line.text}</span>
             )}
             {line.type === 'success' && (
-              <span className="text-[#3fb950]">{line.text}</span>
+              <span className="text-apple-success">{line.text}</span>
             )}
             {line.type === 'error' && (
-              <span className="text-[#f85149]">{line.text}</span>
+              <span className="text-apple-error">{line.text}</span>
             )}
             {line.type === 'hint' && (
-              <span className="text-[#d29922]">{line.text}</span>
+              <span className="text-apple-warning">{line.text}</span>
             )}
             {line.text === '' && <br />}
           </div>
@@ -291,14 +291,14 @@ const SimulatedTerminal = ({ scenario, onComplete }: Props) => {
         {/* Input Line */}
         {!isComplete && !isTyping && (
           <div className="flex items-center">
-            <span className="text-[#3fb950] mr-2">❯</span>
+            <span className="text-apple-success mr-2">❯</span>
             <input
               ref={inputRef}
               type="text"
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="flex-1 bg-transparent text-[#f0f6fc] outline-none font-mono text-sm caret-[#ff9500]"
+              className="flex-1 bg-transparent text-apple-text outline-none font-mono text-sm caret-apple-accent"
               placeholder="Befehl eingeben..."
               autoComplete="off"
               spellCheck={false}
@@ -309,9 +309,9 @@ const SimulatedTerminal = ({ scenario, onComplete }: Props) => {
         {/* Typing indicator */}
         {isTyping && (
           <div className="flex items-center space-x-1 mt-1">
-            <div className="w-1.5 h-1.5 rounded-full bg-[#58a6ff] animate-pulse" />
-            <div className="w-1.5 h-1.5 rounded-full bg-[#58a6ff] animate-pulse" style={{ animationDelay: '0.15s' }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-[#58a6ff] animate-pulse" style={{ animationDelay: '0.3s' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-apple-info animate-pulse" />
+            <div className="w-1.5 h-1.5 rounded-full bg-apple-info animate-pulse" style={{ animationDelay: '0.15s' }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-apple-info animate-pulse" style={{ animationDelay: '0.3s' }} />
           </div>
         )}
       </div>

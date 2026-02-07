@@ -129,7 +129,7 @@ const PlaygroundView = () => {
             {/* Level 3 */}
             <ProjectGroup
               label="Level 3: Expert"
-              color="text-purple-400"
+              color="text-apple-info"
               projects={level3}
               selectedProjectId={selectedProjectId}
               isUnlocked={isProjectUnlocked(3)}
@@ -158,7 +158,7 @@ const PlaygroundView = () => {
                       <span className="text-[10px] text-apple-muted font-mono">
                         {String(idx + 1).padStart(2, '0')}
                       </span>
-                      <Terminal size={12} className="text-[#3fb950] shrink-0" />
+                      <Terminal size={12} className="text-apple-success shrink-0" />
                       <span
                         className={`text-sm font-medium ${
                           selectedTask?.id === task.id
@@ -203,7 +203,7 @@ const PlaygroundView = () => {
                       <p className="text-xs text-apple-accent font-mono uppercase tracking-widest">
                         Aufgabe
                       </p>
-                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-mono bg-[#3fb950]/10 border border-[#3fb950]/25 rounded-full text-[#3fb950]">
+                      <span className="inline-flex items-center space-x-1 px-2 py-0.5 text-[10px] font-mono bg-apple-success/10 border border-apple-success/25 rounded-full text-apple-success">
                         <Terminal size={10} />
                         <span>CLI Simulation</span>
                       </span>

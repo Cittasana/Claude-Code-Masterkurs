@@ -1,0 +1,306 @@
+# Claude Code Masterkurs – Vollständige Kursübersicht
+
+> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 27 kostenlose Lektionen, interaktiver Playground, Quizzes, Community-Features und Zertifikat.
+
+## Über diesen Kurs
+
+Der **Claude Code Masterkurs** (https://claude-code-masterkurs.de/) ist ein interaktiver Online-Kurs, der Entwicklern beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv einsetzen.
+
+**Eckdaten:**
+- Sprache: Deutsch (auch auf Englisch, Französisch, Spanisch verfügbar)
+- Preis: Vollständig kostenlos
+- Umfang: 27 Lektionen in 4 Levels, ca. 20 Stunden Lernzeit
+- Zielgruppe: Softwareentwickler, von Anfängern bis Experten
+- Technologie: React, TypeScript, Tailwind CSS, Vite
+- Features: Live-Playground, Quizzes, Spaced Repetition, Challenges, Forum, Leaderboard, Zertifikat
+
+---
+
+## Was ist Claude Code?
+
+Claude Code ist ein **autonomer KI-Coding-Agent** von Anthropic. Es handelt sich um ein Command-Line Tool (CLI), das im Terminal läuft und durch natürliche Sprache gesteuert wird.
+
+**Schlüsselunterschiede zu anderen Tools:**
+
+| Feature | Claude Code | GitHub Copilot | Cursor | Windsurf |
+|---------|-------------|----------------|--------|----------|
+| Arbeitsweise | Autonomer Agent | Autocomplete | IDE + AI | IDE + AI |
+| Projektverständnis | Gesamtes Projekt | Aktuelle Datei | Workspace | Workspace |
+| Shell-Zugriff | Ja (nativ) | Nein | Begrenzt | Begrenzt |
+| Git-Operationen | Ja (automatisch) | Nein | Begrenzt | Begrenzt |
+| MCP-Server | Ja | Nein | Nein | Nein |
+| Multi-Agent | Ja | Nein | Nein | Nein |
+| Umgebung | Terminal/CLI | IDE-Plugin | Eigene IDE | Eigene IDE |
+
+**Kernfunktionalitäten von Claude Code:**
+1. **CLAUDE.md Context Management**: Projektkontext in einer Markdown-Datei definieren
+2. **MCP Server Integration**: Externe Tools und Services über das Model Context Protocol anbinden
+3. **Agentic Workflows**: Autonome Entwicklungs-Agents erstellen
+4. **Plan & Thinking Mode**: Komplexe Aufgaben durchdenken lassen bevor Code geschrieben wird
+5. **Git Integration**: Automatische Commits, PR-Erstellung, Code Reviews
+6. **Custom Skills**: Claude Code mit eigenen Funktionen erweitern
+7. **Multi-Agent Orchestration**: Mehrere spezialisierte Agents koordinieren
+8. **Subagents**: Aufgaben an spezialisierte Sub-Agents delegieren
+9. **Hooks & Automation**: Pre/Post-Hooks für automatisierte Workflows
+10. **Custom Slash Commands**: Eigene Befehle und Templates erstellen
+
+---
+
+## Detaillierte Kursstruktur
+
+### Level 1: Grundlagen (Lektionen 0–5)
+
+Dieses Level vermittelt die Basis für die Arbeit mit Claude Code.
+
+#### Lektion 0: Was ist Claude Code?
+**URL:** https://claude-code-masterkurs.de/lesson/0
+**Dauer:** 15 Minuten
+**Inhalte:**
+- Was Claude Code ist und wie es funktioniert
+- Kernfunktionalitäten kennenlernen
+- Unterschiede zu GitHub Copilot, Cursor und Windsurf
+- Use Cases und Einsatzgebiete identifizieren
+
+#### Lektion 1: Installation & Setup
+**URL:** https://claude-code-masterkurs.de/lesson/1
+**Dauer:** 20 Minuten
+**Inhalte:**
+- Node.js 18+ installieren (macOS, Windows, Linux)
+- Claude Code über npm global installieren: `npm install -g @anthropic-ai/claude-code`
+- Erstmalige Konfiguration durchführen
+- Systemanforderungen verstehen
+
+#### Lektion 2: Authentifizierung & Model-Auswahl
+**URL:** https://claude-code-masterkurs.de/lesson/2
+**Dauer:** 20 Minuten
+**Inhalte:**
+- Anthropic API-Key erstellen und konfigurieren
+- OAuth-Authentifizierung nutzen (Max Plan)
+- Modellauswahl: Claude Sonnet 4 (Standard), Claude Opus 4 (Premium), Claude Haiku (Budget)
+- Kostenkontrolle und Budget-Limits setzen
+
+#### Lektion 3: Erste Schritte & Befehle
+**URL:** https://claude-code-masterkurs.de/lesson/3
+**Dauer:** 25 Minuten
+**Inhalte:**
+- Grundbefehle: `/help`, `/status`, `/clear`, `/compact`
+- Effektive Prompts schreiben (die 5 Regeln)
+- Mit Dateien und Projekten arbeiten
+- Slash Commands verwenden
+
+#### Lektion 4: CLAUDE.md Mastery
+**URL:** https://claude-code-masterkurs.de/lesson/4
+**Dauer:** 30 Minuten
+**Inhalte:**
+- Die CLAUDE.md Datei verstehen (Projekt-Kontext für Claude Code)
+- Struktur und Best Practices für CLAUDE.md
+- Projektkonventionen, Architektur und Richtlinien dokumentieren
+- Entwicklungsstadium kennzeichnen (MVP, Production, etc.)
+- DSGVO und Datenschutz-Kontexte einbinden
+
+#### Lektion 5: Context Management
+**URL:** https://claude-code-masterkurs.de/lesson/5
+**Dauer:** 25 Minuten
+**Inhalte:**
+- Token-Fenster und Kontext-Limitierungen verstehen
+- .claudeignore zum Ausschließen irrelevanter Dateien nutzen
+- Kontext-Effizienz optimieren (mehr Ergebnis mit weniger Tokens)
+- Compact-Modus und Kontext-Komprimierung
+
+### Level 2: Fortgeschritten (Lektionen 6–11)
+
+Hier werden weiterführende Konzepte und Integrationen behandelt.
+
+#### Lektion 6: MCP Server Integration
+**URL:** https://claude-code-masterkurs.de/lesson/6
+**Dauer:** 30 Minuten
+**Inhalte:**
+- Was ist das Model Context Protocol (MCP)?
+- MCP Server installieren und konfigurieren
+- Praktische MCP Server: Filesystem, GitHub, PostgreSQL, Slack
+- Eigene MCP Server entwickeln
+- Sicherheitsaspekte bei MCP-Verbindungen
+
+#### Lektion 7: Skills & Workflows erstellen
+**URL:** https://claude-code-masterkurs.de/lesson/7
+**Dauer:** 25 Minuten
+**Inhalte:**
+- Custom Skills als wiederverwendbare Bausteine erstellen
+- Workflow-Automatisierung mit Claude Code
+- SKILL.md Dateien strukturieren
+- Best Practices für Skills
+
+#### Lektion 8: Subagents Deep Dive
+**URL:** https://claude-code-masterkurs.de/lesson/8
+**Dauer:** 30 Minuten
+**Inhalte:**
+- Spezialisierte Sub-Agents erstellen und orchestrieren
+- Task-Delegation und parallele Verarbeitung
+- Dynamische Modellwahl (Opus für komplexe, Haiku für einfache Aufgaben)
+- Cost-Efficient Agent Hierarchien
+
+#### Lektion 9: Custom Agents erstellen
+**URL:** https://claude-code-masterkurs.de/lesson/9
+**Dauer:** 30 Minuten
+**Inhalte:**
+- Agent-Architektur und System-Prompts
+- Eigene Agents für spezifische Aufgaben bauen
+- Agent-Konfiguration und -Testing
+- Praxisbeispiele: Review-Agent, Refactoring-Agent, Test-Agent
+
+#### Lektion 10: Agent Personality & Configuration
+**URL:** https://claude-code-masterkurs.de/lesson/10
+**Dauer:** 20 Minuten
+**Inhalte:**
+- Agent-Persönlichkeit designen (Tone of Voice, Kommunikationsstil)
+- Konfigurationsprofile für verschiedene Szenarien
+- Team-spezifische Agent-Konfigurationen
+
+#### Lektion 11: Git-Integration Profi
+**URL:** https://claude-code-masterkurs.de/lesson/11
+**Dauer:** 25 Minuten
+**Inhalte:**
+- Automatische Commits mit aussagekräftigen Nachrichten
+- Pull Requests erstellen und reviewen
+- Code Reviews mit Claude Code durchführen
+- Branch-Management und Merge-Strategien
+- Git Safety Best Practices
+
+### Level 3: Experte (Lektionen 12–26)
+
+Fortgeschrittene Themen für den professionellen Einsatz.
+
+#### Lektion 12: Hooks & Automation
+**URL:** https://claude-code-masterkurs.de/lesson/12
+**Inhalte:** Pre/Post-Hooks, Event-Trigger, automatisierte Qualitätssicherung
+
+#### Lektion 13: Custom Slash Commands
+**URL:** https://claude-code-masterkurs.de/lesson/13
+**Inhalte:** Eigene Commands erstellen, Prompt-Templates, Team-Standards
+
+#### Lektion 14: Advanced Prompting Techniques
+**URL:** https://claude-code-masterkurs.de/lesson/14
+**Inhalte:** Chain-of-Thought, Few-Shot Prompting, Meta-Prompting, Constraint-Prompting
+
+#### Lektion 15: Plan & Thinking Mode
+**URL:** https://claude-code-masterkurs.de/lesson/15
+**Inhalte:** Planungsmodus nutzen, Think-before-Act, komplexe Aufgaben strukturieren
+
+#### Lektion 16: Agent Orchestration
+**URL:** https://claude-code-masterkurs.de/lesson/16
+**Inhalte:** Multi-Agent Systeme, Agent-Koordination, parallele Aufgabenverteilung
+
+#### Lektion 17: Production Best Practices
+**URL:** https://claude-code-masterkurs.de/lesson/17
+**Inhalte:** Produktionsreife Setups, Fehlerbehandlung, Monitoring, Code-Qualität
+
+#### Lektion 18: Troubleshooting Pro
+**URL:** https://claude-code-masterkurs.de/lesson/18
+**Inhalte:** Häufige Probleme lösen, Debugging-Strategien, Performance-Diagnose
+
+#### Lektion 19: Context Engineering Masterclass
+**URL:** https://claude-code-masterkurs.de/lesson/19
+**Inhalte:** Anthropics Context Engineering Konzept, optimale Kontext-Steuerung, Anti-Patterns vermeiden
+
+#### Lektion 20: IDE-Integrationen
+**URL:** https://claude-code-masterkurs.de/lesson/20
+**Inhalte:** VS Code, Cursor, JetBrains Integration, Terminal-Multiplexer (tmux/screen)
+
+#### Lektion 21: Sandboxing & Security Deep Dive
+**URL:** https://claude-code-masterkurs.de/lesson/21
+**Inhalte:** Container-Isolation, Docker-Sandboxing, Permissions, Approval Fatigue vermeiden
+
+#### Lektion 22: CI/CD & Headless Mode
+**URL:** https://claude-code-masterkurs.de/lesson/22
+**Inhalte:** GitHub Actions, GitLab CI, Claude Code in automatisierten Pipelines, Headless Mode
+
+#### Lektion 23: Kosten-Optimierung Profi
+**URL:** https://claude-code-masterkurs.de/lesson/23
+**Inhalte:** Token-Verbrauch minimieren, Modellwahl-Strategien, Budget-Management, ROI berechnen
+
+#### Lektion 24: Claude Agent SDK
+**URL:** https://claude-code-masterkurs.de/lesson/24
+**Inhalte:** Programmatische Nutzung, SDK-Integration in eigene Apps, Custom Tooling
+
+#### Lektion 25: Plugins & Marketplace
+**URL:** https://claude-code-masterkurs.de/lesson/25
+**Inhalte:** Plugin-Ökosystem, Community-Erweiterungen installieren und erstellen
+
+#### Lektion 26: Real-World Workflow Patterns
+**URL:** https://claude-code-masterkurs.de/lesson/26
+**Inhalte:** Praxisnahe Patterns, Team-Workflows, Enterprise-Einsatz, Fallstudien
+
+---
+
+## Schlüsselkonzepte erklärt
+
+### CLAUDE.md
+Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code Kontext über das Projekt gibt. Sie enthält Projektbeschreibung, Architektur, Coding-Konventionen, Tech Stack und spezielle Anweisungen. Claude Code liest diese Datei automatisch beim Start und nutzt sie, um kontextbezogener zu arbeiten.
+
+### Model Context Protocol (MCP)
+MCP ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools zu kommunizieren. Über MCP Server kann Claude Code auf Datenbanken (PostgreSQL, SQLite), APIs (GitHub, Jira, Slack), Dateisysteme und weitere Services zugreifen. Die Konfiguration erfolgt über JSON in der `.claude/settings.json` oder `.mcp.json`.
+
+### Agentic Coding
+Agentic Coding beschreibt die Arbeitsweise, bei der ein KI-Agent (wie Claude Code) autonom Entwicklungsaufgaben ausführt. Statt einzelne Code-Zeilen vorzuschlagen, plant und implementiert der Agent ganze Features – von der Dateianalyse über das Code-Schreiben bis zum Git-Commit.
+
+### Context Engineering
+Context Engineering (Begriff geprägt von Anthropic) ist die Disziplin, den richtigen Kontext für KI-Systeme zu kuratieren. Im Gegensatz zu "Prompt Engineering" geht es nicht nur um die Frage, sondern um den gesamten Informationskontext: CLAUDE.md, Projektstruktur, relevante Dateien und Konventionen.
+
+### Subagents
+Subagents sind spezialisierte Claude Code Instanzen, die vom Haupt-Agent für spezifische Aufgaben erstellt werden. Zum Beispiel kann ein "Review-Subagent" Code prüfen, während ein "Test-Subagent" Tests schreibt – parallel und mit jeweils optimalem Modell/Konfiguration.
+
+---
+
+## Häufig gestellte Fragen (FAQ)
+
+### Was ist Claude Code?
+Claude Code ist ein KI-gesteuertes Command-Line Tool von Anthropic. Es ermöglicht Entwicklern, durch natürliche Sprache mit ihrer Codebasis zu interagieren, Code zu schreiben, zu refactoren, Tests zu erstellen und Git-Operationen durchzuführen. Es läuft im Terminal und versteht das gesamte Projekt.
+
+### Wie unterscheidet sich Claude Code von GitHub Copilot?
+Claude Code ist ein autonomer Agent – es erledigt ganze Aufgaben eigenständig. Copilot ist ein Autocomplete-Tool, das beim Tippen Code-Vorschläge macht. Claude Code hat Zugriff auf das gesamte Projekt, kann Shell-Befehle ausführen, Git-Operationen durchführen und über MCP-Server mit externen Services kommunizieren. Copilot ist auf den Editor beschränkt.
+
+### Wie installiert man Claude Code?
+1. Node.js 18+ installieren
+2. `npm install -g @anthropic-ai/claude-code` ausführen
+3. `claude` im Terminal starten
+4. Anthropic API-Key eingeben oder OAuth nutzen
+
+### Was kostet Claude Code?
+Claude Code erfordert einen Anthropic API-Key. Die Kosten richten sich nach dem Tokenverbrauch: Sonnet 4 kostet ca. $3/$15 pro Million Input/Output Tokens, Opus 4 ca. $15/$75. Ein typischer Entwicklungstag kostet je nach Nutzung $1–20.
+
+### Was sind die Systemanforderungen?
+- Node.js 18 oder höher
+- macOS, Linux oder Windows (WSL2 empfohlen)
+- Internetverbindung für API-Zugriff
+- Terminal/Shell (bash, zsh, fish etc.)
+
+### Ist der Masterkurs kostenlos?
+Ja, der Claude Code Masterkurs ist vollständig kostenlos. Alle 27 Lektionen, Quizzes, der Live-Playground und die Community-Features sind ohne Registrierung nutzbar.
+
+### In welchen Sprachen ist der Kurs verfügbar?
+Der Kurs ist primär auf Deutsch. Über die integrierte Internationalisierung ist er auch auf Englisch, Französisch und Spanisch verfügbar.
+
+### Welche Programmiersprachen unterstützt Claude Code?
+Claude Code ist sprachunabhängig und unterstützt alle gängigen Programmiersprachen: Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin und viele mehr.
+
+---
+
+## Technische Details
+
+- **Frontend:** React 19, TypeScript, Tailwind CSS, Vite 7
+- **State Management:** Zustand
+- **Routing:** React Router v7
+- **Internationalisierung:** i18next (DE, EN, FR, ES)
+- **Charts:** Chart.js + react-chartjs-2
+- **UI-Komponenten:** Radix UI, Lucide Icons
+- **Syntax Highlighting:** Prism.js
+- **Deployment:** Vercel / Netlify
+- **Backend:** Express.js, Prisma, PostgreSQL (optional)
+
+---
+
+## Kontakt & Rechtliches
+
+- Website: https://claude-code-masterkurs.de/
+- Impressum: https://claude-code-masterkurs.de/impressum
+- Datenschutz: https://claude-code-masterkurs.de/datenschutz

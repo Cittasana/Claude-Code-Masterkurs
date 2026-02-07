@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { prisma, logger } from '../index.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { writeRateLimit } from '../middleware/rateLimit.js';
+import { sanitizeUserInput } from '../lib/sanitize.js';
 
 export const forumRouter = Router();
 
@@ -143,11 +144,15 @@ forumRouter.post('/threads', requireAuth, writeRateLimit, async (req, res) => {
   try {
     const data = createThreadSchema.parse(req.body);
 
+    // XSS-Schutz: Benutzereingaben sanitizen
+    const safeTitle = sanitizeUserInput(data.title);
+    const safeBody = sanitizeUserInput(data.body);
+
     const thread = await prisma.forumThread.create({
       data: {
         categoryId: data.categoryId,
-        title: data.title,
-        body: data.body,
+        title: safeTitle,
+        body: safeBody,
         authorId: req.user!.userId,
       },
       include: {
@@ -192,6 +197,9 @@ forumRouter.post(
       const id = paramId(req);
       const data = createReplySchema.parse(req.body);
 
+      // XSS-Schutz: Benutzereingaben sanitizen
+      const safeBody = sanitizeUserInput(data.body);
+
       // Verify thread exists
       const thread = await prisma.forumThread.findUnique({
         where: { id },
@@ -204,7 +212,7 @@ forumRouter.post(
       const reply = await prisma.forumReply.create({
         data: {
           threadId: id,
-          body: data.body,
+          body: safeBody,
           authorId: req.user!.userId,
         },
         include: {

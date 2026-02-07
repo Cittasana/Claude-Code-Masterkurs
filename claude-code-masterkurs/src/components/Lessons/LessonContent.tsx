@@ -80,34 +80,34 @@ const highlightStyles: Record<HighlightVariant, {
   iconBg: string;
 }> = {
   tip: {
-    border: 'border-sky-500/30',
-    bg: 'bg-sky-500/[0.06]',
+    border: 'border-apple-info/30',
+    bg: 'bg-apple-info/[0.06]',
     icon: <Lightbulb size={16} />,
-    iconBg: 'bg-sky-500/15 text-sky-400',
+    iconBg: 'bg-apple-info/15 text-apple-info',
   },
   warning: {
-    border: 'border-red-500/30',
-    bg: 'bg-red-500/[0.06]',
+    border: 'border-apple-error/30',
+    bg: 'bg-apple-error/[0.06]',
     icon: <AlertTriangle size={16} />,
-    iconBg: 'bg-red-500/15 text-red-400',
+    iconBg: 'bg-apple-error/15 text-apple-error',
   },
   important: {
-    border: 'border-amber-500/30',
-    bg: 'bg-amber-500/[0.06]',
+    border: 'border-apple-warning/30',
+    bg: 'bg-apple-warning/[0.06]',
     icon: <Zap size={16} />,
-    iconBg: 'bg-amber-500/15 text-amber-400',
+    iconBg: 'bg-apple-warning/15 text-apple-warning',
   },
   example: {
-    border: 'border-emerald-500/30',
-    bg: 'bg-emerald-500/[0.06]',
+    border: 'border-apple-success/30',
+    bg: 'bg-apple-success/[0.06]',
     icon: <Rocket size={16} />,
-    iconBg: 'bg-emerald-500/15 text-emerald-400',
+    iconBg: 'bg-apple-success/15 text-apple-success',
   },
   info: {
-    border: 'border-blue-500/30',
-    bg: 'bg-blue-500/[0.06]',
+    border: 'border-apple-info/30',
+    bg: 'bg-apple-info/[0.06]',
     icon: <Info size={16} />,
-    iconBg: 'bg-blue-500/15 text-blue-400',
+    iconBg: 'bg-apple-info/15 text-apple-info',
   },
   default: {
     border: 'border-apple-accent/30',
@@ -249,7 +249,7 @@ const ContentBlock = ({
 
       return (
         <div className="lesson-code-block relative group">
-          <div className="rounded-apple-lg overflow-hidden border border-apple-border/60 bg-[#1c1c1e]">
+          <div className="rounded-apple-lg overflow-hidden border border-apple-border/60 bg-apple-bg">
             {/* Code header bar */}
             <div className="flex items-center justify-between px-4 py-2.5 bg-apple-bg/80 border-b border-apple-border/40">
               <div className="flex items-center space-x-2.5">
@@ -333,8 +333,8 @@ const ContentBlock = ({
 
       if (!videoId) {
         return (
-          <div className="lesson-video-block rounded-apple-lg border border-amber-500/30 bg-amber-500/[0.06] p-5 my-2 flex items-center gap-3">
-            <AlertTriangle size={20} className="text-amber-400 flex-shrink-0" />
+          <div className="lesson-video-block rounded-apple-lg border border-apple-warning/30 bg-apple-warning/[0.06] p-5 my-2 flex items-center gap-3">
+            <AlertTriangle size={20} className="text-apple-warning flex-shrink-0" />
             <p className="text-apple-text/80 text-sm">
               Video nicht konfiguriert: Bitte <code className="px-1 py-0.5 rounded bg-apple-elevated/80 font-mono text-xs">videoId</code> und optional <code className="px-1 py-0.5 rounded bg-apple-elevated/80 font-mono text-xs">provider</code> (youtube | vimeo) setzen.
             </p>
@@ -625,7 +625,7 @@ function renderCellContent(text: string): React.ReactNode {
     return (
       <span
         className={`text-base ${
-          isPositive ? 'text-emerald-400' : isNegative ? 'text-red-400/60' : 'text-amber-400'
+          isPositive ? 'text-apple-success' : isNegative ? 'text-apple-error/60' : 'text-apple-warning'
         }`}
       >
         {trimmed}

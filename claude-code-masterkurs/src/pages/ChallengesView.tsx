@@ -232,10 +232,10 @@ const ChallengesView = () => {
                 <span
                   className={`px-2 py-0.5 text-[10px] font-mono rounded-full border ${
                     ch.difficulty === 'Anfänger'
-                      ? 'bg-green-500/10 border-green-500/25 text-green-400'
+                      ? 'bg-apple-success/10 border-apple-success/25 text-apple-success'
                       : ch.difficulty === 'Fortgeschritten'
-                      ? 'bg-yellow-500/10 border-yellow-500/25 text-yellow-400'
-                      : 'bg-purple-500/10 border-purple-500/25 text-purple-400'
+                      ? 'bg-apple-warning/10 border-apple-warning/25 text-apple-warning'
+                      : 'bg-apple-accent/10 border-apple-accent/25 text-apple-accent'
                   }`}
                 >
                   {getDifficultyLabel(ch.difficulty)}
@@ -244,7 +244,7 @@ const ChallengesView = () => {
                   {getCategoryLabel(ch.category)}
                 </span>
                 {ch.source === 'live-coding' && (
-                  <span className="text-[10px] font-mono rounded-full border bg-sky-500/10 border-sky-500/25 text-sky-400 px-2 py-0.5">
+                  <span className="text-[10px] font-mono rounded-full border bg-apple-info/10 border-apple-info/25 text-apple-info px-2 py-0.5">
                     {t('challenges.labelLive')}
                   </span>
                 )}
@@ -465,10 +465,10 @@ function ChallengeWorkspace({
               <span
                 className={`px-2 py-0.5 text-[10px] font-mono rounded-full border ${
                   challenge.difficulty === 'Anfänger'
-                    ? 'bg-green-500/10 border-green-500/25 text-green-400'
+                    ? 'bg-apple-success/10 border-apple-success/25 text-apple-success'
                     : challenge.difficulty === 'Fortgeschritten'
-                    ? 'bg-yellow-500/10 border-yellow-500/25 text-yellow-400'
-                    : 'bg-purple-500/10 border-purple-500/25 text-purple-400'
+                    ? 'bg-apple-warning/10 border-apple-warning/25 text-apple-warning'
+                    : 'bg-apple-accent/10 border-apple-accent/25 text-apple-accent'
                 }`}
               >
                 {getDifficultyLabel(challenge.difficulty)}
@@ -551,19 +551,19 @@ function ChallengeWorkspace({
                     key={vr.id}
                     className={`flex items-start space-x-2.5 p-2.5 rounded-apple border ${
                       vr.passed
-                        ? 'bg-green-500/5 border-green-500/15'
-                        : 'bg-red-500/5 border-red-500/15'
+                        ? 'bg-apple-success/5 border-apple-success/15'
+                        : 'bg-apple-error/5 border-apple-error/15'
                     }`}
                   >
                     {vr.passed ? (
                       <CheckCircle2 size={15} className="text-apple-success shrink-0 mt-0.5" />
                     ) : (
-                      <XCircle size={15} className="text-red-400 shrink-0 mt-0.5" />
+                      <XCircle size={15} className="text-apple-error shrink-0 mt-0.5" />
                     )}
                     <div>
                       <p
                         className={`text-sm font-medium ${
-                          vr.passed ? 'text-apple-success' : 'text-red-400'
+                          vr.passed ? 'text-apple-success' : 'text-apple-error'
                         }`}
                       >
                         {vr.name}{' '}
@@ -572,7 +572,7 @@ function ChallengeWorkspace({
                         </span>
                       </p>
                       {vr.error && (
-                        <p className="text-xs text-red-400/80 mt-0.5">{vr.error}</p>
+                        <p className="text-xs text-apple-error/80 mt-0.5">{vr.error}</p>
                       )}
                     </div>
                   </div>
@@ -599,9 +599,9 @@ function ChallengeWorkspace({
                 <div
                   className={`flex items-center space-x-2 px-3 py-1.5 rounded-apple border font-mono text-sm ${
                     timeExpired
-                      ? 'bg-red-500/10 border-red-500/30 text-red-400'
+                      ? 'bg-apple-error/10 border-apple-error/30 text-apple-error'
                       : timeLeft < 60
-                      ? 'bg-yellow-500/10 border-yellow-500/30 text-yellow-400'
+                      ? 'bg-apple-warning/10 border-apple-warning/30 text-apple-warning'
                       : 'bg-apple-surface border-apple-border text-apple-text'
                   }`}
                 >
@@ -651,9 +651,9 @@ function ChallengeWorkspace({
             <div className="flex items-center justify-between px-4 py-2.5 border-b border-apple-border bg-apple-elevated/50">
               <div className="flex items-center space-x-2">
                 <div className="flex space-x-1.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-green-500/70" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-apple-error/70" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-apple-warning/70" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-apple-success/70" />
                 </div>
                 <span className="text-xs text-apple-muted font-mono ml-2">
                   challenge.{challenge.language}

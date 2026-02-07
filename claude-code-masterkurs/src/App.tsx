@@ -1,8 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import Navigation from './components/Navigation/Navigation';
 import LoadingSpinner from './components/UI/LoadingSpinner';
+import CookieConsent from './components/UI/CookieConsent';
 import { useUserProgress } from './store/userProgress';
 import { useAnalyticsStore } from './store/analyticsStore';
 import { useAuthStore } from './store/authStore';
@@ -23,11 +24,15 @@ const LeaderboardView = lazy(() => import('./pages/LeaderboardView'));
 const LearningAnalyticsView = lazy(() => import('./pages/LearningAnalyticsView'));
 const ImpressumView = lazy(() => import('./pages/ImpressumView'));
 const DatenschutzView = lazy(() => import('./pages/DatenschutzView'));
+const NutzungsbedingungenView = lazy(() => import('./pages/NutzungsbedingungenView'));
 const LoginView = lazy(() => import('./pages/LoginView'));
 const RegisterView = lazy(() => import('./pages/RegisterView'));
 const ProfileView = lazy(() => import('./pages/ProfileView'));
 const PasswordResetRequestView = lazy(() => import('./views/PasswordResetRequestView'));
 const PasswordResetConfirmView = lazy(() => import('./views/PasswordResetConfirmView'));
+const EmailVerifyView = lazy(() => import('./views/EmailVerifyView'));
+const SubscriptionSuccessView = lazy(() => import('./pages/SubscriptionSuccessView'));
+const DocsView = lazy(() => import('./pages/DocsView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -65,13 +70,17 @@ function App() {
               <Route path="/challenges" element={<ChallengesView />} />
               <Route path="/analytics" element={<LearningAnalyticsView />} />
               <Route path="/leaderboard" element={<LeaderboardView />} />
+              <Route path="/docs" element={<DocsView />} />
               <Route path="/login" element={<LoginView />} />
               <Route path="/register" element={<RegisterView />} />
               <Route path="/profile" element={<ProfileView />} />
               <Route path="/password-reset" element={<PasswordResetRequestView />} />
               <Route path="/password-reset/:token" element={<PasswordResetConfirmView />} />
+              <Route path="/verify-email/:token" element={<EmailVerifyView />} />
+              <Route path="/subscription/success" element={<SubscriptionSuccessView />} />
               <Route path="/impressum" element={<ImpressumView />} />
               <Route path="/datenschutz" element={<DatenschutzView />} />
+              <Route path="/nutzungsbedingungen" element={<NutzungsbedingungenView />} />
               <Route path="*" element={<NotFoundPage />} />
             </Routes>
           </Suspense>
@@ -80,12 +89,15 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-apple-muted">
             <p>&copy; {new Date().getFullYear()} Claude Code Masterkurs</p>
             <div className="flex items-center gap-4">
-              <a href="/impressum" className="hover:text-apple-accent transition-colors">Impressum</a>
+              <Link to="/impressum" className="hover:text-apple-accent transition-colors">Impressum</Link>
               <span className="text-apple-border">|</span>
-              <a href="/datenschutz" className="hover:text-apple-accent transition-colors">Datenschutz</a>
+              <Link to="/datenschutz" className="hover:text-apple-accent transition-colors">Datenschutz</Link>
+              <span className="text-apple-border">|</span>
+              <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors">AGB</Link>
             </div>
           </div>
         </footer>
+        <CookieConsent />
       </div>
     </Router>
   );

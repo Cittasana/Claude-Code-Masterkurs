@@ -60,10 +60,14 @@ export const useAuthStore = create<AuthStore>()(
           set({ user, token, isAuthenticated: true, loading: false, error: null });
           return true;
         } catch (err) {
-          const message =
-            err instanceof ApiError
-              ? err.message
-              : 'Registrierung fehlgeschlagen';
+          let message: string;
+          if (err instanceof ApiError) {
+            message = err.message;
+          } else if (err instanceof TypeError && (err.message.includes('fetch') || err.message.includes('network'))) {
+            message = 'Server nicht erreichbar. Bitte prüfe deine Internetverbindung oder versuche es später erneut.';
+          } else {
+            message = 'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
+          }
           set({ loading: false, error: message });
           return false;
         }
@@ -76,10 +80,14 @@ export const useAuthStore = create<AuthStore>()(
           set({ user, token, isAuthenticated: true, loading: false, error: null });
           return true;
         } catch (err) {
-          const message =
-            err instanceof ApiError
-              ? err.message
-              : 'Login fehlgeschlagen';
+          let message: string;
+          if (err instanceof ApiError) {
+            message = err.message;
+          } else if (err instanceof TypeError && (err.message.includes('fetch') || err.message.includes('network'))) {
+            message = 'Server nicht erreichbar. Bitte prüfe deine Internetverbindung oder versuche es später erneut.';
+          } else {
+            message = 'Login fehlgeschlagen. Bitte versuche es erneut.';
+          }
           set({ loading: false, error: message });
           return false;
         }

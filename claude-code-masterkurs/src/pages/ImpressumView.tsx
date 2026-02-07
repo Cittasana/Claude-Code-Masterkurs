@@ -25,30 +25,31 @@ const ImpressumView = () => {
       </div>
 
       {/* Content */}
-      <div className="card p-8 space-y-6">
+      <div className="apple-card space-y-6">
         <section>
           <h2 className="text-xl font-semibold text-apple-text mb-3">Angaben gemäß § 5 TMG</h2>
           <div className="text-apple-textSecondary space-y-1">
-            <p className="font-medium text-apple-text">[Vor- und Nachname / Firmenname]</p>
-            <p>[Straße und Hausnummer]</p>
-            <p>[PLZ Ort]</p>
-            <p>Deutschland</p>
+            <p className="font-medium text-apple-text">Cittasana S.R.L.</p>
+            <p>Vertreten durch: Cosmo Maximilian Gräf</p>
+            <p>Strada Principala 69</p>
+            <p>327065 Carasova, Caras-Severin</p>
+            <p>Rumänien</p>
           </div>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-apple-text mb-3">Kontakt</h2>
           <div className="text-apple-textSecondary space-y-1">
-            <p>E-Mail: <span className="text-apple-accent">[deine@email.de]</span></p>
+            <p>E-Mail: <span className="text-apple-accent">office@cittasana.de</span></p>
           </div>
         </section>
 
         <section>
           <h2 className="text-xl font-semibold text-apple-text mb-3">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
           <div className="text-apple-textSecondary space-y-1">
-            <p className="font-medium text-apple-text">[Vor- und Nachname]</p>
-            <p>[Straße und Hausnummer]</p>
-            <p>[PLZ Ort]</p>
+            <p className="font-medium text-apple-text">Cosmo Maximilian Gräf</p>
+            <p>Strada Principala 69</p>
+            <p>327065 Carasova, Caras-Severin, Rumänien</p>
           </div>
         </section>
 
@@ -85,14 +86,6 @@ const ImpressumView = () => {
             des jeweiligen Autors bzw. Erstellers.
           </p>
         </section>
-
-        {/* Hinweis-Banner */}
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mt-6">
-          <p className="text-amber-400 text-sm font-medium">
-            ⚠️ Platzhalter: Bitte ersetze alle [eckigen Klammern] mit deinen echten Angaben
-            bevor du die Seite veröffentlichst.
-          </p>
-        </div>
       </div>
     </div>
   );

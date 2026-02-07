@@ -130,7 +130,7 @@ const DashboardView = () => {
           completed={level1Completed}
           total={level1Lessons}
           progress={level1Progress}
-          color="from-green-500/20 to-green-500/5"
+          color="from-apple-success/20 to-apple-success/5"
           barColor="bg-apple-success"
         />
         <LevelCard
@@ -139,17 +139,17 @@ const DashboardView = () => {
           completed={level2Completed}
           total={level2Lessons}
           progress={level2Progress}
-          color="from-yellow-500/20 to-yellow-500/5"
+          color="from-apple-warning/20 to-apple-warning/5"
           barColor="bg-apple-warning"
         />
         <LevelCard
-          icon={<Trophy className="text-purple-400" size={22} />}
+          icon={<Trophy className="text-apple-info" size={22} />}
           title={t('dashboard.level3')}
           completed={level3Completed}
           total={level3Lessons}
           progress={level3Progress}
-          color="from-purple-500/20 to-purple-500/5"
-          barColor="bg-purple-400"
+          color="from-apple-info/20 to-apple-info/5"
+          barColor="bg-apple-info"
         />
       </div>
 

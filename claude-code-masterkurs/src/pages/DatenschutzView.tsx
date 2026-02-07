@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, Shield } from 'lucide-react';
+import { ChevronLeft, Shield, Cookie } from 'lucide-react';
+import { resetCookieConsent } from '../components/UI/CookieConsent';
 
 const DatenschutzView = () => {
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ const DatenschutzView = () => {
       </div>
 
       {/* Content */}
-      <div className="card p-8 space-y-6">
+      <div className="apple-card space-y-6">
         <section>
           <h2 className="text-xl font-semibold text-apple-text mb-3">1. Datenschutz auf einen Blick</h2>
           <div className="text-apple-textSecondary space-y-3">
@@ -135,20 +136,30 @@ const DatenschutzView = () => {
         <section>
           <h2 className="text-xl font-semibold text-apple-text mb-3">7. Verantwortliche Stelle</h2>
           <div className="text-apple-textSecondary space-y-1 text-sm">
-            <p className="font-medium text-apple-text">[Vor- und Nachname]</p>
-            <p>[Straße und Hausnummer]</p>
-            <p>[PLZ Ort]</p>
-            <p>E-Mail: <span className="text-apple-accent">[deine@email.de]</span></p>
+            <p className="font-medium text-apple-text">Cittasana S.R.L.</p>
+            <p>Vertreten durch: Cosmo Maximilian Gräf</p>
+            <p>Strada Principala 69</p>
+            <p>327065 Carasova, Caras-Severin</p>
+            <p>Rumänien</p>
+            <p>E-Mail: <span className="text-apple-accent">office@cittasana.de</span></p>
           </div>
         </section>
 
-        {/* Hinweis-Banner */}
-        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 mt-6">
-          <p className="text-amber-400 text-sm font-medium">
-            ⚠️ Platzhalter: Bitte ersetze alle [eckigen Klammern] mit deinen echten Angaben
-            und prüfe die Datenschutzerklärung ggf. mit einem Generator wie e-recht24.de.
+        {/* Cookie-Einstellungen */}
+        <section>
+          <h2 className="text-xl font-semibold text-apple-text mb-3">8. Cookie-Einstellungen ändern</h2>
+          <p className="text-sm text-apple-textSecondary leading-relaxed mb-4">
+            Sie können Ihre Cookie-Einstellungen jederzeit ändern. Klicken Sie dazu auf den
+            folgenden Button, um den Cookie-Banner erneut anzuzeigen.
           </p>
-        </div>
+          <button
+            onClick={resetCookieConsent}
+            className="btn-secondary inline-flex items-center gap-2 text-sm"
+          >
+            <Cookie className="w-4 h-4" />
+            Cookie-Einstellungen zurücksetzen
+          </button>
+        </section>
       </div>
     </div>
   );

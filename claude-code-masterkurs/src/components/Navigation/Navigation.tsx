@@ -20,6 +20,7 @@ import {
   LogIn,
   LogOut,
   Settings,
+  FileText,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -28,6 +29,9 @@ import { useAuthStore } from '../../store/authStore';
 type DropdownId = 'learn' | 'community' | 'resources' | null;
 
 const LANGUAGES = ['de', 'en', 'fr', 'es'] as const;
+
+/** Auth-Seiten, auf denen ein vereinfachter Header gezeigt wird */
+const AUTH_PATHS = ['/login', '/register', '/password-reset', '/docs'];
 
 const Navigation = () => {
   const { t, i18n } = useTranslation();
@@ -45,6 +49,9 @@ const Navigation = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
+
+  // Vereinfachter Header auf Auth-Seiten
+  const isAuthPage = AUTH_PATHS.some((p) => location.pathname.startsWith(p));
 
   const isActive = (match: string) => {
     if (match === '/') return location.pathname === '/' || location.pathname === '/dashboard';
@@ -159,6 +166,44 @@ const Navigation = () => {
       </div>
     );
   };
+
+  // Vereinfachter Header für Auth-Seiten
+  if (isAuthPage) {
+    return (
+      <nav
+        aria-label={t('nav.ariaLabel')}
+        className="glass sticky top-0 z-50 border-b border-apple-border/50"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Link
+              to="/"
+              className="flex items-center gap-3 group shrink-0"
+            >
+              <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
+                CCM
+              </span>
+              <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
+                {t('nav.tagline')}
+              </span>
+            </Link>
+
+            {/* Dokumentation-Link */}
+            <div className="flex items-center gap-3">
+              <Link
+                to="/docs"
+                className="flex items-center gap-2 px-3 py-2 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors"
+              >
+                <FileText size={17} className="shrink-0" />
+                <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav
@@ -339,7 +384,7 @@ const Navigation = () => {
             ) : (
               <Link
                 to="/login"
-                className="flex items-center gap-2 px-3 py-2 rounded-apple text-sm font-medium text-apple-accent hover:bg-apple-accent/10 border border-apple-accent/20 hover:border-apple-accent/40 transition-colors"
+                className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
               >
                 <LogIn size={16} />
                 <span className="hidden lg:inline">{t('auth.loginButton', 'Anmelden')}</span>

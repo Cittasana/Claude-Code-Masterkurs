@@ -263,7 +263,7 @@ const ProgressReportView = () => {
               label={t('report.level3')}
               completed={level3Completed}
               total={level3Lessons.length}
-              color="bg-purple-400"
+              color="bg-apple-info"
             />
           </div>
         </div>

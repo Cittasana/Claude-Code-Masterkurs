@@ -50,6 +50,10 @@ server/dist
 .turbo
 .cache
 
+# Reports
+lighthouse-report.html
+stats.html
+
 # Hosting
 .vercel
 .netlify

@@ -132,9 +132,9 @@ const LessonView = () => {
   };
 
   const levelConfig = {
-    1: { label: t('lesson.levelBasics'), color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20', dot: 'bg-emerald-400' },
-    2: { label: t('lesson.levelAdvanced'), color: 'bg-amber-500/15 text-amber-400 border-amber-500/20', dot: 'bg-amber-400' },
-    3: { label: t('lesson.levelExpert'), color: 'bg-violet-500/15 text-violet-400 border-violet-500/20', dot: 'bg-violet-400' },
+    1: { label: t('lesson.levelBasics'), color: 'bg-apple-success/15 text-apple-success border-apple-success/20', dot: 'bg-apple-success' },
+    2: { label: t('lesson.levelAdvanced'), color: 'bg-apple-accent/15 text-apple-accent border-apple-accent/20', dot: 'bg-apple-accent' },
+    3: { label: t('lesson.levelExpert'), color: 'bg-apple-info/15 text-apple-info border-apple-info/20', dot: 'bg-apple-info' },
   };
 
   const currentLevel = levelConfig[lesson.level];
@@ -298,7 +298,7 @@ const LessonView = () => {
                         <span>Level {lesson.level} · {currentLevel.label}</span>
                       </span>
                       {isCompleted && (
-                        <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-success/10 text-apple-success border border-apple-success/20">
                           <CheckCircle2 size={13} />
                           <span>{t('lesson.completed')}</span>
                         </span>

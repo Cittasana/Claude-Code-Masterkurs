@@ -25,20 +25,14 @@ async function calculateTotalPoints(userId: string): Promise<number> {
 
 // ── Helper: Calculate Completed Lessons ─────────────────────────
 async function calculateCompletedLessons(userId: string): Promise<number[]> {
-  const [quizResults, projectResults] = await Promise.all([
-    prisma.quizResult.findMany({
-      where: { userId, completed: true },
-      select: { lessonId: true }
-    }),
-    prisma.projectResult.findMany({
-      where: { userId, completed: true },
-      select: { lessonId: true }
-    }),
-  ]);
+  // QuizResult hat lessonId, ProjectResult nur projectId (kein direkter Lesson-Bezug)
+  const quizResults = await prisma.quizResult.findMany({
+    where: { userId, completed: true },
+    select: { lessonId: true }
+  });
 
   const completedLessons = new Set<number>();
   quizResults.forEach(r => r.lessonId && completedLessons.add(r.lessonId));
-  projectResults.forEach(r => r.lessonId && completedLessons.add(r.lessonId));
 
   return Array.from(completedLessons).sort((a, b) => a - b);
 }

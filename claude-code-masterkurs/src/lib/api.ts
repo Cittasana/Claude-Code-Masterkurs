@@ -2,7 +2,10 @@
 // API Client – Zentraler fetch-Wrapper mit Auth-Header
 // ─────────────────────────────────────────────────────────────
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Bereinige die API-URL: Entferne Zeilenumbrüche und ungültige Zeichen,
+// die durch fehlerhafte Umgebungsvariablen entstehen können
+const RAW_API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE = RAW_API_URL.replace(/[\n\r\s]/g, '').replace(/^[^h]+(https?)/, '$1');
 
 /** Standardisierter API-Fehler */
 export class ApiError extends Error {

@@ -63,7 +63,8 @@ export const useAuthStore = create<AuthStore>()(
           let message: string;
           if (err instanceof ApiError) {
             message = err.message;
-          } else if (err instanceof TypeError && (err.message.includes('fetch') || err.message.includes('network'))) {
+          } else if (err instanceof TypeError) {
+            // Safari: "Load failed", Chrome: "Failed to fetch", Firefox: "NetworkError..."
             message = 'Server nicht erreichbar. Bitte prüfe deine Internetverbindung oder versuche es später erneut.';
           } else {
             message = 'Registrierung fehlgeschlagen. Bitte versuche es erneut.';
@@ -83,7 +84,8 @@ export const useAuthStore = create<AuthStore>()(
           let message: string;
           if (err instanceof ApiError) {
             message = err.message;
-          } else if (err instanceof TypeError && (err.message.includes('fetch') || err.message.includes('network'))) {
+          } else if (err instanceof TypeError) {
+            // Safari: "Load failed", Chrome: "Failed to fetch", Firefox: "NetworkError..."
             message = 'Server nicht erreichbar. Bitte prüfe deine Internetverbindung oder versuche es später erneut.';
           } else {
             message = 'Login fehlgeschlagen. Bitte versuche es erneut.';
@@ -161,8 +163,10 @@ export const useAuthStore = create<AuthStore>()(
 
       isBackendAvailable: async () => {
         try {
+          const rawUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+          const cleanUrl = rawUrl.replace(/[\n\r\s]/g, '').replace(/^[^h]+(https?)/, '$1');
           const res = await fetch(
-            `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/health`,
+            `${cleanUrl}/health`,
             { signal: AbortSignal.timeout(3000) },
           );
           return res.ok;

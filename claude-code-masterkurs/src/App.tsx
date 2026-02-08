@@ -33,6 +33,7 @@ const PasswordResetConfirmView = lazy(() => import('./views/PasswordResetConfirm
 const EmailVerifyView = lazy(() => import('./views/EmailVerifyView'));
 const SubscriptionSuccessView = lazy(() => import('./pages/SubscriptionSuccessView'));
 const DocsView = lazy(() => import('./pages/DocsView'));
+const LandingView = lazy(() => import('./pages/LandingView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -56,7 +57,8 @@ function App() {
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Suspense fallback={<div className="flex justify-center py-20"><LoadingSpinner /></div>}>
             <Routes>
-              <Route path="/" element={<DashboardView />} />
+              <Route index element={<LandingView />} />
+              <Route path="/dashboard" element={<DashboardView />} />
               <Route path="/lesson/:id" element={<LessonView />} />
               <Route path="/certificate" element={<CertificateView />} />
               <Route path="/dashboard" element={<DashboardView />} />
@@ -109,7 +111,7 @@ function NotFoundPage() {
     <div className="text-center py-20">
       <h1 className="text-6xl font-bold text-apple-accent mb-4 font-mono">404</h1>
       <p className="text-apple-muted mb-6 text-lg">{t('common.pageNotFound')}</p>
-      <a href="/" className="btn-primary inline-block">{t('common.backToDashboard')}</a>
+      <Link to="/dashboard" className="btn-primary inline-block">{t('common.backToDashboard')}</Link>
     </div>
   );
 }

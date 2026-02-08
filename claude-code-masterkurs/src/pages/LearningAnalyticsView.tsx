@@ -392,7 +392,7 @@ const LearningAnalyticsView = () => {
       {/* Header */}
       <div>
         <Link
-          to="/"
+          to="/dashboard"
           className="inline-flex items-center text-apple-muted hover:text-apple-text text-sm mb-4 transition-colors"
         >
           <ChevronLeft size={16} className="mr-1" />

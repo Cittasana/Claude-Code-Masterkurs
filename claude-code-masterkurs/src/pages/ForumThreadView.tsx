@@ -40,7 +40,7 @@ const ForumThreadView = () => {
     return (
       <div className="max-w-3xl mx-auto animate-fade-in-up">
         <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
-          <Link to="/" className="hover:text-apple-accent transition-colors">Dashboard</Link>
+          <Link to="/dashboard" className="hover:text-apple-accent transition-colors">Dashboard</Link>
           <span className="text-apple-border">/</span>
           <Link to="/forum" className="hover:text-apple-accent transition-colors">Forum</Link>
           <span className="text-apple-border">/</span>
@@ -63,7 +63,7 @@ const ForumThreadView = () => {
     <div className="max-w-3xl mx-auto animate-fade-in-up">
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
-        <Link to="/" className="hover:text-apple-accent transition-colors">Dashboard</Link>
+        <Link to="/dashboard" className="hover:text-apple-accent transition-colors">Dashboard</Link>
         <span className="text-apple-border">/</span>
         <Link to="/forum" className="hover:text-apple-accent transition-colors">Forum</Link>
         <span className="text-apple-border">/</span>

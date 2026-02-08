@@ -72,7 +72,7 @@ const ProfileView = () => {
     <div className="max-w-2xl mx-auto">
       {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm text-apple-muted mb-8">
-        <Link to="/" className="hover:text-apple-text transition-colors">
+        <Link to="/dashboard" className="hover:text-apple-text transition-colors">
           {t('nav.dashboard', 'Dashboard')}
         </Link>
         <ChevronRight size={14} />

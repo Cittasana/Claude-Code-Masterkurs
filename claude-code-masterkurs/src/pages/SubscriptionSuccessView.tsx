@@ -137,7 +137,7 @@ const SubscriptionSuccessView = () => {
 
           {/* CTA */}
           <Link
-            to="/"
+            to="/dashboard"
             className="btn-primary w-full flex items-center justify-center gap-2"
           >
             {t('common.startLearning', 'Zum Kurs')}

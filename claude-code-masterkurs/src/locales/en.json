@@ -19,7 +19,51 @@
     "language": "Language",
     "leaderboard": "Ranking",
     "analytics": "Analytics",
-    "challenges": "Challenges"
+    "challenges": "Challenges",
+    "documentation": "Documentation",
+    "openDashboard": "Open Dashboard"
+  },
+  "landing": {
+    "heroTitle": "Claude Code Masterkurs",
+    "heroSubtitle": "Learn AI-assisted programming – from basics to pro. Structured lessons, quizzes, live challenges, and an official certificate.",
+    "ctaStart": "Get started",
+    "ctaDocs": "Read the docs",
+    "signUp": "Sign up",
+    "readDocs": "Read the docs",
+    "openDashboard": "Open Dashboard",
+    "statsLessons": "Lessons",
+    "statsLevels": "Levels",
+    "statsQuizzes": "Quizzes",
+    "statsProjects": "Projects",
+    "featureLessons": "27 Lessons",
+    "featureLessonsDesc": "Structured course in 3 levels: Basics, Advanced, Expert. From setup to multi-agent orchestration.",
+    "featureChallenges": "Challenges & Playground",
+    "featureChallengesDesc": "Live coding, spaced repetition, and hands-on projects for lasting learning.",
+    "featureCert": "Certificate",
+    "featureCertDesc": "Official certificate upon completing quizzes and project requirements.",
+    "ctaText": "Ready to get started? Read the docs or register now.",
+    "sectionWhyTitle": "Why Claude Code?",
+    "sectionWhyLead": "Claude Code is Anthropic's AI coding assistant – right in your IDE. In this course you'll learn to use it effectively.",
+    "sectionWhy1": "Develop faster with natural language and precise code suggestions.",
+    "sectionWhy2": "Use MCP servers, skills, and subagents for complex workflows.",
+    "sectionWhy3": "Best practices for prompting, security, and production use.",
+    "sectionWhatTitle": "What you'll learn",
+    "sectionWhatIntro": "From first steps to orchestrating multiple agents – all in your language.",
+    "sectionWhatItems": "Basics & setup, CLAUDE.md, MCP & skills, custom agents, Git integration, hooks & slash commands, troubleshooting, CI/CD.",
+    "heroBenefit1": "Structured course – from basics to expert",
+    "heroBenefit2": "Certificate & hands-on projects included",
+    "heroBenefit3": "Fully in your language, at your own pace",
+    "trustLine": "Start with no commitment · No credit card required",
+    "socialProofLine": "For beginners and advanced learners"
+  },
+  "docs": {
+    "ctaTitle": "Ready to master Claude Code?",
+    "ctaSubtitle": "Create an account and start learning. Your progress is saved automatically.",
+    "ctaRegister": "Sign up",
+    "ctaLogin": "Already have an account? Sign in"
+  },
+  "register": {
+    "planLabel": "Choose your plan"
   },
   "common": {
     "dashboard": "Dashboard",

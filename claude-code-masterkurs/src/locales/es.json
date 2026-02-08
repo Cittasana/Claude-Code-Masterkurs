@@ -19,7 +19,51 @@
     "language": "Idioma",
     "leaderboard": "Clasificación",
     "analytics": "Analíticas",
-    "challenges": "Desafíos"
+    "challenges": "Desafíos",
+    "documentation": "Documentación",
+    "openDashboard": "Abrir panel"
+  },
+  "landing": {
+    "heroTitle": "Claude Code Masterkurs",
+    "heroSubtitle": "Aprende programación asistida por IA – de lo básico al nivel pro. Lecciones, quizzes, desafíos en vivo y certificado oficial.",
+    "ctaStart": "Empezar",
+    "ctaDocs": "Leer la documentación",
+    "signUp": "Registrarse",
+    "readDocs": "Leer la documentación",
+    "openDashboard": "Abrir panel",
+    "statsLessons": "Lecciones",
+    "statsLevels": "Niveles",
+    "statsQuizzes": "Cuestionarios",
+    "statsProjects": "Proyectos",
+    "featureLessons": "27 lecciones",
+    "featureLessonsDesc": "Curso estructurado en 3 niveles: Básico, Avanzado, Experto. Desde la instalación hasta la orquestación multi-agente.",
+    "featureChallenges": "Desafíos y Playground",
+    "featureChallengesDesc": "Live coding, repetición espaciada y proyectos prácticos para un aprendizaje duradero.",
+    "featureCert": "Certificado",
+    "featureCertDesc": "Certificado oficial al completar quizzes y proyectos.",
+    "ctaText": "¿Listo para empezar? Lee la documentación o regístrate.",
+    "sectionWhyTitle": "¿Por qué Claude Code?",
+    "sectionWhyLead": "Claude Code es el asistente de codificación IA de Anthropic – directamente en tu IDE. En este curso aprenderás a usarlo con eficacia.",
+    "sectionWhy1": "Desarrolla más rápido con lenguaje natural y sugerencias de código precisas.",
+    "sectionWhy2": "Usa servidores MCP, habilidades y subagentes para flujos complejos.",
+    "sectionWhy3": "Buenas prácticas para prompting, seguridad y uso en producción.",
+    "sectionWhatTitle": "Qué aprenderás",
+    "sectionWhatIntro": "Desde los primeros pasos hasta orquestar varios agentes – todo en tu idioma.",
+    "sectionWhatItems": "Bases e instalación, CLAUDE.md, MCP y habilidades, agentes personalizados, integración Git, hooks y slash commands, resolución de problemas, CI/CD.",
+    "heroBenefit1": "Curso estructurado – de lo básico al experto",
+    "heroBenefit2": "Certificado y proyectos prácticos incluidos",
+    "heroBenefit3": "Completamente en tu idioma, a tu ritmo",
+    "trustLine": "Empieza sin compromiso · No se requiere tarjeta",
+    "socialProofLine": "Para principiantes y avanzados"
+  },
+  "docs": {
+    "ctaTitle": "¿Listo para dominar Claude Code?",
+    "ctaSubtitle": "Crea una cuenta y empieza a aprender. Tu progreso se guarda automáticamente.",
+    "ctaRegister": "Registrarse",
+    "ctaLogin": "¿Ya tienes cuenta? Iniciar sesión"
+  },
+  "register": {
+    "planLabel": "Elige tu plan"
   },
   "common": {
     "dashboard": "Panel",

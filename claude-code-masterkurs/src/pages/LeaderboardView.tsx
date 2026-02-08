@@ -102,7 +102,7 @@ const LeaderboardView = () => {
     <div className="max-w-5xl mx-auto animate-fade-in-up">
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
-        <Link to="/" className="hover:text-apple-accent transition-colors">
+        <Link to="/dashboard" className="hover:text-apple-accent transition-colors">
           {t('common.dashboard')}
         </Link>
         <span className="text-apple-border">/</span>

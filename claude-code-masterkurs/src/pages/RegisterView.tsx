@@ -198,51 +198,59 @@ const RegisterView = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Preisauswahl */}
+            {/* Preisauswahl – einheitliche Kacheln, dezenter Akzent nur bei Auswahl */}
             <div>
               <label className="block text-sm font-medium text-apple-textSecondary mb-3">
-                Wähle dein Abo-Modell
+                {t('register.planLabel', 'Wähle dein Abo-Modell')}
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {plans.map((plan) => (
-                  <button
-                    key={plan.id}
-                    type="button"
-                    onClick={() => setSelectedPlan(plan.id)}
-                    className={`relative p-4 rounded-apple border-2 transition-all text-left ${
-                      selectedPlan === plan.id
-                        ? 'border-apple-accent bg-apple-accent/5'
-                        : 'border-apple-border hover:border-apple-accent/50'
-                    }`}
-                  >
-                    {plan.badge && (
-                      <div className="absolute -top-2 -right-2 bg-apple-accent text-white text-xs px-2 py-0.5 rounded-full font-medium">
-                        {plan.badge}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {plans.map((plan) => {
+                  const isSelected = selectedPlan === plan.id;
+                  return (
+                    <button
+                      key={plan.id}
+                      type="button"
+                      onClick={() => setSelectedPlan(plan.id)}
+                      className={`relative p-5 rounded-apple-lg border text-left transition-all duration-200 ${
+                        isSelected
+                          ? 'border-apple-accent/70 bg-apple-surface ring-2 ring-apple-accent/20'
+                          : 'border-apple-border bg-apple-surface hover:border-apple-borderLight hover:bg-apple-hover/50'
+                      }`}
+                    >
+                      {/* Badge dezent im Karteninneren */}
+                      {plan.badge && (
+                        <span className="inline-block text-[11px] font-medium text-apple-accent bg-apple-accent/15 px-2 py-0.5 rounded-full mb-3">
+                          {plan.badge}
+                        </span>
+                      )}
+                      <div className="flex items-center gap-2.5 mb-3">
+                        <div
+                          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 ${
+                            isSelected
+                              ? 'border-apple-accent bg-apple-accent'
+                              : 'border-apple-borderLight'
+                          }`}
+                        >
+                          {isSelected && (
+                            <Check size={12} className="text-white" strokeWidth={3} />
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-apple-text text-sm">
+                          {plan.name}
+                        </h3>
                       </div>
-                    )}
-                    <div className="flex items-center gap-2 mb-2">
-                      <div
-                        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                          selectedPlan === plan.id
-                            ? 'border-apple-accent bg-apple-accent'
-                            : 'border-apple-border'
-                        }`}
-                      >
-                        {selectedPlan === plan.id && (
-                          <Check size={14} className="text-white" />
-                        )}
-                      </div>
-                      <h3 className="font-semibold text-apple-text">{plan.name}</h3>
-                    </div>
-                    <p className="text-2xl font-bold text-apple-accent">
-                      {plan.price}
-                    </p>
-                    <p className="text-xs text-apple-muted">{plan.period}</p>
-                    <p className="text-xs text-apple-textSecondary mt-2">
-                      {plan.description}
-                    </p>
-                  </button>
-                ))}
+                      <p className={`text-xl font-bold tabular-nums ${
+                        isSelected ? 'text-apple-accent' : 'text-apple-text'
+                      }`}>
+                        {plan.price}
+                      </p>
+                      <p className="text-xs text-apple-muted mt-0.5">{plan.period}</p>
+                      <p className="text-xs text-apple-textSecondary mt-3 leading-snug">
+                        {plan.description}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

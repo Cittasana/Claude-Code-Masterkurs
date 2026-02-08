@@ -125,31 +125,31 @@ const DashboardView = () => {
       {/* Level Breakdown */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <LevelCard
-          icon={<BookOpen className="text-apple-success" size={22} />}
+          icon={<BookOpen className="text-apple-accent" size={22} />}
           title={t('dashboard.level1')}
           completed={level1Completed}
           total={level1Lessons}
           progress={level1Progress}
-          color="from-apple-success/20 to-apple-success/5"
-          barColor="bg-apple-success"
+          color="from-apple-accent/20 to-apple-accent/5"
+          barColor="bg-gradient-to-r from-apple-accentMuted to-apple-accent"
         />
         <LevelCard
-          icon={<TrendingUp className="text-apple-warning" size={22} />}
+          icon={<TrendingUp className="text-apple-accent" size={22} />}
           title={t('dashboard.level2')}
           completed={level2Completed}
           total={level2Lessons}
           progress={level2Progress}
-          color="from-apple-warning/20 to-apple-warning/5"
-          barColor="bg-apple-warning"
+          color="from-apple-accent/20 to-apple-accent/5"
+          barColor="bg-gradient-to-r from-apple-accentMuted to-apple-accent"
         />
         <LevelCard
-          icon={<Trophy className="text-apple-info" size={22} />}
+          icon={<Trophy className="text-apple-accent" size={22} />}
           title={t('dashboard.level3')}
           completed={level3Completed}
           total={level3Lessons}
           progress={level3Progress}
-          color="from-apple-info/20 to-apple-info/5"
-          barColor="bg-apple-info"
+          color="from-apple-accent/20 to-apple-accent/5"
+          barColor="bg-gradient-to-r from-apple-accentMuted to-apple-accent"
         />
       </div>
 
@@ -432,7 +432,7 @@ function LevelCard({
   barColor: string;
 }) {
   return (
-    <div className="apple-card-hover">
+    <div className="apple-card">
       <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-apple-lg opacity-50 pointer-events-none`} />
       <div className="relative">
         <div className="flex items-center space-x-3 mb-4">

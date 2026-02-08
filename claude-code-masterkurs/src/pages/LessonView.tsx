@@ -97,7 +97,7 @@ const LessonView = () => {
     return (
       <div className="text-center py-20">
         <p className="text-apple-text text-xl">{t('lesson.notFound')}</p>
-        <Link to="/" className="btn-primary mt-4 inline-block">
+        <Link to="/dashboard" className="btn-primary mt-4 inline-block">
           {t('common.backToDashboard')}
         </Link>
       </div>

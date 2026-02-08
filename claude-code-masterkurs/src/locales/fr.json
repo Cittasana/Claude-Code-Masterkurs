@@ -19,7 +19,51 @@
     "language": "Langue",
     "leaderboard": "Classement",
     "analytics": "Analytiques",
-    "challenges": "Défis"
+    "challenges": "Défis",
+    "documentation": "Documentation",
+    "openDashboard": "Ouvrir le tableau de bord"
+  },
+  "landing": {
+    "heroTitle": "Claude Code Masterkurs",
+    "heroSubtitle": "Apprenez la programmation assistée par l'IA – des bases au niveau pro. Leçons, quiz, défis en direct et certificat officiel.",
+    "ctaStart": "Commencer",
+    "ctaDocs": "Lire la documentation",
+    "signUp": "S'inscrire",
+    "readDocs": "Lire la documentation",
+    "openDashboard": "Ouvrir le tableau de bord",
+    "statsLessons": "Leçons",
+    "statsLevels": "Niveaux",
+    "statsQuizzes": "Quiz",
+    "statsProjects": "Projets",
+    "featureLessons": "27 leçons",
+    "featureLessonsDesc": "Cours structuré en 3 niveaux : Bases, Avancé, Expert. De l'installation à l'orchestration multi-agents.",
+    "featureChallenges": "Défis et Playground",
+    "featureChallengesDesc": "Live coding, répétition espacée et projets pratiques pour une mémorisation durable.",
+    "featureCert": "Certificat",
+    "featureCertDesc": "Certificat officiel après validation des quiz et des projets.",
+    "ctaText": "Prêt à commencer ? Consultez la documentation ou inscrivez-vous.",
+    "sectionWhyTitle": "Pourquoi Claude Code ?",
+    "sectionWhyLead": "Claude Code est l'assistant de codage IA d'Anthropic – directement dans votre IDE. Ce cours vous apprend à l'utiliser efficacement.",
+    "sectionWhy1": "Développez plus vite avec le langage naturel et des suggestions de code précises.",
+    "sectionWhy2": "Utilisez les serveurs MCP, les compétences et les sous-agents pour des flux complexes.",
+    "sectionWhy3": "Bonnes pratiques pour le prompting, la sécurité et la production.",
+    "sectionWhatTitle": "Ce que vous apprendrez",
+    "sectionWhatIntro": "Des premiers pas à l'orchestration de plusieurs agents – le tout dans votre langue.",
+    "sectionWhatItems": "Bases et installation, CLAUDE.md, MCP et compétences, agents personnalisés, intégration Git, hooks et slash commands, dépannage, CI/CD.",
+    "heroBenefit1": "Cours structuré – des bases à l’expert",
+    "heroBenefit2": "Certificat et projets pratiques inclus",
+    "heroBenefit3": "Entièrement en français, à votre rythme",
+    "trustLine": "Sans engagement · Aucune carte bancaire requise",
+    "socialProofLine": "Pour débutants et avancés"
+  },
+  "docs": {
+    "ctaTitle": "Prêt à maîtriser Claude Code ?",
+    "ctaSubtitle": "Créez un compte et commencez à apprendre. Votre progression est enregistrée automatiquement.",
+    "ctaRegister": "S'inscrire",
+    "ctaLogin": "Déjà un compte ? Se connecter"
+  },
+  "register": {
+    "planLabel": "Choisissez votre abonnement"
   },
   "common": {
     "dashboard": "Tableau de bord",

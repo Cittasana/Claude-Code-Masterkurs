@@ -71,7 +71,7 @@ export default function EmailVerifyView() {
               Du kannst jetzt alle Funktionen des Masterkurses nutzen.
             </p>
             <Link
-              to="/"
+              to="/dashboard"
               className="btn-primary inline-flex items-center gap-2"
             >
               Zum Dashboard

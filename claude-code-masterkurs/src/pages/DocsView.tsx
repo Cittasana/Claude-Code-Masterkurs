@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   BookOpen,
   Zap,
@@ -147,6 +148,43 @@ const WHY_REASONS = [
       'Entwickler, die Claude Code effektiv nutzen, berichten von 3-10x Produktivitätssteigerungen. Dieser Kurs zeigt dir genau, wie du dieses Potenzial freischaltest.',
   },
 ];
+
+function DocsCtaSection() {
+  const { t } = useTranslation();
+  return (
+    <section className="text-center pb-8">
+      <div
+        className="apple-card py-12 px-8"
+        style={{
+          background:
+            'linear-gradient(135deg, rgba(255,149,0,0.08) 0%, rgba(36,36,36,1) 60%)',
+        }}
+      >
+        <h2 className="text-2xl sm:text-3xl font-bold text-apple-text mb-4">
+          {t('docs.ctaTitle')}
+        </h2>
+        <p className="text-apple-muted max-w-md mx-auto mb-8">
+          {t('docs.ctaSubtitle')}
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            to="/register"
+            className="btn-primary flex items-center gap-2 text-lg px-8 py-3"
+          >
+            {t('docs.ctaRegister')}
+            <ArrowRight size={20} />
+          </Link>
+          <Link
+            to="/login"
+            className="text-apple-accent hover:text-apple-accentHover text-sm font-medium transition-colors"
+          >
+            {t('docs.ctaLogin')}
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 const DocsView = () => {
   return (
@@ -415,37 +453,7 @@ const DocsView = () => {
       </section>
 
       {/* ── CTA ────────────────────────────────────────── */}
-      <section className="text-center pb-8">
-        <div
-          className="apple-card py-12 px-8"
-          style={{
-            background:
-              'linear-gradient(135deg, rgba(255,149,0,0.08) 0%, rgba(36,36,36,1) 60%)',
-          }}
-        >
-          <h2 className="text-2xl sm:text-3xl font-bold text-apple-text mb-4">
-            Bereit, Claude Code zu meistern?
-          </h2>
-          <p className="text-apple-muted max-w-md mx-auto mb-8">
-            Erstelle einen kostenlosen Account und starte jetzt mit dem Lernen. Dein Fortschritt wird automatisch gespeichert.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link
-              to="/register"
-              className="btn-primary flex items-center gap-2 text-lg px-8 py-3"
-            >
-              Kostenlos registrieren
-              <ArrowRight size={20} />
-            </Link>
-            <Link
-              to="/login"
-              className="text-apple-accent hover:text-apple-accentHover text-sm font-medium transition-colors"
-            >
-              Bereits registriert? Anmelden
-            </Link>
-          </div>
-        </div>
-      </section>
+      <DocsCtaSection />
     </div>
   );
 };

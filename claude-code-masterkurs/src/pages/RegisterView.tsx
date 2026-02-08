@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, AlertCircle, Eye, EyeOff, ArrowRight, Check, Tag, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -32,9 +32,13 @@ const RegisterView = () => {
   const [isCreatingCheckout, setIsCreatingCheckout] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'monthly' | 'yearly' | 'lifetime'>('monthly');
 
-  // Redirect wenn bereits eingeloggt
+  // Ref um zu verhindern, dass der useEffect-Redirect während des
+  // Registrierungs- & Checkout-Flows auslöst
+  const isRegisteringRef = useRef(false);
+
+  // Redirect wenn bereits eingeloggt (aber NICHT während Registrierung/Checkout)
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isRegisteringRef.current) {
       navigate('/', { replace: true });
     }
   }, [isAuthenticated, navigate]);
@@ -135,9 +139,14 @@ const RegisterView = () => {
     }
 
     try {
+      // Redirect-Guard aktivieren BEVOR register() aufgerufen wird,
+      // damit der useEffect nicht zur Startseite navigiert
+      isRegisteringRef.current = true;
+
       // 1. Account erstellen
       const success = await register(email, password, displayName || undefined);
       if (!success) {
+        isRegisteringRef.current = false;
         return;
       }
 
@@ -152,8 +161,11 @@ const RegisterView = () => {
       // 3. Zu Stripe Checkout weiterleiten
       if (checkoutSession.url) {
         window.location.href = checkoutSession.url;
+      } else {
+        throw new Error('Keine Checkout-URL von Stripe erhalten');
       }
     } catch (error: any) {
+      isRegisteringRef.current = false;
       setLocalError(error.message || 'Fehler beim Erstellen des Abonnements');
       setIsCreatingCheckout(false);
     }

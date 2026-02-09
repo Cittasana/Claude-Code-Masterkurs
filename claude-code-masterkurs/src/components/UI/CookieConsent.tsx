@@ -76,8 +76,11 @@ const CookieConsent = () => {
       <div className="absolute inset-0 -top-screen bg-black/20 backdrop-blur-[1px] pointer-events-none" />
 
       {/* Banner */}
-      <div className="relative bg-apple-surface/95 backdrop-blur-xl border-t border-apple-border shadow-2xl shadow-black/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+      <div
+        className="relative bg-apple-surface/95 backdrop-blur-xl border-t border-apple-border shadow-2xl shadow-black/40"
+        style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-5">
           <div className="flex flex-col gap-4">
             {/* Header */}
             <div className="flex items-start justify-between gap-4">
@@ -190,7 +193,7 @@ const CookieConsent = () => {
             )}
 
             {/* Buttons */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-3">
               <button
                 onClick={handleAcceptAll}
                 className="btn-primary flex items-center justify-center gap-2 text-sm"

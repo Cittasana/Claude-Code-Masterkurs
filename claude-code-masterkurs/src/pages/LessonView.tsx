@@ -151,13 +151,13 @@ const LessonView = () => {
 
       <div className="max-w-6xl mx-auto animate-fade-in-up">
         {/* Breadcrumb + Kurs-Fortschritt */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-2 text-sm text-apple-muted font-mono">
-            <Link to="/dashboard" className="hover:text-apple-accent transition-colors">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
+          <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-apple-muted font-mono min-w-0">
+            <Link to="/dashboard" className="hover:text-apple-accent transition-colors shrink-0">
               {t('common.dashboard')}
             </Link>
-            <ChevronRight size={14} className="text-apple-border" />
-            <span className="text-apple-textSecondary">
+            <ChevronRight size={14} className="text-apple-border shrink-0" />
+            <span className="text-apple-textSecondary truncate">
               {t('lesson.lessonXOfY', { current: lessonId + 1, total: totalLessons })}
             </span>
           </div>
@@ -393,19 +393,19 @@ const LessonView = () => {
             )}
 
             {/* Navigation */}
-            <div className="flex items-center justify-between py-8 border-t border-apple-border/40">
-              <div className="flex-1">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 sm:gap-0 py-6 sm:py-8 border-t border-apple-border/40">
+              <div className="flex-1 min-w-0">
                 {prevLesson ? (
                   <Link
                     to={`/lesson/${prevLesson.id}`}
-                    className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50"
+                    className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50 w-full sm:w-auto min-h-[44px]"
                   >
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform flex-shrink-0" />
-                    <div className="text-left">
+                    <div className="text-left min-w-0">
                       <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
                         {t('lesson.previousLesson')}
                       </p>
-                      <p className="text-sm font-semibold">{prevLesson.title}</p>
+                      <p className="text-sm font-semibold truncate">{prevLesson.title}</p>
                     </div>
                   </Link>
                 ) : (
@@ -413,24 +413,24 @@ const LessonView = () => {
                 )}
               </div>
 
-              <div className="flex-1 flex justify-end">
+              <div className="flex-1 flex justify-end min-w-0">
                 {nextLesson ? (
                   <Link
                     to={`/lesson/${nextLesson.id}`}
-                    className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50"
+                    className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50 w-full sm:w-auto justify-end min-h-[44px]"
                   >
-                    <div className="text-right">
+                    <div className="text-right min-w-0">
                       <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
                         {t('lesson.nextLesson')}
                       </p>
-                      <p className="text-sm font-semibold">{nextLesson.title}</p>
+                      <p className="text-sm font-semibold truncate">{nextLesson.title}</p>
                     </div>
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform flex-shrink-0" />
                   </Link>
                 ) : (
                   <Link
                     to="/dashboard"
-                    className="inline-flex items-center space-x-2 text-apple-accent hover:text-apple-accentHover transition-colors group px-4 py-3 rounded-apple hover:bg-apple-accent/5"
+                    className="inline-flex items-center space-x-2 text-apple-accent hover:text-apple-accentHover transition-colors group px-4 py-3 rounded-apple hover:bg-apple-accent/5 min-h-[44px]"
                   >
                     <span className="text-sm font-semibold">{t('lesson.toDashboard')}</span>
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />

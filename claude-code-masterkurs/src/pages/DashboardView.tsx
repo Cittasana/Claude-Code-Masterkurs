@@ -432,7 +432,7 @@ function LevelCard({
   barColor: string;
 }) {
   return (
-    <div className="apple-card">
+    <div className="apple-card relative">
       <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-apple-lg opacity-50 pointer-events-none`} />
       <div className="relative">
         <div className="flex items-center space-x-3 mb-4">

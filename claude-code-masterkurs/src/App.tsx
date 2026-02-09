@@ -54,7 +54,7 @@ function App() {
     <Router>
       <div className="min-h-screen bg-apple-bg font-sans">
         <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <Suspense fallback={<div className="flex justify-center py-20"><LoadingSpinner /></div>}>
             <Routes>
               <Route index element={<LandingView />} />
@@ -87,15 +87,15 @@ function App() {
             </Routes>
           </Suspense>
         </main>
-        <footer className="border-t border-apple-border mt-12 py-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-apple-muted">
+        <footer className="border-t border-apple-border mt-8 sm:mt-12 py-5 sm:py-6" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-apple-muted text-center sm:text-left">
             <p>&copy; {new Date().getFullYear()} Claude Code Masterkurs</p>
-            <div className="flex items-center gap-4">
-              <Link to="/impressum" className="hover:text-apple-accent transition-colors">Impressum</Link>
-              <span className="text-apple-border">|</span>
-              <Link to="/datenschutz" className="hover:text-apple-accent transition-colors">Datenschutz</Link>
-              <span className="text-apple-border">|</span>
-              <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors">AGB</Link>
+            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-1">
+              <Link to="/impressum" className="hover:text-apple-accent transition-colors py-1">Impressum</Link>
+              <span className="text-apple-border hidden sm:inline">|</span>
+              <Link to="/datenschutz" className="hover:text-apple-accent transition-colors py-1">Datenschutz</Link>
+              <span className="text-apple-border hidden sm:inline">|</span>
+              <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors py-1">AGB</Link>
             </div>
           </div>
         </footer>
@@ -109,7 +109,7 @@ function NotFoundPage() {
   const { t } = useTranslation();
   return (
     <div className="text-center py-20">
-      <h1 className="text-6xl font-bold text-apple-accent mb-4 font-mono">404</h1>
+      <h1 className="text-5xl sm:text-6xl font-bold text-apple-accent mb-4 font-mono">404</h1>
       <p className="text-apple-muted mb-6 text-lg">{t('common.pageNotFound')}</p>
       <Link to="/dashboard" className="btn-primary inline-block">{t('common.backToDashboard')}</Link>
     </div>

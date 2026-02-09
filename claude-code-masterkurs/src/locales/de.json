@@ -21,7 +21,9 @@
     "analytics": "Analytics",
     "challenges": "Challenges",
     "documentation": "Dokumentation",
-    "openDashboard": "Dashboard öffnen"
+    "openDashboard": "Dashboard öffnen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",

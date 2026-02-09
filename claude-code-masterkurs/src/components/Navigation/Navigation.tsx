@@ -21,6 +21,8 @@ import {
   LogOut,
   Settings,
   FileText,
+  Menu,
+  X,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -41,6 +43,7 @@ const Navigation = () => {
   const [openDropdown, setOpenDropdown] = useState<DropdownId>(null);
   const [langOpen, setLangOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const langDropdownRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -57,6 +60,21 @@ const Navigation = () => {
     if (match === '/') return location.pathname === '/dashboard';
     return location.pathname.startsWith(match);
   };
+
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -167,47 +185,173 @@ const Navigation = () => {
     );
   };
 
-  // Landing-Page-Header: Logo, DOCS, Dashboard/Login
-  if (isLandingPage) {
-    return (
-      <nav
-        aria-label={t('nav.ariaLabel')}
-        className="glass sticky top-0 z-50 border-b border-apple-border/50"
+  // Mobile Drawer (shared for landing + main app when used)
+  const mobileDrawer = (
+    <>
+      <div
+        className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity"
+        style={{ opacity: mobileMenuOpen ? 1 : 0, pointerEvents: mobileMenuOpen ? 'auto' : 'none' }}
+        onClick={() => setMobileMenuOpen(false)}
+        aria-hidden
+      />
+      <div
+        className={`fixed top-0 right-0 bottom-0 w-full max-w-sm bg-apple-surface border-l border-apple-border shadow-2xl z-50 lg:hidden flex flex-col transition-transform duration-300 ease-out ${
+          mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-3 group shrink-0">
-              <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
-                CCM
-              </span>
-              <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
-                {t('nav.tagline')}
-              </span>
-            </Link>
-
-            <div className="flex items-center gap-3">
-              <Link
-                to="/docs"
-                className="flex items-center gap-2 px-3 py-2 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors"
-              >
-                <FileText size={17} className="shrink-0" />
-                <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
+        <div className="flex items-center justify-between h-16 px-4 border-b border-apple-border shrink-0">
+          <span className="text-apple-muted font-mono text-xs uppercase tracking-widest">Menü</span>
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-2 rounded-apple text-apple-muted hover:text-apple-text hover:bg-apple-hover"
+            aria-label={t('nav.closeMenu', 'Menü schließen')}
+          >
+            <X size={22} />
+          </button>
+        </div>
+        <nav className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-1">
+          <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-apple text-apple-text hover:bg-apple-hover">
+            <Home size={20} className="shrink-0 text-apple-accent" />
+            {t('nav.dashboard')}
+          </Link>
+          <div className="pt-2 pb-1">
+            <p className="px-4 text-[10px] font-mono uppercase tracking-wider text-apple-muted">{t('nav.learn')}</p>
+          </div>
+          {learnItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive(item.match) ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
+                <Icon size={18} className="shrink-0" />
+                {t(item.labelKey)}
               </Link>
-              {isAuthenticated ? (
-                <Link to="/dashboard" className="btn-primary flex items-center gap-2 px-4 py-2 text-sm">
-                  <span className="hidden sm:inline">{t('nav.openDashboard', 'Dashboard öffnen')}</span>
-                  <span className="sm:hidden">{t('nav.dashboard')}</span>
-                </Link>
-              ) : (
-                <Link to="/login" className="btn-primary flex items-center gap-2 px-4 py-2 text-sm">
-                  <LogIn size={16} />
-                  <span className="hidden lg:inline">{t('auth.loginButton', 'Anmelden')}</span>
-                </Link>
-              )}
+            );
+          })}
+          <div className="pt-2 pb-1">
+            <p className="px-4 text-[10px] font-mono uppercase tracking-wider text-apple-muted">{t('nav.community')}</p>
+          </div>
+          {communityItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive(item.match) ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
+                <Icon size={18} className="shrink-0" />
+                {t(item.labelKey)}
+              </Link>
+            );
+          })}
+          <div className="pt-2 pb-1">
+            <p className="px-4 text-[10px] font-mono uppercase tracking-wider text-apple-muted">{t('nav.resources')}</p>
+          </div>
+          {resourcesItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive(item.match) ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
+                <Icon size={18} className="shrink-0" />
+                {t(item.labelKey)}
+              </Link>
+            );
+          })}
+          <Link to="/challenges" onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive('/challenges') ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
+            <Zap size={18} className="shrink-0" />
+            {t('nav.challenges')}
+          </Link>
+          <div className="border-t border-apple-border my-4" />
+          <div className="flex items-center gap-3 px-4 py-3 rounded-apple bg-apple-bg/50">
+            <span className="text-lg">🔥</span>
+            <div>
+              <p className="text-[10px] text-apple-muted font-mono uppercase">{t('nav.streak')}</p>
+              <p className="text-sm font-semibold text-apple-text">{streak} {t('nav.days')}</p>
             </div>
           </div>
-        </div>
-      </nav>
+          <div className="flex items-center gap-3 px-4 py-3 rounded-apple bg-apple-bg/50">
+            <BarChart3 size={18} className="text-apple-accent" />
+            <div>
+              <p className="text-[10px] text-apple-muted font-mono uppercase">{t('nav.points')}</p>
+              <p className="text-sm font-semibold text-apple-text">{totalPoints}</p>
+            </div>
+          </div>
+          <div className="pt-2">
+            <p className="px-4 text-[10px] font-mono uppercase tracking-wider text-apple-muted">{t('nav.language')}</p>
+            <div className="flex flex-wrap gap-2 mt-2 px-4">
+              {LANGUAGES.map((lng) => (
+                <button
+                  key={lng}
+                  type="button"
+                  onClick={() => { i18n.changeLanguage(lng); }}
+                  className={`px-3 py-1.5 rounded-apple text-sm font-mono ${i18n.language === lng ? 'bg-apple-accent text-white' : 'bg-apple-elevated text-apple-textSecondary hover:bg-apple-hover'}`}
+                >
+                  {lng.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="border-t border-apple-border my-4" />
+          {isAuthenticated && user ? (
+            <>
+              <Link to="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-apple text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text">
+                <Settings size={18} className="shrink-0" />
+                {t('auth.profile', 'Profil')}
+              </Link>
+              <button type="button" onClick={() => { setMobileMenuOpen(false); logout(); }} className="w-full flex items-center gap-3 px-4 py-3 rounded-apple text-apple-textSecondary hover:text-apple-error hover:bg-apple-hover text-left">
+                <LogOut size={18} className="shrink-0" />
+                {t('auth.logout', 'Abmelden')}
+              </button>
+            </>
+          ) : (
+            <Link to="/login" onClick={() => setMobileMenuOpen(false)} className="btn-primary flex items-center justify-center gap-2 px-4 py-3 w-full">
+              <LogIn size={18} />
+              {t('auth.loginButton', 'Anmelden')}
+            </Link>
+          )}
+        </nav>
+      </div>
+    </>
+  );
+
+  // Landing-Page-Header: Logo, DOCS, Dashboard/Login (+ Hamburger auf kleinen Screens)
+  if (isLandingPage) {
+    return (
+      <>
+        <nav
+          aria-label={t('nav.ariaLabel')}
+          className="glass sticky top-0 z-50 border-b border-apple-border/50"
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-14 sm:h-16">
+              <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0">
+                <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
+                  CCM
+                </span>
+                <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
+                  {t('nav.tagline')}
+                </span>
+              </Link>
+
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Link
+                  to="/docs"
+                  className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2.5 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors min-h-[44px] min-w-[44px] sm:min-w-0"
+                >
+                  <FileText size={17} className="shrink-0" />
+                  <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
+                </Link>
+                {isAuthenticated ? (
+                  <Link to="/dashboard" className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm min-h-[44px]">
+                    <span className="hidden sm:inline">{t('nav.openDashboard', 'Dashboard öffnen')}</span>
+                    <span className="sm:hidden">{t('nav.dashboard')}</span>
+                  </Link>
+                ) : (
+                  <Link to="/login" className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm min-h-[44px]">
+                    <LogIn size={16} />
+                    <span className="hidden lg:inline">{t('auth.loginButton', 'Anmelden')}</span>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </nav>
+      </>
     );
   }
 
@@ -219,8 +363,8 @@ const Navigation = () => {
         className="glass sticky top-0 z-50 border-b border-apple-border/50"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <Link to="/" className="flex items-center gap-3 group shrink-0">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0">
               <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
                 CCM
               </span>
@@ -229,10 +373,10 @@ const Navigation = () => {
               </span>
             </Link>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 to="/docs"
-                className="flex items-center gap-2 px-3 py-2 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors"
+                className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2.5 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors min-h-[44px] min-w-[44px] sm:min-w-0"
               >
                 <FileText size={17} className="shrink-0" />
                 <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
@@ -245,28 +389,41 @@ const Navigation = () => {
   }
 
   return (
-    <nav
-      aria-label={t('nav.ariaLabel')}
-      className="glass sticky top-0 z-50 border-b border-apple-border/50"
-    >
-      <div ref={navRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
-        <div className="flex items-center justify-between h-16 overflow-visible">
-          {/* Logo – CCM + Tagline einzeilig */}
-          <Link
-            to="/"
-            className="flex items-center gap-3 group shrink-0 min-w-0"
-            style={{ maxWidth: '100%' }}
-          >
-            <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors shrink-0">
-              CCM
-            </span>
-            <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
-              {t('nav.tagline')}
-            </span>
-          </Link>
+    <>
+      {mobileDrawer}
+      <nav
+        aria-label={t('nav.ariaLabel')}
+        className="glass sticky top-0 z-50 border-b border-apple-border/50"
+      >
+        <div ref={navRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
+          <div className="flex items-center justify-between h-14 sm:h-16 overflow-visible">
+            {/* Logo – CCM + Tagline einzeilig */}
+            <Link
+              to="/"
+              className="flex items-center gap-3 group shrink-0 min-w-0"
+              style={{ maxWidth: '100%' }}
+            >
+              <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors shrink-0">
+                CCM
+              </span>
+              <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
+                {t('nav.tagline')}
+              </span>
+            </Link>
 
-          {/* Navigation: Dashboard | Lernen ▼ | Community ▼ | Ressourcen ▼ | Challenges */}
-          <div className="flex items-center space-x-1 overflow-visible">
+            {/* Mobile: Hamburger */}
+            <button
+              type="button"
+              className="lg:hidden flex items-center justify-center p-2.5 rounded-apple text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover min-h-[44px] min-w-[44px]"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label={t('nav.openMenu', 'Menü öffnen')}
+              aria-expanded={mobileMenuOpen}
+            >
+              <Menu size={22} />
+            </button>
+
+            {/* Navigation: Dashboard | Lernen ▼ | Community ▼ | Ressourcen ▼ | Challenges (nur Desktop) */}
+            <div className="hidden lg:flex items-center space-x-1 overflow-visible">
             <Link
               to="/dashboard"
               className={`flex items-center space-x-2 px-4 py-2 rounded-apple text-sm font-medium transition-all duration-200 shrink-0 ${
@@ -348,8 +505,8 @@ const Navigation = () => {
             </div>
           </div>
 
-          {/* Stats + Auth */}
-          <div className="hidden md:flex items-center space-x-4 shrink-0">
+          {/* Stats + Auth (nur Desktop) */}
+          <div className="hidden lg:flex items-center space-x-4 shrink-0">
             <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-apple bg-apple-surface/60 border border-apple-border/50">
               <span className="text-lg">🔥</span>
               <div>
@@ -433,6 +590,7 @@ const Navigation = () => {
         </div>
       </div>
     </nav>
+    </>
   );
 };
 

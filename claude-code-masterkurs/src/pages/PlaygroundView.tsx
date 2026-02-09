@@ -79,15 +79,15 @@ const PlaygroundView = () => {
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-8">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
+        <div className="min-w-0">
           <div className="flex items-center space-x-3 mb-2">
-            <Terminal className="text-apple-accent" size={28} />
-            <h1 className="text-3xl font-bold text-apple-text tracking-tight">
+            <Terminal className="text-apple-accent shrink-0" size={28} />
+            <h1 className="text-2xl sm:text-3xl font-bold text-apple-text tracking-tight truncate">
               Projekt-Playground
             </h1>
           </div>
-          <p className="text-apple-textSecondary max-w-2xl">
+          <p className="text-apple-textSecondary max-w-2xl text-sm sm:text-base">
             Trainiere Claude Code Konzepte interaktiv in der CLI-Simulation. Wähle ein Projekt,
             löse die Aufgaben und erhalte sofortiges Feedback.
           </p>
@@ -98,7 +98,7 @@ const PlaygroundView = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Sidebar: Project & Task Selection */}
         <div className="lg:col-span-3">
-          <div className="apple-card !p-0 overflow-hidden sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+          <div className="apple-card !p-0 overflow-hidden max-h-[70vh] lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] overflow-y-auto">
             <div className="px-4 py-3 border-b border-apple-border bg-apple-elevated/50">
               <h3 className="text-sm font-bold text-apple-text flex items-center space-x-2">
                 <BookOpen size={14} className="text-apple-accent" />

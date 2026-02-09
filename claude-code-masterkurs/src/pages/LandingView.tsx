@@ -159,8 +159,8 @@ const LandingView = () => {
       </section>
 
       {/* Feature-Karten – Apple Cards Grau, Orange nur Icon */}
-      <section className="py-12 sm:py-16 border-t border-apple-border">
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+      <section className="py-10 sm:py-16 border-t border-apple-border px-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 sm:gap-8 max-w-5xl mx-auto">
           <div className="apple-card text-center p-6 border border-apple-border bg-apple-surface hover:border-apple-borderLight transition-colors">
             <BookOpen size={28} className="mx-auto mb-3 text-apple-accent" />
             <h3 className="font-semibold text-apple-text mb-2">{t('landing.featureLessons')}</h3>

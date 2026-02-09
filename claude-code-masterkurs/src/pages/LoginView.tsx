@@ -40,7 +40,7 @@ const LoginView = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[70vh]">
+    <div className="flex items-center justify-center min-h-[70vh] px-2 sm:px-0 py-6">
       <div className="w-full max-w-md">
         {/* Claude Code Masterkurs Logo */}
         <div className="text-center mb-8">
@@ -125,7 +125,7 @@ const LoginView = () => {
             <button
               type="submit"
               disabled={loading || !email || !password}
-              className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="btn-primary w-full flex items-center justify-center gap-2 min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

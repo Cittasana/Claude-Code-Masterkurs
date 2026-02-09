@@ -11250,13 +11250,16 @@ EMPFEHLUNG:
     id: 27,
     level: 3,
     title: 'Fast Mode & Opus 4.6',
-    description: 'Schnellere Antworten mit Fast Mode und das neueste Opus-Modell optimal nutzen.',
-    duration: '12 Minuten',
+    description:
+      'Schnellere Antworten mit Fast Mode, Preismodell, Effort Level, Rate Limits – und Opus 4.6 mit 1M Kontext, adaptivem Thinking und Modellauswahl.',
+    duration: '45 Minuten',
     objectives: [
-      'Fast Mode für Opus 4.6 verstehen und aktivieren',
-      'Wann Fast Mode sinnvoll ist (Geschwindigkeit vs. Kosten)',
-      'Opus 4.6 und Modell-Aliase (sonnet, opus) nutzen',
-      'Antwortgeschwindigkeit gezielt optimieren',
+      'Fast Mode aktivieren, deaktivieren und den Kosten-Tradeoff verstehen',
+      'Fast Mode vs. Effort Level – zwei verschiedene Geschwindigkeits-Hebel',
+      'Opus 4.6 vertieft: 1M Kontext, adaptives Thinking, Benchmarks',
+      'Wann Sonnet vs. Opus – Kosten, Qualität und agentische Aufgaben',
+      'Rate Limits, Fallback-Verhalten und Organisations-Einstellungen kennen',
+      'Kontext-Management als wichtigste Ressource verstehen',
     ],
     content: [
       {
@@ -11266,32 +11269,315 @@ EMPFEHLUNG:
       {
         type: 'text',
         content:
-          'Fast Mode ist ein Feature für Claude Opus 4.6, das die Ausgabe-Geschwindigkeit deutlich erhöht. Die Token-Generierung kann bis zu 2,5x schneller sein – bei Premium-Preisen. Ideal, wenn du Opus für komplexe Aufgaben nutzt und schnelleres Feedback willst.',
+          'Fast Mode ist ein Feature speziell für Claude Opus 4.6, das die Ausgabe-Geschwindigkeit deutlich erhöht – bei höheren Kosten pro Token. Wichtig: Fast Mode ist KEIN anderes Modell. Es nutzt dasselbe Opus 4.6 mit einer anderen API-Konfiguration, die Geschwindigkeit vor Kosteneffizienz priorisiert. Du bekommst identische Qualität und Fähigkeiten, nur schnellere Antworten. Fast Mode ist derzeit in der Research Preview – Preise, Verfügbarkeit und Verhalten können sich ändern.',
       },
       {
         type: 'highlight',
-        title: '💡 Offizielle Docs',
+        title: '💡 Kernkonzept',
         content:
-          'Fast Mode ist in der Research Preview. Aktuelle Details und Aktivierung findest du unter: [Speed up responses with fast mode](https://code.claude.com/docs/en/fast-mode).',
+          'Fast Mode = gleiche Intelligenz, niedrigere Latenz, höherer Preis. Es ist kein Qualitäts-Upgrade, sondern ein Geschwindigkeits-Boost für Opus 4.6.',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `WAS FAST MODE TECHNISCH IST
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Standard Opus 4.6:
+┌─────────────────────────────────────┐
+│  Modell: Opus 4.6                   │
+│  API-Config: Kostenoptimiert        │
+│  Latenz: Normal                     │
+│  Preis: Standard                    │
+└─────────────────────────────────────┘
+
+Fast Mode Opus 4.6:
+┌─────────────────────────────────────┐
+│  Modell: Opus 4.6 (IDENTISCH!)     │
+│  API-Config: Geschwindigkeitsopti.  │
+│  Latenz: ~2.5x schneller           │
+│  Preis: Höher ($30/$150 MTok)      │
+└─────────────────────────────────────┘
+
+→ Gleiche Qualität, gleiche Fähigkeiten
+→ Einziger Unterschied: API-Routing
+→ KEIN anderes Modell, KEIN Downgrade`,
       },
       {
         type: 'heading',
-        content: '🔧 Fast Mode nutzen',
-      },
-      {
-        type: 'list',
-        content: `- **In der Sitzung**: Slash-Command \`/fast\` umschalten – schnelle Antworten an/aus
-- **Modell**: Nur mit **Opus 4.6** verfügbar (\`claude-opus-4-6\` bzw. Alias \`opus\`)
-- **Kosten**: Höhere Kosten pro Token im Vergleich zum Standard-Modus
-- **Einsatz**: Besonders sinnvoll bei langen Code-Generierungen oder vielen kleinen Rückfragen`,
-      },
-      {
-        type: 'heading',
-        content: '📌 Opus 4.6 im Überblick',
+        content: '🔧 Fast Mode aktivieren und deaktivieren',
       },
       {
         type: 'text',
-        content: `Opus 4.6 ist Anthropics leistungsstärkstes Modell für agentische und langfristige Aufgaben. Es bringt u.a. 1M Token Kontext-Fenster (Beta), adaptive Thinking-Empfehlung und Top-Werte in Benchmarks. Für die tägliche Entwicklung reicht oft Sonnet; für schwierige Refactorings, Architektur-Entscheidungen und Multi-Agent-Setups lohnt sich Opus.`,
+        content: `Es gibt zwei Wege, Fast Mode umzuschalten:
+
+**1. Slash-Command (empfohlen):** Tippe \`/fast\` und drücke Tab – Fast Mode togglet an/aus. Funktioniert in der CLI und in der VS Code Extension.
+
+**2. Settings-Datei:** Setze \`"fastMode": true\` in deiner User-Settings-Datei (z.B. \`~/.claude/settings.json\`).
+
+Fast Mode bleibt über Sessions hinweg erhalten – du musst es nicht jedes Mal neu aktivieren.
+
+**Was passiert beim Aktivieren?**
+- Falls du ein anderes Modell nutzt, wechselt Claude Code automatisch zu Opus 4.6.
+- Du siehst die Bestätigung: „Fast mode ON".
+- Ein kleines ↯-Symbol erscheint neben dem Prompt, solange Fast Mode aktiv ist.
+- \`/fast\` erneut eingeben zeigt den aktuellen Status oder deaktiviert es.
+
+**Was passiert beim Deaktivieren?**
+- Du bleibst auf Opus 4.6 – das Modell wechselt NICHT zurück zum vorherigen Modell.
+- Um ein anderes Modell zu nutzen: \`/model sonnet\` oder \`/model\` Menü.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Fast Mode in der Sitzung togglen
+/fast
+
+# Status prüfen (zeigt ON/OFF)
+/fast
+
+# Modell separat wechseln (Fast Mode bleibt unabhängig)
+/model sonnet
+/model opus
+
+# Fast Mode über Settings-Datei dauerhaft setzen
+# In ~/.claude/settings.json:
+# { "fastMode": true }`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Kosten und Preistabelle (offizielle Docs)',
+      },
+      {
+        type: 'text',
+        content: `Fast Mode hat höhere Token-Preise als Standard-Opus. Offizielle Preistabelle (Stand: Februar 2026, Research Preview):
+
+| Modus | Input (pro 1M Token) | Output (pro 1M Token) |
+|---|---|---|
+| Fast Mode Opus 4.6 (< 200K Kontext) | $30 | $150 |
+| Fast Mode Opus 4.6 (> 200K Kontext) | $60 | $225 |
+
+Fast Mode ist kompatibel mit dem erweiterten 1M-Token-Kontextfenster. Beachte: Bei mehr als 200K Token Kontext verdoppeln sich die Input-Kosten und die Output-Kosten steigen um 50%.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Kostenfalle: Mid-Conversation-Aktivierung',
+        content:
+          'Wenn du Fast Mode MITTEN in einer Konversation einschaltest, zahlst du den vollen uncached Fast-Mode-Input-Preis für den gesamten bisherigen Kontext. Das ist deutlich teurer als wenn du Fast Mode von Anfang an aktiviert hättest. Tipp: Fast Mode am besten am Session-Start aktivieren!',
+      },
+      {
+        type: 'text',
+        content: `Fast Mode wird direkt über Extra Usage abgerechnet – auch wenn du noch Abo-Kontingent übrig hast. Fast-Mode-Tokens zählen nicht gegen dein Plan-Kontingent und werden ab dem ersten Token zum Fast-Mode-Preis berechnet.
+
+**Kostenbeispiel:** Du hast eine Konversation mit 100K Token Kontext aufgebaut (Standard-Opus). Jetzt schaltest du Fast Mode ein. Dein nächster Prompt sendet alle 100K Token als Input zum Fast-Mode-Preis ($30/MTok statt Standard). Das sind $3 extra für den einen Prompt, nur weil du mittendrin gewechselt hast. Hättest du von Anfang an Fast Mode genutzt, wäre der Kontext bereits gecacht und günstiger.`,
+      },
+      {
+        type: 'heading',
+        content: '⚖️ Fast Mode vs. Effort Level – zwei verschiedene Hebel',
+      },
+      {
+        type: 'text',
+        content: `Viele Einsteiger verwechseln Fast Mode und Effort Level. Beide beeinflussen die Antwort-Geschwindigkeit, aber auf völlig unterschiedliche Art:
+
+| Einstellung | Was es tut | Qualitätseffekt | Kosteneffekt |
+|---|---|---|---|
+| **Fast Mode** | API-Routing priorisiert Geschwindigkeit | Keine Qualitätsänderung | Höhere Kosten |
+| **Niedriger Effort** | Weniger Extended Thinking | Potenziell niedrigere Qualität bei Komplexem | Niedrigere Kosten |
+| **Beides kombiniert** | Schnellste Antworten möglich | Potenziell niedrigere Qualität | Höhere Kosten durch Fast Mode, aber weniger Tokens durch niedrigeren Effort |
+
+Du kannst beides kombinieren: Fast Mode + niedriger Effort Level = maximale Geschwindigkeit für einfache Tasks.
+
+**Effort Level** reduziert die Menge an internem „Nachdenken" (Extended Thinking), die Claude verwendet. Bei einfachen Aufgaben (Formatierung, Umbenennung, kleine Edits) ist ein niedriger Effort Level sinnvoll. Bei Architektur-Entscheidungen oder komplexem Debugging brauchst du vollen Effort.
+
+**Extended Thinking (Adaptive bei Opus 4.6):** Bei Opus 4.6 ist das Thinking adaptiv – das Modell entscheidet selbst, wie viel Nachdenken eine Aufgabe braucht, statt ein festes Budget zu haben. Ein niedriger Effort Level überschreibt dieses adaptive Verhalten und zwingt das Modell, weniger zu denken.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Praxis-Empfehlung: Die vier Geschwindigkeits-Stufen',
+        content: `Stufe 1 (maximale Qualität): Opus + kein Fast Mode + voller Effort → Architektur, Plan Mode
+Stufe 2 (Standard): Opus + kein Fast Mode + Standard Effort → Tägliche Entwicklung
+Stufe 3 (schnelle Iteration): Opus + Fast Mode + Standard Effort → Rapid Prototyping, Debugging
+Stufe 4 (maximale Geschwindigkeit): Opus + Fast Mode + niedriger Effort → Triviale Aufgaben, Formatting`,
+      },
+      {
+        type: 'heading',
+        content: '📋 Voraussetzungen für Fast Mode',
+      },
+      {
+        type: 'list',
+        content: `Fast Mode erfordert ALLE folgenden Bedingungen:
+
+- **Opus 4.6 Modell**: Fast Mode funktioniert ausschließlich mit Opus 4.6 (\`claude-opus-4-6\` / Alias \`opus\`).
+- **Extra Usage aktiviert**: Dein Account muss Extra Usage aktiviert haben – in den Console Billing Settings oder durch einen Team-Admin.
+- **Nicht auf Drittanbieter-Clouds**: Fast Mode ist NICHT verfügbar auf Amazon Bedrock, Google Vertex AI oder Microsoft Azure Foundry. Nur über Anthropic Console API und Claude-Abo-Pläne.
+- **Teams/Enterprise: Admin muss freigeben**: Fast Mode ist standardmäßig deaktiviert für Teams/Enterprise. Ein Admin muss es explizit in den Claude Code Preferences oder Admin Settings aktivieren.
+
+Wenn dein Admin Fast Mode nicht freigegeben hat, zeigt \`/fast\` die Meldung: „Fast mode has been disabled by your organization."`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `CHECKLISTE: FAST MODE AKTIVIEREN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+□ Claude Code installiert und authentifiziert
+□ Abo-Plan: Pro, Max, Team oder Enterprise
+□ Extra Usage in Billing Settings aktiviert
+  → Console: platform.claude.com/settings/organization/billing
+□ Nicht auf Bedrock/Vertex/Azure (nicht unterstützt)
+□ Bei Teams/Enterprise: Admin hat Fast Mode freigeschaltet
+  → Console: platform.claude.com/claude-code/preferences
+  → Claude AI: claude.ai/admin-settings/claude-code
+□ In Claude Code: /model opus (falls noch nicht)
+□ /fast → "Fast mode ON" + ↯-Symbol erscheint
+
+WENN ES NICHT KLAPPT:
+• "Fast mode has been disabled by your organization"
+  → Admin muss es freischalten
+• Kein ↯-Symbol?
+  → Falsches Modell? Nur Opus 4.6 unterstützt Fast Mode
+• Fehler bei Extra Usage?
+  → Billing Settings prüfen`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Rate Limits und automatischer Fallback',
+      },
+      {
+        type: 'text',
+        content: `Fast Mode hat separate Rate Limits von Standard-Opus. Wenn du das Fast-Mode-Limit erreichst oder dein Extra-Usage-Guthaben aufgebraucht ist, passiert automatisch Folgendes:
+
+1. Fast Mode fällt automatisch auf Standard-Opus 4.6 zurück.
+2. Das ↯-Symbol wird grau → Cooldown-Anzeige.
+3. Du arbeitest mit Standardgeschwindigkeit und Standardpreisen weiter – kein Abbruch, keine Error-Message, keine Unterbrechung.
+4. Wenn der Cooldown abläuft, wird Fast Mode automatisch wieder aktiviert.
+
+Du kannst Fast Mode auch manuell deaktivieren statt auf den Cooldown zu warten: einfach \`/fast\` erneut eingeben.
+
+**Wichtig:** Der Fallback ist nahtlos. Du merkst es nur am grauen ↯-Symbol und der etwas langsameren Antwortzeit. Der Workflow wird nicht unterbrochen. Wenn du in einem kritischen Debugging-Moment bist, musst du dir keine Sorgen machen.`,
+      },
+      {
+        type: 'heading',
+        content: '📌 Opus 4.6 im Detail – warum es für Claude Code zählt',
+      },
+      {
+        type: 'text',
+        content: `Opus 4.6 ist Anthropics leistungsstärkstes Modell, veröffentlicht am 5. Februar 2026. Es ist speziell für agentische und langfristige Aufgaben optimiert. Laut Anthropic plant es sorgfältiger, hält agentische Tasks länger durch, arbeitet zuverlässiger in großen Codebases und hat bessere Code-Review- und Debugging-Fähigkeiten – auch um eigene Fehler zu erkennen.
+
+In Claude Code ist Opus 4.6 die erste Wahl wenn es um die schwierigsten Aufgaben geht. Aber es ist auch die teuerste Option. Das Verständnis der drei Kernfeatures hilft dir, es gezielt und kosteneffizient einzusetzen.`,
+      },
+      {
+        type: 'heading',
+        content: '📦 Feature 1: Das 1M Token Kontextfenster (Beta)',
+      },
+      {
+        type: 'text',
+        content: `Das Standard-Kontextfenster von Claude-Modellen ist 200K Token. Opus 4.6 erweitert dies auf bis zu 1 Million Token im Beta.
+
+**Was bedeutet 1M Token in der Praxis?**
+- Eine durchschnittliche Code-Datei hat 200-500 Token.
+- Ein ganzes Monorepo mit 500 Dateien = ca. 150K-250K Token.
+- Mit 1M Token kannst du also mehrere komplette Projekte oder ein sehr großes Projekt vollständig im Kontext haben.
+- Lange Konversationen mit vielen File-Reads und Tool-Outputs bleiben länger im Kontext, bevor Compaction nötig wird.
+
+**Aber Achtung:** Mehr Kontext ≠ automatisch bessere Ergebnisse. Die offiziellen Best Practices betonen: Das Kontextfenster ist die wichtigste Ressource, die du managen musst. Bei vollem Kontext leidet die Qualität – auch bei Opus. Und mehr Token im Kontext = höhere Kosten (besonders im Fast Mode mit >200K: $60/$225 MTok).
+
+Die empfohlene Strategie: Nutze Skills und Subagents, um den Kontext gezielt zu beladen statt alles auf einmal zu laden. Lies nicht blind alle Dateien ein, sondern lass Claude zuerst suchen und dann gezielt lesen.`,
+      },
+      {
+        type: 'heading',
+        content: '🧠 Feature 2: Adaptive Reasoning (Extended Thinking)',
+      },
+      {
+        type: 'text',
+        content: `Frühere Modelle hatten ein festes Thinking-Budget: Entweder Extended Thinking an oder aus. Opus 4.6 führt Adaptive Reasoning ein – das Modell entscheidet dynamisch, wie viel „Nachdenken" eine Aufgabe braucht.
+
+**Einfache Aufgabe** (z.B. „Benenne die Variable x um in userId"):
+→ Wenig internes Reasoning, schnelle Antwort, wenige Thinking-Tokens.
+
+**Mittlere Aufgabe** (z.B. „Implementiere eine Pagination-Komponente"):
+→ Moderates Reasoning, überlegt kurz über API-Design und Edge Cases.
+
+**Komplexe Aufgabe** (z.B. „Analysiere die Architektur und schlage eine Migration von REST zu GraphQL vor"):
+→ Tiefes Reasoning, umfangreiche interne Analyse, viele Thinking-Tokens.
+
+Das spart Tokens und Geld bei simplen Aufgaben und liefert die nötige Tiefe bei schwierigen. Du musst das Thinking-Budget nicht mehr manuell steuern – Opus 4.6 macht das adaptiv.
+
+**In der Praxis:** Du merkst den Unterschied daran, dass triviale Antworten schneller kommen und komplexe Antworten sorgfältiger durchdacht sind. Das adaptive Verhalten lässt sich über den Effort Level beeinflussen: ein niedriger Effort Level „deckelt" die Thinking-Zeit auch bei komplexen Aufgaben.`,
+      },
+      {
+        type: 'heading',
+        content: '📊 Feature 3: Benchmark-Ergebnisse und was sie bedeuten',
+      },
+      {
+        type: 'text',
+        content: `Opus 4.6 führt mehrere relevante Benchmarks an:
+
+**Terminal-Bench 2.0 (Agentisches Coding):**
+Testet, wie gut ein Modell autonome Coding-Tasks in einer Terminal-Umgebung durchführt – genau das, was Claude Code tut. Opus 4.6 hat den höchsten Score aller getesteten Modelle. Das bedeutet: Es ist besonders gut darin, Dateien zu lesen, Code zu schreiben, Tests auszuführen und Fehler zu finden – in einem langen, autonomen Workflow.
+
+**Humanity's Last Exam (Komplexes Reasoning):**
+Ein multidisziplinärer Reasoning-Test, der verschiedene Wissensdomänen abdeckt. Opus 4.6 hat die anderen Frontier-Modelle übertroffen. Das ist relevant für Aufgaben wie Architektur-Analyse, Code-Review mit tiefem Verständnis, oder wenn Claude Code Entscheidungen treffen muss, die breites Kontextwissen erfordern.
+
+**Warum das für dich zählt:** Wenn du Claude Code für einfache Aufgaben nutzt (Formatting, Umbenennung, kleine Edits), wirst du den Unterschied zwischen Sonnet und Opus kaum merken. Sobald die Aufgaben komplex werden – Multi-File-Refactorings, Architektur-Entscheidungen, schwieriges Debugging – hat Opus einen messbaren Qualitätsvorsprung.`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Wann Sonnet – wann Opus?',
+      },
+      {
+        type: 'text',
+        content: `Die Modellwahl ist eine der wichtigsten Entscheidungen in deinem Claude-Code-Workflow. Hier eine detaillierte Entscheidungshilfe:`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `MODELL-ENTSCHEIDUNGSBAUM
+━━━━━━━━━━━━━━━━━━━━━━
+
+Ist die Aufgabe klar definiert und betrifft wenige Dateien?
+  → JA: Sonnet (günstiger, schneller)
+  → NEIN: ↓
+
+Erfordert die Aufgabe tiefes Architektur-Verständnis?
+  → JA: Opus
+  → NEIN: ↓
+
+Betrifft die Aufgabe mehr als 5-10 Dateien?
+  → JA: Opus (besseres Multi-File-Reasoning)
+  → NEIN: ↓
+
+Nutzt du Agent Teams oder mehrere Subagents?
+  → JA: Opus für den Lead, Sonnet für einfache Teammates
+  → NEIN: ↓
+
+Brauchst du mehr als 200K Token Kontext?
+  → JA: Opus (1M Kontext-Fenster)
+  → NEIN: Sonnet
+
+FAUSTREGELN:
+• 80% der täglichen Arbeit: Sonnet reicht
+• 20% der schwierigen Aufgaben: Opus lohnt sich
+• Spar-Tipp: Starte mit Sonnet, wechsle zu Opus wenn nötig
+• Kosten-Tipp: Opus-Subagents nur für Kern-Tasks`,
+      },
+      {
+        type: 'text',
+        content: `**Sonnet wählen für:**
+- Alltags-Entwicklung mit schnellen Iterationen und klaren Tasks
+- Gut dokumentierte Codebases mit klaren Konventionen
+- Einfache Bug-Fixes, Feature-Implementierungen
+- Kostenbewusstes Arbeiten
+- Die meisten Subagent-Aufgaben (Code-Review einer Datei, Tests schreiben)
+
+**Opus wählen für:**
+- Unklare Architektur, komplexe Planungsfragen
+- Schwere Refactorings über viele Dateien
+- Code-Reviews mit Sicherheits-/Performance-Fokus
+- Multi-Agent-Setups als Lead (Agent Teams)
+- Wenn du das 1M-Kontextfenster brauchst
+- Schwieriges Debugging, wo systematisches Reasoning zählt
+- Plan Mode für komplexe Aufgaben`,
       },
       {
         type: 'code',
@@ -11301,102 +11587,578 @@ claude --model opus
 
 # In der Sitzung: Modell wechseln
 /model opus
+/model sonnet
 
-# Fast Mode in der Sitzung togglen
-/fast`,
+# Fast Mode togglen (nur Opus 4.6)
+/fast
+
+# Kombination: Opus + Fast Mode für schnelle Iteration
+# 1. /model opus  2. /fast
+
+# Modell in CLAUDE.md als Empfehlung für das Projekt dokumentieren:
+# (in CLAUDE.md)
+# ## Modell-Empfehlung
+# - Tägliche Arbeit: Sonnet
+# - Architektur/Refactoring: Opus
+# - Schnelle Iteration: Opus + /fast`,
       },
       {
         type: 'heading',
-        content: '🎯 Wann Fast Mode – wann Standard?',
+        content: '🎯 Praxisszenarien: Fast Mode richtig einsetzen',
       },
       {
-        type: 'list',
-        content: `**Fast Mode sinnvoll:**
-- Lange Code-Generierung, wo du schnell Ergebnis sehen willst
-- Iterative kleine Änderungen mit Opus
-- Wenn Latenz stört, Kosten zweitrangig sind
+        type: 'text',
+        content: `**Szenario 1 – Rapid Prototyping:**
+Du baust schnell einen Prototyp und brauchst viele kleine Iterationen. Du sendest 20-30 Prompts in einer Stunde.
+→ Fast Mode AN, Effort Standard. Schnelleres Feedback bei jedem Prompt. Die Zeitersparnis summiert sich.
 
-**Standard bevorzugen:**
-- Kostenbewusste Nutzung
-- Maximale Qualität bei schwierigen Reasoning-Aufgaben
-- Wenn du nicht auf Opus 4.6 setzt`,
+**Szenario 2 – Live Debugging:**
+Ein Bug tritt auf und du debuggst interaktiv mit Claude. Du liest Fehler, Claude schlägt Fixes vor, du testest – schnelle Zyklen.
+→ Fast Mode AN. Die niedrigere Latenz macht den Dialog flüssiger.
+
+**Szenario 3 – Lange autonome Aufgabe:**
+Du gibst Claude ein großes Refactoring: „Migriere alle API-Routen von Express zu Fastify." Claude arbeitet 10 Minuten autonom.
+→ Fast Mode AUS. Du wartest sowieso, und die Kosten wären unnötig höher.
+
+**Szenario 4 – CI/CD Pipeline:**
+Claude läuft headless in einer GitHub Action und reviewed einen PR.
+→ Fast Mode AUS. Latenz ist irrelevant bei automatisierten Pipelines.
+
+**Szenario 5 – Architektur-Planung im Plan Mode:**
+Du brauchst maximale Reasoning-Tiefe für eine wichtige Architektur-Entscheidung.
+→ Fast Mode AUS, voller Effort Level. Qualität vor Geschwindigkeit.
+
+**Szenario 6 – Agent Teams mit Mixed Models:**
+Lead auf Opus, Teammates auf Sonnet für einfache Tasks, einer auf Opus für den kritischen Pfad.
+→ Lead mit Fast Mode für flüssige Koordination, Teammates ohne Fast Mode zur Kostenkontrolle.`,
+      },
+      {
+        type: 'heading',
+        content: '📚 Kontext-Management – die wichtigste Ressource',
+      },
+      {
+        type: 'text',
+        content: `Die offiziellen Best Practices und „How Claude Code works" betonen: Das Kontextfenster ist die wichtigste Ressource, die du managen musst. Das gilt unabhängig vom Modell und unabhängig von Fast Mode.
+
+**Wie der Kontext sich füllt:**
+Jede Nachricht, jedes gelesene File, jeder Befehlsoutput und jede Tool-Antwort verbraucht Tokens im Kontextfenster. Eine einzige Debugging-Session oder Codebase-Exploration kann Zehntausende Tokens erzeugen. Bei vollem Kontext beginnt Claude, frühere Instruktionen zu „vergessen" oder mehr Fehler zu machen.
+
+**Strategien zum Kontext-Management:**
+- Nutze \`/compact\` oder die Summarize-Option in /rewind, um den Kontext gezielt zu komprimieren.
+- Delegiere Recherche an Subagents – sie haben eigene Kontextfenster und belasten deinen nicht.
+- Lies nicht blind alle Dateien ein: Lass Claude suchen, dann gezielt lesen.
+- Nutze Skills für Wissen, das nicht immer geladen sein muss.
+- Starte neue Sessions für neue Aufgabenbereiche statt alles in eine Session zu packen.
+- Beobachte die Kontextauslastung in der Statuszeile (konfigurierbar über Status Line Settings).`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Fast Mode = gleiche Qualität, weniger Latenz, mehr Kosten
+✅ Immer am Session-Start aktivieren (Mid-Conversation ist teurer!)
+✅ Nur für Opus 4.6 verfügbar – wird automatisch gewechselt
+✅ Automatischer Fallback bei Rate Limits (grauer ↯-Indikator)
+✅ Fast Mode + Effort Level sind zwei unabhängige Geschwindigkeits-Hebel
+✅ Vier Geschwindigkeitsstufen: Qualität → Standard → Schnell → Maximal
+✅ Extra Usage muss aktiviert sein; Teams/Enterprise: Admin-Freigabe nötig
+✅ Opus 4.6 = 1M Kontext (Beta), adaptives Thinking, beste Benchmarks
+✅ 80/20-Regel: Sonnet für Alltag, Opus für Schwieriges
+✅ Kontext-Management ist die wichtigste Ressource – unabhängig vom Modell`,
       },
     ],
   },
+
+  // --- Lektion 28: Agent Teams & Checkpointing ---
   {
     id: 28,
     level: 3,
     title: 'Agent Teams & Checkpointing',
-    description: 'Mehrere Claude-Code-Instanzen als Team koordinieren und Änderungen mit Checkpoints verwalten.',
-    duration: '18 Minuten',
+    description:
+      'Mehrere Claude-Code-Instanzen als Team orchestrieren – Architektur, Display Modes, Task-System, Hooks, Troubleshooting – und Checkpointing mit allen Restore-Optionen.',
+    duration: '45 Minuten',
     objectives: [
-      'Agent Teams (experimentell) verstehen und aktivieren',
-      'Checkpointing für Rückversetzen von Änderungen nutzen',
-      'Session-Zustand und Code-Änderungen gezielt zurückspulen',
-      'Team-Leads, Teammates und geteilte Task-Listen einordnen',
+      'Agent Teams aktivieren, starten und mit Lead/Teammates/Task-Listen arbeiten',
+      'Display Modes (In-Process vs. Split-Pane/tmux), Delegate Mode und direkte Teammate-Kommunikation',
+      'Agent Teams vs. Subagents: Vergleichstabelle und Entscheidungshilfe',
+      'Checkpointing: automatisches Tracking, /rewind, alle 5 Restore-Optionen, Limitations',
+      'Best Practices, Quality Gates mit Hooks und Troubleshooting',
     ],
     content: [
+      // --- TEIL 1: AGENT TEAMS ---
       {
         type: 'heading',
-        content: '👥 Agent Teams (experimentell)',
+        content: '👥 Teil 1: Agent Teams',
       },
       {
         type: 'text',
         content:
-          'Agent Teams ermöglichen die Koordination mehrerer Claude-Code-Sitzungen, die als Team zusammenarbeiten: mit Team-Leads, Teammates und gemeinsamen Task-Listen. So können parallele Arbeitsstränge (z.B. Frontend und Backend) von verschiedenen „Agenten“ bearbeitet werden, während ein Lead die Übersicht hält.',
+          'Agent Teams lassen dich mehrere Claude-Code-Instanzen koordinieren, die als Team zusammenarbeiten. Eine Session ist der Team Lead, der Arbeit koordiniert, Tasks zuweist und Ergebnisse zusammenfasst. Teammates arbeiten unabhängig, jeder in seinem eigenen Kontextfenster, und können direkt miteinander kommunizieren – nicht nur über den Lead. (Quelle: code.claude.com/docs/en/agent-teams)',
       },
       {
-        type: 'list',
-        content: `- **Aktivierung**: Experimentell über \`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1\`
-- **Konzepte**: Team Lead, Teammates, geteilte Task-Listen, Nachrichten zwischen Agenten
-- **Docs**: [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams)
-- **Hinweis**: Feature wird aktiv weiterentwickelt; Changelog und Docs für aktuelle Optionen prüfen`,
+        type: 'highlight',
+        title: '⚠️ Experimentell',
+        content:
+          'Agent Teams sind experimentell und standardmäßig deaktiviert. Sie haben bekannte Limitierungen bei Session-Resumption, Task-Koordination und Shutdown-Verhalten. Immer den Changelog und die Docs für den aktuellen Stand prüfen.',
       },
       {
         type: 'heading',
-        content: '⏪ Checkpointing',
+        content: '🎯 Wann Agent Teams einsetzen?',
+      },
+      {
+        type: 'text',
+        content: `Agent Teams sind am effektivsten, wenn parallele Exploration echten Mehrwert bringt:
+
+- **Research und Review**: Mehrere Teammates untersuchen verschiedene Aspekte eines Problems gleichzeitig, teilen dann Ergebnisse und hinterfragen gegenseitig.
+- **Neue Module oder Features**: Jeder Teammate übernimmt ein separates Modul, ohne sich in die Quere zu kommen.
+- **Debugging mit konkurrierenden Hypothesen**: Teammates testen verschiedene Theorien parallel und konvergieren schneller auf die Antwort.
+- **Cross-Layer-Koordination**: Änderungen, die Frontend, Backend und Tests betreffen – jeder Bereich gehört einem anderen Teammate.
+
+Agent Teams erzeugen Koordinations-Overhead und verbrauchen deutlich mehr Tokens als eine einzelne Session. Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vielen Abhängigkeiten ist eine einzelne Session oder Subagents effektiver.`,
+      },
+      {
+        type: 'heading',
+        content: '🆚 Agent Teams vs. Subagents – Vergleichstabelle',
+      },
+      {
+        type: 'text',
+        content: `Beide parallelisieren Arbeit, funktionieren aber fundamental anders:
+
+| | Subagents | Agent Teams |
+|---|---|---|
+| **Kontext** | Eigenes Kontextfenster; Ergebnisse gehen zurück an den Aufrufer | Eigenes Kontextfenster; vollständig unabhängig |
+| **Kommunikation** | Berichten nur an den Hauptagenten zurück | Teammates können sich direkt gegenseitig Nachrichten schicken |
+| **Koordination** | Hauptagent verwaltet alle Arbeit | Geteilte Task-Liste mit Selbst-Koordination |
+| **Ideal für** | Fokussierte Tasks, bei denen nur das Ergebnis zählt | Komplexe Arbeit, die Diskussion und Zusammenarbeit erfordert |
+| **Token-Kosten** | Niedriger: Ergebnisse werden zusammengefasst zurückgegeben | Höher: jeder Teammate ist eine eigene Claude-Instanz |
+
+**Faustregel:** Subagents für schnelle, isolierte Aufgaben. Agent Teams wenn Teammates Ergebnisse teilen, sich gegenseitig hinterfragen und eigenständig koordinieren müssen.`,
+      },
+      {
+        type: 'heading',
+        content: '🔧 Agent Teams aktivieren',
       },
       {
         type: 'text',
         content:
-          'Checkpointing erlaubt dir, den Zustand der Konversation und der von Claude vorgenommenen Datei-Änderungen zu speichern und später wiederherzustellen. Du kannst „zurückspulen“, wenn etwas schiefgelaufen ist, ohne manuell alle Änderungen rückgängig zu machen.',
+          'Agent Teams sind standardmäßig deaktiviert. Aktiviere sie über die Umgebungsvariable oder die Settings:',
       },
       {
-        type: 'list',
-        content: `- **Checkpoints setzen**: Wichtige Zustände werden erfasst (Konversation + Dateien)
-- **Rewind**: Mit \`/rewind\` oder der Checkpoint-UI zu einem früheren Punkt zurückgehen
-- **Vorteil**: Konsistenter Zustand von Code und Chat – kein „halbes Undo“
-- **Docs**: [Checkpointing](https://code.claude.com/docs/en/checkpointing)`,
+        type: 'code',
+        language: 'json',
+        content: `// In .claude/settings.json oder ~/.claude/settings.json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+
+// ODER als Umgebungsvariable in der Shell:
+// export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`,
+      },
+      {
+        type: 'heading',
+        content: '🚀 Ein Agent Team starten',
+      },
+      {
+        type: 'text',
+        content: `Nach der Aktivierung beschreibst du einfach in natürlicher Sprache, was das Team tun soll. Claude erstellt das Team, startet Teammates und koordiniert die Arbeit basierend auf deinem Prompt.
+
+**Beispiel-Prompts (aus den offiziellen Docs):**`,
       },
       {
         type: 'code',
         language: 'text',
-        content: `Typischer Ablauf:
-1. Du arbeitest mit Claude an einem Feature
-2. Nach einem guten Zwischenstand: Checkpoint (wird automatisch bzw. bei Meilensteinen angeboten)
-3. Claude macht weitere Änderungen
-4. Gefällt dir die Richtung nicht → /rewind oder Checkpoint auswählen
-5. Konversation und Dateien sind wieder auf dem Checkpoint-Stand`,
+        content: `# Beispiel 1: Exploration aus verschiedenen Perspektiven
+Ich designe ein CLI-Tool, das Entwicklern hilft, TODO-Kommentare im Code
+zu tracken. Erstelle ein Agent Team mit drei Perspektiven: ein Teammate
+für UX, einer für technische Architektur, einer als Devil's Advocate.
+
+# Beispiel 2: Paralleles Code-Review
+Create an agent team to review PR #142. Spawn three reviewers:
+- One focused on security implications
+- One checking performance impact
+- One validating test coverage
+Have them each review and report findings.
+
+# Beispiel 3: Competing Hypotheses Debugging
+Users report the app exits after one message instead of staying connected.
+Spawn 5 agent teammates to investigate different hypotheses. Have them
+talk to each other to try to disprove each other's theories, like a
+scientific debate. Update the findings doc with whatever consensus emerges.`,
+      },
+      {
+        type: 'text',
+        content:
+          'Der Lead erstellt eine geteilte Task-Liste, startet die Teammates, und sie arbeiten los. Die Task-Liste zeigt, woran jeder arbeitet. Mit Shift+Up/Down wählst du einen Teammate direkt an.',
+      },
+      {
+        type: 'heading',
+        content: '🖥️ Display Modes: In-Process vs. Split-Pane',
+      },
+      {
+        type: 'text',
+        content: `Agent Teams unterstützen zwei Darstellungsmodi:
+
+**In-Process (Standard):** Alle Teammates laufen in deinem Hauptterminal. Mit Shift+Up/Down wählst du einen Teammate, tippst und sendest direkt Nachrichten. Mit Enter siehst du die Session eines Teammates, mit Escape unterbrichst du seinen aktuellen Turn. Ctrl+T togglet die Task-Liste. Funktioniert in jedem Terminal – kein tmux nötig.
+
+**Split-Pane:** Jeder Teammate bekommt ein eigenes Pane – du siehst alle gleichzeitig und klickst in ein Pane, um direkt zu interagieren. Erfordert tmux oder iTerm2 mit der \`it2\` CLI.
+
+Der Default ist \`"auto"\`: Split Panes wenn du bereits in einer tmux-Session bist, sonst In-Process.`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// Display-Modus konfigurieren in settings.json:
+{ "teammateMode": "in-process" }  // oder "tmux" für Split-Panes
+
+// Oder als Flag für eine einzelne Session:
+// claude --teammate-mode in-process`,
+      },
+      {
+        type: 'heading',
+        content: '🎛️ Team steuern – alle Optionen im Detail',
+      },
+      {
+        type: 'text',
+        content: `Du gibst dem Lead in natürlicher Sprache Anweisungen. Hier die wichtigsten Steuerungsmöglichkeiten:
+
+**Teammates und Modelle festlegen:**
+Du kannst Anzahl und Modell für Teammates bestimmen: „Create a team with 4 teammates. Use Sonnet for each."
+
+**Plan Approval verlangen:**
+Für riskante Tasks kannst du verlangen, dass Teammates erst planen und du den Plan freigibst, bevor sie implementieren: „Spawn an architect teammate. Require plan approval before they make any changes." Der Teammate arbeitet dann im Read-Only Plan Mode bis der Lead zustimmt. Der Lead entscheidet autonom über die Freigabe – du kannst Kriterien mitgeben: „Only approve plans that include test coverage."
+
+**Delegate Mode (Shift+Tab):**
+Verhindert, dass der Lead selbst Code schreibt statt zu delegieren. Aktiviere mit Shift+Tab nach dem Team-Start. Der Lead kann dann nur noch koordinieren: Teammates spawnen, Nachrichten senden, Tasks verwalten – kein Code anfassen.
+
+**Direkt mit Teammates sprechen:**
+- In-Process: Shift+Up/Down zum Auswählen, dann tippen. Enter = Session ansehen, Escape = Turn unterbrechen.
+- Split-Pane: Ins Pane klicken.
+Jeder Teammate ist eine vollständige, unabhängige Claude-Code-Session.`,
+      },
+      {
+        type: 'heading',
+        content: '📋 Das Task-System im Detail',
+      },
+      {
+        type: 'text',
+        content: `Die geteilte Task-Liste ist das Herzstück der Agent-Teams-Koordination:
+
+**Drei Task-Zustände:**
+- **Pending**: Task wartet auf Bearbeitung
+- **In Progress**: Teammate arbeitet daran
+- **Completed**: Task ist abgeschlossen
+
+**Abhängigkeiten:** Tasks können von anderen Tasks abhängen. Ein Pending-Task mit unerledigten Abhängigkeiten kann nicht beansprucht werden, bis die Abhängigkeiten erledigt sind. Das System verwaltet das automatisch.
+
+**Task-Zuweisung:**
+- **Lead weist zu**: Du sagst dem Lead, welchen Task er an welchen Teammate geben soll.
+- **Self-Claim**: Nach Abschluss eines Tasks nimmt sich ein Teammate automatisch den nächsten freien, unblockierten Task.
+- **File-Locking**: Race Conditions werden verhindert – wenn zwei Teammates gleichzeitig denselben Task beanspruchen wollen, gewinnt einer und der andere sucht sich den nächsten.
+
+**Empfehlung:** 5-6 Tasks pro Teammate als Richtgröße. Zu wenig Tasks → Teammates stehen schnell still. Zu viele → Unübersichtlich.`,
+      },
+      {
+        type: 'text',
+        content: `**Teammates beenden:**
+„Ask the researcher teammate to shut down." Der Lead sendet einen Shutdown-Request; der Teammate kann zustimmen (graceful exit) oder mit Begründung ablehnen (z.B. „Ich bin noch mitten in einer Analyse").
+
+**Team aufräumen:**
+„Clean up the team." Entfernt geteilte Ressourcen (Task-Listen, Config). Immer zuerst alle Teammates beenden, dann über den Lead aufräumen. Wichtig: Der Lead prüft auf aktive Teammates und verweigert Cleanup wenn noch welche laufen. Nie über einen Teammate aufräumen – nur über den Lead.`,
+      },
+      {
+        type: 'heading',
+        content: '🏗️ Architektur im Detail',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `AGENT TEAM ARCHITEKTUR
+━━━━━━━━━━━━━━━━━━━━
+
+┌──────────────────────────────────────────────┐
+│                 TEAM LEAD                     │
+│  (Deine Hauptsession)                        │
+│  • Erstellt Team, spawnt Teammates           │
+│  • Koordiniert, weist Tasks zu               │
+│  • Synthesiert Ergebnisse                    │
+│  • Delegate Mode: nur Koordination           │
+└───────┬──────────┬──────────┬────────────────┘
+        │          │          │
+   ┌────▼────┐ ┌──▼──────┐ ┌▼─────────┐
+   │Teammate │ │Teammate │ │Teammate  │
+   │  "API"  │ │ "Tests" │ │"Frontend"│
+   │  Opus   │ │ Sonnet  │ │ Sonnet   │
+   └────┬────┘ └───┬─────┘ └────┬─────┘
+        │          │             │
+        └──────────┼─────────────┘
+                   │
+         ┌─────────▼──────────┐
+         │  GETEILTE RESSOURCEN │
+         │  • Task-Liste        │
+         │  • Mailbox           │
+         │  • CLAUDE.md (lokal) │
+         └─────────────────────┘
+
+SPEICHERORTE:
+  ~/.claude/teams/{team-name}/config.json  → Team-Config
+  ~/.claude/tasks/{team-name}/             → Task-Liste
+
+KONTEXT:
+  • Jeder Teammate hat eigenes Kontextfenster
+  • Lädt: CLAUDE.md + MCP-Server + Skills + Spawn-Prompt
+  • Lead-History wird NICHT übertragen
+  • Nachrichten werden automatisch zugestellt`,
+      },
+      {
+        type: 'heading',
+        content: '🔗 Quality Gates mit Hooks',
+      },
+      {
+        type: 'text',
+        content: `Du kannst Hooks nutzen, um Regeln durchzusetzen, wenn Teammates fertig werden:
+
+- **TeammateIdle Hook**: Wird ausgelöst, wenn ein Teammate idle wird. Exit Code 2 → Feedback senden und Teammate weiterarbeiten lassen (z.B. „Tests fehlen noch", „Lint-Errors beheben").
+- **TaskCompleted Hook**: Wird ausgelöst, wenn ein Task als fertig markiert wird. Exit Code 2 → Fertigstellung verhindern und Feedback geben (z.B. „Typ-Checks müssen passen").
+
+Beispiel: Du willst sicherstellen, dass kein Teammate „fertig" meldet, ohne dass die Tests grün sind. Der TaskCompleted-Hook führt \`npm test\` aus und gibt Exit Code 2 zurück wenn Tests fehlschlagen.`,
+      },
+      {
+        type: 'heading',
+        content: '⚠️ Troubleshooting Agent Teams',
+      },
+      {
+        type: 'list',
+        content: `**Teammates erscheinen nicht?**
+- In In-Process-Mode: Shift+Down drücken – sie laufen evtl. schon, sind aber nicht sichtbar.
+- Task zu einfach? Claude entscheidet, ob ein Team nötig ist.
+- Split-Panes: tmux installiert und im PATH? \`which tmux\` prüfen.
+- iTerm2: \`it2\` CLI installiert? Python API in iTerm2-Einstellungen aktiviert?
+
+**Zu viele Permission-Prompts?**
+- Permission-Requests von Teammates gehen an den Lead. Vor dem Spawnen in den Permission-Settings gängige Operationen vorab genehmigen.
+
+**Teammates stoppen bei Errors?**
+- Output prüfen (Shift+Up/Down oder Pane anklicken), dann zusätzliche Instruktionen geben oder Replacement-Teammate spawnen.
+
+**Lead beendet sich vor Abschluss?**
+- „Wait for your teammates to complete their tasks before proceeding" sagen.
+
+**Orphaned tmux Sessions?**
+- \`tmux ls\` → \`tmux kill-session -t <session-name>\`
+
+**Bekannte Limitierungen:**
+- Kein Session-Resume mit In-Process-Teammates (/resume und /rewind stellen Teammates nicht wieder her)
+- Task-Status kann hinterherhinken – manuell nachhelfen oder Lead bitten, den Teammate zu nudgen
+- Shutdown kann langsam sein (Teammate beendet erst aktuellen Request)
+- Ein Team pro Session, keine verschachtelten Teams
+- Lead ist fest – kein Promote oder Transfer möglich
+- Permissions bei Spawn festgelegt; nach Spawn individuell änderbar
+- Split-Panes nicht in VS Code Terminal, Windows Terminal, Ghostty`,
+      },
+      {
+        type: 'heading',
+        content: '📋 Best Practices für Agent Teams (offizielle Docs)',
+      },
+      {
+        type: 'list',
+        content: `- **Genug Kontext im Spawn-Prompt geben** – Teammates erben NICHT die Lead-History. Task-Details explizit mitgeben. Beispiel: „Review the authentication module at src/auth/. Focus on token handling, session management, and input validation. The app uses JWT tokens stored in httpOnly cookies."
+- **Tasks richtig dimensionieren** – zu klein = Overhead überwiegt; zu groß = Teammate arbeitet zu lange ohne Check-in. Ideal: selbständige Einheiten mit klarem Deliverable. 5-6 Tasks pro Teammate als Richtgröße.
+- **Auf Abschluss warten** – Lead nicht beenden bevor Teammates fertig sind. „Wait for your teammates to complete" wenn der Lead zu früh aufhören will.
+- **Mit Research starten** – Wenn du neu bei Agent Teams bist, beginne mit Review- und Recherche-Tasks statt mit Implementierung. Klar abgegrenzt, wenig Koordinationsrisiko.
+- **Dateikonflikte vermeiden** – Zwei Teammates auf derselben Datei = Überschreibungen. Klare Datei-Verantwortlichkeiten definieren.
+- **Überwachen und Steuern** – Regelmäßig Fortschritt prüfen, Ansätze umlenken wenn nötig. Unbeaufsichtigt laufen lassen erhöht das Risiko verschwendeter Tokens.`,
+      },
+
+      // --- TEIL 2: CHECKPOINTING ---
+      {
+        type: 'heading',
+        content: '⏪ Teil 2: Checkpointing',
+      },
+      {
+        type: 'text',
+        content:
+          'Checkpointing ist ein Sicherheitsnetz, das Claude Codes Datei-Edits automatisch trackt. Du kannst jederzeit zu einem früheren Zustand zurückspulen – sowohl Code als auch Konversation. Das erlaubt dir, ambitionierte, weitreichende Änderungen zu verfolgen, weil du weißt, dass du immer zurückkannst. (Quelle: code.claude.com/docs/en/checkpointing)',
+      },
+      {
+        type: 'heading',
+        content: '🔄 Wie Checkpoints funktionieren',
+      },
+      {
+        type: 'text',
+        content: `**Automatisches Tracking:**
+- Claude Code erfasst den Zustand deines Codes VOR jeder Bearbeitung durch seine File-Editing-Tools.
+- Jeder User-Prompt erzeugt einen neuen Checkpoint.
+- Checkpoints bleiben über Sessions hinweg erhalten – du kannst sie in fortgesetzten Konversationen nutzen.
+- Automatische Bereinigung nach 30 Tagen (konfigurierbar).
+
+Du musst nichts manuell „speichern" – die Checkpoints entstehen automatisch im Verlauf deiner Session.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `WIE CHECKPOINTING FUNKTIONIERT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dein Prompt → Claude bearbeitet Dateien
+                ↓
+      ┌─────────────────────┐
+      │  CHECKPOINT ERSTELLT │
+      │  • Zustand aller     │
+      │    bearbeiteten      │
+      │    Dateien (vorher)  │
+      │  • Konversations-    │
+      │    position          │
+      │  • Prompt-Text       │
+      └─────────────────────┘
+                ↓
+Nächster Prompt → Nächste Bearbeitung
+                ↓
+      ┌─────────────────────┐
+      │  NEUER CHECKPOINT   │
+      └─────────────────────┘
+                ↓
+         ... und so weiter
+
+/rewind oder Esc+Esc → Checkpoint-Liste:
+
+  Prompt 1: "Erstelle Login"    [+120 Zeilen, 3 Dateien]
+  Prompt 2: "Füge Validierung"  [+45/-12 Zeilen, 2 Dateien]
+  Prompt 3: "Refaktoriere"      [+89/-67 Zeilen, 4 Dateien]
+
+→ Wähle Punkt → Wähle Aktion (5 Optionen)`,
+      },
+      {
+        type: 'heading',
+        content: '🔍 Rewind aufrufen und die 5 Optionen',
+      },
+      {
+        type: 'text',
+        content: `Es gibt zwei Wege, das Rewind-Menü zu öffnen:
+- **Esc + Esc** (zweimal Escape drücken)
+- **\`/rewind\` Slash-Command**
+
+Du siehst eine scrollbare Liste aller deiner Prompts aus der Session. Wähle den Punkt, zu dem du zurück willst, und dann eine der fünf Aktionen:`,
+      },
+      {
+        type: 'list',
+        content: `Die 5 Rewind-Optionen im Detail:
+
+1. **Restore code and conversation** – Setzt sowohl den Code ALS AUCH die Konversation auf diesen Punkt zurück. Alles danach ist weg (Code-Änderungen UND Chat-Verlauf). Am häufigsten genutzt wenn alles nach einem bestimmten Punkt schiefgelaufen ist.
+
+2. **Restore conversation** – Spult die Konversation zurück, BEHÄLT aber den aktuellen Code. Nützlich wenn der Chat-Kontext verschmutzt ist (z.B. durch lange Debugging-Outputs), der Code aber okay ist.
+
+3. **Restore code** – Setzt Datei-Änderungen zurück, BEHÄLT aber die Konversation. Nützlich wenn Claude fehlerhaften Code geschrieben hat, du aber die Diskussion behalten willst (z.B. um aus den Fehlern zu lernen und eine andere Anweisung zu geben).
+
+4. **Summarize from here** – Komprimiert die Konversation ab diesem Punkt zu einer KI-generierten Zusammenfassung. Keine Dateien werden geändert. Die Original-Nachrichten bleiben im Transcript erhalten. Du kannst optionale Anweisungen geben, worauf die Zusammenfassung fokussieren soll. Spart gezielt Kontext-Platz – besser als /compact, weil du den Startpunkt wählst und den Anfang der Session intakt lässt.
+
+5. **Never mind** – Zurück zur Nachrichtenliste, nichts ändern.
+
+Nach einem Restore wird der ursprüngliche Prompt aus der gewählten Nachricht in dein Eingabefeld geladen – du kannst ihn direkt neu senden oder bearbeiten.`,
       },
       {
         type: 'highlight',
-        title: '💡 Best Practice',
+        title: '💡 Summarize vs. Fork',
         content:
-          'Vor größeren Refactorings oder riskanten Änderungen bewusst einen Checkpoint setzen oder auf den automatischen Checkpoint achten. So kannst du schnell auf einen sicheren Stand zurück.',
+          'Summarize hält dich in derselben Session und komprimiert Kontext. Wenn du stattdessen einen neuen Ansatz ausprobieren willst OHNE die Original-Session zu verändern, nutze Fork: `claude --continue --fork-session`. Fork erstellt eine Kopie der Session an dem Punkt, an dem du warst.',
+      },
+      {
+        type: 'heading',
+        content: '🎯 Typische Anwendungsfälle für Checkpointing',
+      },
+      {
+        type: 'list',
+        content: `- **Alternativen erkunden**: Verschiedene Implementierungsansätze ausprobieren, ohne den Ausgangspunkt zu verlieren. „Implementiere mit React Query" → gefällt nicht → Rewind → „Implementiere mit SWR".
+- **Fehler rückgängig machen**: Schnell Änderungen zurücknehmen, die Bugs eingeführt oder Funktionalität kaputt gemacht haben. Statt manuell alle Dateien zu revertieren: ein Klick.
+- **Feature-Iterationen**: Mit Variationen experimentieren, weil du jederzeit zu funktionierenden Zuständen zurückkannst.
+- **Kontext freigeben**: Einen langen Debugging-Abschnitt ab der Mitte zusammenfassen (Summarize), wobei die Anfangs-Instruktionen intakt bleiben. Besser als /compact weil gezielter.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `TYPISCHER WORKFLOW MIT CHECKPOINTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Du: "Erstelle eine Login-Komponente mit React Hook Form"
+   → Claude implementiert. Checkpoint 1 entsteht.
+   → Code sieht gut aus ✓
+
+2. Du: "Füge jetzt E-Mail-Validierung hinzu"
+   → Claude implementiert. Checkpoint 2 entsteht.
+   → Code sieht gut aus ✓
+
+3. Du: "Refaktoriere alles zu einem Custom Hook"
+   → Claude refaktoriert. Checkpoint 3 entsteht.
+   → Hmm, das hat die Struktur verschlechtert ✗
+
+4. Esc+Esc → Checkpoint-Liste:
+   [1] "Erstelle Login-Komponente"  [3 Dateien, +120/-0]
+   [2] "Füge Validierung hinzu"    [2 Dateien, +45/-12]  ← hier
+   [3] "Refaktoriere zu Hook"      [4 Dateien, +89/-67]
+
+5. Du wählst [2] → "Restore code and conversation"
+
+6. Ergebnis:
+   - Code ist auf Stand nach Schritt 2 (Validierung OK)
+   - Chat zeigt nur Prompt 1 und 2
+   - Prompt 2 erscheint im Eingabefeld
+   - Schritt 3 (Refactoring) ist komplett weg
+
+7. Du gibst jetzt eine andere Anweisung:
+   "Extrahiere nur die Validierungslogik in eine utils-Datei"
+   → Neuer, besserer Ansatz ab dem guten Punkt`,
+      },
+      {
+        type: 'heading',
+        content: '⚠️ Grenzen von Checkpointing',
+      },
+      {
+        type: 'list',
+        content: `**Bash-Änderungen werden NICHT getrackt:**
+Wenn Claude Shell-Befehle ausführt (rm, mv, cp, npm install, git operations etc.), werden diese Datei-Änderungen NICHT von Checkpointing erfasst. Nur direkte File-Edits über Claudes File-Editing-Tools sind im Checkpoint. Wenn Claude also \`rm important-file.ts\` ausführt, kann Checkpointing diese Datei nicht wiederherstellen.
+
+**Externe Änderungen werden NICHT getrackt:**
+Manuelle Änderungen, die du außerhalb von Claude Code machst, und Edits aus anderen parallelen Sessions sind normalerweise nicht erfasst – es sei denn, sie betreffen zufällig dieselben Dateien.
+
+**KEIN Ersatz für Git:**
+Checkpoints sind für schnelle, Session-Level-Recovery. Für dauerhafte Versionshistorie, Branches und Team-Kollaboration weiterhin Git nutzen. Denke an Checkpoints als „lokales Undo" und Git als „permanente History".
+
+**In Agent Teams:** /rewind stellt In-Process-Teammates NICHT wieder her. Nach Resume kann der Lead versuchen, nicht mehr existierende Teammates anzuschreiben. Lösung: Lead bitten, neue Teammates zu spawnen.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung: Agent Teams + Checkpointing',
+        content: `**Agent Teams:**
+✅ Mehrere Claude-Instanzen als koordiniertes Team
+✅ Lead + Teammates + geteilte Task-Liste + Mailbox
+✅ In-Process oder Split-Pane (tmux/iTerm2) Display
+✅ Delegate Mode, Plan Approval, direkte Teammate-Kommunikation
+✅ Quality Gates mit TeammateIdle/TaskCompleted Hooks
+✅ Deutlich mehr Tokens als Single-Session – bewusst einsetzen
+
+**Checkpointing:**
+✅ Automatisch bei jedem Prompt – kein manuelles Speichern
+✅ 5 Optionen: Restore Code+Chat, nur Chat, nur Code, Summarize, Abbrechen
+✅ Esc+Esc oder /rewind zum Öffnen
+✅ Bash/externe Änderungen nicht erfasst – Git weiterhin nutzen
+✅ Sessions übergreifend, 30 Tage aufbewahrt`,
       },
     ],
   },
+
+  // --- Lektion 29: Claude Code überall & offizielle Ressourcen ---
   {
     id: 29,
     level: 3,
     title: 'Claude Code überall & offizielle Ressourcen',
-    description: 'Terminal, Web, Desktop, Chrome, VS Code, JetBrains – und die zentrale Dokumentation nutzen.',
-    duration: '15 Minuten',
+    description:
+      'Alle Nutzungsorte von Claude Code im Detail, die Dokumentationsstruktur verstehen, Extend-Features einordnen und einen nachhaltigen Lern-Workflow aufbauen.',
+    duration: '40 Minuten',
     objectives: [
-      'Alle Nutzungsorte von Claude Code kennen (CLI, Web, Desktop, Browser, IDEs)',
-      'Die offizielle Dokumentation (code.claude.com) als zentrale Referenz nutzen',
-      'Changelog und neue Methoden regelmäßig prüfen',
-      'Richtige Docs für Setup, MCP, Plugins und Deployment finden',
+      'Alle Nutzungsorte von Claude Code kennen und ihre Stärken/Grenzen verstehen',
+      'Die Dokumentationsstruktur von code.claude.com navigieren und die richtigen Kapitel finden',
+      '"Extend Claude Code" einordnen: CLAUDE.md, Skills, MCP, Subagents, Hooks, Plugins – mit Entscheidungshilfe',
+      'Einen nachhaltigen Workflow aufbauen: Kurs + Docs + Changelog + Community',
     ],
     content: [
       {
@@ -11405,62 +12167,359 @@ claude --model opus
       },
       {
         type: 'text',
-        content:
-          'Claude Code ist nicht nur ein Terminal-Tool. Du kannst es im Browser (claude.ai/code), in der Desktop-App, als Chrome-Extension (Beta), in VS Code, in JetBrains IDEs, in GitHub Actions, GitLab CI/CD und in Slack nutzen. So bleibt dein Workflow flexibel – lokal, in der Cloud oder im Team.',
-      },
-      {
-        type: 'list',
-        content: `- **Terminal (CLI)**: \`claude\` – Kern-Erlebnis, volle Slash-Commands und MCP
-- **Web**: [claude.ai/code](https://claude.ai/code) – keine lokale Installation, parallele Tasks, integrierte Diff-Ansicht
-- **Desktop-App**: Eigenständige App mit Diffs, parallelen Sitzungen (z.B. Git Worktrees), Cloud-Sessions
-- **Chrome (Beta)**: Browser-Anbindung – Web-Apps testen, Console-Logs, Formulare ausfüllen, Daten extrahieren
-- **VS Code**: Native Extension – Inline-Diffs, @-Erwähnungen, Plan-Review
-- **JetBrains**: Plugin für IntelliJ, PyCharm, WebStorm etc.
-- **CI/CD**: GitHub Actions, GitLab CI/CD – \`@claude\` in PRs/Issues
-- **Slack**: Tasks aus Slack an Claude Code im Web delegieren`,
+        content: `Claude Code ist nicht nur ein Terminal-Tool. Es läuft auf mittlerweile acht verschiedenen Plattformen, jede mit eigenen Stärken. Die offizielle Übersicht findest du unter [Claude Code overview](https://code.claude.com/docs/en/overview) (Abschnitt „Use Claude Code everywhere"). Das Verständnis, WANN du WELCHE Plattform nutzt, ist entscheidend für einen effizienten Workflow.`,
       },
       {
         type: 'heading',
-        content: '📚 Offizielle Dokumentation: code.claude.com',
+        content: '💻 Terminal (CLI) – das Kern-Erlebnis',
       },
       {
         type: 'text',
-        content:
-          'Die zentrale und aktuellste Referenz ist die offizielle Claude-Code-Dokumentation unter **code.claude.com**. Dort findest du Übersicht, Quickstart, Changelog, CLI-Referenz, Einstellungen, MCP, Plugins, Skills, Hooks, Deployment (AWS, GCP, Bedrock, Vertex), Sicherheit und Datennutzung.',
+        content: `Das Terminal ist die Ur-Form von Claude Code und bietet die vollständigste Funktionalität:
+
+- **Volle Slash-Commands**: /fast, /model, /rewind, /compact, /init, /agents, /hooks und alle weiteren.
+- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal.
+- **Agent Teams**: Nur im Terminal verfügbar (In-Process oder Split-Pane/tmux).
+- **Headless/Programmatic Mode**: Für CI/CD, Automatisierung und Scripting.
+- **Pipe Support**: Input und Output können gepiped werden – Unix-Philosophie.
+- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees.
+
+**Wann Terminal?** Immer wenn du die volle Kontrolle brauchst, mit Agent Teams arbeitest, in CI/CD-Pipelines oder bei fortgeschrittener Automatisierung.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Terminal-Grundbefehle
+claude                          # Interaktive Session starten
+claude --model opus             # Mit bestimmtem Modell starten
+claude --continue               # Letzte Session fortsetzen
+claude --continue --fork-session # Session forken
+claude --resume                 # Session-Picker öffnen
+
+# Headless/Programmatic (für CI/CD)
+echo "Review this PR" | claude --headless
+claude -p "Fix all TypeScript errors" --output-format json
+
+# Pipe-Support
+cat error.log | claude "Was ist hier schiefgelaufen?"
+claude "Generiere eine Migration" | tee migration.sql`,
+      },
+      {
+        type: 'heading',
+        content: '🌍 Web (claude.ai/code) – keine Installation nötig',
+      },
+      {
+        type: 'text',
+        content: `Die Web-Version läuft unter claude.ai/code und erfordert keine lokale Installation:
+
+- **Parallele Tasks**: Mehrere Claude-Code-Sessions gleichzeitig in verschiedenen Tabs.
+- **Integrierte Diff-Ansicht**: Code-Änderungen werden visuell als Diffs dargestellt.
+- **Cloud-Sessions**: Arbeit wird in der Cloud gespeichert, kein lokaler State.
+- **Keine CLI-Kenntnisse nötig**: Ideal für Einsteiger oder wenn du an einem fremden Rechner sitzt.
+
+**Einschränkungen**: Kein Zugriff auf lokale Dateien (alles in der Cloud), keine MCP-Server, keine Hooks, kein Agent Teams. Für lokale Projekte: CLI oder IDE-Extension.`,
+      },
+      {
+        type: 'heading',
+        content: '🖥️ Desktop-App – eigenständige Anwendung',
+      },
+      {
+        type: 'text',
+        content: `Die Desktop-App ist eine eigenständige Anwendung mit grafischer Oberfläche:
+
+- **Diffs und Inline-Edits**: Visuelle Darstellung von Änderungen wie in einer IDE.
+- **Parallele Sitzungen**: Mehrere Sessions in Tabs, inkl. Git Worktree-Support.
+- **Cloud-Sessions**: Sessions können zwischen Desktop und Web synchronisiert werden.
+- **Kein Terminal nötig**: Für Nutzer, die lieber grafisch arbeiten.
+
+**Wann Desktop?** Wenn du eine dedizierte Claude-Code-Erfahrung willst ohne IDE-Integration, oder wenn du zwischen Projekten wechselst.`,
+      },
+      {
+        type: 'heading',
+        content: '🔍 Chrome Extension (Beta) – Browser-Anbindung',
+      },
+      {
+        type: 'text',
+        content: `Die Chrome-Extension verbindet Claude Code mit deinem Browser:
+
+- **Web-Apps testen**: Claude sieht was im Browser passiert und kann damit interagieren.
+- **Console-Logs auslesen**: Debugging von Frontend-Problemen direkt im Kontext.
+- **Formulare ausfüllen, Daten extrahieren**: Browser-Automatisierung.
+- **Screenshots analysieren**: Claude sieht die UI und kann über Design/Layout sprechen.
+
+**Einschränkung**: Beta-Status, Funktionsumfang kann sich ändern. Nicht geeignet für Backend-Arbeit.`,
+      },
+      {
+        type: 'heading',
+        content: '📝 VS Code Extension – die IDE-Integration',
+      },
+      {
+        type: 'text',
+        content: `Die VS Code Extension bringt Claude Code direkt in den Editor. Offizielle Docs: [Use Claude Code in VS Code](https://code.claude.com/docs/en/vs-code).
+
+- **Inline-Diffs**: Änderungen werden direkt im Editor als Diff angezeigt – accept/reject pro Datei.
+- **@-Erwähnungen**: Referenziere Dateien und Ordner mit @-Syntax im Prompt.
+- **Plan-Review**: Plan Mode ist direkt in der Extension nutzbar.
+- **Checkpoints**: /rewind funktioniert auch in der Extension.
+- **Multiple Conversations**: Mehrere Sessions gleichzeitig.
+- **Terminal-Integration**: Du kannst zwischen Extension und CLI in VS Code wechseln.
+- **MCP-Server**: Werden aus deiner Konfiguration geladen.
+
+**Wann VS Code?** Wenn du sowieso in VS Code arbeitest und die inline Diffs und @-Erwähnungen nutzen willst. Für die meisten Entwickler ist das der tägliche Workflow.`,
+      },
+      {
+        type: 'heading',
+        content: '🔌 JetBrains, CI/CD, Slack',
       },
       {
         type: 'list',
-        content: `**Wichtige Einstiegspunkte:**
-- **Übersicht (DE)**: [code.claude.com/docs/de/overview](https://code.claude.com/docs/de/overview)
+        content: `- **JetBrains**: Plugin für IntelliJ, PyCharm, WebStorm etc. Ähnlich zur VS Code Extension, aber für das JetBrains-Ökosystem.
+- **GitHub Actions**: \`@claude\` in PRs und Issues – Claude Code reviewed, kommentiert und erstellt Fixes direkt in GitHub. Headless-Modus.
+- **GitLab CI/CD**: Ähnlich zu GitHub Actions, integriert in GitLab-Pipelines.
+- **Slack**: Delegiere Tasks aus Slack an Claude Code im Web. Nützlich für Teams, die Slack als Kommunikationszentrale nutzen.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `PLATTFORM-ENTSCHEIDUNGSHILFE
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Tägliche lokale Entwicklung?
+  → VS Code Extension oder JetBrains Plugin
+
+Volle Kontrolle, Agent Teams, MCP, Hooks?
+  → Terminal (CLI)
+
+Kein lokales Setup, schnell ausprobieren?
+  → Web (claude.ai/code)
+
+Dedizierte App ohne IDE?
+  → Desktop-App
+
+Frontend-Testing im Browser?
+  → Chrome Extension (Beta)
+
+CI/CD-Automatisierung?
+  → GitHub Actions / GitLab CI/CD (Headless)
+
+Team-Kommunikation integrieren?
+  → Slack-Integration
+
+EMPFEHLUNG FÜR DEN TÄGLICHEN WORKFLOW:
+IDE-Extension + Terminal für Fortgeschrittenes
+(80% IDE, 20% CLI für Agent Teams/MCP/Headless)`,
+      },
+      {
+        type: 'heading',
+        content: '📚 Dokumentationsstruktur: code.claude.com',
+      },
+      {
+        type: 'text',
+        content: `Die zentrale und aktuellste Referenz ist **code.claude.com**. Die Docs sind in sechs Hauptbereiche gegliedert:`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `DOKUMENTATIONSSTRUKTUR – code.claude.com
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Getting started ─────────────────────────
+  ├── Overview         → Was ist Claude Code?
+  ├── Quickstart       → In 5 Minuten loslegen
+  └── Changelog        → Neueste Features und Fixes
+
+Core concepts ───────────────────────────
+  ├── How Claude Code works → Agentic Loop, Tools,
+  │                           Kontextfenster, Models
+  ├── Extend Claude Code   → Wann CLAUDE.md, Skills,
+  │                           MCP, Subagents, Hooks, Plugins
+  ├── Common workflows     → Schritt-für-Schritt-Guides
+  │                           (Bugs, Refactoring, Tests, etc.)
+  └── Best practices       → Explore→Plan→Code, Kontext,
+                              Verifizierung, CLAUDE.md
+
+Outside of the terminal ─────────────────
+  ├── Web, Desktop, Chrome
+  ├── VS Code, JetBrains
+  ├── GitHub Actions, GitLab CI/CD
+  └── Slack
+
+Build with Claude Code ──────────────────
+  ├── Subagents, Agent Teams
+  ├── Plugins (erstellen & installieren)
+  ├── Skills, Output Styles
+  ├── Hooks, Programmatic usage
+  ├── MCP (Model Context Protocol)
+  └── Troubleshooting
+
+Deployment / Administration / Config ────
+  ├── AWS, GCP, Azure
+  ├── Teams & Enterprise Setup
+  └── Settings, Permissions, Sandbox
+
+Reference ───────────────────────────────
+  ├── CLI reference
+  ├── Interactive mode
+  ├── Checkpointing
+  ├── Hooks reference
+  └── Plugins reference`,
+      },
+      {
+        type: 'heading',
+        content: '🧩 Extend Claude Code – Entscheidungshilfe',
+      },
+      {
+        type: 'text',
+        content: `Die Seite [Extend Claude Code](https://code.claude.com/docs/en/features-overview) erklärt die Erweiterungsoptionen. Hier eine Entscheidungshilfe, wann du welche Erweiterung brauchst:`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `WELCHE ERWEITERUNG FÜR WELCHEN ZWECK?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Claude soll meine Projekt-Konventionen kennen"
+  → CLAUDE.md (persistenter Kontext, bei jeder Session geladen)
+
+"Claude soll spezielle Workflows kennen, aber nur bei Bedarf"
+  → Skills (bei Bedarf geladen, spart Kontext)
+
+"Claude soll mit GitHub/Slack/Sentry/DB kommunizieren"
+  → MCP-Server (verbindet externe Tools)
+
+"Claude soll Teilaufgaben parallel erledigen"
+  → Subagents (isoliert, ergebnisorientiert)
+
+"Claude soll als Team an großen Aufgaben arbeiten"
+  → Agent Teams (koordiniert, mit Kommunikation)
+
+"Nach jedem Edit soll automatisch Prettier laufen"
+  → Hooks (Event-basierte Automatisierung)
+
+"Ich will alles bündeln und mit anderen teilen"
+  → Plugins (Paket aus Skills, Hooks, MCP, Agents)
+
+KONTEXTKOSTEN BEACHTEN:
+  CLAUDE.md:   Bei jeder Session geladen → immer im Kontext
+  Skills:      Nur bei Bedarf → spart Kontext
+  MCP:         Tool-Beschreibungen im Kontext
+  Subagents:   Eigenes Kontextfenster → entlastet deins
+  Hooks:       Kein Kontext-Overhead (Shell-Scripts)
+  Plugins:     Kombiniert alles → Kosten variieren`,
+      },
+      {
+        type: 'text',
+        content: `**CLAUDE.md** ist der Startpunkt – richte es für jedes Projekt ein. Die offiziellen Best Practices empfehlen: Kurze, menschenlesbare Anweisungen (nicht Beschreibungen). Bash-Befehle, Code-Style, Workflow-Regeln. Starte mit \`/init\` und verfeinere iterativ.
+
+**Skills** für domänenspezifisches Wissen, das nicht immer geladen sein muss. Portabel und wiederverwendbar zwischen Projekten.
+
+**MCP** für externe Tool-Anbindung. Populäre Server: GitHub, Slack, Sentry, PostgreSQL, Filesystem. Installation über HTTP, SSE oder stdio. Drei Scopes: lokal (Session), Projekt (.mcp.json), User (~/.claude).
+
+**Subagents** für fokussierte, parallele Aufgaben. Eigenes Kontextfenster, berichten zurück. Niedriger Token-Overhead.
+
+**Hooks** für Automatisierung ohne Kontext-Kosten. 8 Event-Typen: SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PostToolUse, PostToolUseFailure, TeammateIdle, TaskCompleted.
+
+**Plugins** bündeln alles: Skills, Agents, Hooks, MCP-Server, LSP. Installierbar aus Marketplaces oder als lokale Packages.`,
+      },
+      {
+        type: 'heading',
+        content: '🔗 Wichtige Einstiegspunkte und Links',
+      },
+      {
+        type: 'list',
+        content: `- **Übersicht (DE)**: [code.claude.com/docs/de/overview](https://code.claude.com/docs/de/overview)
 - **Quickstart**: Erste Schritte in wenigen Minuten
-- **Changelog**: Neueste Features und Fixes – [code.claude.com/docs/en/changelog](https://code.claude.com/docs/en/changelog)
-- **CLI-Referenz**: Alle Befehle und Flags
+- **Changelog**: [code.claude.com/docs/en/changelog](https://code.claude.com/docs/en/changelog) – regelmäßig prüfen!
+- **How Claude Code works**: Agentic Loop, Models, Tools, Kontext, Checkpoints, Permissions
+- **Best practices**: Verifizierung, Explore→Plan→Code, CLAUDE.md, Kontext-Management, Rewind
+- **Common workflows**: Codebase verstehen, Bugs fixen, Refactoring, Plan Mode, Sessions, Git Worktrees
 - **Extend Claude Code**: Wann CLAUDE.md, Skills, Subagents, Hooks, MCP, Plugins
-- **MCP**: Tools verbinden – [code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp)
+- **MCP**: [code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp)
+- **CLI-Referenz**: Alle Befehle und Flags
 - **Settings**: Konfiguration, Berechtigungen, Sandbox
 - **Plugins & Skills**: Erweiterungen erstellen und aus Marketplaces installieren`,
       },
       {
         type: 'heading',
-        content: '🔄 Updates und neue Methoden',
+        content: '🔄 Nachhaltiger Lern-Workflow',
       },
       {
         type: 'text',
-        content:
-          'Claude Code wird laufend erweitert. Native Installationen aktualisieren sich im Hintergrund; bei Homebrew/WinGet solltest du regelmäßig \`brew upgrade claude-code\` bzw. \`winget upgrade Anthropic.ClaudeCode\` ausführen. Neue Slash-Commands, Fast Mode, Agent Teams, Checkpointing und Plugin-Features findest du im Changelog und in den verlinkten Docs.',
+        content: `Claude Code entwickelt sich schnell weiter. Ein nachhaltiger Lern-Workflow hilft dir, am Ball zu bleiben:
+
+**1. Changelog regelmäßig prüfen** – Neue Features, Breaking Changes und Bugfixes werden dort dokumentiert. Mindestens einmal pro Woche.
+
+**2. Docs als Referenz nutzen** – Du musst nicht alles auswendig wissen. Wenn du einen Hook konfigurieren willst, schlage die [Hooks reference](https://code.claude.com/docs/en/hooks) nach. Wenn du MCP einrichten willst, lies die [MCP-Docs](https://code.claude.com/docs/en/mcp).
+
+**3. CLAUDE.md iterativ verbessern** – Jedes Mal wenn Claude einen Fehler macht, der auf fehlendem Kontext basiert, ergänze deine CLAUDE.md. Sie wird über Wochen immer besser.
+
+**4. Neue Features schrittweise ausprobieren** – Nicht alles auf einmal aktivieren. Erst Skills, dann MCP, dann Hooks, dann Subagents, dann Agent Teams. Jedes Feature einzeln verstehen bevor du kombinierst.
+
+**5. Community und Ressourcen nutzen** – r/ClaudeAI (450K+ Mitglieder), ClaudeLog.com (Mechanics und Best Practices), Anthropic Engineering Blog, GitHub-Repos mit Beispiel-Konfigurationen.`,
+      },
+      {
+        type: 'heading',
+        content: '📦 Updates und Installation',
+      },
+      {
+        type: 'text',
+        content: `Claude Code wird laufend aktualisiert. Je nach Installationsmethode:
+
+- **Native Install (empfohlen)**: Aktualisiert sich automatisch im Hintergrund. Keine Aktion nötig.
+- **Homebrew**: \`brew upgrade claude-code\`
+- **WinGet**: \`winget upgrade Anthropic.ClaudeCode\`
+
+Neue Slash-Commands, Fast Mode, Agent Teams, Checkpointing und Plugin-Features werden über Updates ausgerollt. Nach Updates: \`claude --version\` prüfen und Changelog lesen.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Version prüfen
+claude --version
+
+# Homebrew Update
+brew upgrade claude-code
+
+# WinGet Update
+winget upgrade Anthropic.ClaudeCode
+
+# Changelog direkt aufrufen
+# → code.claude.com/docs/en/changelog`,
+      },
+      {
+        type: 'heading',
+        content: '📄 llms.txt – der Dokumentations-Index',
+      },
+      {
+        type: 'text',
+        content: `Für Automatisierung und LLMs bietet die Dokumentation einen vollständigen Seiten-Index unter **https://code.claude.com/docs/llms.txt**. Dort sind alle verfügbaren Docs-Seiten gelistet. Das ist nützlich für:
+
+- **MCP-Server**, die die Docs durchsuchen sollen
+- **Eigene Scripts**, die bestimmte Docs-Seiten abrufen
+- **Schnelles Nachschlagen**, wenn du den genauen URL einer Unterseite brauchst
+
+In deiner CLAUDE.md kannst du referenzieren: \`Offizielle Docs: https://code.claude.com/docs/llms.txt\` – so weiß Claude Code bei Bedarf, wo es nachschlagen kann.`,
       },
       {
         type: 'code',
         language: 'markdown',
         content: `# Dokumentations-Index für LLMs/Automatisierung
 # Vollständiger Index: https://code.claude.com/docs/llms.txt
-# Dort sind alle verfügbaren Seiten gelistet – ideal zum gezielten Nachschlagen.`,
+# Dort sind alle verfügbaren Seiten gelistet – ideal zum gezielten Nachschlagen.
+
+# In CLAUDE.md referenzieren:
+# ## Referenzen
+# - Offizielle Claude Code Docs: https://code.claude.com/docs/llms.txt
+# - Changelog: https://code.claude.com/docs/en/changelog`,
       },
       {
         type: 'highlight',
-        title: '🎓 Kurs und Docs ergänzen sich',
-        content:
-          'Dieser Kurs vermittelt Konzepte, Workflows und Best Practices. Für exakte CLI-Syntax, aktuelle Flags und offizielle Empfehlungen ist code.claude.com die maßgebliche Quelle. Nutze beide: Kurs für Struktur und Verständnis, Docs für Referenz und neueste Updates.',
+        title: '🎓 Kurs-Abschluss und nächste Schritte',
+        content: `Gratulation! Du hast alle 30 Lektionen dieses Kurses durchgearbeitet – von den Grundlagen (Installation, CLAUDE.md, erste Befehle) über fortgeschrittene Workflows (Plan Mode, Skills, MCP, Hooks, Subagents) bis zu den neuesten Features (Fast Mode, Opus 4.6, Agent Teams, Checkpointing).
+
+Dieser Kurs vermittelt Konzepte, Workflows und Best Practices. Für exakte CLI-Syntax, aktuelle Flags und offizielle Empfehlungen ist code.claude.com die maßgebliche Quelle. Nutze beide: Kurs für Struktur und Verständnis; Docs für Referenz, Vertiefung und neueste Updates.
+
+Nächste Schritte: CLAUDE.md für dein Projekt einrichten (/init), einen MCP-Server anbinden, einen Subagent erstellen, Agent Teams ausprobieren. Viel Erfolg!`,
       },
     ],
   },

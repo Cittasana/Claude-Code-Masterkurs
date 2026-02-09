@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { UserProgress, QuizResult, ProjectResult } from '../types';
 import { useAnalyticsStore } from './analyticsStore';
-import { progressApi } from '../lib/api';
+import { progressApi, ApiError } from '../lib/api';
 
 interface UserProgressStore extends UserProgress {
   // Actions
@@ -237,19 +237,44 @@ export const useUserProgress = create<UserProgressStore>()(
         if (!isLoggedIn()) return;
         try {
           const data = await progressApi.get();
-          // Merge: Server-Daten übernehmen, wenn sie existieren
-          if (data) {
-            const state = get();
-            set({
-              lessonsCompleted: (data.lessonsCompleted as number[]) ?? state.lessonsCompleted,
-              currentLesson: (data.currentLesson as number) ?? state.currentLesson,
-              totalPoints: (data.totalPoints as number) ?? state.totalPoints,
-              streak: (data.streak as number) ?? state.streak,
-              timeInvested: (data.timeInvested as number) ?? state.timeInvested,
-              skillProgress: (data.skillProgress as typeof state.skillProgress) ?? state.skillProgress,
-            });
-          }
-        } catch {
+          if (!data) return;
+          const state = get();
+          // Quiz- und Projekt-Ergebnisse vom Server mappen (timestamp als ISO-String)
+          const quizzesCompleted: QuizResult[] = (data.quizzesCompleted as Array<Record<string, unknown>> || []).map(
+            (q) => ({
+              quizId: String(q.quizId),
+              lessonId: Number(q.lessonId),
+              score: Number(q.score),
+              attempts: Number(q.attempts),
+              completed: Boolean(q.completed),
+              timestamp: typeof q.timestamp === 'string' ? q.timestamp : (q.timestamp ? new Date(q.timestamp as string | Date).toISOString() : new Date().toISOString()),
+            })
+          );
+          const projectsCompleted: ProjectResult[] = (data.projectsCompleted as Array<Record<string, unknown>> || []).map(
+            (p) => ({
+              projectId: String(p.projectId),
+              completed: Boolean(p.completed),
+              score: Number(p.score),
+              timestamp: typeof p.timestamp === 'string' ? p.timestamp : (p.timestamp ? new Date(p.timestamp as string | Date).toISOString() : new Date().toISOString()),
+              validationResults: Array.isArray(p.validationResults)
+                ? (p.validationResults as { testName: string; passed: boolean; points: number }[])
+                : [],
+            })
+          );
+          set({
+            lessonsCompleted: (data.lessonsCompleted as number[]) ?? state.lessonsCompleted,
+            quizzesCompleted: quizzesCompleted.length ? quizzesCompleted : state.quizzesCompleted,
+            projectsCompleted: projectsCompleted.length ? projectsCompleted : state.projectsCompleted,
+            currentLesson: (data.currentLesson as number) ?? state.currentLesson,
+            totalPoints: (data.totalPoints as number) ?? state.totalPoints,
+            streak: (data.streak as number) ?? state.streak,
+            lastSessionDate: (data.lastSessionDate as string) ?? state.lastSessionDate,
+            timeInvested: (data.timeInvested as number) ?? state.timeInvested,
+            skillProgress: (data.skillProgress as typeof state.skillProgress) ?? state.skillProgress,
+            videosWatched: (data.videosWatched as typeof state.videosWatched) ?? state.videosWatched,
+          });
+        } catch (err) {
+          if (err instanceof ApiError && err.status === 404) return; // Noch kein Fortschritt auf dem Server
           // Server nicht erreichbar – LocalStorage-Daten behalten
         }
       },

@@ -530,6 +530,17 @@
     "deleteDesc": "Permanently delete your account and all server-side data. Your local browser progress will be kept. This action cannot be undone.",
     "deleteConfirm": "Are you sure? All data will be deleted.",
     "deleteConfirmYes": "Yes, delete account",
-    "deleteConfirmNo": "Cancel"
+    "deleteConfirmNo": "Cancel",
+    "subscriptionTitle": "Subscription",
+    "subscriptionLoading": "Loading subscription status…",
+    "subscriptionLoadError": "Could not load subscription status.",
+    "subscriptionNone": "You don't have a subscription. After registration you can choose a plan or lifetime access.",
+    "subscriptionLifetime": "Lifetime access – no subscription, no need to cancel.",
+    "subscriptionActiveUntil": "Subscription active until {{date}}.",
+    "subscriptionCanceledAtEnd": "Your subscription has been canceled and ends on {{date}}. You have full access until then.",
+    "subscriptionCancelButton": "Cancel subscription at period end",
+    "subscriptionCancelConfirm": "Cancel your subscription at the end of the current billing period? You will keep access until then.",
+    "subscriptionCancelConfirmYes": "Yes, cancel",
+    "subscriptionCancelError": "Cancellation failed. Please try again later."
   }
 }

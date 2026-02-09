@@ -39,11 +39,22 @@ function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
   const logEvent = useAnalyticsStore((state) => state.logEvent);
   const refreshUser = useAuthStore((state) => state.refreshUser);
+  const user = useAuthStore((state) => state.user);
+  const syncFromServer = useUserProgress((state) => state.syncFromServer);
+  const loadAnalyticsFromServer = useAnalyticsStore((state) => state.loadFromServer);
 
   // Token beim App-Start validieren
   useEffect(() => {
     refreshUser();
   }, [refreshUser]);
+
+  // Eingeloggt: echte Lerndaten und Analytics vom Server laden
+  useEffect(() => {
+    if (user) {
+      syncFromServer();
+      loadAnalyticsFromServer();
+    }
+  }, [user, syncFromServer, loadAnalyticsFromServer]);
 
   useEffect(() => {
     incrementStreak();

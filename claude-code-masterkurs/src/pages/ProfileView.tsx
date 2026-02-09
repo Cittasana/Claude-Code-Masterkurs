@@ -10,9 +10,12 @@ import {
   ChevronRight,
   Shield,
   LogOut,
+  CreditCard,
+  XCircle,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/authStore';
+import { subscriptionApi, type SubscriptionStatus } from '../lib/api';
 
 const AVATAR_OPTIONS = [
   '🧑‍💻', '👩‍💻', '👨‍💻', '🚀', '💜', '⚡', '🌟', '🔧',
@@ -36,6 +39,13 @@ const ProfileView = () => {
   const [saved, setSaved] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
+  const [subscription, setSubscription] = useState<SubscriptionStatus | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
+  const [subscriptionError, setSubscriptionError] = useState<string | null>(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [cancelSuccess, setCancelSuccess] = useState(false);
+
   // Redirect wenn nicht eingeloggt
   useEffect(() => {
     if (!isAuthenticated) {
@@ -51,6 +61,28 @@ const ProfileView = () => {
     }
   }, [user]);
 
+  // Abo-Status laden
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let cancelled = false;
+    setSubscriptionLoading(true);
+    setSubscriptionError(null);
+    subscriptionApi
+      .getStatus()
+      .then((data) => {
+        if (!cancelled) setSubscription(data);
+      })
+      .catch(() => {
+        if (!cancelled) setSubscriptionError(t('auth.subscriptionLoadError', 'Abo-Status konnte nicht geladen werden.'));
+      })
+      .finally(() => {
+        if (!cancelled) setSubscriptionLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAuthenticated, cancelSuccess]);
+
   const handleSave = async () => {
     const success = await updateProfile({ displayName, avatarEmoji });
     if (success) {
@@ -63,6 +95,34 @@ const ProfileView = () => {
     const success = await deleteAccount();
     if (success) {
       navigate('/', { replace: true });
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    setCancelLoading(true);
+    setSubscriptionError(null);
+    try {
+      await subscriptionApi.cancel();
+      setCancelSuccess(true);
+      setShowCancelConfirm(false);
+      setSubscription((prev) => (prev ? { ...prev, cancelAtPeriodEnd: true } : null));
+    } catch {
+      setSubscriptionError(t('auth.subscriptionCancelError', 'Kündigung fehlgeschlagen. Bitte später erneut versuchen.'));
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  const formatDate = (iso: string | undefined) => {
+    if (!iso) return '';
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+    } catch {
+      return iso;
     }
   };
 
@@ -157,6 +217,87 @@ const ProfileView = () => {
             </>
           )}
         </button>
+      </div>
+
+      {/* Abonnement */}
+      <div className="apple-card mb-6">
+        <h2 className="text-lg font-semibold text-apple-text mb-3 flex items-center gap-2">
+          <CreditCard size={20} className="text-apple-accent" />
+          {t('auth.subscriptionTitle', 'Abonnement')}
+        </h2>
+        {subscriptionLoading ? (
+          <p className="text-sm text-apple-muted flex items-center gap-2">
+            <span className="inline-block w-5 h-5 border-2 border-apple-muted border-t-apple-accent rounded-full animate-spin" />
+            {t('auth.subscriptionLoading', 'Lade Abo-Status…')}
+          </p>
+        ) : subscriptionError ? (
+          <p className="text-sm text-apple-error mb-2">{subscriptionError}</p>
+        ) : !subscription?.hasSubscription ? (
+          <p className="text-sm text-apple-muted">
+            {t('auth.subscriptionNone', 'Du hast kein Abonnement. Nach der Registrierung kannst du ein Abo oder Lifetime-Zugang abschließen.')}
+          </p>
+        ) : subscription.isLifetime ? (
+          <p className="text-sm text-apple-muted">
+            {t('auth.subscriptionLifetime', 'Lifetime-Zugang – kein Abo, keine Kündigung nötig.')}
+          </p>
+        ) : (
+          <>
+            {subscription.cancelAtPeriodEnd ? (
+              <p className="text-sm text-apple-muted mb-2">
+                {t('auth.subscriptionCanceledAtEnd', 'Dein Abo wurde gekündigt und endet am {{date}}. Bis dahin hast du vollen Zugriff.', {
+                  date: formatDate(subscription.currentPeriodEnd),
+                })}
+              </p>
+            ) : (
+              <p className="text-sm text-apple-muted mb-2">
+                {t('auth.subscriptionActiveUntil', 'Abo aktiv bis {{date}}.', {
+                  date: formatDate(subscription.currentPeriodEnd),
+                })}
+              </p>
+            )}
+            {subscription.hasSubscription && !subscription.isLifetime && !subscription.cancelAtPeriodEnd && (
+              <>
+                {!showCancelConfirm ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowCancelConfirm(true)}
+                    className="btn-secondary flex items-center gap-2 text-sm"
+                  >
+                    <XCircle size={16} />
+                    {t('auth.subscriptionCancelButton', 'Abo zum Periodenende kündigen')}
+                  </button>
+                ) : (
+                  <div className="p-4 rounded-apple bg-apple-bg border border-apple-border">
+                    <p className="text-sm text-apple-text font-medium mb-3">
+                      {t('auth.subscriptionCancelConfirm', 'Abo zum Ende der aktuellen Abrechnungsperiode kündigen? Du behältst den Zugriff bis dahin.')}
+                    </p>
+                    <div className="flex gap-3">
+                      <button
+                        type="button"
+                        onClick={handleCancelSubscription}
+                        disabled={cancelLoading}
+                        className="px-4 py-2 rounded-apple text-sm font-medium text-white bg-apple-accent hover:bg-apple-accent/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+                      >
+                        {cancelLoading ? (
+                          <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : null}
+                        {t('auth.subscriptionCancelConfirmYes', 'Ja, kündigen')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowCancelConfirm(false)}
+                        disabled={cancelLoading}
+                        className="btn-secondary text-sm"
+                      >
+                        {t('auth.deleteConfirmNo', 'Abbrechen')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
       </div>
 
       {/* Logout */}

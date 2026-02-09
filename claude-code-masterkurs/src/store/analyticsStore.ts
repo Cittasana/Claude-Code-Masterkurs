@@ -1,5 +1,19 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { analyticsApi } from '../lib/api';
+
+// ── Helpers ─────────────────────────────────────────────────────────
+
+function isLoggedIn(): boolean {
+  try {
+    const stored = localStorage.getItem('claude-code-auth');
+    if (!stored) return false;
+    const parsed = JSON.parse(stored);
+    return !!parsed?.state?.token;
+  } catch {
+    return false;
+  }
+}
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -38,6 +52,8 @@ interface AnalyticsStore {
   weeklyGoal: WeeklyGoal;
   // Actions
   logEvent: (type: ActivityType, metadata?: ActivityEvent['metadata']) => void;
+  /** Server-Events laden (wenn eingeloggt) und in den Store übernehmen */
+  loadFromServer: () => Promise<void>;
   setWeeklyGoal: (goal: Partial<WeeklyGoal>) => void;
   // Computed helpers
   getActivityMap: () => DailyActivityMap;
@@ -85,13 +101,35 @@ export const useAnalyticsStore = create<AnalyticsStore>()(
       events: [],
       weeklyGoal: { lessonsPerWeek: 3, quizzesPerWeek: 2 },
 
-      logEvent: (type, metadata) =>
-        set((state) => ({
-          events: [
-            ...state.events,
-            { id: uid(), type, timestamp: new Date().toISOString(), metadata },
-          ],
-        })),
+      logEvent: (type, metadata) => {
+        const event: ActivityEvent = {
+          id: uid(),
+          type,
+          timestamp: new Date().toISOString(),
+          metadata,
+        };
+        set((state) => ({ events: [...state.events, event] }));
+        if (isLoggedIn()) {
+          analyticsApi.logEvent({ type, metadata: metadata ?? undefined }).catch(() => {});
+        }
+      },
+
+      loadFromServer: async () => {
+        if (!isLoggedIn()) return;
+        try {
+          const res = await analyticsApi.getEvents({ limit: 1000 });
+          const raw = (res?.events ?? []) as Array<{ id?: string; type: string; timestamp: string; metadata?: ActivityEvent['metadata'] }>;
+          const events: ActivityEvent[] = raw.map((e) => ({
+            id: e.id ?? uid(),
+            type: e.type as ActivityType,
+            timestamp: e.timestamp,
+            metadata: e.metadata,
+          }));
+          set({ events });
+        } catch {
+          // Server nicht erreichbar – lokale Events behalten
+        }
+      },
 
       setWeeklyGoal: (goal) =>
         set((state) => ({

@@ -485,6 +485,17 @@
     "deleteDesc": "Supprimer définitivement votre compte et toutes les données côté serveur. Votre progression locale sera conservée. Cette action est irréversible.",
     "deleteConfirm": "Êtes-vous sûr ? Toutes les données seront supprimées.",
     "deleteConfirmYes": "Oui, supprimer le compte",
-    "deleteConfirmNo": "Annuler"
+    "deleteConfirmNo": "Annuler",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionLoading": "Chargement du statut d'abonnement…",
+    "subscriptionLoadError": "Impossible de charger le statut d'abonnement.",
+    "subscriptionNone": "Vous n'avez pas d'abonnement. Après l'inscription vous pouvez souscrire un abonnement ou un accès à vie.",
+    "subscriptionLifetime": "Accès à vie – pas d'abonnement, pas besoin d'annuler.",
+    "subscriptionActiveUntil": "Abonnement actif jusqu'au {{date}}.",
+    "subscriptionCanceledAtEnd": "Votre abonnement a été résilié et se termine le {{date}}. Vous avez accès jusqu'à cette date.",
+    "subscriptionCancelButton": "Résilier l'abonnement en fin de période",
+    "subscriptionCancelConfirm": "Résilier votre abonnement à la fin de la période en cours ? Vous conserverez l'accès jusqu'à cette date.",
+    "subscriptionCancelConfirmYes": "Oui, résilier",
+    "subscriptionCancelError": "La résiliation a échoué. Veuillez réessayer plus tard."
   }
 }

@@ -532,6 +532,17 @@
     "deleteDesc": "Account und alle serverseitigen Daten dauerhaft löschen. Dein lokaler Browser-Fortschritt bleibt erhalten. Diese Aktion kann nicht rückgängig gemacht werden.",
     "deleteConfirm": "Bist du sicher? Alle Daten werden gelöscht.",
     "deleteConfirmYes": "Ja, Account löschen",
-    "deleteConfirmNo": "Abbrechen"
+    "deleteConfirmNo": "Abbrechen",
+    "subscriptionTitle": "Abonnement",
+    "subscriptionLoading": "Lade Abo-Status…",
+    "subscriptionLoadError": "Abo-Status konnte nicht geladen werden.",
+    "subscriptionNone": "Du hast kein Abonnement. Nach der Registrierung kannst du ein Abo oder Lifetime-Zugang abschließen.",
+    "subscriptionLifetime": "Lifetime-Zugang – kein Abo, keine Kündigung nötig.",
+    "subscriptionActiveUntil": "Abo aktiv bis {{date}}.",
+    "subscriptionCanceledAtEnd": "Dein Abo wurde gekündigt und endet am {{date}}. Bis dahin hast du vollen Zugriff.",
+    "subscriptionCancelButton": "Abo zum Periodenende kündigen",
+    "subscriptionCancelConfirm": "Abo zum Ende der aktuellen Abrechnungsperiode kündigen? Du behältst den Zugriff bis dahin.",
+    "subscriptionCancelConfirmYes": "Ja, kündigen",
+    "subscriptionCancelError": "Kündigung fehlgeschlagen. Bitte später erneut versuchen."
   }
 }

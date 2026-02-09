@@ -485,6 +485,17 @@
     "deleteDesc": "Eliminar permanentemente tu cuenta y todos los datos del servidor. Tu progreso local del navegador se conservará. Esta acción no se puede deshacer.",
     "deleteConfirm": "¿Estás seguro? Todos los datos serán eliminados.",
     "deleteConfirmYes": "Sí, eliminar cuenta",
-    "deleteConfirmNo": "Cancelar"
+    "deleteConfirmNo": "Cancelar",
+    "subscriptionTitle": "Suscripción",
+    "subscriptionLoading": "Cargando estado de suscripción…",
+    "subscriptionLoadError": "No se pudo cargar el estado de la suscripción.",
+    "subscriptionNone": "No tienes suscripción. Tras registrarte puedes contratar un plan o acceso de por vida.",
+    "subscriptionLifetime": "Acceso de por vida – sin suscripción, no hace falta cancelar.",
+    "subscriptionActiveUntil": "Suscripción activa hasta el {{date}}.",
+    "subscriptionCanceledAtEnd": "Tu suscripción se ha cancelado y termina el {{date}}. Tienes acceso completo hasta entonces.",
+    "subscriptionCancelButton": "Cancelar suscripción al final del periodo",
+    "subscriptionCancelConfirm": "¿Cancelar tu suscripción al final del periodo de facturación actual? Mantendrás el acceso hasta entonces.",
+    "subscriptionCancelConfirmYes": "Sí, cancelar",
+    "subscriptionCancelError": "Error al cancelar. Inténtalo más tarde."
   }
 }

@@ -17,8 +17,16 @@ import {
   Target,
   Clock,
   CheckCircle2,
+  ExternalLink,
 } from 'lucide-react';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
+import {
+  officialDocsOverview,
+  officialDocsCore,
+  officialDocsExtend,
+  officialDocsOutsideTerminal,
+  officialDocsIndexUrl,
+} from '../data/officialDocs';
 
 // ─────────────────────────────────────────────────────────────
 // Dokumentations- / Informationsseite
@@ -26,9 +34,9 @@ import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 // ─────────────────────────────────────────────────────────────
 
 const STATS = [
-  { value: '27', label: 'Lektionen', icon: BookOpen },
+  { value: '30', label: 'Lektionen', icon: BookOpen },
   { value: '3', label: 'Schwierigkeitsstufen', icon: Layers },
-  { value: '27', label: 'Praxis-Quizzes', icon: Brain },
+  { value: '30', label: 'Praxis-Quizzes', icon: Brain },
   { value: '6+', label: 'Projekte', icon: Code2 },
 ];
 
@@ -79,6 +87,9 @@ const LEVELS = [
       'Claude Agent SDK',
       'Plugins & Marketplace',
       'Real-World Workflow Patterns',
+      'Fast Mode & Opus 4.6',
+      'Agent Teams & Checkpointing',
+      'Claude Code überall & offizielle Ressourcen',
     ],
   },
 ];
@@ -321,7 +332,7 @@ const DocsView = () => {
             Der Lehrplan
           </h2>
           <p className="text-apple-muted max-w-lg mx-auto">
-            27 Lektionen in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
+            30 Lektionen in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
           </p>
         </div>
 
@@ -448,6 +459,85 @@ const DocsView = () => {
                 <span className="text-sm text-apple-textSecondary leading-relaxed">{item}</span>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Offizielle Claude Code Dokumentation ───────── */}
+      <section className="mb-16">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-apple-text mb-3">
+            Offizielle Claude Code Dokumentation
+          </h2>
+          <p className="text-apple-muted max-w-lg mx-auto">
+            Zentrale Referenz: <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline">code.claude.com</a>. Vollständiger Index für alle Seiten:{' '}
+            <a href={officialDocsIndexUrl} target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline font-mono text-sm">llms.txt</a>
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="apple-card">
+            <h3 className="font-semibold text-apple-text mb-3 flex items-center gap-2">
+              <BookOpen size={18} className="text-apple-accent" />
+              Einstieg
+            </h3>
+            <ul className="space-y-2">
+              {officialDocsOverview.map((doc) => (
+                <li key={doc.url}>
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-apple-textSecondary hover:text-apple-accent flex items-center gap-1.5 group">
+                    {doc.title}
+                    <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="apple-card">
+            <h3 className="font-semibold text-apple-text mb-3 flex items-center gap-2">
+              <Terminal size={18} className="text-apple-accent" />
+              CLI & Konfiguration
+            </h3>
+            <ul className="space-y-2">
+              {officialDocsCore.map((doc) => (
+                <li key={doc.url}>
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-apple-textSecondary hover:text-apple-accent flex items-center gap-1.5 group">
+                    {doc.title}
+                    <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="apple-card">
+            <h3 className="font-semibold text-apple-text mb-3 flex items-center gap-2">
+              <Layers size={18} className="text-apple-accent" />
+              Erweitern
+            </h3>
+            <ul className="space-y-2">
+              {officialDocsExtend.map((doc) => (
+                <li key={doc.url}>
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-apple-textSecondary hover:text-apple-accent flex items-center gap-1.5 group">
+                    {doc.title}
+                    <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="apple-card">
+            <h3 className="font-semibold text-apple-text mb-3 flex items-center gap-2">
+              <Code2 size={18} className="text-apple-accent" />
+              Web, Desktop, IDE
+            </h3>
+            <ul className="space-y-2">
+              {officialDocsOutsideTerminal.map((doc) => (
+                <li key={doc.url}>
+                  <a href={doc.url} target="_blank" rel="noopener noreferrer" className="text-sm text-apple-textSecondary hover:text-apple-accent flex items-center gap-1.5 group">
+                    {doc.title}
+                    <ExternalLink size={12} className="opacity-70 group-hover:opacity-100" />
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
       </section>

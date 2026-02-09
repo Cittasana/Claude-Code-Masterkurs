@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
@@ -151,6 +151,56 @@ const DashboardView = () => {
           color="from-apple-accent/20 to-apple-accent/5"
           barColor="bg-gradient-to-r from-apple-accentMuted to-apple-accent"
         />
+      </div>
+
+      {/* Neueste Updates – Kacheln */}
+      <div className="apple-card">
+        <h3 className="text-lg font-bold text-apple-text mb-4 flex items-center space-x-2">
+          <Zap className="text-apple-accent" size={20} />
+          <span>Neueste Updates</span>
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <Link
+            to="/lesson/27"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <Zap size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Fast Mode & Opus 4.6</span>
+            <span className="text-xs text-apple-muted mt-1">Schnellere Antworten</span>
+          </Link>
+          <Link
+            to="/lesson/28"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <Users size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Agent Teams & Checkpointing</span>
+            <span className="text-xs text-apple-muted mt-1">Multi-Agent, Rewind</span>
+          </Link>
+          <Link
+            to="/lesson/29"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <ExternalLink size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Claude Code überall</span>
+            <span className="text-xs text-apple-muted mt-1">Web, Desktop, IDE, Docs</span>
+          </Link>
+          <Link
+            to="/features"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <Search size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Reference</span>
+            <span className="text-xs text-apple-muted mt-1">Features & Befehle</span>
+          </Link>
+          <Link
+            to="/patterns"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+          >
+            <Layers size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Patterns</span>
+            <span className="text-xs text-apple-muted mt-1">Prompts & Workflows</span>
+          </Link>
+        </div>
       </div>
 
       {/* Stats Grid */}

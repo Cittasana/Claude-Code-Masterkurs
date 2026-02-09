@@ -16,7 +16,7 @@ export const features: Feature[] = [
       'Mit Ctrl+C kannst du die aktuelle Aktion jederzeit abbrechen',
     ],
     example: 'claude',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'start', 'grundlagen'],
   },
   {
@@ -31,7 +31,7 @@ export const features: Feature[] = [
       'Für mehrstufige Aufgaben ist der interaktive Modus besser geeignet',
     ],
     example: 'claude "erkläre diesen Code"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'prompt', 'grundlagen'],
   },
   {
@@ -46,7 +46,7 @@ export const features: Feature[] = [
       'Große Dateien vorher filtern (head, grep), um den Kontext nicht zu überlasten',
     ],
     example: 'cat file.py | claude "refactore diesen Code"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'pipe', 'stdin'],
   },
   {
@@ -61,7 +61,7 @@ export const features: Feature[] = [
       'Benenne Sessions mit /rename, um sie später leichter wiederzufinden',
     ],
     example: 'claude --resume',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'session', 'resume'],
   },
   {
@@ -75,7 +75,7 @@ export const features: Feature[] = [
       'Falls du die falsche Session erwischst, nutze /resume um gezielt eine andere zu laden',
     ],
     example: 'claude --continue',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'continue', 'session'],
   },
   {
@@ -90,7 +90,7 @@ export const features: Feature[] = [
       'Nützlich um zu erkennen, ob der Kontext zu groß wird',
     ],
     example: 'claude --verbose',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'verbose', 'debug'],
   },
   {
@@ -105,7 +105,7 @@ export const features: Feature[] = [
       'Während der Sitzung mit /model wechseln, um Kosten zu sparen',
     ],
     example: 'claude --model claude-sonnet-4-20250514',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'model', 'konfiguration'],
   },
   {
@@ -120,7 +120,7 @@ export const features: Feature[] = [
       'Auch --output-format stream-json verfügbar für Echtzeit-Streaming',
     ],
     example: 'claude --output-format json "analysiere package.json"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'json', 'output', 'scripting'],
   },
   {
@@ -135,7 +135,7 @@ export const features: Feature[] = [
       'Kombiniere -p mit Pipe für leistungsstarke Automationen: git diff | claude -p "review"',
     ],
     example: 'claude -p "generiere eine README"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'print', 'non-interactive'],
   },
   {
@@ -149,7 +149,7 @@ export const features: Feature[] = [
       'Innerhalb einer Sitzung /help für die Slash Commands verwenden',
     ],
     example: 'claude --help',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['cli', 'help', 'grundlagen'],
   },
 
@@ -170,7 +170,7 @@ export const features: Feature[] = [
       'Skills mit user-invocable: true tauchen ebenfalls in der Liste auf',
     ],
     example: '/help',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'help', 'commands', 'hilfe'],
   },
   {
@@ -184,7 +184,7 @@ export const features: Feature[] = [
       'Zeigt auch an, welche CLAUDE.md Dateien geladen wurden',
     ],
     example: '/status',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'status', 'info', 'einstellungen'],
   },
   {
@@ -199,7 +199,7 @@ export const features: Feature[] = [
       'Haiku-Modell für einfache Tasks spart erheblich Kosten',
     ],
     example: '/cost',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'cost', 'kosten', 'token'],
   },
   {
@@ -214,7 +214,7 @@ export const features: Feature[] = [
       'Große Dateien die Claude gelesen hat, füllen den Kontext schnell',
     ],
     example: '/context',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'context', 'kontext', 'token', 'visualisierung'],
   },
   {
@@ -228,7 +228,7 @@ export const features: Feature[] = [
       'Erkenne Muster: Welche Tage sind am produktivsten?',
     ],
     example: '/stats',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'stats', 'statistiken', 'nutzung', 'historie'],
   },
   {
@@ -242,7 +242,7 @@ export const features: Feature[] = [
       'Am Ende des Monats prüfen, um nicht an Limits zu stoßen',
     ],
     example: '/usage',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'usage', 'nutzung', 'limits', 'plan'],
   },
   {
@@ -256,7 +256,7 @@ export const features: Feature[] = [
       'Claude Code aktualisieren mit: npm update -g @anthropic-ai/claude-code',
     ],
     example: '/release-notes',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'release', 'notes', 'version', 'changelog'],
   },
 
@@ -273,7 +273,7 @@ export const features: Feature[] = [
       '/compact ist die sanftere Alternative – behält eine Zusammenfassung',
     ],
     example: '/clear',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'clear', 'kontext', 'löschen'],
   },
   {
@@ -288,7 +288,7 @@ export const features: Feature[] = [
       'Wird automatisch ausgeführt wenn das Kontext-Limit erreicht wird',
     ],
     example: '/compact fokussiere dich auf die auth-logik',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'compact', 'kontext', 'token', 'komprimieren'],
   },
   {
@@ -303,7 +303,7 @@ export const features: Feature[] = [
       'Auch vom CLI mit claude --resume möglich',
     ],
     example: '/resume my-session',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'resume', 'session', 'fortsetzen'],
   },
   {
@@ -318,7 +318,7 @@ export const features: Feature[] = [
       'Benannte Sessions sind per /resume sofort findbar',
     ],
     example: '/rename auth-refactoring',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'rename', 'session', 'umbenennen'],
   },
   {
@@ -333,7 +333,7 @@ export const features: Feature[] = [
       'Gut zum Teilen von Debugging-Sessions mit dem Team',
     ],
     example: '/export conversation.md',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'export', 'speichern', 'datei', 'clipboard'],
   },
   {
@@ -348,7 +348,7 @@ export const features: Feature[] = [
       'Viel sicherer als manuelles Undo, da der Code-Zustand konsistent bleibt',
     ],
     example: '/rewind',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'rewind', 'zurückspulen', 'undo', 'rückgängig'],
   },
   {
@@ -362,7 +362,7 @@ export const features: Feature[] = [
       'Nützlich um zu prüfen, ob Claude alle Teilaufgaben bearbeitet hat',
     ],
     example: '/todos',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'todos', 'aufgaben', 'liste'],
   },
 
@@ -379,7 +379,7 @@ export const features: Feature[] = [
       'Lokale Settings überschreiben globale Settings',
     ],
     example: '/config',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'config', 'konfiguration', 'einstellungen'],
   },
   {
@@ -394,7 +394,7 @@ export const features: Feature[] = [
       'Tab-Autocomplete zeigt verfügbare Modelle an',
     ],
     example: '/model claude-sonnet-4-20250514',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'model', 'wechseln', 'modell'],
   },
   {
@@ -409,7 +409,7 @@ export const features: Feature[] = [
       'In CI/CD mit --allowedTools einschränken für maximale Sicherheit',
     ],
     example: '/permissions',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'permissions', 'sicherheit', 'berechtigungen'],
   },
   {
@@ -424,7 +424,7 @@ export const features: Feature[] = [
       'Halte die CLAUDE.md fokussiert – zu lang = verschwendeter Kontext',
     ],
     example: '/memory',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'memory', 'claudemd', 'gedächtnis'],
   },
   {
@@ -438,7 +438,7 @@ export const features: Feature[] = [
       'Transcript-Sharing deaktivieren für sensible Projekte',
     ],
     example: '/privacy-settings',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'privacy', 'datenschutz', 'einstellungen'],
   },
   {
@@ -452,7 +452,7 @@ export const features: Feature[] = [
       'Der Stil beeinflusst auch Token-Verbrauch – "concise" spart Kosten',
     ],
     example: '/output-style',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'output', 'style', 'format', 'antwort'],
   },
   {
@@ -466,7 +466,7 @@ export const features: Feature[] = [
       'Die Einstellung bleibt über Sitzungen hinweg gespeichert',
     ],
     example: '/theme',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'theme', 'farbe', 'design', 'aussehen'],
   },
   {
@@ -480,7 +480,7 @@ export const features: Feature[] = [
       'Ausblenden für maximale Terminal-Fläche bei kleinen Bildschirmen',
     ],
     example: '/statusline',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'statusline', 'ui', 'oberfläche'],
   },
   {
@@ -495,7 +495,7 @@ export const features: Feature[] = [
       'Ohne Setup: Alternativ mehrzeilige Eingabe über Pipe oder Dateien',
     ],
     example: '/terminal-setup',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'terminal', 'setup', 'tastatur', 'shift-enter'],
   },
   {
@@ -510,7 +510,7 @@ export const features: Feature[] = [
       'Kann jederzeit mit /vim wieder deaktiviert werden',
     ],
     example: '/vim',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'vim', 'editor', 'modus', 'tastatur'],
   },
 
@@ -527,7 +527,7 @@ export const features: Feature[] = [
       'In die .gitignore gehört CLAUDE.local.md (persönliche Notizen), nicht CLAUDE.md',
     ],
     example: '/init',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'init', 'claudemd', 'setup', 'initialisierung'],
   },
   {
@@ -542,7 +542,7 @@ export const features: Feature[] = [
       'Claude kann nach /add-dir Dateien aus allen hinzugefügten Verzeichnissen lesen',
     ],
     example: '/add-dir ../shared-lib',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'add-dir', 'verzeichnis', 'workspace', 'monorepo'],
   },
   {
@@ -557,7 +557,7 @@ export const features: Feature[] = [
       'Spart langfristig Zeit, weil Fehlentscheidungen früh erkannt werden',
     ],
     example: '/plan',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'plan', 'planung', 'strategie', 'modus'],
   },
   {
@@ -572,7 +572,7 @@ export const features: Feature[] = [
       'Besonders wertvoll für Solo-Entwickler ohne Review-Partner',
     ],
     example: '/review',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'review', 'git', 'code-review'],
   },
   {
@@ -587,7 +587,7 @@ export const features: Feature[] = [
       'Spart enorm Zeit bei iterativen PR-Reviews',
     ],
     example: '/pr-comments',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'pr', 'comments', 'kommentare', 'github'],
   },
   {
@@ -602,7 +602,7 @@ export const features: Feature[] = [
       'Prüft auch auf hardcoded Secrets und API-Keys in Änderungen',
     ],
     example: '/security-review',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'security', 'sicherheit', 'review', 'audit'],
   },
   {
@@ -617,7 +617,7 @@ export const features: Feature[] = [
       'Ideal für das Ausführen von unbekanntem Third-Party Code',
     ],
     example: '/sandbox',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'sandbox', 'isolation', 'sicher', 'bash'],
   },
 
@@ -634,7 +634,7 @@ export const features: Feature[] = [
       'Agents erben CLAUDE.md aber nicht den Konversationskontext',
     ],
     example: '/agents',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'agents', 'subagent', 'verwalten'],
   },
   {
@@ -649,7 +649,7 @@ export const features: Feature[] = [
       'MCP-Server Prompts werden zu Slash Commands: /mcp__server__prompt',
     ],
     example: '/mcp',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'mcp', 'server', 'protokoll', 'verbindung'],
   },
   {
@@ -664,7 +664,7 @@ export const features: Feature[] = [
       'Hooks können Aktionen auch abbrechen (Exit-Code != 0)',
     ],
     example: '/hooks',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'hooks', 'automation', 'events', 'konfiguration'],
   },
   {
@@ -679,7 +679,7 @@ export const features: Feature[] = [
       'Plugins können Skills, Agents und Hooks zusammen bündeln',
     ],
     example: '/plugin',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'plugin', 'erweiterung', 'installieren'],
   },
   {
@@ -694,7 +694,7 @@ export const features: Feature[] = [
       'Verbessert die Relevanz von Claudes Vorschlägen signifikant',
     ],
     example: '/ide',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'ide', 'editor', 'integration', 'vscode'],
   },
   {
@@ -708,7 +708,7 @@ export const features: Feature[] = [
       'Beende nicht mehr benötigte Hintergrund-Prozesse um Ressourcen freizugeben',
     ],
     example: '/bashes',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'bashes', 'hintergrund', 'prozesse', 'tasks'],
   },
 
@@ -724,7 +724,7 @@ export const features: Feature[] = [
       'API-Key basierte Auth ist auch möglich via ANTHROPIC_API_KEY',
     ],
     example: '/login',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'login', 'auth', 'anmelden'],
   },
   {
@@ -738,7 +738,7 @@ export const features: Feature[] = [
       'Nach /logout ist /login erforderlich um weiterzuarbeiten',
     ],
     example: '/logout',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'logout', 'auth', 'abmelden'],
   },
   {
@@ -753,7 +753,7 @@ export const features: Feature[] = [
       'Kombiniere mit GitHub Actions für vollautomatische CI/CD-Integration',
     ],
     example: '/install-github-app',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'github', 'app', 'installation', 'ci'],
   },
 
@@ -769,7 +769,7 @@ export const features: Feature[] = [
       'Der gesamte Konversationskontext wird übertragen',
     ],
     example: '/teleport',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'teleport', 'remote', 'claude-ai', 'session'],
   },
   {
@@ -783,7 +783,7 @@ export const features: Feature[] = [
       'Stellt sicher dass Tools wie git, node etc. im richtigen PATH sind',
     ],
     example: '/remote-env',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'remote', 'env', 'umgebung', 'ssh'],
   },
 
@@ -800,7 +800,7 @@ export const features: Feature[] = [
       'Kann einige Probleme automatisch reparieren',
     ],
     example: '/doctor',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'doctor', 'troubleshooting', 'diagnose'],
   },
   {
@@ -815,7 +815,7 @@ export const features: Feature[] = [
       'Je detaillierter die Beschreibung, desto schneller die Lösung',
     ],
     example: '/bug beschreibung des problems',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'bug', 'report', 'fehler', 'melden'],
   },
   {
@@ -829,7 +829,7 @@ export const features: Feature[] = [
       'Alternativ: Ctrl+D oder Ctrl+C zweimal drücken',
     ],
     example: '/exit',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'exit', 'beenden', 'quit'],
   },
 
@@ -842,7 +842,7 @@ export const features: Feature[] = [
     category: 'CLAUDE.md',
     description: 'Hauptkonfigurationsdatei im Projektroot. Definiert Projektkontext, Konventionen und Regeln.',
     example: '# Projektname\n\nTech Stack: React, TypeScript\nKonventionen: ESLint, Prettier',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['claudemd', 'kontext', 'konfiguration'],
   },
   {
@@ -851,7 +851,7 @@ export const features: Feature[] = [
     category: 'CLAUDE.md',
     description: 'Persönliche Konfiguration in ~/.claude/CLAUDE.md. Globale Präferenzen für alle Projekte.',
     example: '# Meine Präferenzen\n\nSprache: Deutsch\nCode-Stil: Functional',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['claudemd', 'user', 'global'],
   },
   {
@@ -860,7 +860,7 @@ export const features: Feature[] = [
     category: 'CLAUDE.md',
     description: 'CLAUDE.local.md für persönliche, nicht-commitbare Notizen pro Projekt.',
     example: '# Lokale Notizen\n\nMein API Key: sk-...\nBranch-spezifische Info',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['claudemd', 'local', 'persönlich'],
   },
   {
@@ -869,7 +869,7 @@ export const features: Feature[] = [
     category: 'CLAUDE.md',
     description: 'Verzeichnis-spezifische CLAUDE.md Dateien für Subprojekte oder Module.',
     example: 'frontend/CLAUDE.md → Frontend-spezifische Regeln\nbackend/CLAUDE.md → Backend-Konventionen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['claudemd', 'hierarchie', 'verzeichnis'],
   },
   {
@@ -878,7 +878,7 @@ export const features: Feature[] = [
     category: 'CLAUDE.md',
     description: 'Definiert Code-Stil-Richtlinien die Claude automatisch befolgt.',
     example: '## Code Style\n- Verwende functional components\n- Kein any in TypeScript\n- Immer Error Handling',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['claudemd', 'style', 'konventionen'],
   },
 
@@ -891,7 +891,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Claude kann beliebige Dateien im Projekt lesen und analysieren.',
     example: 'Lies die Datei src/App.tsx und erkläre den Code',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'lesen', 'analyse'],
   },
   {
@@ -900,7 +900,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Erstellt neue Dateien oder überschreibt bestehende vollständig.',
     example: 'Erstelle eine neue Komponente in src/components/Button.tsx',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'schreiben', 'erstellen'],
   },
   {
@@ -909,7 +909,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Bearbeitet Teile einer Datei mit gezielten Änderungen.',
     example: 'Ändere die Hintergrundfarbe in index.css von blau zu grün',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'bearbeiten', 'edit'],
   },
   {
@@ -918,7 +918,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Sucht nach Dateien anhand von Mustern oder Inhalten.',
     example: 'Finde alle TypeScript-Dateien die "useState" verwenden',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'suche', 'grep', 'glob'],
   },
   {
@@ -927,7 +927,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Bearbeitet mehrere Dateien gleichzeitig in einem Vorgang.',
     example: 'Refactore den Import-Pfad in allen Komponenten von "@/old" zu "@/new"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'multi', 'refactoring'],
   },
   {
@@ -936,7 +936,7 @@ export const features: Feature[] = [
     category: 'Dateioperationen',
     description: 'Löscht Dateien oder Verzeichnisse im Projekt.',
     example: 'Lösche die veraltete utils/legacy.ts Datei',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['datei', 'löschen', 'cleanup'],
   },
 
@@ -955,7 +955,7 @@ export const features: Feature[] = [
       'Nutze es vor Commits, um nichts versehentlich zu vergessen',
     ],
     example: 'Was hat sich seit dem letzten Commit geändert?',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'status', 'diff'],
   },
   {
@@ -970,7 +970,7 @@ export const features: Feature[] = [
       'Claude warnt vor dem Committen sensibler Dateien wie .env',
     ],
     example: 'Committe die Änderungen mit einer aussagekräftigen Message',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'commit', 'message'],
   },
   {
@@ -985,7 +985,7 @@ export const features: Feature[] = [
       'Claude kann auch verwaiste Branches identifizieren und aufräumen',
     ],
     example: 'Erstelle einen Feature-Branch für das Login-Feature',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'branch', 'feature'],
   },
   {
@@ -1000,7 +1000,7 @@ export const features: Feature[] = [
       'Sage "erstelle einen Draft-PR" für Work-in-Progress Pull Requests',
     ],
     example: 'Erstelle einen PR mit Zusammenfassung aller Änderungen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'pr', 'pullrequest', 'github'],
   },
   {
@@ -1015,7 +1015,7 @@ export const features: Feature[] = [
       'Teste nach der Auflösung immer mit "npm test" oder deinem Test-Framework',
     ],
     example: 'Löse die Merge-Konflikte in der aktuellen Branch',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'merge', 'konflikt'],
   },
   {
@@ -1030,7 +1030,7 @@ export const features: Feature[] = [
       '"Zeige alle Commits die auth betreffen" für Feature-spezifische History',
     ],
     example: 'Zeige mir die letzten 10 Commits und fasse die Änderungen zusammen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'log', 'historie'],
   },
   {
@@ -1045,7 +1045,7 @@ export const features: Feature[] = [
       'git stash pop wendet an UND löscht, git stash apply behält den Stash',
     ],
     example: 'Stashe meine aktuellen Änderungen und wechsle zum main Branch',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'stash', 'workflow'],
   },
   {
@@ -1060,7 +1060,7 @@ export const features: Feature[] = [
       'pick = behalten, squash = zusammenfassen, reword = umbenennen',
     ],
     example: 'Squashe die letzten 3 Commits zu einem zusammen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'rebase', 'squash'],
   },
 
@@ -1419,7 +1419,7 @@ export const features: Feature[] = [
     category: 'Git Integration',
     description: 'Slash Command: Startet ein automatisches Code-Review des aktuellen Git-Diffs mit Feedback zu Code-Qualität, Bugs und Verbesserungen.',
     example: '/review',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'slash', 'review', 'diff', 'code-review'],
   },
   {
@@ -1428,7 +1428,7 @@ export const features: Feature[] = [
     category: 'Git Integration',
     description: 'Slash Command: Zeigt alle Pull-Request-Kommentare an, damit du kontextbezogen auf Feedback reagieren kannst.',
     example: '/pr-comments',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'slash', 'pr', 'comments', 'kommentare', 'github'],
   },
   {
@@ -1437,7 +1437,7 @@ export const features: Feature[] = [
     category: 'Git Integration',
     description: 'Slash Command: Führt ein Security-Review aller ausstehenden Änderungen durch und identifiziert Sicherheitslücken.',
     example: '/security-review',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'slash', 'security', 'sicherheit', 'review', 'audit'],
   },
   {
@@ -1446,7 +1446,7 @@ export const features: Feature[] = [
     category: 'Git Integration',
     description: 'Slash Command: Richtet die Claude GitHub App ein für automatische PR-Reviews und GitHub Actions CI-Integration.',
     example: '/install-github-app',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['git', 'slash', 'github', 'app', 'ci', 'actions', 'installation'],
   },
 
@@ -1465,7 +1465,7 @@ export const features: Feature[] = [
       'MCP-Server Prompts werden automatisch zu Slash Commands',
     ],
     example: 'MCP Server können Datenbanken, APIs, Dateisysteme und mehr anbinden.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'protokoll', 'integration'],
   },
   {
@@ -1479,7 +1479,7 @@ export const features: Feature[] = [
       'Claude Code hat bereits eingebaute Dateisystem-Tools – MCP ergänzt diese',
     ],
     example: '"mcpServers": {\n  "filesystem": {\n    "command": "npx",\n    "args": ["-y", "@anthropic/mcp-filesystem"]\n  }\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'filesystem', 'dateien'],
   },
   {
@@ -1494,7 +1494,7 @@ export const features: Feature[] = [
       'Kombiniere mit /pr-comments für kontextbezogenes PR-Feedback',
     ],
     example: '"mcpServers": {\n  "github": {\n    "command": "npx",\n    "args": ["-y", "@anthropic/mcp-github"]\n  }\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'github', 'repository'],
   },
   {
@@ -1509,7 +1509,7 @@ export const features: Feature[] = [
       'Auch MySQL, SQLite und andere DB-MCP-Server verfügbar',
     ],
     example: '"mcpServers": {\n  "postgres": {\n    "command": "npx",\n    "args": ["-y", "@anthropic/mcp-postgres", "postgresql://..."]\n  }\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'postgres', 'datenbank', 'sql'],
   },
   {
@@ -1524,7 +1524,7 @@ export const features: Feature[] = [
       'Tools, Resources und Prompts sind die drei MCP-Primitive',
     ],
     example: 'npx @anthropic/create-mcp-server my-server',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'custom', 'eigene'],
   },
   {
@@ -1539,7 +1539,7 @@ export const features: Feature[] = [
       'Server werden beim Claude Code Start automatisch gestartet',
     ],
     example: '/config → MCP Servers → Add Server',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'config', 'einrichten'],
   },
   {
@@ -1554,7 +1554,7 @@ export const features: Feature[] = [
       'Lokale Config wird mit dem Team geteilt – keine Secrets reinschreiben!',
     ],
     example: '.claude/settings.json (lokal) vs ~/.claude/settings.json (global)',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['mcp', 'scope', 'lokal', 'global'],
   },
 
@@ -1573,7 +1573,7 @@ export const features: Feature[] = [
       'Subagents sind ideal für: Parallele Recherche, isolierte Tests, spezialisierte Reviews',
     ],
     example: 'Verwende einen Subagent um die Tests parallel zu analysieren',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'subagent', 'delegation'],
   },
   {
@@ -1588,7 +1588,7 @@ export const features: Feature[] = [
       'Ergebnisse werden automatisch zusammengeführt',
     ],
     example: 'Agent 1: Frontend bauen\nAgent 2: Backend API erstellen\nAgent 3: Tests schreiben',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'parallel', 'gleichzeitig'],
   },
   {
@@ -1603,7 +1603,7 @@ export const features: Feature[] = [
       'Definiere spezialisierte Agents für wiederkehrende Workflows',
     ],
     example: 'claude --orchestrate "Build and test the auth module"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'orchestration', 'koordination'],
   },
   {
@@ -1618,7 +1618,7 @@ export const features: Feature[] = [
       'Mit --output-format json für maschinenlesbare Ergebnisse in Pipelines',
     ],
     example: 'claude -p --allowedTools "Edit,Write,Bash" "fix all lint errors"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'headless', 'ci', 'cd', 'automation'],
   },
   {
@@ -1633,7 +1633,7 @@ export const features: Feature[] = [
       'Agents können von Skills mit context: fork referenziert werden',
     ],
     example: 'claude -p --system "Du bist ein Security-Experte" "audit den Code"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'custom', 'spezialisiert'],
   },
   {
@@ -1648,7 +1648,7 @@ export const features: Feature[] = [
       'Kombiniere Personality mit --allowedTools für fokussierte Agents',
     ],
     example: 'System Prompt: "Sei präzise, verwende immer TypeScript, erkläre Entscheidungen"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['agent', 'personality', 'system-prompt'],
   },
 
@@ -1667,7 +1667,7 @@ export const features: Feature[] = [
       'Kombinieredas mit lint-staged für nur geänderte Dateien',
     ],
     example: '"hooks": {\n  "PreCommit": [{\n    "command": "npm run lint && npm test"\n  }]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['hook', 'precommit', 'automation'],
   },
   {
@@ -1682,7 +1682,7 @@ export const features: Feature[] = [
       'Sound-Alert: afplay /System/Library/Sounds/Glass.aiff (macOS)',
     ],
     example: '"hooks": {\n  "Notification": [{\n    "command": "osascript -e \'display notification \\\"$CLAUDE_MESSAGE\\\"\'"\n  }]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['hook', 'notification', 'benachrichtigung'],
   },
   {
@@ -1697,7 +1697,7 @@ export const features: Feature[] = [
       'Exit-Code != 0 verhindert die Dateiänderung',
     ],
     example: '"hooks": {\n  "PreToolUse": [{\n    "matcher": "Write",\n    "command": "validate-change.sh"\n  }]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['hook', 'prewrite', 'validierung'],
   },
   {
@@ -1712,7 +1712,7 @@ export const features: Feature[] = [
       'Auch für: ESLint --fix, import-sorting, oder custom Formatters',
     ],
     example: '"hooks": {\n  "PostToolUse": [{\n    "matcher": "Write",\n    "command": "prettier --write $CLAUDE_FILE_PATH"\n  }]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['hook', 'postwrite', 'formatting'],
   },
   {
@@ -1727,7 +1727,7 @@ export const features: Feature[] = [
       'Kombination mit Notification Hook für "Task fertig"-Alerts',
     ],
     example: '"hooks": {\n  "Stop": [{\n    "command": "echo \'Task abgeschlossen\' >> log.txt"\n  }]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['hook', 'stop', 'abschluss'],
   },
 
@@ -1746,7 +1746,7 @@ export const features: Feature[] = [
       'Frontmatter für Konfiguration: model, allowed-tools, context',
     ],
     example: '.claude/commands/deploy.md:\n---\nDeploy-Anleitung für Production...',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['command', 'projekt', 'custom'],
   },
   {
@@ -1761,7 +1761,7 @@ export const features: Feature[] = [
       'Nicht committet – nur auf deinem Rechner verfügbar',
     ],
     example: '~/.claude/commands/review.md:\n---\nCode Review Workflow...',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['command', 'user', 'global'],
   },
   {
@@ -1776,7 +1776,7 @@ export const features: Feature[] = [
       '@dateiname referenziert Dateien direkt im Command',
     ],
     example: '.claude/commands/fix.md:\nFix: $ARGUMENTS\nAnalysiere und behebe das Problem.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['command', 'variablen', 'arguments'],
   },
   {
@@ -1791,7 +1791,7 @@ export const features: Feature[] = [
       'Skills (.claude/skills/) und Commands (.claude/commands/) sind gleichwertig',
     ],
     example: '/project:deploy production\n/user:review src/auth/',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['command', 'aufrufen', 'invoke'],
   },
 
@@ -1810,7 +1810,7 @@ export const features: Feature[] = [
       'Besonders wertvoll bei Refactorings, Migrationen und neuen Features',
     ],
     example: 'Erstelle einen Plan für das Refactoring der Auth-Module, dann implementiere ihn.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'plan', 'strategie'],
   },
   {
@@ -1825,7 +1825,7 @@ export const features: Feature[] = [
       'Kostet mehr Tokens, liefert aber bei komplexen Problemen deutlich bessere Ergebnisse',
     ],
     example: 'Denke Schritt für Schritt über die optimale Architektur nach.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'thinking', 'reasoning'],
   },
   {
@@ -1840,7 +1840,7 @@ export const features: Feature[] = [
       'Je spezifischer, desto besser – "React 19" statt nur "React"',
     ],
     example: 'Kontext: Wir verwenden React 19, TypeScript strict, Tailwind CSS.\nAufgabe: Erstelle eine neue Komponente.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'kontext', 'priming'],
   },
   {
@@ -1855,7 +1855,7 @@ export const features: Feature[] = [
       'Constraints sind besonders bei großen Codebases wichtig',
     ],
     example: 'Ändere NUR die Datei utils.ts. Berühre keine anderen Dateien. Verwende kein any.',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'constraint', 'einschränkung'],
   },
   {
@@ -1870,7 +1870,7 @@ export const features: Feature[] = [
       'Besser 5 kleine, präzise Prompts als ein riesiger',
     ],
     example: '1. Erstelle die Interfaces\n2. Implementiere die Basislogik\n3. Füge Error Handling hinzu\n4. Schreibe Tests',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'iterativ', 'schrittweise'],
   },
   {
@@ -1885,7 +1885,7 @@ export const features: Feature[] = [
       'In CLAUDE.md Code-Beispiele als Referenz-Patterns hinterlegen',
     ],
     example: 'Erstelle Komponenten im gleichen Stil wie Button.tsx:\n```\nexport const Button = ({ label, onClick }) => ...\n```',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['prompt', 'examples', 'few-shot'],
   },
 
@@ -1904,7 +1904,7 @@ export const features: Feature[] = [
       'In CI/CD IMMER --allowedTools setzen für maximale Sicherheit',
     ],
     example: 'claude --allowedTools "Read,Grep,Glob" "analysiere den Code"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sicherheit', 'tools', 'allowed'],
   },
   {
@@ -1919,7 +1919,7 @@ export const features: Feature[] = [
       'Whitelist (--allowedTools) ist generell sicherer als Blacklist',
     ],
     example: 'claude --disallowedTools "Bash,Write" "review den Code"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sicherheit', 'tools', 'denied'],
   },
   {
@@ -1934,7 +1934,7 @@ export const features: Feature[] = [
       '/permissions in der Sitzung für schnelle Änderungen',
     ],
     example: '"permissions": {\n  "allow": ["Read", "Write src/**"],\n  "deny": ["Bash rm -rf"]\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sicherheit', 'permissions', 'settings'],
   },
   {
@@ -1949,7 +1949,7 @@ export const features: Feature[] = [
       'Im Headless Mode (-p) gibt es keinen Approval – definiere erlaubte Tools!',
     ],
     example: 'Claude: "Soll ich die Datei server.ts ändern? [y/n]"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sicherheit', 'approval', 'bestätigung'],
   },
 
@@ -1968,7 +1968,7 @@ export const features: Feature[] = [
       'Lass auch Edge-Cases und Error-Handling testen',
     ],
     example: 'Schreibe Unit Tests für die Funktion calculateTotal in utils.ts',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['test', 'generieren', 'unit'],
   },
   {
@@ -1983,7 +1983,7 @@ export const features: Feature[] = [
       'Nach Refactorings: "Aktualisiere alle Tests für die neuen Interfaces"',
     ],
     example: 'Die Tests in auth.test.ts schlagen fehl, finde und behebe den Fehler',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['test', 'fix', 'reparieren'],
   },
   {
@@ -1998,7 +1998,7 @@ export const features: Feature[] = [
       'Ziel: 80%+ Coverage für kritische Module',
     ],
     example: 'Analysiere die Testabdeckung und erstelle Tests für ungetestete Funktionen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['test', 'coverage', 'abdeckung'],
   },
   {
@@ -2013,7 +2013,7 @@ export const features: Feature[] = [
       'Claude erstellt automatisch stabile Selektoren (data-testid, role)',
     ],
     example: 'Schreibe einen E2E-Test mit Playwright für den Login-Flow',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['test', 'e2e', 'playwright', 'end-to-end'],
   },
 
@@ -2032,7 +2032,7 @@ export const features: Feature[] = [
       'Ergebnis als CLAUDE.md speichern für zukünftige Sessions',
     ],
     example: 'Analysiere dieses Projekt und erstelle eine Zusammenfassung der Architektur',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['analyse', 'codebase', 'überblick'],
   },
   {
@@ -2047,7 +2047,7 @@ export const features: Feature[] = [
       'Regelmäßig durchführen – nicht erst vor dem Release',
     ],
     example: 'Prüfe den Code auf Sicherheitslücken und erstelle einen Bericht',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['analyse', 'security', 'audit', 'sicherheit'],
   },
   {
@@ -2062,7 +2062,7 @@ export const features: Feature[] = [
       'Bundle-Size: "Analysiere die Bundle-Größe und schlage Code-Splitting vor"',
     ],
     example: 'Analysiere die Performance der React-Komponenten und schlage Optimierungen vor',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['analyse', 'performance', 'optimierung'],
   },
   {
@@ -2077,7 +2077,7 @@ export const features: Feature[] = [
       'Nach der Extraktion: Tests prüfen und ggf. anpassen',
     ],
     example: 'Extrahiere die Validierungslogik in eine eigene Utility-Funktion',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['refactoring', 'extract', 'modularisierung'],
   },
   {
@@ -2092,7 +2092,7 @@ export const features: Feature[] = [
       'Nach dem Rename: git diff reviewen und Tests laufen lassen',
     ],
     example: 'Benenne die Funktion getData in fetchUserProfile um, überall im Projekt',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['refactoring', 'rename', 'umbenennen'],
   },
   {
@@ -2107,7 +2107,7 @@ export const features: Feature[] = [
       'Aktiviere strict mode in tsconfig.json für maximale Type-Safety',
     ],
     example: 'Entferne alle "any"-Typen und ersetze sie durch korrekte Typen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['refactoring', 'typescript', 'types'],
   },
 
@@ -2126,7 +2126,7 @@ export const features: Feature[] = [
       'Verschiedene Prompts für verschiedene Events: PR, Push, Release',
     ],
     example: 'GitHub Action:\n- uses: anthropics/claude-code-action@v1\n  with:\n    prompt: "Review this PR"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['production', 'ci', 'cd', 'github-actions'],
   },
   {
@@ -2141,7 +2141,7 @@ export const features: Feature[] = [
       'Auch docker-compose.yml für Multi-Service-Setups',
     ],
     example: 'Erstelle ein Multi-Stage Dockerfile für die Node.js-App',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['production', 'docker', 'deployment'],
   },
   {
@@ -2156,7 +2156,7 @@ export const features: Feature[] = [
       'Sentry oder ähnlich für automatisches Error-Tracking',
     ],
     example: 'Richte Structured Logging mit winston ein und füge Health-Checks hinzu',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['production', 'monitoring', 'logging'],
   },
   {
@@ -2171,7 +2171,7 @@ export const features: Feature[] = [
       'Claude warnt wenn .env-Dateien versehentlich committet werden',
     ],
     example: 'Erstelle .env.example und validiere alle Umgebungsvariablen beim Start',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['production', 'env', 'umgebung'],
   },
 
@@ -2190,7 +2190,7 @@ export const features: Feature[] = [
       'git bisect + Claude für historische Bug-Suche',
     ],
     example: 'Ich bekomme einen TypeError in Zeile 42 von App.tsx, hilf mir den Bug zu finden',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['troubleshooting', 'debug', 'bug'],
   },
   {
@@ -2205,7 +2205,7 @@ export const features: Feature[] = [
       'Stack-Traces mitschicken – Claude findet die Root-Cause',
     ],
     example: 'cat error.log | claude "analysiere diese Fehler und schlage Lösungen vor"',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['troubleshooting', 'error', 'analyse'],
   },
   {
@@ -2220,7 +2220,7 @@ export const features: Feature[] = [
       'Proxy-Settings in ~/.npmrc bei Firmennetzwerken prüfen',
     ],
     example: '/doctor\n# Führt Diagnose aus und schlägt Lösungen vor',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['troubleshooting', 'installation', 'setup'],
   },
   {
@@ -2235,7 +2235,7 @@ export const features: Feature[] = [
       'Zu lange CLAUDE.md = verschwendeter Kontext bei jeder Nachricht',
     ],
     example: '/compact\n# Komprimiert den Kontext wenn er zu groß wird',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['troubleshooting', 'kontext', 'token', 'limit'],
   },
   {
@@ -2250,7 +2250,7 @@ export const features: Feature[] = [
       'Bei Enterprise: Admin-Regeln können lokale Settings überschreiben',
     ],
     example: '/permissions\n# Prüft und korrigiert Berechtigungseinstellungen',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['troubleshooting', 'permissions', 'zugriff'],
   },
 
@@ -2269,7 +2269,7 @@ export const features: Feature[] = [
       'Ideal für Custom Tooling und Automatisierung',
     ],
     example: 'import { claude } from "@anthropic-ai/claude-code";\nconst result = await claude("Analysiere diesen Code");',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sdk', 'nodejs', 'api', 'programmatisch'],
   },
   {
@@ -2284,7 +2284,7 @@ export const features: Feature[] = [
       'Ideal für bedingte Workflows: "wenn Test fehlschlägt, debugge"',
     ],
     example: 'const conv = claude.conversation();\nawait conv.send("Erstelle Interfaces");\nawait conv.send("Jetzt implementiere sie");',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sdk', 'conversation', 'multi-turn'],
   },
   {
@@ -2299,7 +2299,7 @@ export const features: Feature[] = [
       'Ideal für Chat-Interfaces und Progress-Anzeigen',
     ],
     example: 'const stream = claude.stream("Erkläre diesen Code");\nfor await (const chunk of stream) {\n  process.stdout.write(chunk);\n}',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['sdk', 'streaming', 'echtzeit'],
   },
 
@@ -2317,7 +2317,7 @@ export const features: Feature[] = [
       'Nutze wenn Claude in die falsche Richtung geht – dann neu formulieren',
     ],
     example: 'Esc → Bricht laufende Generierung ab',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['shortcut', 'escape', 'abbrechen'],
   },
   {
@@ -2332,7 +2332,7 @@ export const features: Feature[] = [
       'Funktioniert auch mitten im Text, nicht nur am Anfang',
     ],
     example: 'Tab → Vervollständigt Dateipfade im Prompt',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['shortcut', 'tab', 'autocomplete'],
   },
   {
@@ -2347,7 +2347,7 @@ export const features: Feature[] = [
       'Besser als Terminalfenster schließen – Session wird sauber gespeichert',
     ],
     example: 'Ctrl+C → Stoppt laufende Bash-Befehle oder Generierung',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['shortcut', 'ctrl-c', 'stoppen'],
   },
   {
@@ -2361,8 +2361,69 @@ export const features: Feature[] = [
       'Ideal für iteratives Arbeiten: leicht modifizierte Prompts schnell senden',
     ],
     example: '↑ → Zeigt vorherige Prompts',
-    documentation: 'https://docs.anthropic.com/claude-code',
+    documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['shortcut', 'history', 'navigation'],
+  },
+
+  // ========================================
+  // NEUESTE UPDATES (2026)
+  // ========================================
+  {
+    id: 'f-slash-fast',
+    name: '/fast',
+    category: 'Slash Commands',
+    description: 'Schaltet Fast Mode für Opus 4.6 ein/aus – bis zu 2,5x schnellere Token-Ausgabe.',
+    details: 'Fast Mode ist nur mit Claude Opus 4.6 verfügbar. Mit /fast aktivierst oder deaktivierst du den Modus in der laufenden Sitzung. Die Antworten kommen spürbar schneller, die Kosten pro Token sind höher (Premium-Preise). Ideal für lange Code-Generierungen oder iterative Runden, wenn Latenz wichtiger ist als Kosten.',
+    tips: [
+      'Nur mit Modell Opus 4.6 nutzbar – vorher mit /model opus wechseln',
+      'Für kostenbewusste Nutzung wieder /fast ausstellen',
+      'Offizielle Details: code.claude.com/docs/en/fast-mode',
+    ],
+    example: '/fast',
+    documentation: 'https://code.claude.com/docs/en/fast-mode',
+    tags: ['slash', 'fast', 'opus', 'performance'],
+  },
+  {
+    id: 'f-cli-add-dir',
+    name: '--add-dir',
+    category: 'Grundlagen',
+    description: 'Fügt weitere Arbeitsverzeichnisse hinzu, auf die Claude Zugriff haben soll.',
+    details: 'Mit --add-dir kannst du zusätzliche Verzeichnisse (z.B. übergeordnete Libs oder parallele Apps) angeben. Claude validiert, dass jeder Pfad existiert und ein Verzeichnis ist. Nützlich in Monorepos oder wenn Code in mehreren Sibling-Ordnern liegt.',
+    tips: [
+      'Mehrere Verzeichnisse: claude --add-dir ../apps ../lib',
+      'Pfade müssen existieren und Verzeichnisse sein',
+    ],
+    example: 'claude --add-dir ../apps ../lib',
+    documentation: 'https://code.claude.com/docs/en/cli-reference',
+    tags: ['cli', 'add-dir', 'monorepo', 'kontext'],
+  },
+  {
+    id: 'f-cli-mcp-config',
+    name: '--mcp-config',
+    category: 'MCP',
+    description: 'Lädt MCP-Server aus JSON-Dateien oder JSON-Strings (platzgetrennt).',
+    details: 'Statt MCP-Server nur interaktiv zu konfigurieren, kannst du sie per --mcp-config aus einer oder mehreren JSON-Dateien laden. Mit --strict-mcp-config werden ausschließlich diese Server verwendet; alle anderen MCP-Konfigurationen werden ignoriert. Ideal für reproduzierbare Setups und CI.',
+    tips: [
+      'Einzelne Datei: claude --mcp-config ./mcp.json',
+      'Strikte Nutzung nur dieser Server: --strict-mcp-config --mcp-config ./mcp.json',
+    ],
+    example: 'claude --mcp-config ./mcp.json',
+    documentation: 'https://code.claude.com/docs/en/mcp',
+    tags: ['mcp', 'cli', 'config', 'json'],
+  },
+  {
+    id: 'f-agent-teams',
+    name: 'Agent Teams',
+    category: 'Subagents',
+    description: 'Mehrere Claude-Code-Sitzungen als Team koordinieren (experimentell).',
+    details: 'Agent Teams ermöglichen die Zusammenarbeit mehrerer Claude-Code-Instanzen: mit Team-Leads, Teammates und gemeinsamen Task-Listen. Aktivierung über die Umgebungsvariable CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1. Nützlich für parallele Arbeitsstränge (z.B. Frontend/Backend) mit zentraler Koordination.',
+    tips: [
+      'Experimentell – aktuelle Optionen im Changelog und unter code.claude.com/docs/en/agent-teams prüfen',
+      'Gut für parallele Features in getrennten Worktrees',
+    ],
+    example: 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude',
+    documentation: 'https://code.claude.com/docs/en/agent-teams',
+    tags: ['agents', 'teams', 'multi-agent', 'experimentell'],
   },
 ];
 

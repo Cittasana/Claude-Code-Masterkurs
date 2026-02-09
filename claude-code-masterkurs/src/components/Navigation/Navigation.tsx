@@ -23,6 +23,7 @@ import {
   FileText,
   Menu,
   X,
+  ExternalLink,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -105,7 +106,8 @@ const Navigation = () => {
     { to: '/analytics', match: '/analytics', icon: Activity, labelKey: 'nav.analytics' },
   ];
 
-  const resourcesItems = [
+  const resourcesItems: { to: string; match: string; icon: typeof Search; labelKey: string; externalUrl?: string }[] = [
+    { to: '/docs', match: '/__external__', icon: ExternalLink, labelKey: 'nav.officialDocs', externalUrl: 'https://code.claude.com/docs/de/overview' },
     { to: '/features', match: '/features', icon: Search, labelKey: 'nav.reference' },
     { to: '/patterns', match: '/patterns', icon: Layers, labelKey: 'nav.patterns' },
     { to: '/certificate', match: '/certificate', icon: Award, labelKey: 'nav.certificate' },
@@ -162,17 +164,34 @@ const Navigation = () => {
           >
             {items.map((item) => {
               const Icon = item.icon;
-              const itemActive = isActive(item.match);
+              const isExternal = Boolean('externalUrl' in item && item.externalUrl);
+              const itemActive = !isExternal && isActive(item.match);
+              const className = `flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
+                itemActive
+                  ? 'text-apple-accent bg-apple-accent/10 font-medium'
+                  : 'text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover'
+              }`;
+              if (isExternal && item.externalUrl) {
+                return (
+                  <a
+                    key={item.externalUrl}
+                    href={item.externalUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => setOpenDropdown(null)}
+                    className={className}
+                  >
+                    <Icon size={16} className="shrink-0 text-apple-accent/80" />
+                    {t(item.labelKey)}
+                  </a>
+                );
+              }
               return (
                 <Link
                   key={item.to}
                   to={item.to}
                   onClick={() => setOpenDropdown(null)}
-                  className={`flex items-center gap-2.5 px-4 py-2.5 text-sm transition-colors ${
-                    itemActive
-                      ? 'text-apple-accent bg-apple-accent/10 font-medium'
-                      : 'text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover'
-                  }`}
+                  className={className}
                 >
                   <Icon size={16} className="shrink-0 text-apple-accent/80" />
                   {t(item.labelKey)}

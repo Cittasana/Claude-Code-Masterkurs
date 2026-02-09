@@ -11242,4 +11242,226 @@ EMPFEHLUNG:
       },
     ],
   },
+
+  // ========================================
+  // LEVEL 3: NEUESTE UPDATES (Lektionen 27–29)
+  // ========================================
+  {
+    id: 27,
+    level: 3,
+    title: 'Fast Mode & Opus 4.6',
+    description: 'Schnellere Antworten mit Fast Mode und das neueste Opus-Modell optimal nutzen.',
+    duration: '12 Minuten',
+    objectives: [
+      'Fast Mode für Opus 4.6 verstehen und aktivieren',
+      'Wann Fast Mode sinnvoll ist (Geschwindigkeit vs. Kosten)',
+      'Opus 4.6 und Modell-Aliase (sonnet, opus) nutzen',
+      'Antwortgeschwindigkeit gezielt optimieren',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '⚡ Was ist Fast Mode?',
+      },
+      {
+        type: 'text',
+        content:
+          'Fast Mode ist ein Feature für Claude Opus 4.6, das die Ausgabe-Geschwindigkeit deutlich erhöht. Die Token-Generierung kann bis zu 2,5x schneller sein – bei Premium-Preisen. Ideal, wenn du Opus für komplexe Aufgaben nutzt und schnelleres Feedback willst.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Offizielle Docs',
+        content:
+          'Fast Mode ist in der Research Preview. Aktuelle Details und Aktivierung findest du unter: [Speed up responses with fast mode](https://code.claude.com/docs/en/fast-mode).',
+      },
+      {
+        type: 'heading',
+        content: '🔧 Fast Mode nutzen',
+      },
+      {
+        type: 'list',
+        content: `- **In der Sitzung**: Slash-Command \`/fast\` umschalten – schnelle Antworten an/aus
+- **Modell**: Nur mit **Opus 4.6** verfügbar (\`claude-opus-4-6\` bzw. Alias \`opus\`)
+- **Kosten**: Höhere Kosten pro Token im Vergleich zum Standard-Modus
+- **Einsatz**: Besonders sinnvoll bei langen Code-Generierungen oder vielen kleinen Rückfragen`,
+      },
+      {
+        type: 'heading',
+        content: '📌 Opus 4.6 im Überblick',
+      },
+      {
+        type: 'text',
+        content: `Opus 4.6 ist Anthropics leistungsstärkstes Modell für agentische und langfristige Aufgaben. Es bringt u.a. 1M Token Kontext-Fenster (Beta), adaptive Thinking-Empfehlung und Top-Werte in Benchmarks. Für die tägliche Entwicklung reicht oft Sonnet; für schwierige Refactorings, Architektur-Entscheidungen und Multi-Agent-Setups lohnt sich Opus.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Mit Opus starten (Alias)
+claude --model opus
+
+# In der Sitzung: Modell wechseln
+/model opus
+
+# Fast Mode in der Sitzung togglen
+/fast`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Wann Fast Mode – wann Standard?',
+      },
+      {
+        type: 'list',
+        content: `**Fast Mode sinnvoll:**
+- Lange Code-Generierung, wo du schnell Ergebnis sehen willst
+- Iterative kleine Änderungen mit Opus
+- Wenn Latenz stört, Kosten zweitrangig sind
+
+**Standard bevorzugen:**
+- Kostenbewusste Nutzung
+- Maximale Qualität bei schwierigen Reasoning-Aufgaben
+- Wenn du nicht auf Opus 4.6 setzt`,
+      },
+    ],
+  },
+  {
+    id: 28,
+    level: 3,
+    title: 'Agent Teams & Checkpointing',
+    description: 'Mehrere Claude-Code-Instanzen als Team koordinieren und Änderungen mit Checkpoints verwalten.',
+    duration: '18 Minuten',
+    objectives: [
+      'Agent Teams (experimentell) verstehen und aktivieren',
+      'Checkpointing für Rückversetzen von Änderungen nutzen',
+      'Session-Zustand und Code-Änderungen gezielt zurückspulen',
+      'Team-Leads, Teammates und geteilte Task-Listen einordnen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '👥 Agent Teams (experimentell)',
+      },
+      {
+        type: 'text',
+        content:
+          'Agent Teams ermöglichen die Koordination mehrerer Claude-Code-Sitzungen, die als Team zusammenarbeiten: mit Team-Leads, Teammates und gemeinsamen Task-Listen. So können parallele Arbeitsstränge (z.B. Frontend und Backend) von verschiedenen „Agenten“ bearbeitet werden, während ein Lead die Übersicht hält.',
+      },
+      {
+        type: 'list',
+        content: `- **Aktivierung**: Experimentell über \`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1\`
+- **Konzepte**: Team Lead, Teammates, geteilte Task-Listen, Nachrichten zwischen Agenten
+- **Docs**: [Orchestrate teams of Claude Code sessions](https://code.claude.com/docs/en/agent-teams)
+- **Hinweis**: Feature wird aktiv weiterentwickelt; Changelog und Docs für aktuelle Optionen prüfen`,
+      },
+      {
+        type: 'heading',
+        content: '⏪ Checkpointing',
+      },
+      {
+        type: 'text',
+        content:
+          'Checkpointing erlaubt dir, den Zustand der Konversation und der von Claude vorgenommenen Datei-Änderungen zu speichern und später wiederherzustellen. Du kannst „zurückspulen“, wenn etwas schiefgelaufen ist, ohne manuell alle Änderungen rückgängig zu machen.',
+      },
+      {
+        type: 'list',
+        content: `- **Checkpoints setzen**: Wichtige Zustände werden erfasst (Konversation + Dateien)
+- **Rewind**: Mit \`/rewind\` oder der Checkpoint-UI zu einem früheren Punkt zurückgehen
+- **Vorteil**: Konsistenter Zustand von Code und Chat – kein „halbes Undo“
+- **Docs**: [Checkpointing](https://code.claude.com/docs/en/checkpointing)`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `Typischer Ablauf:
+1. Du arbeitest mit Claude an einem Feature
+2. Nach einem guten Zwischenstand: Checkpoint (wird automatisch bzw. bei Meilensteinen angeboten)
+3. Claude macht weitere Änderungen
+4. Gefällt dir die Richtung nicht → /rewind oder Checkpoint auswählen
+5. Konversation und Dateien sind wieder auf dem Checkpoint-Stand`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Best Practice',
+        content:
+          'Vor größeren Refactorings oder riskanten Änderungen bewusst einen Checkpoint setzen oder auf den automatischen Checkpoint achten. So kannst du schnell auf einen sicheren Stand zurück.',
+      },
+    ],
+  },
+  {
+    id: 29,
+    level: 3,
+    title: 'Claude Code überall & offizielle Ressourcen',
+    description: 'Terminal, Web, Desktop, Chrome, VS Code, JetBrains – und die zentrale Dokumentation nutzen.',
+    duration: '15 Minuten',
+    objectives: [
+      'Alle Nutzungsorte von Claude Code kennen (CLI, Web, Desktop, Browser, IDEs)',
+      'Die offizielle Dokumentation (code.claude.com) als zentrale Referenz nutzen',
+      'Changelog und neue Methoden regelmäßig prüfen',
+      'Richtige Docs für Setup, MCP, Plugins und Deployment finden',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🌐 Claude Code überall',
+      },
+      {
+        type: 'text',
+        content:
+          'Claude Code ist nicht nur ein Terminal-Tool. Du kannst es im Browser (claude.ai/code), in der Desktop-App, als Chrome-Extension (Beta), in VS Code, in JetBrains IDEs, in GitHub Actions, GitLab CI/CD und in Slack nutzen. So bleibt dein Workflow flexibel – lokal, in der Cloud oder im Team.',
+      },
+      {
+        type: 'list',
+        content: `- **Terminal (CLI)**: \`claude\` – Kern-Erlebnis, volle Slash-Commands und MCP
+- **Web**: [claude.ai/code](https://claude.ai/code) – keine lokale Installation, parallele Tasks, integrierte Diff-Ansicht
+- **Desktop-App**: Eigenständige App mit Diffs, parallelen Sitzungen (z.B. Git Worktrees), Cloud-Sessions
+- **Chrome (Beta)**: Browser-Anbindung – Web-Apps testen, Console-Logs, Formulare ausfüllen, Daten extrahieren
+- **VS Code**: Native Extension – Inline-Diffs, @-Erwähnungen, Plan-Review
+- **JetBrains**: Plugin für IntelliJ, PyCharm, WebStorm etc.
+- **CI/CD**: GitHub Actions, GitLab CI/CD – \`@claude\` in PRs/Issues
+- **Slack**: Tasks aus Slack an Claude Code im Web delegieren`,
+      },
+      {
+        type: 'heading',
+        content: '📚 Offizielle Dokumentation: code.claude.com',
+      },
+      {
+        type: 'text',
+        content:
+          'Die zentrale und aktuellste Referenz ist die offizielle Claude-Code-Dokumentation unter **code.claude.com**. Dort findest du Übersicht, Quickstart, Changelog, CLI-Referenz, Einstellungen, MCP, Plugins, Skills, Hooks, Deployment (AWS, GCP, Bedrock, Vertex), Sicherheit und Datennutzung.',
+      },
+      {
+        type: 'list',
+        content: `**Wichtige Einstiegspunkte:**
+- **Übersicht (DE)**: [code.claude.com/docs/de/overview](https://code.claude.com/docs/de/overview)
+- **Quickstart**: Erste Schritte in wenigen Minuten
+- **Changelog**: Neueste Features und Fixes – [code.claude.com/docs/en/changelog](https://code.claude.com/docs/en/changelog)
+- **CLI-Referenz**: Alle Befehle und Flags
+- **Extend Claude Code**: Wann CLAUDE.md, Skills, Subagents, Hooks, MCP, Plugins
+- **MCP**: Tools verbinden – [code.claude.com/docs/en/mcp](https://code.claude.com/docs/en/mcp)
+- **Settings**: Konfiguration, Berechtigungen, Sandbox
+- **Plugins & Skills**: Erweiterungen erstellen und aus Marketplaces installieren`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Updates und neue Methoden',
+      },
+      {
+        type: 'text',
+        content:
+          'Claude Code wird laufend erweitert. Native Installationen aktualisieren sich im Hintergrund; bei Homebrew/WinGet solltest du regelmäßig \`brew upgrade claude-code\` bzw. \`winget upgrade Anthropic.ClaudeCode\` ausführen. Neue Slash-Commands, Fast Mode, Agent Teams, Checkpointing und Plugin-Features findest du im Changelog und in den verlinkten Docs.',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `# Dokumentations-Index für LLMs/Automatisierung
+# Vollständiger Index: https://code.claude.com/docs/llms.txt
+# Dort sind alle verfügbaren Seiten gelistet – ideal zum gezielten Nachschlagen.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Kurs und Docs ergänzen sich',
+        content:
+          'Dieser Kurs vermittelt Konzepte, Workflows und Best Practices. Für exakte CLI-Syntax, aktuelle Flags und offizielle Empfehlungen ist code.claude.com die maßgebliche Quelle. Nutze beide: Kurs für Struktur und Verständnis, Docs für Referenz und neueste Updates.',
+      },
+    ],
+  },
 ];

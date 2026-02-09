@@ -10,6 +10,8 @@ import {
   Layers,
   User,
   Tag,
+  ExternalLink,
+  Zap,
 } from 'lucide-react';
 import { patterns, patternCategories } from '../data/patterns';
 
@@ -71,6 +73,17 @@ const CommunityPatternsView = () => {
         <p className="text-apple-textSecondary text-lg max-w-2xl mx-auto">
           Bewährte Prompts, CLAUDE.md-Snippets, Workflows und Skills – durchsuchbar, kopierbar, sofort nutzbar.
         </p>
+        <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
+          <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
+            <Zap size={16} className="text-apple-accent shrink-0" />
+            <span>
+              <strong className="text-apple-text">Neueste Patterns:</strong> Fast Mode, Agent Teams, Checkpointing, Claude Code überall (Web/Desktop/IDE), offizielle Docs. Kategorie „Neueste Updates“ durchsuchen. Referenz:{' '}
+              <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
+                code.claude.com <ExternalLink size={12} />
+              </a>
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Search & Filter */}

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import Navigation from './components/Navigation/Navigation';
@@ -73,6 +73,7 @@ function App() {
               <Route path="/analytics" element={<LearningAnalyticsView />} />
               <Route path="/leaderboard" element={<LeaderboardView />} />
               <Route path="/docs" element={<DocsView />} />
+              <Route path="/resources" element={<Navigate to="/docs" replace />} />
               <Route path="/login" element={<LoginView />} />
               <Route path="/register" element={<RegisterView />} />
               <Route path="/profile" element={<ProfileView />} />

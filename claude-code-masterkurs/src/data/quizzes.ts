@@ -3829,4 +3829,175 @@ export const quizzes: Quiz[] = [
       },
     ],
   },
+
+  // ========================================
+  // LEKTION 27: Fast Mode & Opus 4.6
+  // ========================================
+  {
+    id: 'l27-quiz-1',
+    lessonId: 27,
+    title: 'Fast Mode & Opus 4.6',
+    type: 'multiple-choice',
+    points: 5,
+    passingScore: 80,
+    maxAttempts: 3,
+    questions: [
+      {
+        id: 'l27-q1',
+        text: 'Mit welchem Modell ist Fast Mode verfügbar?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'Claude Sonnet 4', value: 'sonnet' },
+          { id: 'b', label: 'Claude Haiku', value: 'haiku' },
+          { id: 'c', label: 'Claude Opus 4.6', value: 'opus46', isCorrect: true },
+          { id: 'd', label: 'Allen Modellen', value: 'all' },
+        ],
+        correctAnswer: 'c',
+        explanation: 'Fast Mode ist nur für Claude Opus 4.6 verfügbar und ermöglicht bis zu 2,5x schnellere Token-Generierung.',
+        hints: ['Es ist das neueste Top-Modell', 'Opus 4.6'],
+      },
+      {
+        id: 'l27-q2',
+        text: 'Wie aktivierst du Fast Mode in einer laufenden Sitzung?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: '/speed', value: 'speed' },
+          { id: 'b', label: '/fast', value: 'fast', isCorrect: true },
+          { id: 'c', label: '--fast beim Start', value: 'flag' },
+          { id: 'd', label: 'In den Einstellungen unter "Performance"', value: 'settings' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'In der Sitzung schaltest du Fast Mode mit dem Slash-Command /fast ein bzw. aus.',
+        hints: ['Slash-Command', 'Englisch für "schnell"'],
+      },
+      {
+        id: 'l27-q3',
+        text: 'Was gilt für Fast Mode in Bezug auf Kosten?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'Kosten sind niedriger als im Standard-Modus', value: 'cheaper' },
+          { id: 'b', label: 'Kosten sind höher (Premium-Preise) bei schnellerer Ausgabe', value: 'premium', isCorrect: true },
+          { id: 'c', label: 'Kosten sind identisch', value: 'same' },
+          { id: 'd', label: 'Fast Mode ist kostenlos', value: 'free' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Fast Mode bietet schnellere Ausgabe, wird aber zu Premium-Preisen abgerechnet.',
+        hints: ['Premium', 'Geschwindigkeit hat einen Preis'],
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 28: Agent Teams & Checkpointing
+  // ========================================
+  {
+    id: 'l28-quiz-1',
+    lessonId: 28,
+    title: 'Agent Teams & Checkpointing',
+    type: 'multiple-choice',
+    points: 5,
+    passingScore: 80,
+    maxAttempts: 3,
+    questions: [
+      {
+        id: 'l28-q1',
+        text: 'Wie aktivierst du Agent Teams (experimentell)?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: '/agent-teams in der Sitzung', value: 'slash' },
+          { id: 'b', label: 'Umgebungsvariable CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1', value: 'env', isCorrect: true },
+          { id: 'c', label: 'In settings.json unter "teams"', value: 'settings' },
+          { id: 'd', label: 'Agent Teams sind bereits standardmäßig aktiv', value: 'default' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Agent Teams werden über die Umgebungsvariable CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 aktiviert.',
+        hints: ['Experimentell', 'Umgebungsvariable'],
+      },
+      {
+        id: 'l28-q2',
+        text: 'Was ermöglicht Checkpointing?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'Nur die Konversation zu speichern', value: 'chat-only' },
+          { id: 'b', label: 'Konversation und Datei-Änderungen zu einem früheren Stand zurückzusetzen', value: 'both', isCorrect: true },
+          { id: 'c', label: 'Nur Dateien zu sichern', value: 'files-only' },
+          { id: 'd', label: 'Automatische Backups in die Cloud', value: 'cloud' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Checkpointing speichert Konversations- und Dateizustand; mit /rewind kannst du beides auf einen früheren Punkt zurücksetzen.',
+        hints: ['Konversation UND Code', 'Zurückspulen'],
+      },
+      {
+        id: 'l28-q3',
+        text: 'Welcher Befehl hilft, zu einem früheren Zustand (Konversation + Änderungen) zurückzugehen?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: '/clear', value: 'clear' },
+          { id: 'b', label: '/rewind', value: 'rewind', isCorrect: true },
+          { id: 'c', label: '/undo', value: 'undo' },
+          { id: 'd', label: '/reset', value: 'reset' },
+        ],
+        correctAnswer: 'b',
+        explanation: '/rewind spult Konversation und zugehörige Code-Änderungen auf einen früheren Checkpoint zurück.',
+        hints: ['Zurückspulen', 'Checkpoints'],
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 29: Claude Code überall & Ressourcen
+  // ========================================
+  {
+    id: 'l29-quiz-1',
+    lessonId: 29,
+    title: 'Claude Code überall & offizielle Ressourcen',
+    type: 'multiple-choice',
+    points: 5,
+    passingScore: 80,
+    maxAttempts: 3,
+    questions: [
+      {
+        id: 'l29-q1',
+        text: 'Wo ist die offizielle, zentrale Dokumentation für Claude Code?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'docs.anthropic.com', value: 'anthropic' },
+          { id: 'b', label: 'code.claude.com', value: 'codeclaude', isCorrect: true },
+          { id: 'c', label: 'claude.ai/docs', value: 'claudeai' },
+          { id: 'd', label: 'github.com/anthropics/claude-code', value: 'github' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Die offizielle Claude-Code-Dokumentation liegt unter code.claude.com (inkl. DE-Übersicht unter docs/de/overview).',
+        hints: ['code.claude.com', 'Offizielle Docs'],
+      },
+      {
+        id: 'l29-q2',
+        text: 'Welche Nutzungsorte für Claude Code gibt es?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'Nur Terminal', value: 'terminal-only' },
+          { id: 'b', label: 'Terminal, Web (claude.ai/code), Desktop, Chrome, VS Code, JetBrains, Slack, CI/CD', value: 'all', isCorrect: true },
+          { id: 'c', label: 'Nur Terminal und VS Code', value: 'two' },
+          { id: 'd', label: 'Nur im Browser', value: 'browser-only' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Claude Code ist an vielen Stellen nutzbar: Terminal, Web, Desktop-App, Chrome-Extension, VS Code, JetBrains, GitHub Actions, GitLab CI/CD, Slack.',
+        hints: ['Überall', 'CLI, Web, IDE, Slack'],
+      },
+      {
+        id: 'l29-q3',
+        text: 'Wo findest du den vollständigen Index aller Dokumentationsseiten (z.B. für Automatisierung)?',
+        type: 'radio',
+        options: [
+          { id: 'a', label: 'In der README auf GitHub', value: 'readme' },
+          { id: 'b', label: 'https://code.claude.com/docs/llms.txt', value: 'llms', isCorrect: true },
+          { id: 'c', label: 'Nur in der Web-UI unter "Docs"', value: 'webui' },
+          { id: 'd', label: 'Es gibt keinen zentralen Index', value: 'none' },
+        ],
+        correctAnswer: 'b',
+        explanation: 'Der Dokumentations-Index für alle Seiten ist unter https://code.claude.com/docs/llms.txt abrufbar.',
+        hints: ['llms.txt', 'Index aller Docs'],
+      },
+    ],
+  },
 ];

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, BookOpen, Terminal, Copy, Check, ChevronDown, ChevronRight } from 'lucide-react';
+import { Search, BookOpen, Terminal, Copy, Check, ChevronDown, ChevronRight, ExternalLink, Zap } from 'lucide-react';
 import { features, featureCategories } from '../data/features';
 
 const FeatureReferenceView = () => {
@@ -61,6 +61,17 @@ const FeatureReferenceView = () => {
         <p className="text-apple-textSecondary text-lg">
           {features.length}+ Features, Commands & Funktionen im Überblick
         </p>
+        <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
+          <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
+            <Zap size={16} className="text-apple-accent shrink-0" />
+            <span>
+              <strong className="text-apple-text">Neueste Updates:</strong> Fast Mode (<code className="text-apple-accent/90">/fast</code>), Agent Teams, Checkpointing, <code className="text-apple-accent/90">--add-dir</code>, <code className="text-apple-accent/90">--mcp-config</code>. Offizielle Referenz:{' '}
+              <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
+                code.claude.com <ExternalLink size={12} />
+              </a>
+            </span>
+          </p>
+        </div>
       </div>
 
       {/* Search & Filter */}

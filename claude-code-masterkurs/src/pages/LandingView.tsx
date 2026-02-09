@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Layers, Monitor, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 
 // Apple-Design: Grau-Basis, dezentes Punktmuster
@@ -175,6 +175,52 @@ const LandingView = () => {
             <Award size={28} className="mx-auto mb-3 text-apple-accent" />
             <h3 className="font-semibold text-apple-text mb-2">{t('landing.featureCert')}</h3>
             <p className="text-sm text-apple-muted leading-relaxed">{t('landing.featureCertDesc')}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Neueste Updates – Kacheln */}
+      <section className="py-10 sm:py-14 border-t border-apple-border px-4 bg-apple-surface/30">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl font-bold text-apple-text text-center mb-2">
+            Neueste Claude-Code-Updates
+          </h2>
+          <p className="text-apple-textSecondary text-center mb-8 max-w-xl mx-auto text-sm">
+            Fast Mode, Agent Teams, Checkpointing und offizielle Docs – im Kurs abgedeckt.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <Link
+              to="/docs"
+              className="apple-card text-center p-5 border border-apple-border bg-apple-surface hover:border-apple-accent/40 transition-colors group"
+            >
+              <Zap size={26} className="mx-auto mb-2 text-apple-accent" />
+              <h3 className="font-semibold text-apple-text mb-1 text-sm group-hover:text-apple-accent transition-colors">Fast Mode & Opus 4.6</h3>
+              <p className="text-xs text-apple-muted leading-relaxed">Schnellere Antworten mit /fast</p>
+            </Link>
+            <Link
+              to="/docs"
+              className="apple-card text-center p-5 border border-apple-border bg-apple-surface hover:border-apple-accent/40 transition-colors group"
+            >
+              <Layers size={26} className="mx-auto mb-2 text-apple-accent" />
+              <h3 className="font-semibold text-apple-text mb-1 text-sm group-hover:text-apple-accent transition-colors">Agent Teams & Checkpointing</h3>
+              <p className="text-xs text-apple-muted leading-relaxed">Multi-Agent, /rewind</p>
+            </Link>
+            <Link
+              to="/docs"
+              className="apple-card text-center p-5 border border-apple-border bg-apple-surface hover:border-apple-accent/40 transition-colors group"
+            >
+              <Monitor size={26} className="mx-auto mb-2 text-apple-accent" />
+              <h3 className="font-semibold text-apple-text mb-1 text-sm group-hover:text-apple-accent transition-colors">Claude Code überall</h3>
+              <p className="text-xs text-apple-muted leading-relaxed">Web, Desktop, IDE, Slack</p>
+            </Link>
+            <Link
+              to="/docs"
+              className="apple-card text-center p-5 border border-apple-border bg-apple-surface hover:border-apple-accent/40 transition-colors group"
+            >
+              <ExternalLink size={26} className="mx-auto mb-2 text-apple-accent" />
+              <h3 className="font-semibold text-apple-text mb-1 text-sm group-hover:text-apple-accent transition-colors">Offizielle Docs</h3>
+              <p className="text-xs text-apple-muted leading-relaxed">code.claude.com</p>
+            </Link>
           </div>
         </div>
       </section>

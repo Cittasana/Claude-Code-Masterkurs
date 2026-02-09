@@ -119,7 +119,7 @@ const Navigation = () => {
   const renderDropdown = (
     id: DropdownId,
     labelKey: string,
-    items: { to: string; match: string; icon: React.ComponentType<{ size?: number; className?: string }>; labelKey: string }[],
+    items: { to: string; match: string; icon: React.ComponentType<{ size?: number; className?: string }>; labelKey: string; externalUrl?: string }[],
     groupIcon: React.ComponentType<{ size?: number; className?: string }>
   ) => {
     const GroupIcon = groupIcon;

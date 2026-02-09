@@ -1,0 +1,53 @@
+---
+description: Standard-Format für Git Commits und Pushes bei Updates und Features
+alwaysApply: true
+---
+
+# Git Commit & Push Standard
+
+## Commit-Nachricht Format
+
+Erste Zeile: Kurze, prägnante Zusammenfassung auf Deutsch (max ~72 Zeichen).
+Danach Leerzeile, gefolgt von Aufzählung der konkreten Änderungen.
+
+```
+<Zusammenfassung der Änderung>
+
+- <Detailpunkt 1>
+- <Detailpunkt 2>
+- <Detailpunkt 3>
+```
+
+## Regeln
+
+- Sprache: **Deutsch**
+- `.DS_Store` wird NIE committet
+- Zusammenfassung beschreibt das "Was" und "Warum" knapp
+- Aufzählungspunkte listen die betroffenen Bereiche/Dateien konkret auf
+- Prefixes bei Bedarf: `Fix:`, `Feature:`, `Kurs-Update:`, `Refactor:`
+- Immer auf `origin/main` pushen, sofern nicht anders angegeben
+- HEREDOC-Syntax für mehrzeilige Commit-Messages verwenden
+
+## Beispiel
+
+```bash
+git commit -m "$(cat <<'EOF'
+Lektionen 27–29 umfassend erweitert, Profil-/Store-Verbesserungen
+
+- Lektionen 27, 28, 29 mit offiziellem Docs-Kontext ausgebaut
+- ProfileView, analyticsStore und userProgress Store erweitert
+- Lokalisierungen (de/en/es/fr) aktualisiert
+- App.tsx: neue Views/Routen ergänzt
+EOF
+)"
+```
+
+## Workflow
+
+1. `git status` – Überblick über Änderungen
+2. `git diff --stat` – Umfang prüfen
+3. `git log --oneline -5` – Commit-Stil prüfen
+4. Relevante Dateien stagen (KEIN `.DS_Store`)
+5. Commit mit HEREDOC-Message
+6. Push nach `origin/main`
+7. `git status` zur Bestätigung

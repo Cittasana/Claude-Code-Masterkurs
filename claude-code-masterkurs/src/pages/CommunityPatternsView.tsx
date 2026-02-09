@@ -22,6 +22,11 @@ const CommunityPatternsView = () => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  const lastUpdatePatterns = useMemo(
+    () => patterns.filter((p) => p.lastUpdate === true),
+    []
+  );
+
   const filteredPatterns = useMemo(() => {
     return patterns.filter((p) => {
       const matchesSearch =
@@ -73,17 +78,26 @@ const CommunityPatternsView = () => {
         <p className="text-apple-textSecondary text-lg max-w-2xl mx-auto">
           Bewährte Prompts, CLAUDE.md-Snippets, Workflows und Skills – durchsuchbar, kopierbar, sofort nutzbar.
         </p>
-        <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
-          <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
-            <Zap size={16} className="text-apple-accent shrink-0" />
-            <span>
-              <strong className="text-apple-text">Neueste Patterns:</strong> Fast Mode, Agent Teams, Checkpointing, Claude Code überall (Web/Desktop/IDE), offizielle Docs. Kategorie „Neueste Updates“ durchsuchen. Referenz:{' '}
-              <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
-                code.claude.com <ExternalLink size={12} />
-              </a>
-            </span>
-          </p>
-        </div>
+        {lastUpdatePatterns.length > 0 && (
+          <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
+            <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
+              <Zap size={16} className="text-apple-accent shrink-0" />
+              <span>
+                <strong className="text-apple-text">Neueste Patterns:</strong>{' '}
+                {lastUpdatePatterns.map((p, i) => (
+                  <span key={p.id}>
+                    {i > 0 && ', '}
+                    {p.bannerLabel || p.title}
+                  </span>
+                ))}
+                . Referenz:{' '}
+                <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
+                  code.claude.com <ExternalLink size={12} />
+                </a>
+              </span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Search & Filter */}
@@ -180,10 +194,15 @@ const CommunityPatternsView = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <span className="text-sm font-semibold text-apple-text">
                               {pattern.title}
                             </span>
+                            {pattern.lastUpdate && (
+                              <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-apple-accent/20 text-apple-accent border border-apple-accent/40">
+                                Letztes Update
+                              </span>
+                            )}
                           </div>
                           <p className="text-apple-textSecondary text-xs mt-0.5 truncate">
                             {pattern.description}

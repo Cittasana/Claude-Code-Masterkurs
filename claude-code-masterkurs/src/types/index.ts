@@ -229,6 +229,10 @@ export interface Feature {
   example: string;
   documentation: string;
   tags: string[];
+  /** Wenn true: Feature als „Neuestes Update“ anzeigen (Banner + Badge). Bei neuem Update auf false setzen. */
+  lastUpdate?: boolean;
+  /** Optional: Anzeigename im „Neueste Updates“-Banner (z. B. „Fast Mode“ für /fast, „Checkpointing“ für /rewind). */
+  bannerLabel?: string;
 }
 
 // Community Patterns Library Types
@@ -242,6 +246,10 @@ export interface CommunityPattern {
   language?: string;
   tags: string[];
   useCase?: string;
+  /** Wenn true: Pattern als „Neuestes Update“ anzeigen (Banner + Badge). Bei neuem Update auf false setzen. */
+  lastUpdate?: boolean;
+  /** Optional: Anzeigename im „Neueste Patterns“-Banner. */
+  bannerLabel?: string;
 }
 
 // Live Coding Challenge Types

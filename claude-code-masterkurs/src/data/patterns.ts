@@ -201,6 +201,80 @@ Halte jeden Schritt klein und deploybar.`,
 Halte die README kurz; Verweise auf ausführliche Docs, falls vorhanden.`,
     tags: ['dokumentation', 'readme', 'onboarding'],
   },
+  // ---------- Neueste Updates (in Workflows, lastUpdate bis zum nächsten Release) ----------
+  {
+    id: 'n-fast-mode',
+    title: 'Fast Mode für Opus 4.6 nutzen',
+    description: 'Schnellere Token-Ausgabe mit /fast – nur bei Opus 4.6, höhere Kosten.',
+    category: 'Workflows',
+    author: 'CCM · code.claude.com',
+    snippet: `# Fast Mode (Opus 4.6)
+- In der Sitzung: /model opus  (falls noch nicht Opus)
+- Dann: /fast  → schaltet schnellere Ausgabe an/aus
+- Bis zu 2,5x schneller, Premium-Preise
+- Ideal bei langen Code-Generierungen oder vielen kleinen Runden
+# Referenz: https://code.claude.com/docs/en/fast-mode`,
+    tags: ['fast-mode', 'opus', 'performance', '2026'],
+    useCase: 'Schnellere Antworten bei Opus 4.6',
+    lastUpdate: true,
+    bannerLabel: 'Fast Mode',
+  },
+  {
+    id: 'n-agent-teams',
+    title: 'Agent Teams aktivieren (experimentell)',
+    description: 'Mehrere Claude-Code-Sessions als Team mit Lead und Teammates koordinieren.',
+    category: 'Workflows',
+    author: 'CCM · code.claude.com',
+    snippet: `# Agent Teams (experimentell)
+# Aktivierung (vor dem Start):
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude
+
+# Konzepte: Team Lead, Teammates, geteilte Task-Listen
+# Nützlich für parallele Stränge (z.B. Frontend + Backend)
+# Docs: https://code.claude.com/docs/en/agent-teams`,
+    language: 'bash',
+    tags: ['agent-teams', 'multi-agent', 'experimentell', '2026'],
+    useCase: 'Parallele Features mit mehreren Agents',
+    lastUpdate: true,
+    bannerLabel: 'Agent Teams',
+  },
+  {
+    id: 'n-checkpointing',
+    title: 'Checkpointing & Rewind',
+    description: 'Konversation und Code-Änderungen auf einen früheren Stand zurückspulen.',
+    category: 'Workflows',
+    author: 'CCM · code.claude.com',
+    snippet: `# Checkpointing
+- Checkpoints speichern Konversation + Dateizustand
+- /rewind  → spult auf früheren Checkpoint zurück (auch Code-Änderungen)
+- Vor großen Refactorings: Checkpoint setzen oder auf automatischen achten
+# Docs: https://code.claude.com/docs/en/checkpointing`,
+    tags: ['checkpointing', 'rewind', 'undo', '2026'],
+    useCase: 'Sicherer Rollback bei falschem Ansatz',
+    lastUpdate: true,
+    bannerLabel: 'Checkpointing',
+  },
+  {
+    id: 'n-claude-everywhere',
+    title: 'Claude Code überall nutzen',
+    description: 'Terminal, Web, Desktop, Chrome, VS Code, JetBrains, Slack, CI/CD.',
+    category: 'Workflows',
+    author: 'CCM · code.claude.com',
+    snippet: `# Nutzungsorte
+- Terminal: claude  (Kern-Erlebnis)
+- Web: claude.ai/code  (keine lokale Installation)
+- Desktop-App: Diffs, parallele Sessions, Cloud
+- Chrome (Beta): Web-Apps testen, Console, Formulare
+- VS Code / JetBrains: Extension / Plugin
+- CI/CD: GitHub Actions, GitLab – @claude in PRs
+- Slack: Tasks an Claude Code delegieren
+# Übersicht: https://code.claude.com/docs/de/overview`,
+    tags: ['web', 'desktop', 'ide', 'slack', 'cicd', '2026'],
+    useCase: 'Passenden Einstieg für deinen Workflow wählen',
+    lastUpdate: true,
+    bannerLabel: 'Claude Code überall',
+  },
   // ========== MCP ==========
   {
     id: 'm-filesystem-rules',
@@ -307,78 +381,11 @@ ci(github): add lint job
 **Sprache**: [Deutsch/Englisch]`,
     tags: ['prompt', 'template', 'best-practice'],
   },
-
-  // ========== Neueste Updates (2026) ==========
-  {
-    id: 'n-fast-mode',
-    title: 'Fast Mode für Opus 4.6 nutzen',
-    description: 'Schnellere Token-Ausgabe mit /fast – nur bei Opus 4.6, höhere Kosten.',
-    category: 'Neueste Updates',
-    author: 'CCM · code.claude.com',
-    snippet: `# Fast Mode (Opus 4.6)
-- In der Sitzung: /model opus  (falls noch nicht Opus)
-- Dann: /fast  → schaltet schnellere Ausgabe an/aus
-- Bis zu 2,5x schneller, Premium-Preise
-- Ideal bei langen Code-Generierungen oder vielen kleinen Runden
-# Referenz: https://code.claude.com/docs/en/fast-mode`,
-    tags: ['fast-mode', 'opus', 'performance', '2026'],
-    useCase: 'Schnellere Antworten bei Opus 4.6',
-  },
-  {
-    id: 'n-agent-teams',
-    title: 'Agent Teams aktivieren (experimentell)',
-    description: 'Mehrere Claude-Code-Sessions als Team mit Lead und Teammates koordinieren.',
-    category: 'Neueste Updates',
-    author: 'CCM · code.claude.com',
-    snippet: `# Agent Teams (experimentell)
-# Aktivierung (vor dem Start):
-export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
-claude
-
-# Konzepte: Team Lead, Teammates, geteilte Task-Listen
-# Nützlich für parallele Stränge (z.B. Frontend + Backend)
-# Docs: https://code.claude.com/docs/en/agent-teams`,
-    language: 'bash',
-    tags: ['agent-teams', 'multi-agent', 'experimentell', '2026'],
-    useCase: 'Parallele Features mit mehreren Agents',
-  },
-  {
-    id: 'n-checkpointing',
-    title: 'Checkpointing & Rewind',
-    description: 'Konversation und Code-Änderungen auf einen früheren Stand zurückspulen.',
-    category: 'Neueste Updates',
-    author: 'CCM · code.claude.com',
-    snippet: `# Checkpointing
-- Checkpoints speichern Konversation + Dateizustand
-- /rewind  → spult auf früheren Checkpoint zurück (auch Code-Änderungen)
-- Vor großen Refactorings: Checkpoint setzen oder auf automatischen achten
-# Docs: https://code.claude.com/docs/en/checkpointing`,
-    tags: ['checkpointing', 'rewind', 'undo', '2026'],
-    useCase: 'Sicherer Rollback bei falschem Ansatz',
-  },
-  {
-    id: 'n-claude-everywhere',
-    title: 'Claude Code überall nutzen',
-    description: 'Terminal, Web, Desktop, Chrome, VS Code, JetBrains, Slack, CI/CD.',
-    category: 'Neueste Updates',
-    author: 'CCM · code.claude.com',
-    snippet: `# Nutzungsorte
-- Terminal: claude  (Kern-Erlebnis)
-- Web: claude.ai/code  (keine lokale Installation)
-- Desktop-App: Diffs, parallele Sessions, Cloud
-- Chrome (Beta): Web-Apps testen, Console, Formulare
-- VS Code / JetBrains: Extension / Plugin
-- CI/CD: GitHub Actions, GitLab – @claude in PRs
-- Slack: Tasks an Claude Code delegieren
-# Übersicht: https://code.claude.com/docs/de/overview`,
-    tags: ['web', 'desktop', 'ide', 'slack', 'cicd', '2026'],
-    useCase: 'Passenden Einstieg für deinen Workflow wählen',
-  },
   {
     id: 'n-official-docs',
     title: 'Offizielle Dokumentation (code.claude.com)',
     description: 'Zentrale Referenz: CLI, Settings, MCP, Plugins, Changelog.',
-    category: 'Neueste Updates',
+    category: 'Sonstige',
     author: 'CCM · Anthropic',
     snippet: `# Offizielle Claude-Code-Docs
 - Übersicht (DE): https://code.claude.com/docs/de/overview
@@ -390,15 +397,13 @@ claude
     language: 'markdown',
     tags: ['docs', 'reference', 'code.claude.com', '2026'],
     useCase: 'Aktuelle Syntax, Flags und Features nachschlagen',
+    lastUpdate: true,
+    bannerLabel: 'Offizielle Docs',
   },
 ];
 
-export const patternCategories = [
-  'Neueste Updates',
-  'Prompts',
-  'CLAUDE.md',
-  'Workflows',
-  'MCP',
-  'Skills',
-  'Sonstige',
-] as const;
+/** Kategorien in fester Reihenfolge; nur solche, die mindestens ein Pattern haben. Bei neuem Update: neue Patterns in bestehende Kategorien mit lastUpdate: true. */
+const CATEGORY_ORDER = ['Prompts', 'CLAUDE.md', 'Workflows', 'MCP', 'Skills', 'Sonstige'] as const;
+export const patternCategories = CATEGORY_ORDER.filter((c) =>
+  patterns.some((p) => p.category === c)
+);

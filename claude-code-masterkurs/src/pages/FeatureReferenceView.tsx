@@ -11,6 +11,11 @@ const FeatureReferenceView = () => {
   const [expandedFeature, setExpandedFeature] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  const lastUpdateFeatures = useMemo(
+    () => features.filter((f) => f.lastUpdate === true),
+    []
+  );
+
   const filteredFeatures = useMemo(() => {
     return features.filter((f) => {
       const matchesSearch =
@@ -61,17 +66,38 @@ const FeatureReferenceView = () => {
         <p className="text-apple-textSecondary text-lg">
           {features.length}+ Features, Commands & Funktionen im Überblick
         </p>
-        <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
-          <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
-            <Zap size={16} className="text-apple-accent shrink-0" />
-            <span>
-              <strong className="text-apple-text">Neueste Updates:</strong> Fast Mode (<code className="text-apple-accent/90">/fast</code>), Agent Teams, Checkpointing, <code className="text-apple-accent/90">--add-dir</code>, <code className="text-apple-accent/90">--mcp-config</code>. Offizielle Referenz:{' '}
-              <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
-                code.claude.com <ExternalLink size={12} />
-              </a>
-            </span>
-          </p>
-        </div>
+        {lastUpdateFeatures.length > 0 && (
+          <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">
+            <p className="text-sm text-apple-textSecondary flex items-center gap-2 flex-wrap">
+              <Zap size={16} className="text-apple-accent shrink-0" />
+              <span>
+                <strong className="text-apple-text">Neueste Updates:</strong>{' '}
+                {lastUpdateFeatures.map((f, i) => {
+                  const label = f.bannerLabel || f.name;
+                  const isCli = f.name.startsWith('/') || f.name.startsWith('--');
+                  return (
+                    <span key={f.id}>
+                      {i > 0 && ', '}
+                      {isCli ? (
+                        <>
+                          {f.bannerLabel ? `${label} (` : ''}
+                          <code className="text-apple-accent/90">{f.name}</code>
+                          {f.bannerLabel ? ')' : ''}
+                        </>
+                      ) : (
+                        label
+                      )}
+                    </span>
+                  );
+                })}
+                . Offizielle Referenz:{' '}
+                <a href="https://code.claude.com/docs/de/overview" target="_blank" rel="noopener noreferrer" className="text-apple-accent hover:underline inline-flex items-center gap-1">
+                  code.claude.com <ExternalLink size={12} />
+                </a>
+              </span>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Search & Filter */}
@@ -169,10 +195,15 @@ const FeatureReferenceView = () => {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <div className="flex items-center space-x-2">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <code className="text-sm font-mono text-apple-accent font-semibold">
                               {feature.name}
                             </code>
+                            {feature.lastUpdate && (
+                              <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-apple-accent/20 text-apple-accent border border-apple-accent/40">
+                                Letztes Update
+                              </span>
+                            )}
                           </div>
                           <p className="text-apple-textSecondary text-xs mt-0.5 truncate">
                             {feature.description}

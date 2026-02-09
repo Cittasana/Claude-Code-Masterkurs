@@ -350,6 +350,8 @@ export const features: Feature[] = [
     example: '/rewind',
     documentation: 'https://code.claude.com/docs/en/overview',
     tags: ['slash', 'rewind', 'zurückspulen', 'undo', 'rückgängig'],
+    lastUpdate: true,
+    bannerLabel: 'Checkpointing',
   },
   {
     id: 'f-slash-todos',
@@ -2366,7 +2368,9 @@ export const features: Feature[] = [
   },
 
   // ========================================
-  // NEUESTE UPDATES (2026)
+  // NEUESTE UPDATES – Zuordnung in bestehende Kategorien (Slash Commands, Grundlagen, MCP, Subagents).
+  // Workflow: Bei neuem Release lastUpdate bei allen hier auf false setzen; neue Features mit lastUpdate: true
+  // in die passende Kategorie einfügen (oder neue Kategorie nur wenn nötig). Banner & Badge „Letztes Update“ kommen aus den Daten.
   // ========================================
   {
     id: 'f-slash-fast',
@@ -2382,6 +2386,8 @@ export const features: Feature[] = [
     example: '/fast',
     documentation: 'https://code.claude.com/docs/en/fast-mode',
     tags: ['slash', 'fast', 'opus', 'performance'],
+    lastUpdate: true,
+    bannerLabel: 'Fast Mode',
   },
   {
     id: 'f-cli-add-dir',
@@ -2396,6 +2402,7 @@ export const features: Feature[] = [
     example: 'claude --add-dir ../apps ../lib',
     documentation: 'https://code.claude.com/docs/en/cli-reference',
     tags: ['cli', 'add-dir', 'monorepo', 'kontext'],
+    lastUpdate: true,
   },
   {
     id: 'f-cli-mcp-config',
@@ -2410,6 +2417,7 @@ export const features: Feature[] = [
     example: 'claude --mcp-config ./mcp.json',
     documentation: 'https://code.claude.com/docs/en/mcp',
     tags: ['mcp', 'cli', 'config', 'json'],
+    lastUpdate: true,
   },
   {
     id: 'f-agent-teams',
@@ -2424,6 +2432,7 @@ export const features: Feature[] = [
     example: 'CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 claude',
     documentation: 'https://code.claude.com/docs/en/agent-teams',
     tags: ['agents', 'teams', 'multi-agent', 'experimentell'],
+    lastUpdate: true,
   },
 ];
 

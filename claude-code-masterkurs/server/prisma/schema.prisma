@@ -20,9 +20,11 @@ model User {
   passwordHash  String   @map("password_hash")
   displayName   String   @default("Lernender")
   avatarEmoji   String   @default("🧑‍💻") @map("avatar_emoji")
-  emailVerified Boolean  @default(false) @map("email_verified")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  emailVerified    Boolean  @default(false) @map("email_verified")
+  discordId        String?  @unique @map("discord_id")
+  discordUsername   String?  @map("discord_username")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   // Relations
   progress           UserProgress?
@@ -37,6 +39,7 @@ model User {
   passwordResets     PasswordReset[]
   emailVerifications EmailVerification[]
   subscription       Subscription?
+  showcaseEntries    ShowcaseEntry[]
 
   @@map("users")
 }
@@ -284,6 +287,34 @@ model Subscription {
   @@map("subscriptions")
 }
 
+// ── Newsletter Subscribers ───────────────────────────────────
+// Newsletter subscribers with double-opt-in
+
+model NewsletterSubscriber {
+  id              String    @id @default(cuid())
+  email           String    @unique
+  displayName     String?   @map("display_name")
+
+  status          String    @default("pending") // 'pending' | 'active' | 'unsubscribed'
+  source          String    @default("website") // 'website' | 'footer' | 'signup' | 'landing'
+
+  confirmToken    String?   @unique @map("confirm_token")
+  unsubscribeToken String   @unique @map("unsubscribe_token")
+
+  subscribedAt    DateTime  @default(now()) @map("subscribed_at")
+  confirmedAt     DateTime? @map("confirmed_at")
+  unsubscribedAt  DateTime? @map("unsubscribed_at")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@index([status])
+  @@index([confirmToken])
+  @@index([unsubscribeToken])
+  @@map("newsletter_subscribers")
+}
+
 // ── Promo Codes ──────────────────────────────────────────────
 // Promo codes that can provide free subscription periods
 
@@ -307,4 +338,26 @@ model PromoCode {
   @@index([code])
   @@index([active])
   @@map("promo_codes")
+}
+
+// ── Showcase Entries ────────────────────────────────────────
+// Student project showcase gallery (moderation required)
+
+model ShowcaseEntry {
+  id          String   @id @default(cuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId   String?  @map("project_id")
+  title       String
+  description String
+  githubUrl   String?  @map("github_url")
+  liveUrl     String?  @map("live_url")
+  imageUrl    String?  @map("image_url")
+  approved    Boolean  @default(false)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([approved, createdAt])
+  @@index([userId])
+  @@map("showcase_entries")
 }

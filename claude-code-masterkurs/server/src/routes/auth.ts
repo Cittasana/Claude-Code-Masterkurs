@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { prisma, logger } from '../index.js';
 import { signToken, requireAuth } from '../middleware/auth.js';
 import { authRateLimit } from '../middleware/rateLimit.js';
-import { sendPasswordResetEmail, sendEmailVerificationEmail } from '../lib/email.js';
+import { sendPasswordResetEmail, sendEmailVerificationEmail, sendFreeWelcomeEmail } from '../lib/email.js';
 import { sanitizeUserInput } from '../lib/sanitize.js';
 
 export const authRouter = Router();
@@ -402,6 +402,100 @@ authRouter.post('/verify-email', authRateLimit, async (req, res) => {
     }
     logger.error(error, 'Email verification error');
     res.status(500).json({ error: 'Fehler bei der E-Mail-Verifizierung' });
+  }
+});
+
+// ── POST /api/auth/signup/free ───────────────────────────────
+// Free tier signup – email only, no password required
+// Creates a user with a random password (cannot login with password)
+// Sends welcome email with link to free lessons
+
+const freeSignupSchema = z.object({
+  email: z.string().email('Ungueltige E-Mail-Adresse'),
+  displayName: z.string().min(1).max(50).optional(),
+});
+
+authRouter.post('/signup/free', authRateLimit, async (req, res) => {
+  try {
+    const data = freeSignupSchema.parse(req.body);
+
+    // Check if user already exists
+    const existing = await prisma.user.findUnique({
+      where: { email: data.email },
+    });
+
+    if (existing) {
+      // Don't leak user existence – just send a success-like response
+      // and re-send the welcome email
+      sendFreeWelcomeEmail(data.email, existing.displayName).catch((err) => {
+        logger.error({ error: err, email: data.email }, 'Failed to re-send free welcome email');
+      });
+
+      // Sign a token so the user can start learning immediately
+      const token = signToken({ userId: existing.id, email: existing.email });
+      res.status(200).json({
+        user: {
+          id: existing.id,
+          email: existing.email,
+          displayName: existing.displayName,
+          avatarEmoji: existing.avatarEmoji,
+          emailVerified: existing.emailVerified,
+        },
+        token,
+        message: 'Willkommen zurueck! Dein Zugang ist aktiv.',
+      });
+      return;
+    }
+
+    // Generate a random password (user signed up via free tier – no password login)
+    const randomPassword = crypto.randomBytes(32).toString('hex');
+    const passwordHash = await bcrypt.hash(randomPassword, 12);
+
+    // XSS protection
+    const safeDisplayName = data.displayName
+      ? sanitizeUserInput(data.displayName)
+      : 'Lernender';
+
+    // Create user + initial progress
+    const user = await prisma.user.create({
+      data: {
+        email: data.email,
+        passwordHash,
+        displayName: safeDisplayName,
+        progress: {
+          create: {},
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        avatarEmoji: true,
+        emailVerified: true,
+        createdAt: true,
+      },
+    });
+
+    // Send free welcome email (non-blocking)
+    sendFreeWelcomeEmail(user.email, user.displayName).catch((err) => {
+      logger.error({ error: err, userId: user.id }, 'Failed to send free welcome email');
+    });
+
+    const token = signToken({ userId: user.id, email: user.email });
+
+    logger.info({ userId: user.id, tier: 'free' }, 'Free tier user registered');
+    res.status(201).json({
+      user,
+      token,
+      message: 'Willkommen! Deine 5 kostenlosen Lektionen warten auf dich.',
+    });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors[0].message });
+      return;
+    }
+    logger.error(error, 'Free signup error');
+    res.status(500).json({ error: 'Registrierung fehlgeschlagen' });
   }
 });
 

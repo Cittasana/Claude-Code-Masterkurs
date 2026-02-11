@@ -10,85 +10,50 @@ import {
   BookOpen,
   List,
   ChevronRight,
-  GraduationCap,
-  BookMarked,
+  Briefcase,
+  Lock,
 } from 'lucide-react';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
+import { freelancerModules } from '../data/freelancerTrack';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
-import { useSRSStore } from '../store/srsStore';
 import LessonContent from '../components/Lessons/LessonContent';
-import QuizComponent from '../components/Quiz/QuizComponent';
-import PaywallOverlay from '../components/Paywall/PaywallOverlay';
-import { isFreeTierLesson } from '../lib/lessons-config';
-import { lessonAccessApi } from '../lib/api';
 
-const LessonView = () => {
+/** First 2 modules (index 0, 1) are free */
+const FREE_MODULE_LIMIT = 2;
+
+const FreelancerModuleView = () => {
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lessonsCompleted, completeLesson, setCurrentLesson } = useUserProgress();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const addLessonToSRS = useSRSStore((s) => s.addLessonToSRS);
+  const user = useAuthStore((s) => s.user);
+  const hasPremium = Boolean(user?.plan && user.plan !== 'free');
+
   const [readingProgress, setReadingProgress] = useState(0);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
-  const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const lessonId = parseInt(id || '0');
-  const lesson = lessons.find((l) => l.id === lessonId);
-  const quiz = quizzes.find((q) => q.lessonId === lessonId);
+  const moduleId = parseInt(id || '100');
+  const module = freelancerModules.find((m) => m.id === moduleId);
+  const moduleIndex = freelancerModules.findIndex((m) => m.id === moduleId);
+  const isFree = moduleIndex < FREE_MODULE_LIMIT;
+  const canAccess = isFree || hasPremium || lessonsCompleted.includes(moduleId);
 
-  // ── Free Tier / Paywall Access Check ────────────────────────
-  useEffect(() => {
-    // Client-side quick check: free lessons always accessible
-    if (isFreeTierLesson(lessonId)) {
-      setHasAccess(true); // eslint-disable-line react-hooks/set-state-in-effect -- intentional: sync free-tier check
-      return;
-    }
-
-    // For premium lessons, check with the server
-    let cancelled = false;
-    lessonAccessApi
-      .canAccess(lessonId)
-      .then((result) => {
-        if (!cancelled) setHasAccess(result.canAccess);
-      })
-      .catch(() => {
-        // On error (e.g. offline), allow access optimistically for free lessons
-        // but block premium lessons for guests
-        if (!cancelled) setHasAccess(isFreeTierLesson(lessonId));
-      });
-
-    return () => { cancelled = true; };
-  }, [lessonId, isAuthenticated]);
-
-  // Extract headings from lesson content for table of contents
+  // Extract headings for table of contents
   const headings = useMemo(() => {
-    if (!lesson) return [];
-    return lesson.content
+    if (!module) return [];
+    return module.content
       .filter((block) => block.type === 'heading')
       .map((block, index) => ({
         id: `section-${index}`,
-        title: block.content.replace(/^[^\w\s]*\s*/, ''), // Remove emoji prefix
+        title: block.content.replace(/^[^\w\s]*\s*/, ''),
         emoji: block.content.match(/^([^\w\s]*)\s*/)?.[1] || '',
         index: index + 1,
       }));
-  }, [lesson]);
+  }, [module]);
 
-  // Abgeschlossene Lektionen für Schnellnavigation (zum Nachschlagen)
-  // Must be called before any early returns to satisfy rules-of-hooks
-  const completedLessonsList = useMemo(
-    () =>
-      lessons
-        .filter((l) => lessonsCompleted.includes(l.id))
-        .sort((a, b) => a.id - b.id),
-    [lessonsCompleted]
-  );
-
-  // Scroll tracking for reading progress
+  // Scroll tracking
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -96,7 +61,6 @@ const LessonView = () => {
       const progress = docHeight > 0 ? Math.min(100, Math.round((scrollTop / docHeight) * 100)) : 0;
       setReadingProgress(progress);
 
-      // Determine active section
       if (contentRef.current) {
         const sectionEls = contentRef.current.querySelectorAll('[data-section-id]');
         let current: string | null = null;
@@ -116,12 +80,9 @@ const LessonView = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    /* Reset reading state when navigating between lessons */
-    /* eslint-disable react-hooks/set-state-in-effect -- intentional: reset on route change */
     setReadingProgress(0);
     setActiveSection(null);
     setTocOpen(false);
-    /* eslint-enable react-hooks/set-state-in-effect */
   }, [id]);
 
   const scrollToSection = useCallback((sectionId: string) => {
@@ -133,116 +94,94 @@ const LessonView = () => {
     setTocOpen(false);
   }, []);
 
-  if (!lesson) {
+  if (!module) {
     return (
       <div className="text-center py-20">
-        <p className="text-apple-text text-xl">{t('lesson.notFound')}</p>
-        <Link to="/dashboard" className="btn-primary mt-4 inline-block">
-          {t('common.backToDashboard')}
+        <p className="text-apple-text text-xl">{t('freelancer.moduleNotFound')}</p>
+        <Link to="/freelancer" className="btn-primary mt-4 inline-block">
+          {t('freelancer.backToTrack')}
         </Link>
       </div>
     );
   }
 
-  // Show paywall for premium lessons when access is denied
-  if (hasAccess === false) {
+  // Show paywall for premium modules when access is denied
+  if (!canAccess) {
     return (
-      <div className="py-10 sm:py-16 animate-fade-in-up">
-        <PaywallOverlay lessonId={lessonId} lessonTitle={lesson.title} />
+      <div className="max-w-2xl mx-auto py-10 sm:py-16 animate-fade-in-up text-center">
+        <div className="apple-card">
+          <Lock size={40} className="mx-auto text-apple-muted mb-4" />
+          <h2 className="text-2xl font-bold text-apple-text mb-2">{t('freelancer.premiumTitle')}</h2>
+          <p className="text-apple-textSecondary mb-6">{t('freelancer.premiumDesc')}</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/freelancer" className="btn-primary inline-flex items-center gap-2 px-6 py-3">
+              {t('freelancer.backToTrack')}
+            </Link>
+            <Link
+              to="/register"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-apple text-sm font-medium text-apple-accent border border-apple-accent/30 hover:bg-apple-accent/5 transition-colors"
+            >
+              {t('freelancer.ctaUpgrade')}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
 
-  // While checking access, show a minimal loading state (only for premium lessons)
-  if (hasAccess === null && !isFreeTierLesson(lessonId)) {
-    return (
-      <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
-      </div>
-    );
-  }
+  const isCompleted = lessonsCompleted.includes(moduleId);
+  const prevModule = moduleIndex > 0 ? freelancerModules[moduleIndex - 1] : null;
+  const nextModule = moduleIndex < freelancerModules.length - 1 ? freelancerModules[moduleIndex + 1] : null;
+  const totalModules = freelancerModules.length;
+  const moduleProgress = Math.round(((moduleIndex + 1) / totalModules) * 100);
 
-  const isCompleted = lessonsCompleted.includes(lessonId);
-  const prevLesson = lessons.find((l) => l.id === lessonId - 1);
-  const nextLesson = lessons.find((l) => l.id === lessonId + 1);
-  const totalLessons = lessons.length;
-  const lessonProgress = Math.round(((lessonId + 1) / totalLessons) * 100);
-  const showCompletedJump = completedLessonsList.length > 1;
-
-  const handleCompleteLesson = () => {
-    completeLesson(lessonId);
-    addLessonToSRS(lessonId);
-    if (nextLesson) {
-      setCurrentLesson(nextLesson.id);
-      navigate(`/lesson/${nextLesson.id}`);
+  const handleCompleteModule = () => {
+    completeLesson(moduleId);
+    if (nextModule) {
+      setCurrentLesson(nextModule.id);
+      navigate(`/freelancer/${nextModule.id}`);
     } else {
-      navigate('/dashboard');
+      navigate('/freelancer');
     }
   };
 
-  const levelConfig = {
-    1: { label: t('lesson.levelBasics'), color: 'bg-apple-success/15 text-apple-success border-apple-success/20', dot: 'bg-apple-success' },
-    2: { label: t('lesson.levelAdvanced'), color: 'bg-apple-accent/15 text-apple-accent border-apple-accent/20', dot: 'bg-apple-accent' },
-    3: { label: t('lesson.levelExpert'), color: 'bg-apple-info/15 text-apple-info border-apple-info/20', dot: 'bg-apple-info' },
-  };
-
-  const currentLevel = levelConfig[lesson.level];
-
   return (
     <>
-      {/* Reading Progress Bar - Fixed at top */}
+      {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-apple-bg/50">
         <div
-          className="h-full bg-gradient-to-r from-apple-accent via-apple-accentHover to-apple-accent transition-all duration-150 ease-out"
+          className="h-full bg-gradient-to-r from-apple-accent via-apple-success to-apple-accent transition-all duration-150 ease-out"
           style={{ width: `${readingProgress}%` }}
         />
       </div>
 
       <div className="max-w-6xl mx-auto animate-fade-in-up">
-        {/* Breadcrumb + Kurs-Fortschritt */}
+        {/* Breadcrumb + Track Progress */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-apple-muted font-mono min-w-0">
             <Link to="/dashboard" className="hover:text-apple-accent transition-colors shrink-0">
               {t('common.dashboard')}
             </Link>
             <ChevronRight size={14} className="text-apple-border shrink-0" />
+            <Link to="/freelancer" className="hover:text-apple-accent transition-colors shrink-0">
+              {t('freelancer.breadcrumb')}
+            </Link>
+            <ChevronRight size={14} className="text-apple-border shrink-0" />
             <span className="text-apple-textSecondary truncate">
-              {t('lesson.lessonXOfY', { current: lessonId + 1, total: totalLessons })}
+              {t('freelancer.moduleXOfY', { current: moduleIndex + 1, total: totalModules })}
             </span>
           </div>
           <div className="hidden sm:flex items-center space-x-3">
-            <span className="text-xs text-apple-muted font-mono">{t('lesson.courseProgress')}</span>
+            <span className="text-xs text-apple-muted font-mono">{t('freelancer.trackProgress')}</span>
             <div className="w-24 h-1.5 bg-apple-border rounded-full overflow-hidden">
               <div
                 className="h-full bg-apple-accent rounded-full transition-all duration-500"
-                style={{ width: `${lessonProgress}%` }}
+                style={{ width: `${moduleProgress}%` }}
               />
             </div>
-            <span className="text-xs text-apple-muted font-mono">{lessonProgress}%</span>
+            <span className="text-xs text-apple-muted font-mono">{moduleProgress}%</span>
           </div>
         </div>
-
-        {/* Schnell zu abgeschlossener Lektion (zum Nachschlagen) */}
-        {showCompletedJump && (
-          <div className="mb-6 flex flex-wrap items-center gap-3 rounded-apple-lg bg-apple-surface/50 border border-apple-border/50 px-4 py-3">
-            <span className="text-xs font-medium text-apple-muted font-mono uppercase tracking-wider flex items-center gap-2 flex-shrink-0">
-              <BookMarked size={14} className="text-apple-accent" />
-              {t('lesson.jumpToLesson')}
-            </span>
-            <select
-              value={lessonId}
-              onChange={(e) => navigate(`/lesson/${e.target.value}`)}
-              className="flex-1 min-w-0 max-w-md bg-apple-bg border border-apple-border rounded-apple text-sm text-apple-text px-3 py-2 font-mono focus:outline-none focus:ring-2 focus:ring-apple-accent/50 focus:border-apple-accent"
-              aria-label={t('lesson.jumpToLessonAria')}
-            >
-              {completedLessonsList.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {t('review.lessonX', { id: l.id + 1 })}: {l.title}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
 
         <div className="flex gap-8">
           {/* Table of Contents - Desktop Sidebar */}
@@ -275,7 +214,7 @@ const LessonView = () => {
                     ))}
                   </nav>
 
-                  {/* Mini-Fortschritt im Sidebar */}
+                  {/* Mini Progress */}
                   <div className="mt-5 pt-4 border-t border-apple-border/40">
                     <div className="flex items-center justify-between text-[10px] text-apple-muted font-mono uppercase tracking-wider mb-2">
                       <span>{t('lesson.read')}</span>
@@ -332,19 +271,17 @@ const LessonView = () => {
               </div>
             )}
 
-            {/* Lesson Header */}
+            {/* Module Header */}
             <header className="relative mb-10">
               <div className="apple-card overflow-hidden">
-                {/* Decorative gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-apple-accent/5 via-transparent to-transparent pointer-events-none" />
-
+                <div className="absolute inset-0 bg-gradient-to-br from-apple-accent/5 via-transparent to-apple-success/5 pointer-events-none" />
                 <div className="relative">
-                  {/* Level + Status row */}
+                  {/* Badge + Status */}
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center space-x-3">
-                      <span className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold font-mono border ${currentLevel.color}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${currentLevel.dot}`} />
-                        <span>Level {lesson.level} · {currentLevel.label}</span>
+                      <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold font-mono border bg-apple-accent/15 text-apple-accent border-apple-accent/20">
+                        <Briefcase size={13} />
+                        <span>{t('freelancer.badge')}</span>
                       </span>
                       {isCompleted && (
                         <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-success/10 text-apple-success border border-apple-success/20">
@@ -354,29 +291,29 @@ const LessonView = () => {
                       )}
                     </div>
                     <span className="text-apple-muted font-mono text-xs hidden sm:block">
-                      #{String(lessonId).padStart(2, '0')}
+                      #{String(moduleIndex + 1).padStart(2, '0')}
                     </span>
                   </div>
 
                   {/* Title */}
                   <h1 className="text-3xl sm:text-4xl font-extrabold text-apple-text mb-3 tracking-tight leading-tight">
-                    {lesson.title}
+                    {module.title}
                   </h1>
 
                   {/* Description */}
                   <p className="text-apple-textSecondary text-lg leading-relaxed max-w-2xl">
-                    {lesson.description}
+                    {module.description}
                   </p>
 
-                  {/* Meta info */}
+                  {/* Meta */}
                   <div className="flex flex-wrap items-center gap-5 mt-6 pt-5 border-t border-apple-border/40">
                     <div className="flex items-center space-x-2 text-apple-muted">
                       <Clock size={15} />
-                      <span className="text-sm font-mono">{lesson.duration}</span>
+                      <span className="text-sm font-mono">{module.duration}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-apple-muted">
                       <Target size={15} />
-                      <span className="text-sm">{lesson.objectives.length} {t('lesson.objectives')}</span>
+                      <span className="text-sm">{module.objectives.length} {t('lesson.objectives')}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-apple-muted">
                       <BookOpen size={15} />
@@ -387,15 +324,15 @@ const LessonView = () => {
               </div>
             </header>
 
-            {/* Learning Objectives - Redesigned as a compact checklist */}
+            {/* Learning Objectives */}
             <div className="mb-10">
               <div className="rounded-apple-lg bg-gradient-to-br from-apple-accent/[0.06] to-transparent border border-apple-accent/15 p-6">
                 <h2 className="text-base font-bold text-apple-text mb-4 flex items-center space-x-2.5">
-                  <GraduationCap className="text-apple-accent" size={18} />
-                  <span>{t('lesson.whatYouLearn')}</span>
+                  <Briefcase className="text-apple-accent" size={18} />
+                  <span>{t('freelancer.whatYouLearn')}</span>
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {lesson.objectives.map((objective, index) => (
+                  {module.objectives.map((objective, index) => (
                     <div
                       key={index}
                       className="flex items-start space-x-3 bg-apple-surface/40 rounded-apple px-4 py-3 border border-apple-border/30"
@@ -410,28 +347,21 @@ const LessonView = () => {
               </div>
             </div>
 
-            {/* Lesson Content */}
+            {/* Module Content */}
             <div ref={contentRef} className="lesson-content-area mb-10">
-              <LessonContent content={lesson.content} lessonId={lesson.id} />
+              <LessonContent content={module.content} lessonId={module.id} />
             </div>
 
-            {/* Quiz Section */}
-            {quiz && (
-              <div className="mb-10">
-                <QuizComponent key={quiz.id} quiz={quiz} />
-              </div>
-            )}
-
-            {/* Lesson Complete CTA */}
+            {/* Complete Module CTA */}
             {!isCompleted && (
               <div className="mb-10">
-                <div className="rounded-apple-lg bg-gradient-to-r from-apple-accent/10 via-apple-accent/5 to-transparent border border-apple-accent/20 p-8 text-center">
-                  <GraduationCap className="mx-auto text-apple-accent mb-3" size={32} />
-                  <h3 className="text-xl font-bold text-apple-text mb-2">{t('lesson.completeLesson')}</h3>
+                <div className="rounded-apple-lg bg-gradient-to-r from-apple-accent/10 via-apple-success/5 to-transparent border border-apple-accent/20 p-8 text-center">
+                  <Briefcase className="mx-auto text-apple-accent mb-3" size={32} />
+                  <h3 className="text-xl font-bold text-apple-text mb-2">{t('freelancer.completeModule')}</h3>
                   <p className="text-apple-textSecondary text-sm mb-5 max-w-md mx-auto">
-                    {t('lesson.completeLessonDesc')}
+                    {t('freelancer.completeModuleDesc')}
                   </p>
-                  <button onClick={handleCompleteLesson} className="btn-primary text-base px-8 py-3">
+                  <button onClick={handleCompleteModule} className="btn-primary text-base px-8 py-3">
                     <span className="flex items-center space-x-2">
                       <CheckCircle2 size={18} />
                       <span>{t('lesson.markComplete')}</span>
@@ -444,17 +374,17 @@ const LessonView = () => {
             {/* Navigation */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 sm:gap-0 py-6 sm:py-8 border-t border-apple-border/40">
               <div className="flex-1 min-w-0">
-                {prevLesson ? (
+                {prevModule ? (
                   <Link
-                    to={`/lesson/${prevLesson.id}`}
+                    to={`/freelancer/${prevModule.id}`}
                     className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50 w-full sm:w-auto min-h-[44px]"
                   >
                     <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform flex-shrink-0" />
                     <div className="text-left min-w-0">
                       <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
-                        {t('lesson.previousLesson')}
+                        {t('freelancer.previousModule')}
                       </p>
-                      <p className="text-sm font-semibold truncate">{prevLesson.title}</p>
+                      <p className="text-sm font-semibold truncate">{prevModule.title}</p>
                     </div>
                   </Link>
                 ) : (
@@ -463,25 +393,25 @@ const LessonView = () => {
               </div>
 
               <div className="flex-1 flex justify-end min-w-0">
-                {nextLesson ? (
+                {nextModule ? (
                   <Link
-                    to={`/lesson/${nextLesson.id}`}
+                    to={`/freelancer/${nextModule.id}`}
                     className="inline-flex items-center space-x-3 text-apple-textSecondary hover:text-apple-text transition-colors group px-4 py-3 rounded-apple hover:bg-apple-surface/50 w-full sm:w-auto justify-end min-h-[44px]"
                   >
                     <div className="text-right min-w-0">
                       <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
-                        {t('lesson.nextLesson')}
+                        {t('freelancer.nextModule')}
                       </p>
-                      <p className="text-sm font-semibold truncate">{nextLesson.title}</p>
+                      <p className="text-sm font-semibold truncate">{nextModule.title}</p>
                     </div>
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform flex-shrink-0" />
                   </Link>
                 ) : (
                   <Link
-                    to="/dashboard"
+                    to="/freelancer"
                     className="inline-flex items-center space-x-2 text-apple-accent hover:text-apple-accentHover transition-colors group px-4 py-3 rounded-apple hover:bg-apple-accent/5 min-h-[44px]"
                   >
-                    <span className="text-sm font-semibold">{t('lesson.toDashboard')}</span>
+                    <span className="text-sm font-semibold">{t('freelancer.backToTrack')}</span>
                     <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </Link>
                 )}
@@ -494,4 +424,4 @@ const LessonView = () => {
   );
 };
 
-export default LessonView;
+export default FreelancerModuleView;

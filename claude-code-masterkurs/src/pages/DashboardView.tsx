@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, ArrowRight } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
@@ -9,7 +9,11 @@ import { lessons } from '../data/lessons';
 import { quizzes } from '../data/quizzes';
 import { challenges } from '../data/challenges';
 import { liveCodingChallenges } from '../data/liveCodingChallenges';
+import { projectTemplates } from '../data/projectTemplates';
+import { capstoneProjects as capstoneProjectsList } from '../data/capstoneProjects';
 import { useChallengeStore } from '../store/challengeStore';
+import DiscordWidget from '../components/DiscordWidget';
+import { freelancerModules } from '../data/freelancerTrack';
 
 const totalChallengesCount = challenges.length + liveCodingChallenges.length;
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
@@ -393,6 +397,127 @@ const DashboardView = () => {
           </Link>
         )}
       </div>
+
+      {/* Capstone Projects Widget */}
+      <div className="apple-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-apple-text flex items-center space-x-2">
+            <Layers className="text-apple-accent" size={20} />
+            <span>{t('dashboard.capstoneTitle')}</span>
+          </h3>
+          <Link to="/projects" className="text-sm text-apple-accent hover:text-apple-accentHover font-medium transition-colors">
+            {t('dashboard.showAll')}
+          </Link>
+        </div>
+        <p className="text-sm text-apple-textSecondary mb-4">{t('dashboard.capstoneSubtitle')}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {capstoneProjectsList.slice(0, 3).map((p) => (
+            <Link
+              key={p.id}
+              to={`/projects/${p.id}`}
+              className="p-3 bg-apple-bg rounded-apple border border-apple-border hover:border-apple-accent/40 transition-all duration-200 group"
+            >
+              <div className="flex items-center space-x-2 mb-2">
+                <span className="text-xl">{p.thumbnailEmoji}</span>
+                <span className={`px-1.5 py-0.5 text-[9px] font-mono rounded-full border ${
+                  p.difficulty === 1
+                    ? 'bg-apple-success/10 border-apple-success/25 text-apple-success'
+                    : p.difficulty === 2
+                    ? 'bg-apple-warning/10 border-apple-warning/25 text-apple-warning'
+                    : 'bg-apple-accent/10 border-apple-accent/25 text-apple-accent'
+                }`}>
+                  {p.difficulty === 1 ? t('projects.difficultyBeginner') : p.difficulty === 2 ? t('projects.difficultyIntermediate') : t('projects.difficultyExpert')}
+                </span>
+              </div>
+              <p className="text-sm font-medium text-apple-text group-hover:text-apple-accent transition-colors line-clamp-1">
+                {t(`projects.data.${p.id}.title`, { defaultValue: p.title })}
+              </p>
+              <p className="text-xs text-apple-muted mt-1">~{p.estimatedHours} {t('projects.hours')}</p>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Project Templates Widget */}
+      <div className="apple-card">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-apple-text flex items-center space-x-2">
+            <FolderGit2 className="text-apple-accent" size={20} />
+            <span>{t('dashboard.templatesTitle')}</span>
+          </h3>
+          <Link to="/templates" className="text-sm text-apple-accent hover:text-apple-accentHover font-medium transition-colors">
+            {t('dashboard.showAll')}
+          </Link>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {projectTemplates.slice(0, 3).map((tpl) => (
+            <Link
+              key={tpl.id}
+              to={`/templates/${tpl.id}`}
+              className="p-3 bg-apple-bg rounded-apple border border-apple-border hover:border-apple-accent/40 transition-all duration-200 group"
+            >
+              <div className="flex items-center space-x-2 mb-2">
+                <span className={`px-1.5 py-0.5 text-[9px] font-mono rounded-full border ${
+                  tpl.difficulty === 1
+                    ? 'bg-apple-success/10 border-apple-success/25 text-apple-success'
+                    : tpl.difficulty === 2
+                    ? 'bg-apple-warning/10 border-apple-warning/25 text-apple-warning'
+                    : 'bg-apple-accent/10 border-apple-accent/25 text-apple-accent'
+                }`}>
+                  {tpl.difficulty === 1 ? t('templates.difficultyBeginner') : tpl.difficulty === 2 ? t('templates.difficultyAdvanced') : t('templates.difficultyExpert')}
+                </span>
+                <span className="text-[10px] text-apple-muted font-mono">~{tpl.estimatedHours}h</span>
+              </div>
+              <p className="text-sm font-semibold text-apple-text group-hover:text-apple-accent transition-colors">
+                {t(`templates.data.${tpl.id}.title`, { defaultValue: tpl.title })}
+              </p>
+              <div className="flex flex-wrap gap-1 mt-2">
+                {tpl.techStack.slice(0, 3).map((tech) => (
+                  <span key={tech} className="text-[9px] font-mono text-apple-muted">{tech}</span>
+                ))}
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Freelancer Track Widget */}
+      {(() => {
+        const freelancerCompleted = freelancerModules.filter((m) => lessonsCompleted.includes(m.id)).length;
+        const freelancerTotal = freelancerModules.length;
+        const freelancerProgress = freelancerTotal > 0 ? Math.round((freelancerCompleted / freelancerTotal) * 100) : 0;
+        return (
+          <Link to="/freelancer" className="block apple-card group hover:border-apple-accent/30 transition-all duration-200">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-apple-accent/10 flex items-center justify-center">
+                  <Briefcase size={20} className="text-apple-accent" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-apple-text group-hover:text-apple-accent transition-colors">
+                    {t('freelancer.dashboardTitle')}
+                  </h3>
+                  <p className="text-xs text-apple-muted">{t('freelancer.dashboardDesc')}</p>
+                </div>
+              </div>
+              <ArrowRight size={18} className="text-apple-muted group-hover:text-apple-accent group-hover:translate-x-1 transition-all" />
+            </div>
+            <div className="flex items-center justify-between text-xs text-apple-muted font-mono mb-2">
+              <span>{t('freelancer.dashboardProgress', { completed: freelancerCompleted, total: freelancerTotal })}</span>
+              <span>{freelancerProgress}%</span>
+            </div>
+            <div className="w-full h-1.5 bg-apple-border/50 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-apple-accent to-apple-success rounded-full transition-all duration-500"
+                style={{ width: `${freelancerProgress}%` }}
+              />
+            </div>
+          </Link>
+        );
+      })()}
+
+      {/* Discord Community Widget */}
+      <DiscordWidget serverId={import.meta.env.VITE_DISCORD_SERVER_ID} compact />
 
       {/* Next Steps */}
       <div className="apple-card">

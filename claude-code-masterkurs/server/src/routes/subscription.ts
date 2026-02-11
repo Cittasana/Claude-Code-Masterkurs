@@ -2,7 +2,11 @@ import { Router } from 'express';
 import Stripe from 'stripe';
 import { z } from 'zod';
 import { prisma, logger } from '../index.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, optionalAuth } from '../middleware/auth.js';
+import { createPipedriveContact } from '../lib/pipedrive.js';
+import { sendDiscordInviteEmail } from '../lib/email.js';
+import { updateDiscordRole, getTierFromSubscription } from '../lib/discord.js';
+import { canAccessLesson, FREE_LESSON_LIMIT } from '../lib/lessons-config.js';
 
 export const subscriptionRouter = Router();
 
@@ -84,7 +88,7 @@ subscriptionRouter.post('/create-checkout-session', requireAuth, async (req, res
     }
 
     // Promo Code validieren (falls angegeben)
-    let promoCodeData: any = null;
+    let promoCodeData: { durationMonths: number } | null = null;
     if (data.promoCode) {
       const promoCode = await prisma.promoCode.findUnique({
         where: { code: data.promoCode },
@@ -140,8 +144,8 @@ subscriptionRouter.post('/create-checkout-session', requireAuth, async (req, res
       };
     }
 
-    // Wenn Promo Code vorhanden: Trial Period setzen (6 Monate = 180 Tage)
-    if (promoCodeData) {
+    // Wenn Promo Code vorhanden: Trial Period setzen (nur bei Subscriptions, nicht bei Lifetime)
+    if (promoCodeData && !isLifetime) {
       const trialDays = promoCodeData.durationMonths * 30; // ca. 30 Tage pro Monat
       sessionParams.subscription_data = {
         ...sessionParams.subscription_data,
@@ -299,6 +303,47 @@ subscriptionRouter.get('/status', requireAuth, async (req, res) => {
   }
 });
 
+// ── GET /api/subscription/can-access-lesson/:lessonId ────────
+// Prueft ob ein User (oder Gast) eine bestimmte Lektion oeffnen darf
+// Verwendet optionalAuth: funktioniert mit und ohne Token
+
+subscriptionRouter.get('/can-access-lesson/:lessonId', optionalAuth, async (req, res) => {
+  try {
+    const rawParam = req.params.lessonId;
+    const lessonId = parseInt(Array.isArray(rawParam) ? rawParam[0] : rawParam, 10);
+
+    if (isNaN(lessonId) || lessonId < 0) {
+      res.status(400).json({ error: 'Ungueltige Lektion' });
+      return;
+    }
+
+    // Guest user (no token)
+    if (!req.user) {
+      const result = canAccessLesson(lessonId, null);
+      res.json({
+        ...result,
+        freeLessonLimit: FREE_LESSON_LIMIT,
+      });
+      return;
+    }
+
+    // Authenticated user – check subscription
+    const subscription = await prisma.subscription.findUnique({
+      where: { userId: req.user.userId },
+      select: { status: true, isLifetime: true },
+    });
+
+    const result = canAccessLesson(lessonId, subscription);
+    res.json({
+      ...result,
+      freeLessonLimit: FREE_LESSON_LIMIT,
+    });
+  } catch (error) {
+    logger.error(error, 'Check lesson access error');
+    res.status(500).json({ error: 'Fehler beim Pruefen des Zugriffs' });
+  }
+});
+
 // ── POST /api/subscription/cancel ────────────────────────────
 // Kündigt das Abo zum Ende der aktuellen Periode
 
@@ -340,7 +385,7 @@ subscriptionRouter.post('/cancel', requireAuth, async (req, res) => {
 subscriptionRouter.post('/webhook', async (req, res) => {
   const sig = req.headers['stripe-signature'];
 
-  if (!sig) {
+  if (!sig || Array.isArray(sig)) {
     res.status(400).send('Missing signature');
     return;
   }
@@ -354,8 +399,9 @@ subscriptionRouter.post('/webhook', async (req, res) => {
       sig,
       STRIPE_WEBHOOK_SECRET
     );
-  } catch (err: any) {
-    logger.error({ error: err.message }, 'Webhook signature verification failed');
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    logger.error({ error: message }, 'Webhook signature verification failed');
     res.status(400).send('Webhook verification failed');
     return;
   }
@@ -444,6 +490,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     }
   }
 
+  // User-Daten für Pipedrive holen
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true, displayName: true },
+  });
+
   // Subscription in DB erstellen/aktualisieren
   if (isLifetime) {
     // Lifetime Purchase
@@ -488,6 +540,26 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
 
     logger.info({ userId, subscriptionId, sessionId: session.id }, 'Subscription checkout completed');
   }
+
+  // ── Pipedrive: Kontakt + Deal anlegen (non-blocking) ──────
+  if (user) {
+    createPipedriveContact({
+      email: user.email,
+      displayName: user.displayName,
+      isLifetime,
+      amountPaid: session.amount_total ?? undefined,
+    }).catch((error) => {
+      logger.error({ error, userId }, 'Pipedrive-Sync nach Checkout fehlgeschlagen');
+    });
+  }
+
+  // ── Discord: Invite-Email senden (non-blocking) ──────────
+  if (user) {
+    const tier = isLifetime ? 'lifetime' : 'pro';
+    sendDiscordInviteEmail(user.email, user.displayName, tier).catch((error) => {
+      logger.error({ error, userId }, 'Discord Invite-Email nach Checkout fehlgeschlagen');
+    });
+  }
 }
 
 async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
@@ -498,18 +570,41 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     return;
   }
 
+  // In Stripe API 2026+, current_period fields are on SubscriptionItem, not Subscription
+  const firstItem = subscription.items.data[0];
+  const periodStart = firstItem?.current_period_start;
+  const periodEnd = firstItem?.current_period_end;
+
   await prisma.subscription.update({
     where: { userId },
     data: {
       status: subscription.status,
-      stripePriceId: subscription.items.data[0]?.price.id,
-      currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
-      currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
-      cancelAtPeriodEnd: (subscription as any).cancel_at_period_end || false,
+      stripePriceId: firstItem?.price.id,
+      currentPeriodStart: periodStart ? new Date(periodStart * 1000) : null,
+      currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
+      cancelAtPeriodEnd: subscription.cancel_at_period_end ?? false,
     },
   });
 
   logger.info({ userId, subscriptionId: subscription.id, status: subscription.status }, 'Subscription updated');
+
+  // ── Discord: Rolle aktualisieren bei Tier-Wechsel (non-blocking) ──
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { discordId: true },
+  });
+
+  if (user?.discordId) {
+    const sub = await prisma.subscription.findUnique({
+      where: { userId },
+      select: { isLifetime: true, status: true, stripePriceId: true },
+    });
+
+    const tier = getTierFromSubscription(sub);
+    updateDiscordRole(user.discordId, tier).catch((error) => {
+      logger.error({ error, userId, discordId: user.discordId }, 'Discord Role-Update fehlgeschlagen');
+    });
+  }
 }
 
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
@@ -529,10 +624,28 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   });
 
   logger.info({ userId, subscriptionId: subscription.id }, 'Subscription deleted');
+
+  // ── Discord: Rolle auf Free zurücksetzen (non-blocking) ──
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { discordId: true },
+  });
+
+  if (user?.discordId) {
+    updateDiscordRole(user.discordId, 'free').catch((error) => {
+      logger.error({ error, userId, discordId: user.discordId }, 'Discord Role-Downgrade fehlgeschlagen');
+    });
+  }
 }
 
 async function handleInvoicePaid(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  // In Stripe API 2026+, subscription is nested under parent.subscription_details
+  const subDetails = invoice.parent?.subscription_details;
+  const subscriptionId = subDetails
+    ? (typeof subDetails.subscription === 'string'
+        ? subDetails.subscription
+        : subDetails.subscription?.id ?? null)
+    : null;
 
   if (!subscriptionId) {
     return;
@@ -554,7 +667,12 @@ async function handleInvoicePaid(invoice: Stripe.Invoice) {
 }
 
 async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  const subDetails = invoice.parent?.subscription_details;
+  const subscriptionId = subDetails
+    ? (typeof subDetails.subscription === 'string'
+        ? subDetails.subscription
+        : subDetails.subscription?.id ?? null)
+    : null;
 
   if (!subscriptionId) {
     return;

@@ -29,3 +29,13 @@ export const writeRateLimit = rateLimit({
   legacyHeaders: false,
   message: { error: 'Zu viele Schreibvorgänge. Bitte warte kurz.' },
 });
+
+// ── Newsletter Rate Limit ────────────────────────────────────
+// 5 requests per 15 minutes per IP (anti-spam for public endpoint)
+export const newsletterRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Zu viele Anfragen. Bitte warte einige Minuten.' },
+});

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Navigation from './components/Navigation/Navigation';
 import LoadingSpinner from './components/UI/LoadingSpinner';
 import CookieConsent from './components/UI/CookieConsent';
+import NewsletterSignup from './components/Newsletter/NewsletterSignup';
 import { useUserProgress } from './store/userProgress';
 import { useAnalyticsStore } from './store/analyticsStore';
 import { useAuthStore } from './store/authStore';
@@ -34,6 +35,20 @@ const EmailVerifyView = lazy(() => import('./views/EmailVerifyView'));
 const SubscriptionSuccessView = lazy(() => import('./pages/SubscriptionSuccessView'));
 const DocsView = lazy(() => import('./pages/DocsView'));
 const LandingView = lazy(() => import('./pages/LandingView'));
+const StartKostenlosView = lazy(() => import('./pages/StartKostenlosView'));
+const TemplatesView = lazy(() => import('./pages/TemplatesView'));
+const TemplateDetailView = lazy(() => import('./pages/TemplateDetailView'));
+const ProjectsView = lazy(() => import('./pages/ProjectsView'));
+const ShowcaseView = lazy(() => import('./pages/ShowcaseView'));
+const NewsletterView = lazy(() => import('./pages/NewsletterView'));
+const NewsletterConfirmView = lazy(() =>
+  import('./pages/NewsletterView').then((m) => ({ default: m.NewsletterConfirmView }))
+);
+const NewsletterUnsubscribeView = lazy(() =>
+  import('./pages/NewsletterView').then((m) => ({ default: m.NewsletterUnsubscribeView }))
+);
+const FreelancerTrackView = lazy(() => import('./pages/FreelancerTrackView'));
+const FreelancerModuleView = lazy(() => import('./pages/FreelancerModuleView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -81,6 +96,11 @@ function App() {
               <Route path="/forum" element={<ForumView />} />
               <Route path="/forum/thread/:id" element={<ForumThreadView />} />
               <Route path="/challenges" element={<ChallengesView />} />
+              <Route path="/projects" element={<ProjectsView />} />
+              <Route path="/projects/:id" element={<ProjectsView />} />
+              <Route path="/showcase" element={<ShowcaseView />} />
+              <Route path="/templates" element={<TemplatesView />} />
+              <Route path="/templates/:id" element={<TemplateDetailView />} />
               <Route path="/analytics" element={<LearningAnalyticsView />} />
               <Route path="/leaderboard" element={<LeaderboardView />} />
               <Route path="/docs" element={<DocsView />} />
@@ -92,6 +112,12 @@ function App() {
               <Route path="/password-reset/:token" element={<PasswordResetConfirmView />} />
               <Route path="/verify-email/:token" element={<EmailVerifyView />} />
               <Route path="/subscription/success" element={<SubscriptionSuccessView />} />
+              <Route path="/start-kostenlos" element={<StartKostenlosView />} />
+              <Route path="/freelancer" element={<FreelancerTrackView />} />
+              <Route path="/freelancer/:id" element={<FreelancerModuleView />} />
+              <Route path="/newsletter" element={<NewsletterView />} />
+              <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
+              <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />
               <Route path="/impressum" element={<ImpressumView />} />
               <Route path="/datenschutz" element={<DatenschutzView />} />
               <Route path="/nutzungsbedingungen" element={<NutzungsbedingungenView />} />
@@ -100,14 +126,22 @@ function App() {
           </Suspense>
         </main>
         <footer className="border-t border-apple-border mt-8 sm:mt-12 py-5 sm:py-6" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-apple-muted text-center sm:text-left">
-            <p>&copy; {new Date().getFullYear()} Claude Code Masterkurs</p>
-            <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-1">
-              <Link to="/impressum" className="hover:text-apple-accent transition-colors py-1">Impressum</Link>
-              <span className="text-apple-border hidden sm:inline">|</span>
-              <Link to="/datenschutz" className="hover:text-apple-accent transition-colors py-1">Datenschutz</Link>
-              <span className="text-apple-border hidden sm:inline">|</span>
-              <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors py-1">AGB</Link>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            {/* Newsletter in Footer */}
+            <div className="pb-6 mb-6 border-b border-apple-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+              <div className="w-full sm:max-w-sm">
+                <NewsletterSignup source="footer" compact />
+              </div>
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-1 text-sm text-apple-muted">
+                <Link to="/impressum" className="hover:text-apple-accent transition-colors py-1">Impressum</Link>
+                <span className="text-apple-border hidden sm:inline">|</span>
+                <Link to="/datenschutz" className="hover:text-apple-accent transition-colors py-1">Datenschutz</Link>
+                <span className="text-apple-border hidden sm:inline">|</span>
+                <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors py-1">AGB</Link>
+              </div>
+            </div>
+            <div className="text-sm text-apple-muted text-center">
+              <p>&copy; {new Date().getFullYear()} Claude Code Masterkurs</p>
             </div>
           </div>
         </footer>

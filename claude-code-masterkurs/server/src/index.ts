@@ -13,8 +13,12 @@ import { patternsRouter } from './routes/patterns.js';
 import { srsRouter } from './routes/srs.js';
 import { analyticsRouter } from './routes/analytics.js';
 import { subscriptionRouter } from './routes/subscription.js';
+import { discordRouter } from './routes/discord.js';
+import { newsletterRouter } from './routes/newsletter.js';
+import { showcaseRouter } from './routes/showcase.js';
 import { globalRateLimit } from './middleware/rateLimit.js';
 import { initSentry, Sentry } from './lib/sentry.js';
+import { startDiscordBot, stopDiscordBot } from './lib/discord-bot.js';
 
 // ── Logger ───────────────────────────────────────────────────
 export const logger = pino({
@@ -55,7 +59,7 @@ app.use(
         connectSrc: ["'self'"],
         fontSrc: ["'self'"],
         objectSrc: ["'none'"],
-        frameSrc: ["'none'"],
+        frameSrc: ["'self'", 'https://discord.com'],
         frameAncestors: ["'none'"],
         baseUri: ["'self'"],
         formAction: ["'self'"],
@@ -124,6 +128,9 @@ app.use('/api/patterns', patternsRouter);
 app.use('/api/srs', srsRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/subscription', subscriptionRouter);
+app.use('/api/discord', discordRouter);
+app.use('/api/newsletter', newsletterRouter);
+app.use('/api/showcase', showcaseRouter);
 
 // ── 404 Handler ──────────────────────────────────────────────
 app.use((_req, res) => {
@@ -161,6 +168,11 @@ async function main() {
       logger.info(`Server running on http://0.0.0.0:${PORT}`);
       logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
     });
+
+    // Start Discord Bot (non-blocking – bot failure should not prevent server startup)
+    startDiscordBot().catch((error) => {
+      logger.error(error, 'Discord Bot startup failed (non-critical)');
+    });
   } catch (error) {
     logger.fatal(error, 'Failed to start server');
     process.exit(1);
@@ -170,6 +182,7 @@ async function main() {
 // ── Graceful Shutdown ────────────────────────────────────────
 async function shutdown() {
   logger.info('Shutting down...');
+  await stopDiscordBot();
   await prisma.$disconnect();
   process.exit(0);
 }

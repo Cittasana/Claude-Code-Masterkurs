@@ -24,6 +24,9 @@ import {
   Menu,
   X,
   ExternalLink,
+  FolderGit2,
+  Image,
+  Briefcase,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -34,7 +37,7 @@ type DropdownId = 'learn' | 'community' | 'resources' | null;
 const LANGUAGES = ['de', 'en', 'fr', 'es'] as const;
 
 /** Auth-Seiten, auf denen ein vereinfachter Header gezeigt wird */
-const AUTH_PATHS = ['/login', '/register', '/password-reset', '/docs'];
+const AUTH_PATHS = ['/login', '/register', '/password-reset', '/docs', '/start-kostenlos'];
 
 const Navigation = () => {
   const { t, i18n } = useTranslation();
@@ -96,6 +99,7 @@ const Navigation = () => {
 
   const learnItems = [
     { to: '/lesson/0', match: '/lesson', icon: BookOpen, labelKey: 'nav.lessons' },
+    { to: '/freelancer', match: '/freelancer', icon: Briefcase, labelKey: 'nav.freelancer' },
     { to: '/review', match: '/review', icon: Repeat, labelKey: 'nav.review' },
     { to: '/playground', match: '/playground', icon: Code2, labelKey: 'nav.playground' },
   ];
@@ -104,6 +108,8 @@ const Navigation = () => {
     { to: '/forum', match: '/forum', icon: MessageCircle, labelKey: 'nav.forum' },
     { to: '/leaderboard', match: '/leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
     { to: '/analytics', match: '/analytics', icon: Activity, labelKey: 'nav.analytics' },
+    { to: '/projects', match: '/projects', icon: FolderOpen, labelKey: 'nav.projects' },
+    { to: '/showcase', match: '/showcase', icon: Image, labelKey: 'nav.showcase' },
   ];
 
   const resourcesItems: { to: string; match: string; icon: typeof Search; labelKey: string; externalUrl?: string }[] = [
@@ -274,6 +280,10 @@ const Navigation = () => {
           <Link to="/challenges" onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive('/challenges') ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
             <Zap size={18} className="shrink-0" />
             {t('nav.challenges')}
+          </Link>
+          <Link to="/templates" onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive('/templates') ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
+            <FolderGit2 size={18} className="shrink-0" />
+            {t('nav.templates')}
           </Link>
           <div className="border-t border-apple-border my-4" />
           <div className="flex items-center gap-3 px-4 py-3 rounded-apple bg-apple-bg/50">
@@ -469,6 +479,18 @@ const Navigation = () => {
             >
               <Zap size={17} strokeWidth={isActive('/challenges') ? 2.2 : 1.8} className="shrink-0" />
               <span className="hidden sm:inline">{t('nav.challenges')}</span>
+            </Link>
+
+            <Link
+              to="/templates"
+              className={`flex items-center space-x-2 px-4 py-2 rounded-apple text-sm font-medium transition-all duration-200 shrink-0 ${
+                isActive('/templates')
+                  ? 'text-apple-accent'
+                  : 'text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover'
+              }`}
+            >
+              <FolderGit2 size={17} strokeWidth={isActive('/templates') ? 2.2 : 1.8} className="shrink-0" />
+              <span className="hidden sm:inline">{t('nav.templates')}</span>
             </Link>
 
             {/* Sprach-Dropdown: nur Klick (kein Hover), damit es beim Ansteuern nicht verschwindet */}

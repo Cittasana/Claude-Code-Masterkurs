@@ -301,6 +301,27 @@ export interface AccessStatus {
   status?: string;
 }
 
+// ── Free Signup API ────────────────────────────────────────
+
+export const freeSignupApi = {
+  signup: (email: string, displayName?: string) =>
+    api.post<AuthResponse & { message: string }>('/api/auth/signup/free', { email, displayName }),
+};
+
+// ── Lesson Access API ──────────────────────────────────────
+
+export interface LessonAccessResult {
+  canAccess: boolean;
+  reason: 'free_lesson' | 'subscription_active' | 'requires_subscription';
+  tier: string;
+  freeLessonLimit: number;
+}
+
+export const lessonAccessApi = {
+  canAccess: (lessonId: number) =>
+    api.get<LessonAccessResult>(`/api/subscription/can-access-lesson/${lessonId}`),
+};
+
 export const subscriptionApi = {
   createCheckoutSession: (priceId: string, promoCode?: string) =>
     api.post<{ url: string; sessionId: string }>('/api/subscription/create-checkout-session', {
@@ -316,6 +337,71 @@ export const subscriptionApi = {
   hasAccess: () => api.get<AccessStatus>('/api/subscription/has-access'),
 
   cancel: () => api.post<{ message: string }>('/api/subscription/cancel'),
+};
+
+// ── Discord API ─────────────────────────────────────────────
+
+export interface DiscordStatus {
+  connected: boolean;
+  discordId: string | null;
+  discordUsername: string | null;
+  isConfigured: boolean;
+}
+
+export const discordApi = {
+  /** Returns the Discord connection status for the current user */
+  getStatus: () => api.get<DiscordStatus>('/api/discord/status'),
+
+  /** Returns the Discord OAuth URL to initiate the connection flow */
+  getAuthUrl: () => api.get<{ url: string }>('/api/discord/auth-url'),
+
+  /** Disconnects the Discord account from the user profile */
+  disconnect: () => api.post<{ message: string }>('/api/discord/disconnect'),
+};
+
+// ── Newsletter API ──────────────────────────────────────────
+
+export interface NewsletterStatus {
+  subscribed: boolean;
+  status?: string;
+  subscribedAt?: string;
+}
+
+export const newsletterApi = {
+  subscribe: (email: string, displayName?: string, source?: string) =>
+    api.post<{ message: string }>('/api/newsletter/subscribe', { email, displayName, source }),
+
+  confirm: (token: string) =>
+    api.post<{ message: string }>('/api/newsletter/confirm', { token }),
+
+  unsubscribe: (token: string) =>
+    api.post<{ message: string }>('/api/newsletter/unsubscribe', { token }),
+
+  getStatus: () =>
+    api.get<NewsletterStatus>('/api/newsletter/status'),
+};
+
+// ── Showcase API ───────────────────────────────────────────
+
+export const showcaseApi = {
+  getAll: (params?: { page?: number; limit?: number }) => {
+    const search = new URLSearchParams();
+    if (params?.page) search.set('page', String(params.page));
+    if (params?.limit) search.set('limit', String(params.limit));
+    const qs = search.toString();
+    return api.get<{ entries: unknown[]; total: number }>(
+      `/api/showcase${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  create: (data: {
+    title: string;
+    description: string;
+    projectId?: string;
+    githubUrl?: string;
+    liveUrl?: string;
+    imageUrl?: string;
+  }) => api.post<Record<string, unknown>>('/api/showcase', data),
 };
 
 // ── Health Check ────────────────────────────────────────────

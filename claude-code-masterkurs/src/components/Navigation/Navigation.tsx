@@ -100,6 +100,7 @@ const Navigation = () => {
   const learnItems = [
     { to: '/lesson/0', match: '/lesson', icon: BookOpen, labelKey: 'nav.lessons' },
     { to: '/freelancer', match: '/freelancer', icon: Briefcase, labelKey: 'nav.freelancer' },
+    { to: '/projects', match: '/projects', icon: FolderOpen, labelKey: 'nav.projects' },
     { to: '/review', match: '/review', icon: Repeat, labelKey: 'nav.review' },
     { to: '/playground', match: '/playground', icon: Code2, labelKey: 'nav.playground' },
   ];
@@ -108,7 +109,6 @@ const Navigation = () => {
     { to: '/forum', match: '/forum', icon: MessageCircle, labelKey: 'nav.forum' },
     { to: '/leaderboard', match: '/leaderboard', icon: Trophy, labelKey: 'nav.leaderboard' },
     { to: '/analytics', match: '/analytics', icon: Activity, labelKey: 'nav.analytics' },
-    { to: '/projects', match: '/projects', icon: FolderOpen, labelKey: 'nav.projects' },
     { to: '/showcase', match: '/showcase', icon: Image, labelKey: 'nav.showcase' },
   ];
 

@@ -116,6 +116,7 @@ const Navigation = () => {
     { to: '/docs', match: '/__external__', icon: ExternalLink, labelKey: 'nav.officialDocs', externalUrl: 'https://code.claude.com/docs/de/overview' },
     { to: '/features', match: '/features', icon: Search, labelKey: 'nav.reference' },
     { to: '/patterns', match: '/patterns', icon: Layers, labelKey: 'nav.patterns' },
+    { to: '/templates', match: '/templates', icon: FolderGit2, labelKey: 'nav.templates' },
     { to: '/certificate', match: '/certificate', icon: Award, labelKey: 'nav.certificate' },
   ];
 
@@ -280,10 +281,6 @@ const Navigation = () => {
           <Link to="/challenges" onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive('/challenges') ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
             <Zap size={18} className="shrink-0" />
             {t('nav.challenges')}
-          </Link>
-          <Link to="/templates" onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive('/templates') ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
-            <FolderGit2 size={18} className="shrink-0" />
-            {t('nav.templates')}
           </Link>
           <div className="border-t border-apple-border my-4" />
           <div className="flex items-center gap-3 px-4 py-3 rounded-apple bg-apple-bg/50">
@@ -479,18 +476,6 @@ const Navigation = () => {
             >
               <Zap size={17} strokeWidth={isActive('/challenges') ? 2.2 : 1.8} className="shrink-0" />
               <span className="hidden sm:inline">{t('nav.challenges')}</span>
-            </Link>
-
-            <Link
-              to="/templates"
-              className={`flex items-center space-x-2 px-4 py-2 rounded-apple text-sm font-medium transition-all duration-200 shrink-0 ${
-                isActive('/templates')
-                  ? 'text-apple-accent'
-                  : 'text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover'
-              }`}
-            >
-              <FolderGit2 size={17} strokeWidth={isActive('/templates') ? 2.2 : 1.8} className="shrink-0" />
-              <span className="hidden sm:inline">{t('nav.templates')}</span>
             </Link>
 
             {/* Sprach-Dropdown: nur Klick (kein Hover), damit es beim Ansteuern nicht verschwindet */}

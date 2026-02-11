@@ -23,8 +23,10 @@ const createShowcaseSchema = z.object({
 
 showcaseRouter.get('/', optionalAuth, async (req, res) => {
   try {
-    const page = Math.max(1, parseInt(String(Array.isArray(req.query.page) ? req.query.page[0] : req.query.page) || '1'));
-    const limit = Math.min(50, Math.max(1, parseInt(String(Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit) || '30')));
+    const rawPage = Array.isArray(req.query.page) ? req.query.page[0] : req.query.page;
+    const rawLimit = Array.isArray(req.query.limit) ? req.query.limit[0] : req.query.limit;
+    const page = Math.max(1, parseInt(String(rawPage ?? '1'), 10) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(String(rawLimit ?? '30'), 10) || 30));
     const offset = (page - 1) * limit;
 
     const [entries, total] = await Promise.all([

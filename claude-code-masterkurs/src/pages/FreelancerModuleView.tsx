@@ -16,6 +16,7 @@ import {
 import { freelancerModules } from '../data/freelancerTrack';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
+import { subscriptionApi } from '../lib/api';
 import LessonContent from '../components/Lessons/LessonContent';
 
 /** First 2 modules (index 0, 1) are free */
@@ -26,13 +27,21 @@ const FreelancerModuleView = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lessonsCompleted, completeLesson, setCurrentLesson } = useUserProgress();
-  const user = useAuthStore((s) => s.user);
-  const hasPremium = Boolean(user?.plan && user.plan !== 'free');
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const [hasPremium, setHasPremium] = useState(false);
 
   const [readingProgress, setReadingProgress] = useState(0);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // Check subscription access
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    subscriptionApi.hasAccess()
+      .then((result) => setHasPremium(result.hasAccess))
+      .catch(() => setHasPremium(false));
+  }, [isAuthenticated]);
 
   const moduleId = parseInt(id || '100');
   const module = freelancerModules.find((m) => m.id === moduleId);

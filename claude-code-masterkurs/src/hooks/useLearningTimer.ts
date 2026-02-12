@@ -2,7 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useUserProgress } from '../store/userProgress';
 import { useAnalyticsStore } from '../store/analyticsStore';
 
-export type LearningContext = 'lesson' | 'freelancer' | 'playground' | 'challenge';
+export type LearningContext = 'lesson' | 'freelancer' | 'playground' | 'challenge' | 'tools';
 
 interface UseLearningTimerOptions {
   context: LearningContext;

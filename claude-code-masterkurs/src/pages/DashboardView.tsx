@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, ArrowRight } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, Wrench, ArrowRight } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
@@ -14,6 +14,7 @@ import { capstoneProjects as capstoneProjectsList } from '../data/capstoneProjec
 import { useChallengeStore } from '../store/challengeStore';
 import DiscordWidget from '../components/DiscordWidget';
 import { freelancerModules } from '../data/freelancerTrack';
+import { allTools } from '../data/tools';
 
 const totalChallengesCount = challenges.length + liveCodingChallenges.length;
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
@@ -510,6 +511,41 @@ const DashboardView = () => {
               <div
                 className="h-full bg-gradient-to-r from-apple-accent to-apple-success rounded-full transition-all duration-500"
                 style={{ width: `${freelancerProgress}%` }}
+              />
+            </div>
+          </Link>
+        );
+      })()}
+
+      {/* Tools & Extensions Widget */}
+      {(() => {
+        const toolsCompleted = allTools.filter((m) => lessonsCompleted.includes(m.id)).length;
+        const toolsTotal = allTools.length;
+        const toolsProgress = toolsTotal > 0 ? Math.round((toolsCompleted / toolsTotal) * 100) : 0;
+        return (
+          <Link to="/tools" className="block apple-card group hover:border-apple-accent/30 transition-all duration-200">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-apple-accent/10 flex items-center justify-center">
+                  <Wrench size={20} className="text-apple-accent" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-apple-text group-hover:text-apple-accent transition-colors">
+                    {t('tools.dashboardTitle')}
+                  </h3>
+                  <p className="text-xs text-apple-muted">{t('tools.dashboardDesc')}</p>
+                </div>
+              </div>
+              <ArrowRight size={18} className="text-apple-muted group-hover:text-apple-accent group-hover:translate-x-1 transition-all" />
+            </div>
+            <div className="flex items-center justify-between text-xs text-apple-muted font-mono mb-2">
+              <span>{t('tools.dashboardProgress', { completed: toolsCompleted, total: toolsTotal })}</span>
+              <span>{toolsProgress}%</span>
+            </div>
+            <div className="w-full h-1.5 bg-apple-border/50 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-apple-accent to-apple-success rounded-full transition-all duration-500"
+                style={{ width: `${toolsProgress}%` }}
               />
             </div>
           </Link>

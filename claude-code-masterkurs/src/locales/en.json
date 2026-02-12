@@ -26,7 +26,8 @@
     "openDashboard": "Open Dashboard",
     "projects": "Projects",
     "showcase": "Showcase",
-    "freelancer": "Freelancer Track"
+    "freelancer": "Freelancer Track",
+    "tools": "Tools & Extensions"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",
@@ -819,5 +820,40 @@
     "dashboardDesc": "Build your AI business",
     "dashboardProgress": "{{completed}}/{{total}} modules",
     "dashboardCta": "Continue learning"
+  },
+  "tools": {
+    "title": "Tools & Extensions",
+    "subtitle": "43 essential CLI tools and MCP servers for your workflow",
+    "badge": "Tools & Extensions",
+    "catAnfaenger": "Beginner Tools",
+    "catAnfaengerDesc": "Essential CLI tools to get started",
+    "catFortgeschritten": "Intermediate Tools",
+    "catFortgeschrittenDesc": "Modern CLI tools for productive workflows",
+    "catExpert": "Expert Tools",
+    "catExpertDesc": "Terminal multiplexers & file managers",
+    "catMcp": "MCP Servers",
+    "catMcpDesc": "Model Context Protocol integrations",
+    "categoriesTitle": "4 Categories",
+    "statsTools": "Tools",
+    "statsCategories": "Categories",
+    "statsDuration": "Total",
+    "statsFree": "Free",
+    "progress": "Overall Progress",
+    "toolNotFound": "Tool not found",
+    "backToOverview": "Back to overview",
+    "toolXOfY": "Tool {{current}} of {{total}}",
+    "trackProgress": "Progress",
+    "whatYouLearn": "What you will learn",
+    "completeTool": "Complete lesson",
+    "completeToolDesc": "Finished all content? Mark this lesson as completed.",
+    "prevTool": "Previous tool",
+    "nextTool": "Next tool",
+    "premiumTitle": "Premium Tool",
+    "premiumDesc": "This lesson is only available for premium members. The first 8 tools are free.",
+    "ctaTitle": "Unlock all 43 tools",
+    "ctaDesc": "Upgrade to premium and get access to all tools & extensions, plus the full course.",
+    "dashboardTitle": "Tools & Extensions",
+    "dashboardDesc": "Master CLI tools and MCP servers",
+    "dashboardProgress": "{{completed}}/{{total}} completed"
   }
 }

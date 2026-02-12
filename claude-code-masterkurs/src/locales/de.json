@@ -28,7 +28,8 @@
     "closeMenu": "Menü schließen",
     "projects": "Projekte",
     "showcase": "Showcase",
-    "freelancer": "Freelancer-Track"
+    "freelancer": "Freelancer-Track",
+    "tools": "Tools & Extensions"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",
@@ -821,5 +822,40 @@
     "dashboardDesc": "AI-Business aufbauen",
     "dashboardProgress": "{{completed}}/{{total}} Module",
     "dashboardCta": "Weiter lernen"
+  },
+  "tools": {
+    "title": "Tools & Extensions",
+    "subtitle": "43 essenzielle CLI-Tools und MCP Server fuer deinen Workflow",
+    "badge": "Tools & Extensions",
+    "catAnfaenger": "Anfaenger-Tools",
+    "catAnfaengerDesc": "Grundlegende CLI-Tools fuer den Einstieg",
+    "catFortgeschritten": "Fortgeschrittene Tools",
+    "catFortgeschrittenDesc": "Moderne CLI-Tools fuer produktive Workflows",
+    "catExpert": "Experten-Tools",
+    "catExpertDesc": "Terminal Multiplexer & File Manager",
+    "catMcp": "MCP Server",
+    "catMcpDesc": "Model Context Protocol Integrationen",
+    "categoriesTitle": "4 Kategorien",
+    "statsTools": "Tools",
+    "statsCategories": "Kategorien",
+    "statsDuration": "Gesamt",
+    "statsFree": "Kostenlos",
+    "progress": "Gesamtfortschritt",
+    "toolNotFound": "Tool nicht gefunden",
+    "backToOverview": "Zurueck zur Uebersicht",
+    "toolXOfY": "Tool {{current}} von {{total}}",
+    "trackProgress": "Fortschritt",
+    "whatYouLearn": "Was du in dieser Lektion lernst",
+    "completeTool": "Lektion abschliessen",
+    "completeToolDesc": "Hast du alle Inhalte durchgearbeitet? Markiere diese Lektion als abgeschlossen.",
+    "prevTool": "Vorheriges Tool",
+    "nextTool": "Naechstes Tool",
+    "premiumTitle": "Premium-Tool",
+    "premiumDesc": "Diese Lektion ist nur fuer Premium-Mitglieder verfuegbar. Die ersten 8 Tools sind kostenlos.",
+    "ctaTitle": "Alle 43 Tools freischalten",
+    "ctaDesc": "Upgrade auf Premium und erhalte Zugang zu allen Tools & Extensions, plus den gesamten Hauptkurs.",
+    "dashboardTitle": "Tools & Extensions",
+    "dashboardDesc": "CLI-Tools und MCP Server meistern",
+    "dashboardProgress": "{{completed}}/{{total}} abgeschlossen"
   }
 }

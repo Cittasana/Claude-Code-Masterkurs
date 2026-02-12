@@ -26,7 +26,8 @@
     "openDashboard": "Abrir panel",
     "projects": "Proyectos",
     "showcase": "Galeria",
-    "freelancer": "Ruta Freelance"
+    "freelancer": "Ruta Freelance",
+    "tools": "Herramientas & Extensiones"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",
@@ -774,5 +775,40 @@
     "dashboardDesc": "Construye tu negocio AI",
     "dashboardProgress": "{{completed}}/{{total}} modulos",
     "dashboardCta": "Seguir aprendiendo"
+  },
+  "tools": {
+    "title": "Herramientas & Extensiones",
+    "subtitle": "43 herramientas CLI esenciales y servidores MCP para tu workflow",
+    "badge": "Herramientas & Extensiones",
+    "catAnfaenger": "Herramientas basicas",
+    "catAnfaengerDesc": "Herramientas CLI esenciales para empezar",
+    "catFortgeschritten": "Herramientas intermedias",
+    "catFortgeschrittenDesc": "Herramientas CLI modernas para workflows productivos",
+    "catExpert": "Herramientas avanzadas",
+    "catExpertDesc": "Multiplexores de terminal y gestores de archivos",
+    "catMcp": "Servidores MCP",
+    "catMcpDesc": "Integraciones del Model Context Protocol",
+    "categoriesTitle": "4 Categorias",
+    "statsTools": "Herramientas",
+    "statsCategories": "Categorias",
+    "statsDuration": "Total",
+    "statsFree": "Gratis",
+    "progress": "Progreso general",
+    "toolNotFound": "Herramienta no encontrada",
+    "backToOverview": "Volver a la vista general",
+    "toolXOfY": "Herramienta {{current}} de {{total}}",
+    "trackProgress": "Progreso",
+    "whatYouLearn": "Lo que aprenderas",
+    "completeTool": "Completar leccion",
+    "completeToolDesc": "Has terminado todo el contenido? Marca esta leccion como completada.",
+    "prevTool": "Herramienta anterior",
+    "nextTool": "Siguiente herramienta",
+    "premiumTitle": "Herramienta Premium",
+    "premiumDesc": "Esta leccion solo esta disponible para miembros premium. Las primeras 8 herramientas son gratuitas.",
+    "ctaTitle": "Desbloquear las 43 herramientas",
+    "ctaDesc": "Actualiza a premium y obtene acceso a todas las herramientas y extensiones, mas el curso completo.",
+    "dashboardTitle": "Herramientas & Extensiones",
+    "dashboardDesc": "Dominar herramientas CLI y servidores MCP",
+    "dashboardProgress": "{{completed}}/{{total}} completados"
   }
 }

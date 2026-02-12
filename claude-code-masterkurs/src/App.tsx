@@ -49,6 +49,8 @@ const NewsletterUnsubscribeView = lazy(() =>
 );
 const FreelancerTrackView = lazy(() => import('./pages/FreelancerTrackView'));
 const FreelancerModuleView = lazy(() => import('./pages/FreelancerModuleView'));
+const ToolsOverviewView = lazy(() => import('./pages/ToolsOverviewView'));
+const ToolsLessonView = lazy(() => import('./pages/ToolsLessonView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -115,6 +117,8 @@ function App() {
               <Route path="/start-kostenlos" element={<StartKostenlosView />} />
               <Route path="/freelancer" element={<FreelancerTrackView />} />
               <Route path="/freelancer/:id" element={<FreelancerModuleView />} />
+              <Route path="/tools" element={<ToolsOverviewView />} />
+              <Route path="/tools/:id" element={<ToolsLessonView />} />
               <Route path="/newsletter" element={<NewsletterView />} />
               <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
               <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />

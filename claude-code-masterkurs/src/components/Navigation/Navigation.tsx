@@ -27,6 +27,7 @@ import {
   FolderGit2,
   Image,
   Briefcase,
+  Wrench,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -100,6 +101,7 @@ const Navigation = () => {
   const learnItems = [
     { to: '/lesson/0', match: '/lesson', icon: BookOpen, labelKey: 'nav.lessons' },
     { to: '/freelancer', match: '/freelancer', icon: Briefcase, labelKey: 'nav.freelancer' },
+    { to: '/tools', match: '/tools', icon: Wrench, labelKey: 'nav.tools' },
     { to: '/projects', match: '/projects', icon: FolderOpen, labelKey: 'nav.projects' },
     { to: '/review', match: '/review', icon: Repeat, labelKey: 'nav.review' },
     { to: '/playground', match: '/playground', icon: Code2, labelKey: 'nav.playground' },

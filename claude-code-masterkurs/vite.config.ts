@@ -50,6 +50,13 @@ export default defineConfig({
           'vendor-state': ['zustand'],
           // Vendor: Syntax Highlighting
           'vendor-prism': ['prismjs'],
+          // App: Tools & Extensions Daten
+          'data-tools': [
+            './src/data/tools/toolsAnfaenger.ts',
+            './src/data/tools/toolsFortgeschritten.ts',
+            './src/data/tools/toolsExpert.ts',
+            './src/data/tools/toolsMcp.ts',
+          ],
           // App: Daten-Module (Lektionen, Quizzes, etc.)
           'data': [
             './src/data/lessons.ts',
@@ -68,8 +75,8 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
       },
     },
-    // Data-Chunk enthält Kursinhalt (~900KB) - das ist erwartet
-    chunkSizeWarningLimit: 1000,
+    // Data-Chunks enthalten Kursinhalt (~1MB data + ~1.1MB data-tools) - das ist erwartet
+    chunkSizeWarningLimit: 1200,
   },
 
   // ── Performance: Optimierungen ──────────────────────────────

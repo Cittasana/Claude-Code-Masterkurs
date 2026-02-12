@@ -26,7 +26,8 @@
     "openDashboard": "Ouvrir le tableau de bord",
     "projects": "Projets",
     "showcase": "Vitrine",
-    "freelancer": "Parcours Freelance"
+    "freelancer": "Parcours Freelance",
+    "tools": "Outils & Extensions"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",
@@ -774,5 +775,40 @@
     "dashboardDesc": "Construisez votre business AI",
     "dashboardProgress": "{{completed}}/{{total}} modules",
     "dashboardCta": "Continuer a apprendre"
+  },
+  "tools": {
+    "title": "Outils & Extensions",
+    "subtitle": "43 outils CLI essentiels et serveurs MCP pour votre workflow",
+    "badge": "Outils & Extensions",
+    "catAnfaenger": "Outils debutant",
+    "catAnfaengerDesc": "Outils CLI essentiels pour commencer",
+    "catFortgeschritten": "Outils intermediaires",
+    "catFortgeschrittenDesc": "Outils CLI modernes pour des workflows productifs",
+    "catExpert": "Outils expert",
+    "catExpertDesc": "Multiplexeurs de terminal et gestionnaires de fichiers",
+    "catMcp": "Serveurs MCP",
+    "catMcpDesc": "Integrations du Model Context Protocol",
+    "categoriesTitle": "4 Categories",
+    "statsTools": "Outils",
+    "statsCategories": "Categories",
+    "statsDuration": "Total",
+    "statsFree": "Gratuit",
+    "progress": "Progression globale",
+    "toolNotFound": "Outil non trouve",
+    "backToOverview": "Retour a la vue d'ensemble",
+    "toolXOfY": "Outil {{current}} sur {{total}}",
+    "trackProgress": "Progression",
+    "whatYouLearn": "Ce que vous apprendrez",
+    "completeTool": "Terminer la lecon",
+    "completeToolDesc": "Vous avez termine tout le contenu ? Marquez cette lecon comme terminee.",
+    "prevTool": "Outil precedent",
+    "nextTool": "Outil suivant",
+    "premiumTitle": "Outil Premium",
+    "premiumDesc": "Cette lecon est reservee aux membres premium. Les 8 premiers outils sont gratuits.",
+    "ctaTitle": "Debloquer les 43 outils",
+    "ctaDesc": "Passez a premium et accedez a tous les outils et extensions, plus le cours complet.",
+    "dashboardTitle": "Outils & Extensions",
+    "dashboardDesc": "Maitriser les outils CLI et serveurs MCP",
+    "dashboardProgress": "{{completed}}/{{total}} termines"
   }
 }

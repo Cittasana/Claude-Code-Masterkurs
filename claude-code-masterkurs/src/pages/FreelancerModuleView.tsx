@@ -18,11 +18,14 @@ import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
 import { subscriptionApi } from '../lib/api';
 import LessonContent from '../components/Lessons/LessonContent';
+import { useLearningTimer } from '../hooks/useLearningTimer';
 
 /** First 2 modules (index 0, 1) are free */
 const FREE_MODULE_LIMIT = 2;
 
 const FreelancerModuleView = () => {
+  useLearningTimer({ context: 'freelancer' });
+
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();

@@ -534,7 +534,15 @@
     "weekdayTh": "Do",
     "weekdayFr": "Fr",
     "weekdaySa": "Sa",
-    "weekdaySu": "So"
+    "weekdaySu": "So",
+    "dailyLearningTime": "Tägliche Lernzeit",
+    "dailyLearningTimeDesc": "Effektive Lernzeit pro Tag (letzte 14 Tage)",
+    "noLearningTimeYet": "Lerne auf einer Seite, um deine Lernzeit zu tracken",
+    "minutesSuffix": "Minuten",
+    "ctxLesson": "Lektionen",
+    "ctxFreelancer": "Freelancer",
+    "ctxPlayground": "Playground",
+    "ctxChallenge": "Challenges"
   },
   "logo": {
     "masterkurs": "Masterkurs"

@@ -22,7 +22,8 @@ export type ActivityType =
   | 'quiz_complete'
   | 'project_complete'
   | 'session_start'
-  | 'review_complete';
+  | 'review_complete'
+  | 'learning_time';
 
 export interface ActivityEvent {
   id: string;
@@ -33,7 +34,8 @@ export interface ActivityEvent {
     quizId?: string;
     projectId?: string;
     score?: number;
-    duration?: number; // minutes
+    duration?: number; // seconds (for learning_time events)
+    context?: string; // learning context: lesson | freelancer | playground | challenge
   };
 }
 
@@ -66,6 +68,8 @@ interface AnalyticsStore {
   getLearningVelocity: (weeks: number) => { weekLabel: string; lessons: number; quizzes: number }[];
   getStreakHistory: () => { current: number; longest: number; activeDays: number };
   getInsights: () => string[];
+  /** Daily learning time from learning_time events, last N days */
+  getDailyLearningTime: (days: number) => { date: string; total: number; lesson: number; freelancer: number; playground: number; challenge: number }[];
 }
 
 function uid(): string {
@@ -336,6 +340,41 @@ export const useAnalyticsStore = create<AnalyticsStore>()(
         }
 
         return insights.slice(0, 6);
+      },
+
+      getDailyLearningTime: (days) => {
+        const now = new Date();
+        now.setHours(23, 59, 59, 999);
+        const start = new Date(now);
+        start.setDate(start.getDate() - days + 1);
+        start.setHours(0, 0, 0, 0);
+
+        // Build a map of day → context → seconds
+        const dayMap: Record<string, { lesson: number; freelancer: number; playground: number; challenge: number }> = {};
+        for (let i = 0; i < days; i++) {
+          const d = new Date(start);
+          d.setDate(d.getDate() + i);
+          dayMap[d.toISOString().slice(0, 10)] = { lesson: 0, freelancer: 0, playground: 0, challenge: 0 };
+        }
+
+        for (const ev of get().events) {
+          if (ev.type !== 'learning_time') continue;
+          const key = ev.timestamp.slice(0, 10);
+          if (!dayMap[key]) continue;
+          const ctx = (ev.metadata?.context ?? 'lesson') as keyof typeof dayMap[string];
+          const dur = ev.metadata?.duration ?? 0;
+          if (dayMap[key][ctx] !== undefined) {
+            dayMap[key][ctx] += dur;
+          }
+        }
+
+        return Object.entries(dayMap)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([date, ctxs]) => ({
+            date,
+            total: ctxs.lesson + ctxs.freelancer + ctxs.playground + ctxs.challenge,
+            ...ctxs,
+          }));
       },
     }),
     { name: 'claude-code-masterkurs-analytics' }

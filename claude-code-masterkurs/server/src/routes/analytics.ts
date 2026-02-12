@@ -16,6 +16,7 @@ const VALID_EVENT_TYPES = [
   'project_complete',
   'session_start',
   'review_complete',
+  'learning_time',
 ] as const;
 
 const logEventSchema = z.object({
@@ -27,6 +28,7 @@ const logEventSchema = z.object({
       projectId: z.string().optional(),
       score: z.number().optional(),
       duration: z.number().optional(),
+      context: z.string().optional(),
     })
     .optional(),
 });

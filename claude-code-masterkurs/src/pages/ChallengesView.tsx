@@ -27,6 +27,7 @@ import { useTranslation } from 'react-i18next';
 import { useChallengeStore } from '../store/challengeStore';
 import { getCategoryI18nKey } from '../utils/challengeI18n';
 import type { CodingChallenge, ChallengeResult } from '../types';
+import { useLearningTimer } from '../hooks/useLearningTimer';
 
 /** Alle Challenges: Claude Code (Kurs) + Live Coding (Algorithmen), separat von Projekten */
 const allChallenges: CodingChallenge[] = [
@@ -49,6 +50,7 @@ const DIFFICULTY_KEYS: Record<string, string> = {
 };
 
 const ChallengesView = () => {
+  useLearningTimer({ context: 'challenge' });
   const { t } = useTranslation();
   const [selectedChallenge, setSelectedChallenge] = useState<CodingChallenge | null>(null);
   const [filterDifficulty, setFilterDifficulty] = useState<string>('Alle');

@@ -13,8 +13,11 @@ import { useUserProgress } from '../store/userProgress';
 import { lessons } from '../data/lessons';
 import SimulatedTerminal from '../components/Playground/SimulatedTerminal';
 import type { PlaygroundTask } from '../types';
+import { useLearningTimer } from '../hooks/useLearningTimer';
 
 const PlaygroundView = () => {
+  useLearningTimer({ context: 'playground' });
+
   const { t } = useTranslation();
   const { lessonsCompleted } = useUserProgress();
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);

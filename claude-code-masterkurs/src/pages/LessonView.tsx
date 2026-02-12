@@ -23,8 +23,11 @@ import QuizComponent from '../components/Quiz/QuizComponent';
 import PaywallOverlay from '../components/Paywall/PaywallOverlay';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
+import { useLearningTimer } from '../hooks/useLearningTimer';
 
 const LessonView = () => {
+  useLearningTimer({ context: 'lesson' });
+
   const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();

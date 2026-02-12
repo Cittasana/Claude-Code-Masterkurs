@@ -164,6 +164,7 @@ const LearningAnalyticsView = () => {
     getStreakHistory,
     getInsights,
     getWeeklyActivity,
+    getDailyLearningTime,
     events,
     weeklyGoal,
     setWeeklyGoal,
@@ -191,6 +192,7 @@ const LearningAnalyticsView = () => {
   const streakHistory = useMemo(() => getStreakHistory(), [events]);
   const insights = useMemo(() => getInsights(), [events]);
   const weeklyActivity = useMemo(() => getWeeklyActivity(8), [events]);
+  const dailyLearningTime = useMemo(() => getDailyLearningTime(14), [events]);
 
   // ── Current week progress toward goal ──────────────────────────
   const currentWeekEvents = useMemo(() => {
@@ -376,6 +378,50 @@ const LearningAnalyticsView = () => {
     ],
   };
 
+  // Daily Learning Time (Stacked Bar)
+  const toMinutes = (s: number) => Math.round(s / 60);
+  const dailyLearningTimeData = {
+    labels: dailyLearningTime.map((d) => {
+      const date = new Date(d.date);
+      return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    }),
+    datasets: [
+      {
+        label: t('analytics.ctxLesson'),
+        data: dailyLearningTime.map((d) => toMinutes(d.lesson)),
+        backgroundColor: CHART_COLORS.accentMuted,
+        borderColor: CHART_COLORS.accent,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: t('analytics.ctxFreelancer'),
+        data: dailyLearningTime.map((d) => toMinutes(d.freelancer)),
+        backgroundColor: CHART_COLORS.successMuted,
+        borderColor: CHART_COLORS.success,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: t('analytics.ctxPlayground'),
+        data: dailyLearningTime.map((d) => toMinutes(d.playground)),
+        backgroundColor: CHART_COLORS.infoMuted,
+        borderColor: CHART_COLORS.info,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+      {
+        label: t('analytics.ctxChallenge'),
+        data: dailyLearningTime.map((d) => toMinutes(d.challenge)),
+        backgroundColor: CHART_COLORS.purpleMuted,
+        borderColor: CHART_COLORS.purple,
+        borderWidth: 1,
+        borderRadius: 4,
+      },
+    ],
+  };
+  const hasLearningTimeData = dailyLearningTime.some((d) => d.total > 0);
+
   // ── Averages ───────────────────────────────────────────────────
   const avgQuizScore = useMemo(() => {
     if (quizzesCompleted.length === 0) return 0;
@@ -446,6 +492,57 @@ const LearningAnalyticsView = () => {
           value={hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`}
           suffix={t('analytics.investedSuffix')}
         />
+      </div>
+
+      {/* ── Daily Learning Time ──────────────────────────────── */}
+      <div className="apple-card">
+        <h2 className="text-lg font-bold text-apple-text mb-1 flex items-center space-x-2">
+          <Clock className="text-apple-accent" size={20} />
+          <span>{t('analytics.dailyLearningTime')}</span>
+        </h2>
+        <p className="text-apple-muted text-xs mb-4 font-mono">
+          {t('analytics.dailyLearningTimeDesc')}
+        </p>
+        <div className="h-[250px]">
+          {hasLearningTimeData ? (
+            <Bar
+              data={dailyLearningTimeData}
+              options={{
+                ...baseChartOptions,
+                plugins: {
+                  ...baseChartOptions.plugins,
+                  legend: {
+                    ...baseChartOptions.plugins.legend,
+                    position: 'top' as const,
+                  },
+                  tooltip: {
+                    ...baseChartOptions.plugins.tooltip,
+                    callbacks: {
+                      label: (ctx: { dataset: { label?: string }; parsed: { y: number | null } }) =>
+                        `${ctx.dataset.label}: ${ctx.parsed.y} min`,
+                    },
+                  },
+                },
+                scales: {
+                  ...baseChartOptions.scales,
+                  x: { ...baseChartOptions.scales.x, stacked: true },
+                  y: {
+                    ...baseChartOptions.scales.y,
+                    stacked: true,
+                    title: {
+                      display: true,
+                      text: t('analytics.minutesSuffix'),
+                      color: CHART_COLORS.text,
+                      font: { family: "'JetBrains Mono', monospace", size: 10 },
+                    },
+                  },
+                },
+              }}
+            />
+          ) : (
+            <EmptyChart message={t('analytics.noLearningTimeYet')} />
+          )}
+        </div>
       </div>
 
       {/* ── Weekly Goals ──────────────────────────────────────── */}

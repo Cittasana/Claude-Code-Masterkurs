@@ -532,7 +532,15 @@
     "weekdayTh": "Thu",
     "weekdayFr": "Fri",
     "weekdaySa": "Sat",
-    "weekdaySu": "Sun"
+    "weekdaySu": "Sun",
+    "dailyLearningTime": "Daily Learning Time",
+    "dailyLearningTimeDesc": "Effective learning time per day (last 14 days)",
+    "noLearningTimeYet": "Start learning to track your study time",
+    "minutesSuffix": "Minutes",
+    "ctxLesson": "Lessons",
+    "ctxFreelancer": "Freelancer",
+    "ctxPlayground": "Playground",
+    "ctxChallenge": "Challenges"
   },
   "logo": {
     "masterkurs": "Masterkurs"

@@ -198,9 +198,11 @@ export const useUserProgress = create<UserProgressStore>()(
         }),
 
       addTimeInvested: (minutes: number) =>
-        set((state) => ({
-          timeInvested: state.timeInvested + minutes,
-        })),
+        set((state) => {
+          const newTime = state.timeInvested + minutes;
+          syncInBackground({ timeInvested: newTime });
+          return { timeInvested: newTime };
+        }),
 
       updateSkillProgress: (skill, value) =>
         set((state) => ({

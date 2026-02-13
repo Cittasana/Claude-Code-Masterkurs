@@ -67,7 +67,7 @@ Dieser Abschnitt fuehrt dich durch die Installation, Konfiguration und taegliche
 Die Installation von btop variiert je nach Betriebssystem. Auf macOS ist Homebrew der schnellste Weg, waehrend unter Linux je nach Distribution ein Paketmanager oder das Kompilieren aus dem Quellcode noetig ist.
 
 #### macOS (via Homebrew):
-Homebrew ist der einfachste Installationsweg auf macOS. Nach der Installation kannst du btop sofort mit dem gleichnamigen Befehl starten:
+Homebrew ist der einfachste Installationsweg auf macOS und erledigt alle Abhaengigkeiten automatisch. Der Befehl `brew install btop` laedt die neueste stabile Version herunter, kompiliert sie falls noetig und installiert das Binary in den PATH. Danach kannst du btop sofort mit dem gleichnamigen Befehl starten. Stell dir vor, du hast gerade einen neuen Mac eingerichtet und willst sofort die Systemressourcen ueberwachen -- mit Homebrew ist btop in weniger als einer Minute einsatzbereit. Nach der Installation pruefst du mit `btop --version`, ob alles korrekt installiert wurde, und startest dann btop ohne weitere Argumente fuer die Standardansicht. Im Terminal erscheint die interaktive Oberflaeche mit CPU-Graphen, Speicherverbrauch, Netzwerk-Aktivitaet und einer Prozessliste.
 ```bash
 # btop installieren
 brew install btop
@@ -80,7 +80,7 @@ btop
 ```
 
 #### Ubuntu/Debian:
-Unter Ubuntu/Debian empfiehlt es sich, btop aus dem Quellcode zu kompilieren, da die Paketmanager-Version oft veraltet ist. Alternativ steht Snap zur Verfuegung:
+Unter Ubuntu/Debian empfiehlt es sich, btop aus dem Quellcode zu kompilieren, da die Paketmanager-Version oft veraltet ist und wichtige Features fehlen koennen. Dazu installierst du zuerst die Build-Dependencies (build-essential und git), klonst dann das offizielle Repository und kompilierst mit make. Alternativ steht Snap zur Verfuegung, das allerdings in einer Sandbox laeuft und daher moeglicherweise nicht alle Systeminformationen lesen kann. Stell dir vor, du richtest einen neuen Ubuntu-Server ein und willst die Systemlast ueberwachen -- durch das Kompilieren aus dem Quellcode bekommst du immer die aktuellste Version mit allen Bugfixes. Der gesamte Vorgang dauert je nach Rechnerleistung nur 2-5 Minuten. Nach der Installation steht btop systemweit zur Verfuegung und kann von jedem Benutzer gestartet werden.
 ```bash
 # Dependencies installieren
 sudo apt update
@@ -100,7 +100,7 @@ btop --version
 ```
 
 #### Arch Linux:
-Arch Linux stellt btop direkt ueber die offiziellen Repositories bereit:
+Arch Linux stellt btop direkt ueber die offiziellen Repositories bereit, was die Installation besonders einfach macht. Mit pacman wird btop in wenigen Sekunden heruntergeladen und installiert, inklusive aller Abhaengigkeiten. Da Arch Linux ein Rolling-Release-Modell nutzt, bekommst du hier in der Regel die aktuellste Version von btop ohne manuelles Kompilieren. Stell dir vor, du betreibst einen Arch-basierten Entwicklungs-Server und willst schnell einen System-Monitor einrichten -- ein einziger pacman-Befehl genuegt. Nach der Installation pruefst du mit `btop --version`, ob die richtige Version installiert wurde.
 ```bash
 # btop aus AUR installieren
 sudo pacman -S btop
@@ -111,7 +111,7 @@ btop --version
 
 ### Basis-Verwendung
 
-btop bietet verschiedene Startoptionen, mit denen du Theme, Layout und Update-Geschwindigkeit direkt beim Aufruf festlegen kannst. Die wichtigsten Flags im Ueberblick:
+btop bietet verschiedene Startoptionen, mit denen du Theme, Layout und Update-Geschwindigkeit direkt beim Aufruf festlegen kannst. Ohne Argumente startet btop im Standardmodus mit dem Default-Theme und einem Update-Intervall von 2 Sekunden. Du kannst aber auch ein bestimmtes Farbschema waehlen, das Layout aendern oder die Aktualisierungsrate anpassen. Stell dir vor, du arbeitest auf einem aelteren Server mit begrenzter Terminalunterstuetzung -- dann ist der Low-Color-Mode oder TTY-Mode nuetzlich, damit die Darstellung trotzdem korrekt funktioniert. Besonders praktisch sind die Preset-Layouts: Preset 1 zeigt die CPU-Graphen oben und die Prozessliste unten, Preset 2 dreht das um. So findest du schnell die Ansicht, die fuer deinen Workflow am besten passt. Fuer ressourcenarme Systeme kannst du das Update-Intervall erhoehen, um CPU-Last durch btop selbst zu minimieren.
 ```bash
 # btop starten (Standard-View)
 btop
@@ -144,7 +144,7 @@ btop --help
 btop wird hauptsaechlich ueber Tastenkuerzel bedient. Die folgenden Shortcuts sind nach Funktionsbereich gruppiert, damit du sie im Arbeitsalltag schnell findest.
 
 #### Navigation:
-Mit den Navigationstasten bewegst du dich durch die Prozessliste und oeffnest Menues fuer Einstellungen:
+Mit den Navigationstasten bewegst du dich durch die Prozessliste und oeffnest Menues fuer Einstellungen. Die Pfeiltasten bewegen dich zeilenweise durch die Liste, waehrend PgUp/PgDn seitenweise scrollt -- besonders nuetzlich, wenn hunderte Prozesse laufen. Stell dir vor, du suchst auf einem Produktionsserver einen bestimmten Prozess in einer langen Liste: Mit Home springst du zum Anfang, mit End zum Ende, und mit dem Menu (m) erreichst du die Einstellungen. Die ESC-Taste ist dein Ausweg aus jedem Untermenue und loescht aktive Filter. Mit q beendest du btop jederzeit sauber.
 ```
 ↑/↓         Prozess-Liste navigieren
 PgUp/PgDn   Prozess-Liste scrollen (Seitenweise)
@@ -155,7 +155,7 @@ q           btop beenden
 ```
 
 #### Process-Management:
-Diese Shortcuts ermoeglichen direktes Eingreifen in laufende Prozesse -- vom sanften Beenden bis zur Prioritaetsaenderung:
+Diese Shortcuts ermoeglichen direktes Eingreifen in laufende Prozesse -- vom sanften Beenden bis zur Prioritaetsaenderung. Der Unterschied zwischen k (SIGTERM) und K (SIGKILL) ist entscheidend: SIGTERM gibt dem Prozess die Chance, sich sauber zu beenden und offene Dateien zu schliessen, waehrend SIGKILL den Prozess sofort und ohne Vorwarnung beendet. Stell dir vor, ein Node.js-Server haengt und blockiert Port 3000 -- du wahlst ihn in btop aus, drueckst k, und der Server faehrt geordnet herunter. Nur wenn das nicht klappt, nutzt du K als letzte Option. Mit +/- aenderst du die nice-Prioritaet, was bestimmt, wie viel CPU-Zeit ein Prozess bekommt. Die Tasten e und i zeigen detaillierte Informationen wie Umgebungsvariablen und I/O-Statistiken, die beim Debugging unverzichtbar sind.
 ```
 k           Prozess beenden (SIGTERM)
 K           Prozess erzwingen beenden (SIGKILL)
@@ -165,7 +165,7 @@ i           I/O Stats für Prozess anzeigen
 ```
 
 #### Sortierung:
-Mit diesen Tasten aenderst du die Sortierreihenfolge der Prozessliste, um z.B. den CPU-intensivsten Prozess schnell zu finden:
+Mit diesen Tasten aenderst du die Sortierreihenfolge der Prozessliste, um z.B. den CPU-intensivsten Prozess schnell zu finden. Die Sortierung ist kontextabhaengig: Wenn du einen CPU-Engpass suchst, drueckst du c, um den Prozess mit der hoechsten CPU-Last ganz oben zu sehen. Fuer Memory-Leaks sortierst du nach Memory (m) und beobachtest, welcher Prozess ueber die Zeit stetig waechst. Stell dir vor, dein System wird ploetzlich langsam -- du oeffnest btop, drueckst c und siehst sofort, dass ein Python-Skript 95% CPU verbraucht. Mit r kehrst du die Sortierreihenfolge um, was nuetzlich ist, wenn du z.B. die am wenigsten aktiven Prozesse sehen willst. Die Sortierung nach PID (p) oder Name (n) hilft, wenn du einen bestimmten Prozess in der Liste finden willst.
 ```
 c           Nach CPU sortieren
 m           Nach Memory sortieren
@@ -175,7 +175,7 @@ r           Sortierreihenfolge umkehren
 ```
 
 #### Views:
-Zwischen verschiedenen Ansichten wechseln -- z.B. Tree-View fuer Eltern-Kind-Beziehungen oder gefilterter Modus fuer gezielte Analyse:
+Zwischen verschiedenen Ansichten wechseln -- z.B. Tree-View fuer Eltern-Kind-Beziehungen oder gefilterter Modus fuer gezielte Analyse. Der Tree-View (t) ist besonders wertvoll bei Docker-Compose-Setups oder Microservice-Architekturen, wo du sehen willst, welche Kindprozesse von welchem Elternprozess gestartet wurden. Stell dir vor, du hast 5 Docker-Container laufen und willst verstehen, warum einer davon so viel CPU verbraucht -- im Tree-View siehst du sofort alle Unterprozesse. Der Filter (f) unterstuetzt regulaere Ausdruecke, sodass du z.B. mit "node|python" alle Node.js- und Python-Prozesse gleichzeitig anzeigen kannst. Das Hilfemenue (h) listet alle verfuegbaren Shortcuts auf, und das Optionenmenue (o) bietet Zugang zu allen Konfigurationseinstellungen.
 ```
 t           Prozess-Tree-View umschalten
 f           Filter für Prozesse setzen (Regex)
@@ -192,7 +192,7 @@ z           Box ein/ausblenden (nach Focus)
 
 ### Konfigurations-Datei
 
-btop speichert Einstellungen in `~/.config/btop/btop.conf`. Du kannst die Datei entweder direkt im Editor bearbeiten oder ueber das integrierte Optionsmenue anpassen:
+btop speichert Einstellungen in `~/.config/btop/btop.conf`. Du kannst die Datei entweder direkt im Editor bearbeiten oder ueber das integrierte Optionsmenue anpassen. Die Config-Datei wird beim ersten Start von btop automatisch erstellt und enthaelt alle verfuegbaren Optionen mit ihren Standardwerten. Aenderungen in der Datei werden beim naechsten Start von btop wirksam, waehrend Aenderungen ueber das integrierte Menue sofort angewendet werden. Stell dir vor, du richtest btop auf mehreren Servern ein -- dann kopierst du einfach die Config-Datei und hast ueberall die gleichen Einstellungen. Falls die Datei beschaedigt wird oder du zu den Defaults zurueckkehren willst, loesche sie einfach und starte btop neu -- die Datei wird automatisch mit Standardwerten neu erstellt.
 
 ```bash
 # Config-Datei bearbeiten
@@ -201,7 +201,7 @@ vim ~/.config/btop/btop.conf
 # Oder direkt in btop: Menu öffnen (m) → Options → Edit Config
 ```
 
-Die wichtigsten Config-Optionen steuern Aussehen, Update-Geschwindigkeit und welche Metriken angezeigt werden. Jede Option wird einzeln erklaert:
+Die wichtigsten Config-Optionen steuern Aussehen, Update-Geschwindigkeit und welche Metriken angezeigt werden. Das color_theme bestimmt das Farbschema, waehrend update_ms die Aktualisierungsrate in Millisekunden festlegt -- niedrigere Werte bedeuten haeufigere Updates, aber auch hoeheren CPU-Verbrauch. Die proc_sorting-Option legt fest, nach welchem Kriterium die Prozessliste sortiert wird, wobei "cpu lazy" nach CPU-Verbrauch sortiert und seltener aktualisiert. Die Graph-Typen (cpu_graph_upper, mem_graph_lower etc.) bestimmen den visuellen Stil der Diagramme -- "braille" nutzt Unicode-Braille-Zeichen fuer feinere Darstellung, "block" ist einfacher und kompatibler. Besonders nuetzlich ist enable_mouse, das volle Mausunterstuetzung aktiviert, und show_cpu_temps, das die CPU-Temperatur anzeigt, sofern die passenden Sensoren vorhanden sind. Die proc_columns-Option definiert, welche Spalten in der Prozessliste sichtbar sind.
 
 ```ini
 # btop.conf
@@ -262,6 +262,8 @@ proc_columns = ["pid", "user", "cpu", "mem", "time", "name"]
 
 btop kommt mit vielen vorinstallierten Themes, die du im laufenden Betrieb oder ueber die Config-Datei wechseln kannst. Um die verfuegbaren Themes zu sehen, schaue in das Themes-Verzeichnis:
 
+Mit dem folgenden Befehl kannst du alle installierten Themes auflisten. Im laufenden btop wechselst du Themes ueber das Menue, oder du setzt das gewuenschte Theme direkt in der Config-Datei. Beliebte Optionen sind gruvbox_dark fuer warme Farben, nord fuer ein kuehles skandinavisches Design, oder dracula fuer ein dunkles Lila-Theme. Stell dir vor, du praesentierst System-Metriken auf einem Beamer -- dann waehle ein Theme mit hohem Kontrast wie solarized_dark. Du kannst verschiedene Themes ausprobieren, bis du das findest, das am besten zu deinem Terminal und deiner Arbeitsumgebung passt.
+
 ```bash
 # Verfügbare Themes ansehen
 ls ~/.config/btop/themes/
@@ -278,7 +280,7 @@ color_theme = "solarized_dark"
 
 **Eigenes Theme erstellen:**
 
-Du kannst ein eigenes Theme erstellen, indem du eine `.theme`-Datei im Themes-Verzeichnis anlegst. Die Datei definiert Farben fuer alle UI-Elemente:
+Du kannst ein eigenes Theme erstellen, indem du eine `.theme`-Datei im Themes-Verzeichnis anlegst. Die Datei definiert Farben fuer alle UI-Elemente im Hex-Format. Jeder Farbwert wird einem bestimmten UI-Element zugeordnet, z.B. main_bg fuer den Hintergrund oder cpu_graph fuer die CPU-Graphen. Stell dir vor, du willst btop an dein Terminal-Farbschema anpassen, damit alles visuell zusammenpasst -- dann erstellst du ein eigenes Theme mit den passenden Hex-Codes. Am einfachsten ist es, ein bestehendes Theme als Vorlage zu kopieren und die Farbwerte anzupassen. Oeffne dazu die Theme-Datei in deinem bevorzugten Editor:
 
 ```bash
 # Theme-Datei erstellen
@@ -335,7 +337,7 @@ theme[proc_text]="#d4d4d4"
 In diesem Abschnitt findest du bewaehrte Vorgehensweisen fuer den produktiven Einsatz von btop -- von Startup-Aliasen ueber Remote-Monitoring bis hin zur CI/CD-Integration.
 
 ### 1. **Startup-Optimierung**
-Wenn du btop regelmaessig mit den gleichen Optionen startest, lohnen sich Shell-Aliase. So sparst du Tipparbeit und hast konsistente Einstellungen:
+Wenn du btop regelmaessig mit den gleichen Optionen startest, lohnen sich Shell-Aliase. So sparst du Tipparbeit und hast konsistente Einstellungen. Stell dir vor, du oeffnest btop taeglich und stellst jedes Mal manuell das Theme und das Update-Intervall ein -- das kostet unnoetig Zeit. Mit einem Alias in deiner .bashrc oder .zshrc startest du btop immer mit deinen bevorzugten Einstellungen. Du kannst sogar mehrere Aliase fuer verschiedene Szenarien definieren, z.B. einen fuer Dark-Theme und einen fuer Light-Theme. Nachdem du die Aliase hinzugefuegt hast, lade die Shell-Konfiguration neu mit `source ~/.zshrc` oder oeffne ein neues Terminal.
 ```bash
 # btop mit optimalen Einstellungen starten
 # Alias in ~/.bashrc oder ~/.zshrc:
@@ -347,7 +349,7 @@ alias btop-light='btop --theme gruvbox_light'
 ```
 
 ### 2. **Remote-Server-Monitoring**
-btop laesst sich problemlos ueber SSH auf Remote-Servern ausfuehren. Mit tmux oder screen bleibt die Monitoring-Session auch nach dem Trennen der SSH-Verbindung aktiv:
+btop laesst sich problemlos ueber SSH auf Remote-Servern ausfuehren. Mit tmux oder screen bleibt die Monitoring-Session auch nach dem Trennen der SSH-Verbindung aktiv. Das ist besonders wichtig bei Produktionsservern, die du ueber instabile Verbindungen ueberwachst -- wenn die SSH-Verbindung abbricht, laeuft btop in der tmux-Session weiter und du kannst dich spaeter wieder verbinden. Stell dir vor, du deployst ein Update auf einem Remote-Server und willst die Systemlast waehrend des Rollouts beobachten. Du startest btop in einer tmux-Session, trennst dich, und verbindest dich spaeter wieder, um die historischen Graphen zu pruefen. Der Befehl `ssh user@server -t 'btop'` startet btop direkt beim SSH-Login, waehrend die tmux-Variante persistente Sessions ermoeglicht.
 ```bash
 # btop auf Remote-Server via SSH
 ssh user@server 'btop'
@@ -360,7 +362,7 @@ ssh user@server 'screen -S btop btop'
 ```
 
 ### 3. **Performance-Monitoring während Deployments**
-Waehrend eines Deployments ist es wichtig, die Systemressourcen im Blick zu behalten, um Engpaesse fruehzeitig zu erkennen:
+Waehrend eines Deployments ist es wichtig, die Systemressourcen im Blick zu behalten, um Engpaesse fruehzeitig zu erkennen. Ein ploetzlicher CPU-Spike oder Memory-Engpass waehrend des Deployments kann darauf hindeuten, dass die neue Version ein Leistungsproblem hat. Stell dir vor, du rollst ein Update fuer eine Node.js-Anwendung aus und siehst in btop, dass die CPU-Auslastung von 30% auf 95% steigt -- dann weisst du sofort, dass etwas mit der neuen Version nicht stimmt und kannst den Rollback einleiten. Am besten startest du btop in einem separaten Terminal oder tmux-Pane, bevor du das Deployment ausfuehrst. So hast du die Metriken in Echtzeit im Blick und kannst bei Problemen sofort reagieren.
 ```bash
 # btop in separate Terminal-Session starten vor Deployment
 btop
@@ -408,7 +410,7 @@ btop eignet sich hervorragend zur systematischen Analyse von Engpaessen in allen
 ```
 
 ### 6. **btop in tmux/screen integrieren**
-btop in einem separaten tmux-Pane oder Screen-Session zu betreiben ist ideal fuer dauerhaftes Monitoring neben der eigentlichen Arbeit:
+btop in einem separaten tmux-Pane oder Screen-Session zu betreiben ist ideal fuer dauerhaftes Monitoring neben der eigentlichen Arbeit. Die Befehle unten zeigen drei verschiedene Ansaetze: Eine eigene tmux-Session nur fuer btop, ein geteiltes Pane neben deinem Arbeitsfenster, oder eine screen-Alternative. Stell dir vor, du programmierst in einem Terminal und willst gleichzeitig die Systemlast sehen -- mit `tmux split-window -h 'btop'` teilst du dein Terminal horizontal und hast btop immer im Blick. Die separate Session (`tmux new-session -s monitor`) ist besser fuer langfristiges Monitoring, da du sie jederzeit per `tmux attach -t monitor` wieder oeffnen kannst. Waehle die Variante, die am besten zu deinem Workflow passt.
 ```bash
 # tmux-Session mit btop
 tmux new-session -s monitor 'btop'
@@ -421,7 +423,7 @@ screen -S monitor btop
 ```
 
 ### 7. **Config-Backup und Sync**
-Deine btop-Konfiguration solltest du in einem Dotfiles-Repository sichern, damit du sie auf anderen Rechnern schnell wiederherstellen kannst:
+Deine btop-Konfiguration solltest du in einem Dotfiles-Repository sichern, damit du sie auf anderen Rechnern schnell wiederherstellen kannst. Wenn du mehrere Rechner nutzt (z.B. einen Laptop und einen Arbeits-PC), willst du ueberall die gleichen btop-Einstellungen haben. Dazu kopierst du die Config-Datei in dein Dotfiles-Git-Repo und erstellst einen Symlink zurueck. Stell dir vor, du richtest einen neuen Mac ein -- statt btop muehsam neu zu konfigurieren, klonst du dein Dotfiles-Repo und der Symlink sorgt dafuer, dass btop sofort deine gewohnte Konfiguration nutzt. Das spart bei jedem Rechnerwechsel Zeit und stellt sicher, dass deine Einstellungen nie verloren gehen.
 ```bash
 # btop-Config in Git-Repo sichern
 cp ~/.config/btop/btop.conf ~/dotfiles/btop/btop.conf
@@ -1182,7 +1184,7 @@ deploy:
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: System-Ressourcen vor Claude Code Session pruefen
-Bevor du eine ressourcenintensive Claude Code Session startest, pruefe kurz die verfuegbaren Systemressourcen mit einem btop-Snapshot:
+Bevor du eine ressourcenintensive Claude Code Session startest, pruefe kurz die verfuegbaren Systemressourcen mit einem btop-Snapshot. Claude Code kann bei grossen Projekten erhebliche CPU- und RAM-Ressourcen verbrauchen, besonders wenn es viele Dateien analysiert oder umfangreiche Builds ausfuehrt. Mit einem kurzen btop-Snapshot im TTY-Modus siehst du sofort, ob genug Reserven vorhanden sind. Stell dir vor, du willst Claude Code auf ein grosses Monorepo loslassen -- wenn dein RAM bereits zu 90% belegt ist, wird die Session frustrierend langsam. Der Snapshot laeuft 5 Sekunden und gibt dir dann eine klare Uebersicht. Danach startest du Claude Code mit dem Wissen, welche Ressourcen zur Verfuegung stehen.
 ```bash
 # btop kurz starten, um freie Ressourcen zu pruefen
 btop --tty_on --update 1000 --quit-after 5
@@ -1191,7 +1193,7 @@ claude "Analysiere dieses Projekt -- ich habe 16GB RAM frei und 4 Cores verfuegb
 ```
 
 ### Workflow 2: Claude Code Prozesse in Echtzeit ueberwachen
-Starte btop in einem separaten tmux-Pane und filtere auf Claude-relevante Prozesse, um den Ressourcenverbrauch waehrend der Arbeit im Blick zu behalten:
+Starte btop in einem separaten tmux-Pane und filtere auf Claude-relevante Prozesse, um den Ressourcenverbrauch waehrend der Arbeit im Blick zu behalten. Claude Code spawnt im Hintergrund Node.js- und Python-Prozesse, die manchmal mehr Ressourcen verbrauchen als erwartet. Mit dem Filter auf "claude|node|python|npm" siehst du genau, welche Prozesse Claude Code gestartet hat und wie viel CPU und RAM sie belegen. Stell dir vor, ein Claude Code Build laeuft ungewoehnlich langsam -- ein Blick in btop zeigt dir, ob ein bestimmter Unterprozess haengt oder ob das System insgesamt ueberlastet ist. So kannst du gezielt eingreifen, statt im Dunkeln zu tappen.
 ```bash
 # In tmux: btop in einem Pane, Claude Code im anderen
 tmux split-window -h 'btop'
@@ -1200,7 +1202,7 @@ tmux split-window -h 'btop'
 ```
 
 ### Workflow 3: Performance-Snapshot fuer Claude Code Analyse erstellen
-Erstelle einen Snapshot und uebergib ihn direkt an Claude Code zur automatischen Analyse von Engpaessen:
+Erstelle einen Snapshot und uebergib ihn direkt an Claude Code zur automatischen Analyse von Engpaessen. Der Befehl speichert einen 10-Sekunden-Snapshot in eine temporaere Datei und uebergibt den Inhalt direkt als Kontext an Claude Code. Claude analysiert dann automatisch die Systemmetriken und identifiziert potenzielle Probleme wie hohe CPU-Last, Memory-Leaks oder I/O-Engpaesse. Stell dir vor, dein Entwicklungsserver reagiert traege und du weisst nicht warum -- dieser Workflow automatisiert die Diagnose komplett. Claude Code gibt dir konkrete Handlungsempfehlungen basierend auf den tatsaechlichen Systemdaten, anstatt generische Tipps zu liefern.
 ```bash
 # Snapshot erstellen und von Claude Code analysieren lassen
 btop --tty_on --update 1000 --quit-after 10 > /tmp/system-snapshot.txt
@@ -1624,7 +1626,7 @@ sudo btop
 Fortgeschrittene Techniken und Automatisierungen fuer den Power-User-Einsatz von btop.
 
 ### 1. **Alias für schnellen Start**
-Definiere kurze Aliase in deiner Shell-Konfiguration, um btop mit verschiedenen Voreinstellungen schnell zu starten:
+Definiere kurze Aliase in deiner Shell-Konfiguration, um btop mit verschiedenen Voreinstellungen schnell zu starten. Ein einbuchstabiger Alias wie `b` spart dir taeglich mehrere Sekunden Tipparbeit. Die spezialisierten Aliase wie btop-dark und btop-simple sind nuetzlich, wenn du btop in verschiedenen Kontexten nutzt -- z.B. btop-simple auf einem ressourcenarmen Server mit laengerem Update-Intervall. Stell dir vor, du wechselst mehrmals taeglich zwischen hellem und dunklem Terminal-Theme -- mit den Aliasen startest du btop immer passend ohne die Flags jedes Mal einzutippen. Fuege die Aliase in deine ~/.bashrc oder ~/.zshrc ein und lade die Datei mit `source` neu.
 ```bash
 # ~/.bashrc oder ~/.zshrc
 alias b='btop'
@@ -1634,7 +1636,7 @@ alias btop-simple='btop --preset 1 --update 5000'
 ```
 
 ### 2. **btop mit tmux für Monitoring-Dashboard**
-Binde btop an eine tmux-Tastenkombination, damit du jederzeit mit einem Shortcut ein Monitoring-Pane oeffnen kannst:
+Binde btop an eine tmux-Tastenkombination, damit du jederzeit mit einem Shortcut ein Monitoring-Pane oeffnen kannst. Diese tmux-Konfiguration erstellt eine neue Keybinding: Wenn du den tmux-Prefix (standardmaessig Ctrl+B) gefolgt von Shift+M drueckst, oeffnet sich automatisch ein neues horizontales Pane mit btop. Stell dir vor, du arbeitest in tmux an einem Deployment und willst kurz die Systemlast pruefen -- ein Tastendruck genuegt und btop erscheint neben deinem Arbeitsfenster. Das ist viel schneller als manuell ein neues Pane zu erstellen und btop zu starten. Um die Aenderung zu aktivieren, lade die tmux-Konfiguration neu mit `tmux source-file ~/.tmux.conf`.
 ```bash
 # ~/.tmux.conf
 # Automatisch btop in Pane starten

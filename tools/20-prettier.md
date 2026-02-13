@@ -14,6 +14,9 @@
 ## 🎯 Berechtigung: Warum prettier?
 
 ### Problem ohne prettier:
+
+Ohne automatische Formatierung schreibt jeder Entwickler im Team Code in seinem eigenen Stil. Der eine nutzt Semikolons, der andere nicht. Tabs und Spaces werden wild gemischt, und Zeilenumbrueche folgen keinem einheitlichen Muster. Das fuehrt zu unnoetig grossen Git-Diffs, endlosen Code-Review-Diskussionen ueber Stil statt Logik, und schwer lesbarem Code. Stell dir vor, du oeffnest eine Datei und findest einzeilige Objekte mit 200 Zeichen Laenge, uneinheitliche Anfuehrungszeichen und fehlende Trailing Commas -- das folgende Beispiel zeigt genau solchen inkonsistenten Code.
+
 ```javascript
 // Inkonsistenter Code im Team
 const user={name:"John",age:30,email:"john@example.com"}
@@ -29,6 +32,9 @@ const arr = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
 ```
 
 ### Lösung mit prettier:
+
+Prettier formatiert den Code automatisch in einen einheitlichen, gut lesbaren Stil. Objekte werden ueber mehrere Zeilen aufgeteilt, Funktionen erhalten konsistente Einrueckung, und lange Arrays werden sinnvoll umgebrochen. Das Ergebnis ist sofort lesbar, und Git-Diffs zeigen nur tatsaechliche Logik-Aenderungen statt Formatierungs-Unterschiede. Stell dir vor, der gleiche Code von oben wird mit einem einzigen `prettier --write`-Befehl in dieses saubere Format gebracht -- ohne manuellen Aufwand.
+
 ```javascript
 // Automatisch formatierter, einheitlicher Code
 const user = {
@@ -126,6 +132,9 @@ npm install --save-dev prettier
 ```
 
 #### Arch Linux:
+
+Auf Arch Linux kannst du prettier entweder ueber npm als Projektabhaengigkeit installieren oder global ueber das AUR. Die npm-Variante ist bevorzugt, da sie versioniert und reproduzierbar ist.
+
 ```bash
 # Via npm (empfohlen)
 npm install --save-dev prettier
@@ -172,6 +181,9 @@ prettier --write src/index.js src/utils.js
 > 💡 **Tipp**: Installiere prettier immer als devDependency (`npm install --save-dev prettier`) und nie global -- so stellst du sicher, dass alle im Team exakt dieselbe Version verwenden.
 
 #### 2. **Ganzes Projekt formatieren**
+
+Wenn du ein ganzes Projekt auf einmal formatieren willst, nutzt du Glob-Patterns, um alle relevanten Dateien zu erfassen. Das ist besonders nuetzlich bei der erstmaligen Einfuehrung von prettier in einem bestehenden Projekt oder nach groesseren Refactorings. Mit dem `--ignore-path`-Flag stellst du sicher, dass .gitignore-Eintraege respektiert werden und Dateien wie `node_modules` oder Build-Artefakte nicht formatiert werden. Stell dir vor, du hast gerade prettier in ein Projekt mit 500 Dateien eingefuehrt -- mit einem einzigen Befehl bringst du alle auf den gleichen Stand. Das Ergebnis ist ein einzelner Commit, der das gesamte Projekt einheitlich formatiert.
+
 ```bash
 # Alle JS-Dateien
 prettier --write "**/*.js"
@@ -358,6 +370,9 @@ Mit Overrides kannst du fuer verschiedene Dateitypen unterschiedliche Formatieru
 ```
 
 #### 5. **API Usage (Programmatic)**
+
+Die Prettier API ermoeglicht es, Formatierung programmatisch in deine eigenen Node.js-Scripts oder Build-Tools zu integrieren. Statt prettier ueber die Kommandozeile aufzurufen, kannst du es als JavaScript-Modul importieren und die `format()`-Funktion direkt nutzen. `resolveConfig()` liest dabei automatisch die naechstgelegene `.prettierrc`-Datei und wendet deren Optionen an. Stell dir vor, du baust ein Custom-Build-Tool, das Code generiert und ihn vor dem Schreiben formatieren soll -- mit der API integrierst du Prettier nahtlos in diesen Workflow. Das Ergebnis ist ein formatierter String, den du in die Datei schreiben oder weiterverarbeiten kannst.
+
 ```javascript
 // format.js
 const prettier = require('prettier');
@@ -379,7 +394,10 @@ async function formatFile(filePath) {
 formatFile('./src/index.js');
 ```
 
-#### 6. **Custom Plugin für neue Sprachen**
+#### 6. **Custom Plugin fuer neue Sprachen**
+
+Prettier unterstuetzt ueber Plugins zusaetzliche Sprachen und Frameworks, die nicht im Kern enthalten sind. Die Plugins fuer Svelte und Tailwind CSS sind besonders beliebt, da sie die Formatierung von Svelte-Komponenten und die Sortierung von Tailwind-Klassen automatisieren. In der `.prettierrc.js`-Datei registrierst du die Plugins und definierst ueber Overrides, welcher Parser fuer welche Dateiendungen verwendet werden soll. Stell dir vor, du arbeitest an einem SvelteKit-Projekt mit Tailwind CSS -- ohne diese Plugins wuerde Prettier die `.svelte`-Dateien ignorieren und die Tailwind-Klassen nicht sortieren. Nach der Installation und Konfiguration formatiert Prettier auch diese Dateien automatisch bei jedem Save.
+
 ```javascript
 // .prettierrc.js
 module.exports = {
@@ -428,6 +446,9 @@ EOF
 ```
 
 ### 2. **Team-Onboarding**
+
+Eine gute Dokumentation der Code-Style-Konfiguration erleichtert neuen Teammitgliedern den Einstieg erheblich. Dieser Abschnitt in der README erklaert, wie man prettier einrichtet, welche npm-Scripts verfuegbar sind und wie die Editor-Integration funktioniert. Stell dir vor, ein neuer Entwickler startet im Team -- er liest die README, fuehrt `npm install` aus, installiert die VSCode-Extension und ist sofort produktiv, ohne ueber Formatierungsfragen nachdenken zu muessen. Pre-commit Hooks stellen sicher, dass auch versehentlich unformatierter Code automatisch korrigiert wird.
+
 ```bash
 # README.md Documentation
 cat >> README.md << 'EOF'
@@ -454,6 +475,9 @@ EOF
 > ⚠️ **Warnung**: Pinne die Prettier-Version in deiner package.json exakt (z.B. `"prettier": "3.2.4"` statt `"^3.2.4"`), um unterschiedliche Formatierung zwischen lokaler Entwicklung und CI zu vermeiden.
 
 ### 3. **CI/CD Integration**
+
+Ein GitHub Actions Workflow prueft bei jedem Push und Pull Request automatisch, ob alle Dateien korrekt formatiert sind. Der Workflow installiert Node.js mit npm-Cache fuer schnellere Ausfuehrung, fuehrt `npm ci` fuer eine saubere Installation aus und ruft dann den Format-Check auf. Stell dir vor, ein Teammitglied hat vergessen, prettier vor dem Push auszufuehren -- der CI-Check blockiert den Merge und zeigt an, welche Dateien noch formatiert werden muessen. So stellst du sicher, dass im Hauptbranch nur korrekt formatierter Code landet.
+
 ```yaml
 # .github/workflows/prettier.yml
 name: Code Style Check
@@ -499,6 +523,9 @@ git commit -m "chore: apply prettier formatting"
 ```
 
 ### 5. **Ignore-Patterns optimieren**
+
+Eine gut konfigurierte `.prettierignore`-Datei verhindert, dass Prettier Dateien formatiert, die nicht formatiert werden sollten -- Build-Artefakte, Third-Party-Libraries, generierte Dateien und grosse Datendateien. Das spart Laufzeit und vermeidet unerwuenschte Aenderungen an Dateien, die nicht unter deiner Kontrolle stehen. Stell dir vor, du fuehrst `prettier --write .` aus und Prettier aendert eine minimierte Vendor-Library -- das wuerde zu einem riesigen Git-Diff fuehren und moeglicherweise die Library brechen. Mit den richtigen Ignore-Patterns passiert das nicht.
+
 ```bash
 # .prettierignore
 # Build outputs
@@ -528,6 +555,9 @@ src/legacy/old-vendor-lib.js
 ## 📚 Beispiele
 
 ### Beispiel 1: Basic Formatierung
+
+Dieses Beispiel zeigt die grundlegendste Prettier-Anwendung: eine komprimierte Einzeiler-Syntax wird in gut lesbaren, mehrzeiligen Code umgewandelt. Prettier erkennt automatisch, dass das Objekt und die Funktion auf separate Zeilen aufgeteilt werden sollten, und fuegt konsistente Einrueckung hinzu. Das Ergebnis ist sofort lesbarer Code ohne manuellen Aufwand.
+
 ```bash
 # Vorher: script.js
 const x={a:1,b:2};function foo(){return x;}
@@ -543,6 +573,9 @@ function foo() {
 ```
 
 ### Beispiel 2: React-Komponente formatieren
+
+React-Komponenten mit JSX profitieren besonders von automatischer Formatierung, da die Mischung aus JavaScript und HTML-aehnlicher Syntax schnell unuebersichtlich wird. Prettier trennt Destructuring-Props, JSX-Attribute und den Return-Block sauber auf. Stell dir vor, ein Kollege hat eine Komponente in einer einzigen Zeile geschrieben -- nach `prettier --write` ist sie sofort lesbar und reviewbar.
+
 ```bash
 # Vorher: Button.jsx
 import React from 'react';export default function Button({onClick,children,disabled=false}){return <button onClick={onClick} disabled={disabled} className="btn btn-primary">{children}</button>}
@@ -563,6 +596,9 @@ export default function Button({ onClick, children, disabled = false }) {
 ```
 
 ### Beispiel 3: JSON formatieren
+
+JSON-Dateien werden oft minifiziert ausgeliefert oder entstehen als einzeilige Ausgabe von APIs und Tools. Prettier formatiert sie automatisch mit korrekter Einrueckung, was die Lesbarkeit und das Arbeiten mit Git-Diffs deutlich verbessert. Stell dir vor, du bekommst eine `config.json` mit allen Werten in einer Zeile -- nach der Formatierung ist jedes Feld klar erkennbar und Aenderungen im Git-Diff beziehen sich nur auf die tatsaechlich geaenderten Werte.
+
 ```bash
 # Vorher: config.json
 {"name":"my-app","version":"1.0.0","scripts":{"start":"node index.js","test":"jest"},"dependencies":{"express":"^4.18.0"}}
@@ -585,6 +621,9 @@ prettier --write config.json
 ```
 
 ### Beispiel 4: Markdown-Dateien formatieren
+
+Prettier kann auch Markdown-Dateien formatieren, indem es lange Zeilen umbricht, Listen-Einrueckung normalisiert und konsistente Leerzeichen einfuegt. Mit `--prose-wrap always` werden Absaetze automatisch bei der angegebenen Zeilenbreite umgebrochen. Stell dir vor, du hast eine README mit einer 200 Zeichen langen Zeile -- Prettier bricht sie sauber bei 80 Zeichen um, was die Lesbarkeit in Terminals und Code-Reviews verbessert.
+
 ```bash
 # Vorher: README.md (unformatted)
 # My Project
@@ -608,7 +647,10 @@ according to prettier settings but currently isn't.
 - Item 3
 ```
 
-### Beispiel 5: Git-Integration (nur geänderte Dateien)
+### Beispiel 5: Git-Integration (nur geaenderte Dateien)
+
+Dieser Ansatz formatiert nur die Dateien, die im Git-Staging-Bereich liegen, anstatt das gesamte Projekt. Das ist effizienter und verhindert unerwuenschte Formatierungsaenderungen an Dateien, die du gar nicht bearbeitet hast. Stell dir vor, du arbeitest in einem grossen Projekt und willst nur deine eigenen Aenderungen formatieren -- dieser Befehl filtert auf staged Dateien und formatiert nur diese.
+
 ```bash
 # Nur staged Dateien formatieren
 git diff --cached --name-only --diff-filter=ACM | \
@@ -819,16 +861,25 @@ generate_and_format "Create a React form component" src/components/Form.tsx
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code Output formatieren
+
+Nachdem Claude Code TypeScript- oder JavaScript-Dateien generiert oder geaendert hat, bringt dieser Befehl alle betroffenen Dateien in einheitliches Format. AI-generierter Code kann manchmal leicht vom Projekt-Stil abweichen, z.B. bei der Verwendung von Anfuehrungszeichen oder der Zeilenlaenge. Prettier korrigiert das automatisch, sodass der AI-generierte Code nahtlos zum restlichen Code passt. Stell dir vor, Claude hat drei neue React-Komponenten erstellt und dabei doppelte Anfuehrungszeichen verwendet, waehrend dein Projekt einfache nutzt -- dieser Befehl vereinheitlicht das sofort. Das Ergebnis ist Code, bei dem nicht mehr erkennbar ist, ob er von einem Menschen oder einer AI geschrieben wurde.
+
 ```bash
 npx prettier --write "src/**/*.{ts,tsx,js,jsx}"
 ```
 
 ### Workflow 2: Nur geaenderte Files formatieren
+
+Dieser Befehl ist effizienter als das gesamte Projekt zu formatieren, da er nur die tatsaechlich geaenderten Dateien bearbeitet. Er listet alle geaenderten Dateien mit `git diff` auf und piped sie an prettier. Das ist besonders in grossen Projekten mit tausenden Dateien nuetzlich, wo eine vollstaendige Formatierung mehrere Sekunden dauern wuerde. Stell dir vor, Claude hat 5 Dateien geaendert und du willst nur diese formatieren -- mit diesem Befehl dauert das weniger als eine Sekunde, waehrend `prettier --write .` auf dem gesamten Projekt 10 Sekunden brauchen wuerde. Verwende diesen Workflow als Teil deines Post-Claude-Code-Workflows.
+
 ```bash
 git diff --name-only | xargs npx prettier --write
 ```
 
 ### Workflow 3: Format-Check in CI
+
+In CI/CD-Pipelines willst du nicht formatieren, sondern nur pruefen, ob die Dateien korrekt formatiert sind. Der `--check`-Flag gibt einen Fehlercode zurueck, wenn Dateien nicht dem Prettier-Standard entsprechen, was den Build blockiert. Das stellt sicher, dass auch AI-generierter Code die Formatierungsstandards einhält, bevor er gemerged wird. Stell dir vor, ein Teammitglied hat vergessen, prettier auszufuehren, bevor es seinen Code gepusht hat -- der CI-Check faengt das ab und blockiert den Merge. Das Ergebnis ist eine klare Fehlermeldung mit den Dateinamen, die noch formatiert werden muessen.
+
 ```bash
 npx prettier --check "src/**/*.{ts,tsx}"
 ```
@@ -1021,6 +1072,9 @@ git commit -m "chore: pin prettier version"
 ## 💎 Pro-Tipps
 
 ### Tipp 1: Shared Config über npm
+
+Wenn dein Unternehmen mehrere Projekte hat, die alle den gleichen Code-Stil verwenden sollen, kannst du die Prettier-Konfiguration als eigenes npm-Paket veroeffentlichen. So muessen die einzelnen Projekte nur das Paket installieren und in ihrer package.json referenzieren, statt die Konfiguration zu duplizieren. Bei einer Stilaenderung aktualisierst du das zentrale Paket, und alle Projekte bekommen die Aenderung beim naechsten `npm update`. Stell dir vor, dein Team verwaltet 20 Microservices und will ueberall den gleichen Code-Stil -- ohne Shared Config muesstest du 20 `.prettierrc`-Dateien manuell synchronisieren. Mit dem Paket genuegt ein `npm update @company/prettier-config` in jedem Projekt. Beachte, dass du das Paket in einem privaten npm-Registry oder oeffentlich veroeffentlichen kannst.
+
 ```bash
 # Eigenes Prettier-Config-Package erstellen
 mkdir prettier-config-company
@@ -1054,6 +1108,9 @@ npm install --save-dev @company/prettier-config
 ```
 
 ### Tipp 2: Range-Formatting (nur Selektion)
+
+Range-Formatting ist nuetzlich, wenn du nur einen bestimmten Abschnitt einer Datei formatieren willst, ohne den Rest zu beruehren. Das ist besonders hilfreich bei Legacy-Dateien, wo du schrittweise formatieren moechtest, oder bei generierten Dateien, wo nur ein bestimmter Abschnitt manuell bearbeitet wurde. Die Byte-Offsets `--range-start` und `--range-end` definieren den zu formatierenden Bereich. Stell dir vor, du hast eine 2000 Zeilen lange Legacy-Datei und willst nur die Funktion formatieren, die du gerade geaendert hast -- mit Range-Formatting aenderst du nur diesen Bereich und laesst den Rest unveraendert. In VSCode kannst du dasselbe mit Shift+Alt+F nach dem Markieren eines Textbereichs erreichen.
+
 ```bash
 # Nur Zeilen 10-20 formatieren (nützlich für große Dateien)
 prettier --write script.js --range-start 200 --range-end 500
@@ -1062,6 +1119,9 @@ prettier --write script.js --range-start 200 --range-end 500
 ```
 
 ### Tipp 3: Prettier als Git-Diff-Filter
+
+Mit einem Git-Diff-Filter zeigt `git diff` automatisch die formatierten Versionen der Dateien an, auch wenn die Dateien im Repository noch nicht formatiert sind. Das ist besonders nuetzlich bei der schrittweisen Migration zu Prettier, wenn du sehen willst, wie der Code nach der Formatierung aussehen wuerde. Der `textconv`-Filter in der Git-Config wendet Prettier auf jede Datei an, bevor der Diff berechnet wird. Stell dir vor, du reviewst einen Pull Request und willst die tatsaechlichen Logik-Aenderungen sehen, ohne von Formatierungs-Unterschieden abgelenkt zu werden -- dieser Filter normalisiert die Formatierung im Diff. Trage die Konfiguration in deine `.git/config` und `.gitattributes` ein, um den Filter zu aktivieren.
+
 ```bash
 # .git/config
 [diff "prettier"]
@@ -1076,6 +1136,9 @@ git diff
 ```
 
 ### Tipp 4: Prettier + Renovate für Auto-Updates
+
+Renovate kann Prettier-Versions-Updates automatisch durchfuehren und dabei pruefen, ob die neue Version die Formatierung aendert. Mit `automerge: true` werden kompatible Updates automatisch gemerged, und das `postUpgradeTasks`-Feld fuehrt nach dem Update einen Format-Check aus. Das stellt sicher, dass eine neue Prettier-Version keine unerwarteten Formatierungsaenderungen einfuehrt. Stell dir vor, Prettier veroeffentlicht ein Minor-Update, das die Behandlung von Arrow-Functions leicht aendert -- Renovate erstellt automatisch einen PR, fuehrt den Format-Check aus, und du siehst sofort, ob das Update Auswirkungen auf dein Projekt hat. Ohne dieses Setup koenntest du durch ein unkontrolliertes Update ploetzlich hunderte Dateien mit geaenderter Formatierung haben.
+
 ```json
 // renovate.json
 {
@@ -1095,6 +1158,9 @@ git diff
 ```
 
 ### Tipp 5: Debugging mit --loglevel
+
+Wenn Prettier nicht wie erwartet funktioniert oder du verstehen willst, welche Dateien verarbeitet werden und welche Config angewendet wird, hilft der Debug-Modus. Mit `--loglevel debug` siehst du detaillierte Informationen darueber, welche Konfigurationsdatei geladen wird, welcher Parser verwendet wird und welche Dateien uebersprungen werden. Das ist besonders hilfreich, wenn Prettier eine Datei zu ignorieren scheint oder eine unerwartete Konfiguration anwendet. Stell dir vor, eine bestimmte Datei wird nicht formatiert und du weisst nicht warum -- mit `--loglevel debug` siehst du, ob sie von `.prettierignore` ausgeschlossen wird oder ob der Parser nicht erkannt wird. Der `warn`-Level zeigt nur Warnungen und ist nuetzlich fuer CI-Pipelines, wo du keine ueberfluessige Ausgabe haben willst.
+
 ```bash
 # Detaillierte Logs für Troubleshooting
 prettier --write src/ --loglevel debug

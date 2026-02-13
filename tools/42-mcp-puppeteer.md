@@ -16,6 +16,9 @@ Der **Puppeteer MCP Server** gibt Claude Code die Fähigkeit, Browser zu automat
 ### Warum Browser Automation via MCP?
 
 **Ohne MCP**:
+
+Ohne den Puppeteer MCP Server muss Claude Puppeteer-Skripte als JavaScript-Dateien generieren, die du dann separat ausfuehren musst. Das erfordert mehrere Schritte: Code schreiben, in eine Datei speichern, mit Node.js ausfuehren und den Output zuruecklesen. Bei Fehlern muss der Zyklus von vorne beginnen, was zeitaufwendig und umstaendlich ist. Stell dir vor, du willst nur einen Screenshot einer Webseite machen -- ohne MCP musst du erst 20 Zeilen Boilerplate-Code schreiben. Mit MCP reicht ein einziger Tool-Aufruf.
+
 ```bash
 # Claude generiert Puppeteer-Code
 node script.js
@@ -23,6 +26,9 @@ node script.js
 ```
 
 **Mit MCP**:
+
+Mit dem Puppeteer MCP Server steuert Claude den Browser direkt ueber MCP-Tool-Aufrufe und erhaelt strukturiertes Feedback zurueck. Der `puppeteer_navigate`-Aufruf oeffnet eine URL und wartet, bis die Seite geladen ist. Der `waitUntil`-Parameter `networkidle0` bedeutet, dass Puppeteer wartet, bis keine Netzwerkanfragen mehr aktiv sind -- das ist wichtig fuer Single-Page-Apps, die Daten asynchron nachladen. Stell dir vor, Claude soll deine Webanwendung testen: Es navigiert zur Login-Seite, fuellt das Formular aus und prueft, ob der Redirect zum Dashboard funktioniert -- alles in einer flüessigen Abfolge von Tool-Aufrufen. Das Feedback ist sofort verfuegbar, ohne Dateien erstellen oder Scripts ausfuehren zu muessen.
+
 ```json
 {
   "method": "puppeteer_navigate",
@@ -62,6 +68,8 @@ node script.js
 
 ### Installation & Setup
 
+Der folgende Befehl installiert den Puppeteer MCP Server global und laed automatisch eine passende Chromium-Version herunter, die vom Server gesteuert wird. Dieser Download kann je nach Internetverbindung einige Minuten dauern, da Chromium ca. 150-200 MB gross ist. Alternativ kannst du dein bereits installiertes Google Chrome verwenden, indem du den Pfad in der Konfiguration angibst (siehe Troubleshooting). Der Server benoetigt eine grafische Umgebung oder den Headless-Modus, um den Browser starten zu koennen. Auf reinen Server-Systemen (ohne GUI) musst du `headless: true` in der Konfiguration setzen, was der Standard ist.
+
 ```bash
 # Puppeteer MCP Server installieren
 npm install -g @modelcontextprotocol/server-puppeteer
@@ -73,6 +81,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ### Konfiguration
 
 **~/.config/mcp/puppeteer.json**:
+
+Die Konfiguration des Puppeteer MCP Servers bestimmt das Verhalten des gesteuerten Browsers und welche Operationen erlaubt sind. `headless: true` startet den Browser ohne sichtbares Fenster, was fuer automatisierte Tests und Server-Umgebungen noetig ist -- setze es auf `false`, wenn du den Browser waehrend der Automatisierung beobachten willst. Das `defaultViewport` definiert die Aufloesung der virtuellen Browserseite und beeinflusst, wie Websites gerendert und Screenshots erstellt werden. Der `userAgent` bestimmt, wie sich der Browser gegenueber Webservern identifiziert -- manche Websites blockieren automatisierte Browser anhand des User-Agents. Mit `screenshotPath` legst du fest, wohin Screenshots gespeichert werden. Die `permissions`-Sektion ist ein wichtiges Sicherheitsfeature: `download: false` verhindert zum Beispiel, dass der Browser automatisch Dateien herunterlaedt, was ein Sicherheitsrisiko sein koennte.
+
 ```json
 {
   "mcpServers": {
@@ -106,6 +117,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ### Available MCP Tools
 
 #### 1. `puppeteer_navigate`
+
+Dieses Tool navigiert den Browser zu einer bestimmten URL und wartet, bis die Seite geladen ist. Der `waitUntil`-Parameter bestimmt, wann die Seite als "geladen" gilt: `load` wartet auf das Load-Event, `domcontentloaded` wartet, bis der HTML-Parser fertig ist, und `networkidle0` wartet, bis keine Netzwerkanfragen mehr aktiv sind (ideal fuer SPAs). Stell dir vor, du willst eine React-App testen, die Daten per API laed -- mit `networkidle0` wartest du automatisch, bis alle API-Responses eingetroffen sind. Falls die Seite nicht innerhalb des konfigurierten Timeouts laedt, wird ein Timeout-Fehler zurueckgegeben.
+
 ```json
 {
   "name": "puppeteer_navigate",
@@ -118,6 +132,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 2. `puppeteer_screenshot`
+
+Dieses Tool erstellt einen Screenshot der aktuell geladenen Seite und speichert ihn als Bilddatei. Mit `fullPage: true` wird die gesamte Seite erfasst (inklusive des Bereichs, der erst durch Scrollen sichtbar wird), waehrend `false` nur den sichtbaren Bereich (Viewport) aufnimmt. Der `type`-Parameter bestimmt das Bildformat: PNG fuer verlustfreie Qualitaet, JPEG fuer kleinere Dateien. Stell dir vor, du willst die Dokumentation deiner App mit aktuellen Screenshots illustrieren -- Claude kann automatisch alle Seiten besuchen und Screenshots erstellen. Das Tool eignet sich auch hervorragend fuer Visual Regression Testing, bei dem aktuelle Screenshots mit Baseline-Bildern verglichen werden.
+
 ```json
 {
   "name": "puppeteer_screenshot",
@@ -143,6 +160,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 3. `puppeteer_click`
+
+Dieses Tool klickt auf ein HTML-Element, das durch einen CSS-Selektor identifiziert wird. Der `selector`-Parameter verwendet die gleiche Syntax wie `document.querySelector()` -- du kannst IDs (`#submit`), Klassen (`.btn`), Attribute (`[type="submit"]`) oder Kombinationen davon verwenden. Mit `waitForNavigation: true` wartet das Tool nach dem Klick darauf, dass eine neue Seite geladen wird -- das ist wichtig bei Submit-Buttons, die einen Redirect ausloesen. Stell dir vor, du testest einen Checkout-Flow: Claude klickt auf den "Kaufen"-Button und wartet automatisch auf die Bestaetigungsseite. Verwende stabile Selektoren wie `data-testid`-Attribute, um deine Tests robust gegen Design-Aenderungen zu machen.
+
 ```json
 {
   "name": "puppeteer_click",
@@ -155,6 +175,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 4. `puppeteer_type`
+
+Dieses Tool tippt Text in ein Eingabefeld, das durch einen CSS-Selektor identifiziert wird. Der `delay`-Parameter bestimmt die Verzoegerung in Millisekunden zwischen den einzelnen Tastendruecken -- ein Wert von 100ms simuliert menschliches Tippen und kann bei Formularen noetig sein, die Keystroke-Events verarbeiten (z.B. fuer Autocomplete oder Validierung). Stell dir vor, du testest ein Login-Formular: Claude tippt die E-Mail-Adresse ins entsprechende Feld und wartet kurz zwischen den Zeichen, damit die Echtzeit-Validierung korrekt ausloest. Ohne `delay` wuerde der Text sofort eingefuegt, was manche JavaScript-basierte Formulare nicht korrekt erkennen. Fuer einfache Eingabefelder ohne Echtzeit-Verarbeitung kannst du den Delay auf 0 setzen.
+
 ```json
 {
   "name": "puppeteer_type",
@@ -168,6 +191,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 5. `puppeteer_evaluate`
+
+Dieses Tool fuehrt beliebiges JavaScript im Kontext der geladenen Seite aus und gibt das Ergebnis zurueck. Es ist das maechtigste Tool des Puppeteer MCP Servers, da du damit auf das gesamte DOM, die JavaScript-APIs und alle Seitendaten zugreifen kannst. Der `script`-Parameter enthaelt den JavaScript-Code, der im Browser ausgefuehrt wird -- er hat Zugriff auf `document`, `window`, `localStorage` und alle anderen Browser-APIs. Stell dir vor, du willst wissen, wie viele Links eine Seite hat -- ein einfaches `document.querySelectorAll('a').length` liefert die Antwort. Claude nutzt dieses Tool haeufig fuer Web Scraping, SEO-Audits und das Auslesen von Seitendaten, die nicht direkt ueber HTML-Elemente zugaenglich sind.
+
 ```json
 {
   "name": "puppeteer_evaluate",
@@ -186,6 +212,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 6. `puppeteer_pdf`
+
+Dieses Tool generiert eine PDF-Datei aus der aktuell geladenen Webseite, mit konfigurierbarem Format und Seitenraendern. Der `format`-Parameter akzeptiert Standard-Papierformate wie `A4`, `Letter` oder `Legal`, und `printBackground: true` stellt sicher, dass Hintergrundfarben und -bilder im PDF enthalten sind. Stell dir vor, du willst eine Web-Dokumentation als PDF exportieren -- Claude navigiert zur Seite und generiert eine druckfertige PDF mit korrektem Layout. Das ist besonders nuetzlich fuer die automatische Erstellung von Reports, Rechnungen oder Dokumentationen. Beachte, dass die PDF-Generierung nur im Headless-Modus zuverlaessig funktioniert.
+
 ```json
 {
   "name": "puppeteer_pdf",
@@ -199,6 +228,9 @@ npm install -g @modelcontextprotocol/server-puppeteer
 ```
 
 #### 7. `puppeteer_wait`
+
+Dieses Tool wartet, bis ein bestimmtes Element auf der Seite erscheint oder ein Timeout erreicht wird. Das ist unverzichtbar fuer moderne Single-Page-Applications, bei denen Inhalte asynchron nachgeladen werden und nicht sofort nach dem Seitenaufruf verfuegbar sind. Der `selector`-Parameter gibt das CSS-Element an, auf das gewartet werden soll, und `timeout` definiert die maximale Wartezeit in Millisekunden. Stell dir vor, du testest eine App, die nach dem Login einen Spinner zeigt und dann das Dashboard laedt -- mit `puppeteer_wait({ selector: ".dashboard-content" })` wartet Claude automatisch, bis der Dashboard-Inhalt sichtbar ist. Falls das Element nicht innerhalb des Timeouts erscheint, wird ein TimeoutError zurueckgegeben, der auf einen Bug oder ein Performance-Problem hinweisen kann.
+
 ```json
 {
   "name": "puppeteer_wait",
@@ -216,6 +248,8 @@ npm install -g @modelcontextprotocol/server-puppeteer
 
 ### 1. **Selector Stability**
 
+Die Wahl der richtigen CSS-Selektoren ist entscheidend fuer die Zuverlaessigkeit deiner Browser-Automatisierung. Dynamische IDs (wie `#user-123-button`) aendern sich bei jedem Seitenaufruf und machen deine Tests instabil. `data-testid`-Attribute sind dagegen speziell fuer Tests gedacht und aendern sich nicht, wenn das Design aktualisiert wird. Noch robuster ist die Kombination mehrerer Selektoren -- wenn ein Attribut nicht reicht, verwende Typ, Role und Label zusammen. Stell dir vor, das Design-Team aendert die Button-IDs bei einem Redesign -- mit `data-testid` bleiben alle deine Tests funktionsfaehig. Definiere eine Konvention im Team, dass jedes interaktive Element ein `data-testid`-Attribut bekommt.
+
 ```javascript
 // ❌ Fragile: IDs können sich ändern
 await page.click('#user-123-button');
@@ -228,6 +262,8 @@ await page.click('button[type="submit"][aria-label="Submit Form"]');
 ```
 
 ### 2. **Wait Strategies**
+
+Harte Timeouts (`waitForTimeout(3000)`) sind der haeufigste Fehler bei Browser-Automatisierung, weil sie entweder zu kurz sind (Test schlaegt fehl) oder zu lang (Test ist unnoetig langsam). Verwende stattdessen explizite Wartebedingungen, die auf bestimmte DOM-Elemente, Netzwerkzustaende oder JavaScript-Bedingungen reagieren. `waitForSelector` wartet, bis ein Element im DOM erscheint, `waitForNavigation` bis eine neue Seite geladen wird, und `waitForFunction` bis eine beliebige JavaScript-Bedingung erfuellt ist. Stell dir vor, deine App braucht manchmal 1 Sekunde und manchmal 5 Sekunden zum Laden -- mit einem harten Timeout wuerde der Test in 50% der Faelle fehlschlagen, waehrend explizite Wartebedingungen immer korrekt funktionieren. Diese Strategie macht deine Tests sowohl schneller als auch zuverlaessiger.
 
 ```javascript
 // ❌ Hard Timeouts vermeiden

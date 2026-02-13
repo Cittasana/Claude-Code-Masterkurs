@@ -40,36 +40,45 @@ Das klassische Unix-Tool `ls` ist seit 1971 unverändert:
 Hier siehst du die fuenf wichtigsten Szenarien, in denen eza dein Standard-`ls` deutlich uebertrifft.
 
 ### 1. **Projekt-Struktur auf einen Blick**
-Sieh sofort, welche Files wichtig sind:
+
+Wenn du ein neues Projekt oeffnest oder in ein Verzeichnis wechselst, willst du sofort verstehen welche Dateien vorhanden sind und welche Typen sie haben. eza zeigt dir mit dem `--icons` Flag farbige Icons neben jedem Dateinamen - JavaScript-Dateien bekommen ein JS-Icon, Ordner ein Ordner-Symbol, Markdown-Dateien ein Dokument-Icon. Das macht es visuell viel einfacher, die Struktur zu erfassen als bei einer reinen Textliste. Stell dir vor, du oeffnest ein Verzeichnis mit 30 Dateien - mit eza erkennst du auf einen Blick wo die Source-Dateien, Configs und Dokumentation liegen. Das `-la` Flag zeigt dabei alle Dateien (inkl. versteckte) im Detail-Format mit Berechtigungen, Groesse und Datum an.
+
 ```bash
 eza -la --icons
 # → Icons zeigen: JS, TS, JSON, Markdown, etc.
 ```
 
 ### 2. **Git-Status direkt beim Listing**
-Keine separaten `git status` mehr:
-```bash
 
+Normalerweise musst du `ls` und `git status` separat ausfuehren, um sowohl die Dateiliste als auch den Git-Status zu sehen. Mit eza's `--git` Flag bekommst du beides in einer einzigen Ansicht: Neben jedem Dateinamen erscheint ein Git-Status-Indikator wie M fuer Modified, A fuer Added oder ?? fuer Untracked. Das spart dir den staendigen Wechsel zwischen zwei Befehlen und gibt dir sofortigen Ueberblick ueber den Zustand deines Repositories. Stell dir vor, du hast an mehreren Dateien gleichzeitig gearbeitet und willst wissen, welche noch nicht committed sind - ein einziger Blick auf die eza-Ausgabe genuegt. Besonders in grossen Projekten mit vielen Dateien ist das ein enormer Zeitgewinn.
+
+```bash
 eza -la --git
 # → Siehst du Modified (M), Added (A), Untracked (??)
 ```
 
-### 3. **File-Größen verstehen**
-Welche Files fressen Speicher?
+### 3. **File-Groessen verstehen**
+
+In jedem Projekt gibt es Dateien die unerwartet gross sind - sei es ein vergessener Build-Artefakt, ein hochaufloestes Bild oder ein riesiger Datenbankdump. Mit `eza -lh --sort=size` sortierst du alle Dateien nach Groesse und siehst die Werte in menschenlesbarem Format (KB, MB, GB statt Bytes). So findest du sofort die Platzfresser in deinem Projekt. Stell dir vor, dein Git-Repository ist ploetzlich 500MB gross und du weisst nicht warum - sortiere nach Groesse und du siehst sofort welche Datei das Problem ist. Das ist auch nuetzlich um zu pruefen, ob Build-Artefakte versehentlich im Repository gelandet sind.
+
 ```bash
 eza -lh --sort=size
 # → Sortiert nach Größe, human-readable
 ```
 
-### 4. **Verzeichnis-Bäume visualisieren**
-Statt separatem `tree`-Tool:
+### 4. **Verzeichnis-Baeume visualisieren**
+
+Oft willst du nicht nur die Dateien im aktuellen Verzeichnis sehen, sondern auch die Struktur der Unterordner. Statt das separate `tree`-Tool zu installieren, bietet eza eine eingebaute Tree-Ansicht mit dem `--tree` Flag. Mit `--level=2` begrenzt du die Tiefe auf zwei Ebenen, was in den meisten Faellen den besten Ueberblick gibt. Stell dir vor, du willst die Ordnerstruktur eines React-Projekts verstehen - mit eza siehst du sofort `src/components/`, `src/pages/`, `src/utils/` und deren Unterordner. Im Gegensatz zum klassischen `tree`-Tool bekommst du bei eza zusaetzlich Icons und optional Git-Status in der Baumansicht.
+
 ```bash
 eza --tree --level=2
 # → Zeigt 2 Ebenen tief
 ```
 
 ### 5. **Zeitstempel-basierte Suche**
-Welche Files wurden zuletzt geändert?
+
+Beim Debugging oder nach einer laengeren Pause willst du oft wissen, welche Dateien zuletzt geaendert wurden. Mit `eza -la --sort=modified` sortierst du die Dateiliste nach dem Aenderungsdatum, sodass die zuletzt bearbeiteten Dateien oben stehen. Das ist besonders nuetzlich, wenn du nach einem automatisierten Prozess (z.B. einem Build oder einer Claude Code Session) pruefen willst, welche Dateien betroffen waren. Stell dir vor, ein Kollege hat Aenderungen gepusht und du willst schnell sehen, was sich geaendert hat - sortiere nach modified und du siehst sofort die betroffenen Dateien. Kombiniere das mit `--git` fuer eine noch aussagekraeftigere Ansicht.
+
 ```bash
 eza -la --sort=modified
 # → Neueste zuerst
@@ -86,12 +95,15 @@ Von der Installation bis zu fortgeschrittenen Sortier- und Filter-Optionen - hie
 eza ist auf allen gaengigen Plattformen verfuegbar. Auf neueren Systemen ist es direkt im Paketmanager enthalten.
 
 **macOS (Homebrew)**:
-Die schnellste Installation auf macOS:
+Die schnellste Installation auf macOS ist ueber Homebrew. Der Befehl laedt das vorkompilierte eza-Binary herunter und richtet alles automatisch ein. Nach der Installation kannst du sofort `eza` im Terminal nutzen. Fuer die Icons brauchst du zusaetzlich einen Nerd Font (siehe Troubleshooting-Sektion). Pruefe mit `eza --version` ob die Installation erfolgreich war.
+
 ```bash
 brew install eza
 ```
 
 **Ubuntu 24.04+ (native)**:
+Ab Ubuntu 24.04 ist eza in den offiziellen Paket-Repositories enthalten und laesst sich direkt ueber apt installieren. Das ist der einfachste Weg auf neueren Ubuntu-Versionen. Beachte dass aeltere Ubuntu-Versionen (20.04, 22.04) eza nicht in den Standard-Repos haben - fuer diese Versionen siehe die naechste Option. Nach der Installation steht der Befehl `eza` sofort zur Verfuegung. Auch hier brauchst du einen Nerd Font fuer die Icon-Darstellung.
+
 ```bash
 sudo apt install eza
 ```
@@ -104,11 +116,15 @@ cargo install eza
 ```
 
 **Arch Linux**:
+Arch Linux bietet eza ueber das offizielle Community-Repository an. Dank Rolling Release bekommst du hier immer die aktuellste Version. Die Installation dauert nur wenige Sekunden, und eza ist danach sofort einsatzbereit. Vergiss nicht, auch einen Nerd Font zu installieren, damit die Icons korrekt angezeigt werden.
+
 ```bash
 sudo pacman -S eza
 ```
 
 **Windows (Scoop)**:
+Auf Windows installierst du eza am besten ueber den Paketmanager Scoop. Alternativ kannst du das Binary auch manuell von der GitHub-Releases-Seite herunterladen. Beachte dass die Icon-Darstellung auf Windows vom verwendeten Terminal abhaengt - das Windows Terminal bietet die beste Kompatibilitaet. Nach der Installation funktioniert eza in PowerShell und Windows Terminal. Fuer die beste Erfahrung nutze das Windows Terminal mit einem Nerd Font.
+
 ```bash
 scoop install eza
 ```
@@ -122,6 +138,8 @@ scoop install eza
 Diese vier Grundbefehle decken 90% deiner taeglichen Nutzung ab.
 
 **Basis-Usage**:
+Diese vier Befehle sind die Grundlage fuer den taeglichen Einsatz von eza. Der einfachste Aufruf `eza` ohne Flags zeigt die Dateien im aktuellen Verzeichnis - aehnlich wie `ls`, aber mit modernen Farben. Mit `-la --icons` bekommst du die volle Ansicht: alle Dateien inklusive versteckter, im Detail-Format mit Icons. Der `--git` Flag fuegt Git-Status-Informationen hinzu, und `--tree` zeigt die Verzeichnisstruktur als Baum. Stell dir vor, du wechselst in ein neues Projektverzeichnis und willst sofort verstehen was drin ist - `eza -la --icons --git` gibt dir in einem Befehl alle relevanten Informationen. Am besten legst du dir sofort Aliases an (siehe Best Practices), damit du diese Flags nicht jedes Mal tippen musst.
+
 ```bash
 # Simple Listing (wie ls)
 eza
@@ -175,6 +193,8 @@ export EZA_COLORS="da=1;34:gm=1;33"
 ```
 
 **3. Grid-Layout**:
+Das Grid-Layout ordnet Dateien in mehreren Spalten an, um den verfuegbaren Platz im Terminal optimal auszunutzen. Das ist besonders nuetzlich wenn du viele kleine Dateien in einem Verzeichnis hast und einen schnellen Ueberblick willst. Mit `eza --grid --icons` bekommst du eine kompakte Darstellung aehnlich wie `ls` in Spalten, aber mit farbigen Icons. Die Kombination `-l --grid` zeigt Details (Groesse, Datum) plus Grid-Layout - ideal fuer Verzeichnisse mit vielen Dateien. Je breiter dein Terminal ist, desto mehr Spalten werden automatisch verwendet.
+
 ```bash
 # Multi-Column Grid
 eza --grid --icons
@@ -184,6 +204,8 @@ eza -l --grid --icons
 ```
 
 **4. File-Type Filtering**:
+Manchmal willst du nur bestimmte Dateitypen sehen - zum Beispiel nur Ordner fuer einen Strukturueberblick oder nur JavaScript-Dateien fuer ein Code-Review. Mit `-D` zeigt eza ausschliesslich Verzeichnisse an, mit `-f` nur Dateien. Fuer spezifischere Filter kombinierst du eza mit grep. Stell dir vor, du willst in einem Monorepo nur die Package-Ordner sehen ohne die ganzen Config-Dateien - `eza -D` gibt dir genau das. Das ist schneller als die Ausgabe manuell zu ueberfliegen und relevante Eintraege zu suchen.
+
 ```bash
 # Nur Directories
 eza -D
@@ -196,6 +218,8 @@ eza | grep '.js$'
 ```
 
 **5. Sortierung**:
+eza bietet flexible Sortieroptionen, mit denen du Dateien nach verschiedenen Kriterien ordnen kannst. Die Sortierung nach Groesse ist ideal um Platzfresser zu finden, die Sortierung nach Aenderungsdatum zeigt dir die zuletzt bearbeiteten Dateien, und die Sortierung nach Extension gruppiert gleichartige Dateien zusammen. Mit dem `--reverse` Flag drehst du die Reihenfolge um, sodass zum Beispiel die groessten Dateien zuerst erscheinen. Stell dir vor, du willst in einem Build-Ordner die groessten generierten Dateien finden - `eza -lh --sort=size --reverse` zeigt sie dir sofort. Die Standard-Sortierung ist alphabetisch nach Name.
+
 ```bash
 # Nach Größe (größte zuerst)
 eza -lh --sort=size --reverse
@@ -289,6 +313,9 @@ eza | rg 'component'
 ```
 
 ### 6. **Header mit Context**
+
+Der `--header` Flag fuegt eine Kopfzeile ueber der Dateiliste hinzu, die die Spaltennamen anzeigt (Permissions, Size, User, Date Modified, Name). Das macht die Ausgabe lesbarer, besonders fuer Einsteiger die noch nicht wissen welche Spalte was bedeutet. In Kombination mit `-la --icons` bekommst du eine vollstaendige, selbsterklaerende Dateiuebersicht. Stell dir vor, du zeigst einem Kollegen dein Terminal und er soll die Ausgabe verstehen koennen - mit Header ist sofort klar was jede Spalte bedeutet. Besonders bei der Arbeit mit Permissions und Dateigroessen ist der Header hilfreich.
+
 ```bash
 # Zeige File-Count
 eza -la --icons --header
@@ -638,6 +665,9 @@ eza --tree --git -lh --level=2 --icons
 ```
 
 ### 3. **Integration mit zsh-autosuggestions**
+
+Wenn du zsh mit dem Plugin zsh-autosuggestions nutzt, funktioniert die Tab-Completion bei eza genauso wie bei ls. Du tippst `eza -l` und drueckst Tab, und die Shell zeigt dir alle verfuegbaren Flags und Optionen an. Das beschleunigt deinen Workflow erheblich, weil du die Flags nicht auswendig kennen musst. Stell dir vor, du weisst dass es einen Sort-Flag gibt, aber nicht genau wie er heisst - Tab-Completion zeigt dir alle Optionen. Installiere das Completion-Skript fuer eza ueber deinen Plugin-Manager, falls es nicht automatisch verfuegbar ist.
+
 ```bash
 # eza nutzt Completion
 # Autocomplete funktioniert wie bei ls
@@ -645,6 +675,9 @@ eza -l <TAB>
 ```
 
 ### 4. **Custom Grid-Width**
+
+Die Grid-Breite von eza passt sich normalerweise automatisch an die Terminalbreite an. Mit dem `--grid-rows` Parameter kannst du die Anzahl der Zeilen im Grid manuell steuern, was bei unterschiedlichen Terminalgroessen hilfreich ist. Bei einem kleinen Terminal-Pane in tmux oder einem Split-Screen willst du weniger Zeilen, bei einem Vollbild-Terminal mehr. Stell dir vor, du arbeitest mit tmux und hast ein schmales Seitenpanel fuer Dateiuebersichten - mit angepasster Grid-Width bekommst du trotzdem eine uebersichtliche Darstellung. Experimentiere mit den Werten, um die optimale Einstellung fuer dein Setup zu finden.
+
 ```bash
 # Für kleine Terminals
 eza --grid --grid-rows=10

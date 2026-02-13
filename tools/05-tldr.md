@@ -41,32 +41,42 @@ Die klassischen Man Pages sind:
 tldr deckt fuenf Hauptszenarien ab, in denen du schnell die richtige Befehlssyntax brauchst.
 
 ### 1. **Commands schnell nachschlagen**
-Wie war nochmal `tar`?
+
+Jeder Entwickler kennt das: Du weisst dass es einen Befehl gibt, aber die genaue Syntax ist dir entfallen. Klassische Man Pages sind hunderte Zeilen lang und ueberwaeltigend, wenn du nur eine schnelle Antwort brauchst. tldr gibt dir stattdessen die 5-10 haeufigsten Anwendungsfaelle mit konkreten Beispielen. Stell dir vor, du willst ein tar-Archiv entpacken und erinnerst dich nicht ob es `-xvf` oder `-xzf` heisst - `tldr tar` zeigt dir die richtige Syntax in Sekunden. Das Ergebnis ist ein kurzer, uebersichtlicher Output mit syntax-highlighted Befehlen, die du direkt kopieren und ausfuehren kannst.
+
 ```bash
 tldr tar
 # → Zeigt sofort: tar -xvf file.tar
 ```
 
 ### 2. **Neue Tools lernen**
-Tool installiert, wie benutzen?
+
+Wenn du ein neues Tool installiert hast, willst du sofort wissen wie du es benutzt - nicht erst 20 Minuten Dokumentation lesen. tldr zeigt dir die wichtigsten Anwendungsfaelle mit konkreten Beispielen, sodass du in weniger als einer Minute produktiv bist. Die Beispiele sind von der Community geschrieben und spiegeln die haeufigsten realen Anwendungsfaelle wider. Stell dir vor, du hast ripgrep installiert und willst wissen wie du damit nach einem Pattern in allen JavaScript-Dateien suchst - `tldr ripgrep` gibt dir genau diese Beispiele. Das ist der schnellste Weg von "installiert" zu "produktiv".
+
 ```bash
 tldr ripgrep
 ```
 
 ### 3. **Flags refreshen**
-Was macht `-r` nochmal bei `cp`?
+
+Selbst erfahrene Entwickler vergessen manchmal die genauen Flags eines Befehls, den sie nicht taeglich nutzen. Statt `man cp` mit 200 Zeilen durchzuscrollen, zeigt dir `tldr cp` die wichtigsten Optionen mit Erklaerung in nur wenigen Zeilen. Jedes Beispiel enthaelt den vollstaendigen Befehl mit Erklaerung, sodass du sofort siehst was jeder Flag tut. Stell dir vor, du willst einen Ordner rekursiv kopieren und weisst nicht mehr ob es `-r`, `-R` oder `--recursive` ist - tldr zeigt dir die richtige Syntax. Das spart dir den Umweg ueber Google oder StackOverflow.
+
 ```bash
 tldr cp
 ```
 
 ### 4. **Common Use-Cases finden**
-Wie nutzen die meisten Leute `ffmpeg`?
+
+Komplexe Tools wie ffmpeg haben hunderte Optionen, aber die meisten Nutzer brauchen nur eine Handvoll davon. tldr zeigt dir genau die Anwendungsfaelle, die am haeufigsten vorkommen - kuratiert und geprueft von der Community. Das ist besonders wertvoll bei Tools mit kryptischer Syntax, wo die Man Page mehr verwirrt als hilft. Stell dir vor, du willst einfach nur ein Video von MP4 nach WebM konvertieren - statt 50 StackOverflow-Posts zu lesen, zeigt dir `tldr ffmpeg` den exakten Befehl. Die Beispiele werden staendig aktualisiert und repraesentieren aktuelle Best Practices.
+
 ```bash
 tldr ffmpeg
 ```
 
 ### 5. **Alternative zu Google**
-Statt "how to use curl" googlen:
+
+Wenn du bisher fuer jeden Befehl "how to use X" gegoogelt hast, ist tldr die schnellere Alternative. Statt Browser oeffnen, Suchergebnisse scannen, den richtigen StackOverflow-Post finden und die Antwort lesen, tippst du einfach `tldr` gefolgt vom Befehlsnamen und bekommst sofort die Antwort im Terminal. Das spart nicht nur Zeit, sondern unterbricht auch nicht deinen Terminal-Flow. Stell dir vor, du bist mitten in einer Coding-Session und brauchst die curl-Syntax fuer einen POST-Request - mit tldr hast du die Antwort in 3 Sekunden statt 30. Und im Gegensatz zu Google funktioniert tldr auch offline, nachdem du den Cache einmal heruntergeladen hast.
+
 ```bash
 tldr curl
 ```
@@ -82,6 +92,8 @@ Installation, Grundbefehle und fortgeschrittene Optionen - alles was du fuer den
 tldr ist in mehreren Clients verfuegbar. Der System-Paketmanager ist der schnellste Weg.
 
 **macOS (Homebrew)**:
+Die einfachste Installation auf macOS ist ueber Homebrew. Das Paket enthaelt den Standard-tldr-Client, der in Python oder C geschrieben ist (je nach Version). Nach der Installation musst du einmalig `tldr --update` ausfuehren, um den lokalen Cache mit allen Pages herunterzuladen. Ohne diesen Schritt funktioniert kein einziger Befehl. Alternativ kannst du den schnelleren Rust-Client `tealdeer` installieren (siehe Pro-Tipps).
+
 ```bash
 brew install tldr
 ```
@@ -96,16 +108,22 @@ tldr --update
 ```
 
 **Arch Linux**:
+Arch Linux bietet tldr ueber das Community-Repository an. Wie bei allen Arch-Paketen bekommst du die aktuellste Version. Vergiss nicht nach der Installation `tldr --update` auszufuehren, um den lokalen Cache herunterzuladen. Ohne Cache-Update bekommst du bei jedem Aufruf eine Fehlermeldung.
+
 ```bash
 sudo pacman -S tldr
 ```
 
 **Node.js (Universal)**:
+Der Node.js-Client funktioniert auf allen Plattformen, auf denen Node.js installiert ist. Er wird global installiert und ist danach sofort im Terminal verfuegbar. Der Node.js-Client bietet farbigen Output und unterstuetzt alle Standard-Funktionen. Nach der Installation fuehre `tldr --update` aus um den Cache herunterzuladen. Beachte, dass der Node.js-Client etwas langsamer startet als der Rust-basierte tealdeer.
+
 ```bash
 npm install -g tldr
 ```
 
 **Python (Universal)**:
+Der Python-Client ist eine weitere universelle Option, die ueberall funktioniert wo Python installiert ist. Er bietet aehnliche Funktionalitaet wie der Node.js-Client, ist aber manchmal etwas veraltet. Fuer die beste Erfahrung empfehlen wir den Homebrew-Client auf macOS oder tealdeer als Rust-Alternative. Auch hier gilt: Nach der Installation `tldr --update` ausfuehren, um den lokalen Cache herunterzuladen.
+
 ```bash
 pip install tldr
 ```
@@ -162,6 +180,8 @@ tldr --platform windows dir
 ```
 
 **2. Sprache wechseln**:
+tldr-Pages sind in ueber 30 Sprachen verfuegbar, darunter auch Deutsch. Mit dem `--language` Flag kannst du die Sprache fuer einzelne Aufrufe wechseln. Beachte, dass nicht alle Pages in allen Sprachen verfuegbar sind - bei fehlender Uebersetzung faellt tldr automatisch auf Englisch zurueck. Stell dir vor, du bist Einsteiger und verstehst die englischen Erklaerungen nicht vollstaendig - `--language de` zeigt dir deutsche Beschreibungen, wenn verfuegbar. Setze deine bevorzugte Sprache permanent mit einer Umgebungsvariable (siehe Best Practices).
+
 ```bash
 # Deutsch
 tldr --language de git
@@ -197,6 +217,8 @@ tldr curl  # (funktioniert ohne Internet)
 ```
 
 **5. Custom Rendering**:
+Manche Clients bieten verschiedene Ausgabeformate an. Mit `--render` bekommst du den Plain-Text-Output ohne Farben und Formatierung, was nuetzlich ist fuer die Weiterverarbeitung in Skripten. Der Markdown-Output gibt dir das Rohformat der tldr-Page, das du in eigene Dokumentationen einbinden kannst. Stell dir vor, du erstellst ein internes Cheatsheet fuer dein Team und willst die tldr-Texte dafuer verwenden - der Markdown-Export gibt dir das Ausgangsmaterial. Beachte, dass nicht alle Clients diese Optionen unterstuetzen.
+
 ```bash
 # Plain-Text (kein Styling)
 tldr --render git
@@ -259,6 +281,9 @@ tldr git  # → Zeigt deutsche Version
 ```
 
 ### 5. **Combine mit Clipboard**
+
+Eine besonders praktische Kombination ist tldr mit der Zwischenablage. Die folgende Funktion zeigt dir die tldr-Beispiele an, laesst dich mit fzf einen Befehl auswaehlen und kopiert ihn direkt in die Zwischenablage. So kannst du den Befehl sofort einfuegen und ausfuehren, ohne ihn manuell abtippen zu muessen. Stell dir vor, du suchst den richtigen git-Befehl, waehlst ihn aus der Liste aus und hast ihn sofort in der Zwischenablage. Das spart Zeit und verhindert Tippfehler bei komplexen Befehlen.
+
 ```bash
 # Copy Command direkt
 tldr-copy() {
@@ -283,7 +308,10 @@ npm install -g some-tool
 tldr some-tool
 ```
 
-### 7. **Custom Pages hinzufügen**
+### 7. **Custom Pages hinzufuegen**
+
+Du kannst eigene tldr-Pages fuer interne Tools, Custom Scripts oder haeufig verwendete Befehle erstellen. Das Format ist einfaches Markdown mit einer speziellen Struktur: Titel, Beschreibung und nummerierte Beispiele mit kurzer Erklaerung. Stell dir vor, dein Team hat ein internes Deployment-Skript mit vielen Flags - erstelle eine tldr-Page dafuer, und jeder im Team kann die Syntax schnell nachschlagen. Eigene Pages werden in einem separaten Ordner gespeichert und beim Aufruf genauso angezeigt wie die offiziellen Pages. Du kannst deine Pages auch als Pull Request zum offiziellen tldr-Repository beitragen, wenn sie fuer andere nuetzlich sind.
+
 ```bash
 # Eigene Pages erstellen (in ~/tldr-custom/)
 mkdir -p ~/tldr-custom/pages/common
@@ -651,12 +679,18 @@ tldr --update
 ```
 
 ### 2. **Integration in IDE (VS Code)**
+
+Fuer VS Code gibt es eine tldr-Extension, die dir die Befehls-Dokumentation direkt in der IDE anzeigt. Du markierst einen Befehl im integrierten Terminal oder im Code und bekommst sofort die tldr-Page angezeigt. Das ist besonders nuetzlich wenn du Shell-Skripte schreibst und die Syntax eines Befehls pruefen willst, ohne das Terminal zu oeffnen. Stell dir vor, du siehst in einem Dockerfile einen unbekannten Befehl und willst wissen was er tut - ein Klick genuegt. Suche in den VS Code Extensions nach "tldr-pages" und installiere die Erweiterung.
+
 ```bash
 # Extension: tldr-pages
 # → Inline Command-Hilfe
 ```
 
 ### 3. **Custom Workflow Function**
+
+Diese Shell-Funktion erstellt eine smarte Hilfe-Funktion, die zuerst tldr versucht und bei unbekannten Befehlen automatisch auf die klassische Man Page zurueckfaellt. Das ist der beste Ansatz, weil tldr die schnellere und praxisnahere Referenz bietet, aber nicht jeden obskuren Befehl abdeckt. In solchen Faellen greift die Funktion automatisch auf `man` zurueck. Stell dir vor, du suchst Hilfe zu einem seltenen System-Tool das keine tldr-Page hat - die Funktion zeigt dir dann die Man Page an statt "not found". Fuege diese Funktion in deine .zshrc ein und nutze `help befehlsname` statt tldr.
+
 ```bash
 # In ~/.zshrc: Smart Help
 help() {
@@ -669,6 +703,9 @@ help() {
 ```
 
 ### 4. **Contribution (neue Pages)**
+
+Die tldr-Datenbank ist Community-driven und lebt von Beitraegen. Wenn du bemerkst, dass ein Tool keine Page hat oder die bestehende Page unvollstaendig ist, kannst du eine neue Page erstellen und als Pull Request einreichen. Das Format ist einfaches Markdown mit einer definierten Struktur: ein Titel, eine kurze Beschreibung und konkrete Beispiele. Stell dir vor, du hast ein nuetzliches Tool entdeckt das noch keine tldr-Page hat - dein Beitrag hilft tausenden anderen Entwicklern. Folge der CONTRIBUTING.md im offiziellen Repository fuer die genauen Formatierungs-Richtlinien.
+
 ```bash
 # Wenn Tool fehlt: Contribution!
 # 1. Fork: https://github.com/tldr-pages/tldr

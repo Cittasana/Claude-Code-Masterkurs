@@ -97,17 +97,26 @@ KiB Swap: 4194304 total, 4194304 free, 0 used. 6543210 avail Mem
 ### Installation
 
 #### macOS (mit Homebrew):
+
+Auf macOS installierst du htop am einfachsten ueber Homebrew. Nach der Installation ist htop sofort verfuegbar und kann ohne weitere Konfiguration gestartet werden. Beachte, dass htop auf macOS einige Features wie CPU-Affinity nicht vollstaendig unterstuetzt, da macOS andere Kernel-Schnittstellen als Linux verwendet. Die grundlegenden Funktionen wie CPU/Memory-Monitoring, Prozess-Management und Tree-View funktionieren aber identisch. Auf Apple-Silicon-Macs (M1/M2/M3) werden die Performance- und Efficiency-Cores separat angezeigt, was dir einen guten Ueberblick ueber die ARM-Architektur gibt.
+
 ```bash
 brew install htop
 ```
 
 #### Ubuntu/Debian:
+
+Unter Ubuntu und Debian ist htop in den offiziellen Repositories verfuegbar und kann direkt ueber apt installiert werden. Du brauchst sudo-Rechte fuer die Installation, aber htop kann danach auch ohne Root-Rechte gestartet werden -- allerdings siehst du dann nur deine eigenen Prozesse. Um alle Systemprozesse zu sehen, starte htop mit `sudo htop`. Die Version im Repository ist moeglicherweise nicht die neueste -- falls du die aktuellste Version brauchst, kannst du auch das offizielle PPA verwenden.
+
 ```bash
 sudo apt-get update
 sudo apt-get install htop
 ```
 
 #### Arch Linux:
+
+Auf Arch Linux ist htop im offiziellen Repository enthalten und wird regelmaessig aktualisiert. Die Arch-Version ist typischerweise eine der aktuellsten verfuegbaren Versionen, da Arch einem Rolling-Release-Modell folgt. Nach der Installation kannst du htop sofort starten und konfigurieren. Stell dir vor, du setzt einen neuen Arch-Server auf und willst sofort die Systemauslastung pruefen -- nach einem einzigen Befehl hast du htop einsatzbereit.
+
 ```bash
 sudo pacman -S htop
 ```
@@ -117,6 +126,9 @@ sudo pacman -S htop
 ### Quick Start: Erste Schritte
 
 #### 1. **htop starten**
+
+Der einfachste Aufruf startet htop mit der Standard-Konfiguration und zeigt alle laufenden Prozesse an. Mit dem `-u`-Flag filterst du auf einen bestimmten User, mit `-t` aktivierst du die Tree-View, und mit `--sort-key` bestimmst du die Sortierung. Stell dir vor, du loggst dich auf einen Server ein und willst sofort sehen, welche Prozesse am meisten Speicher verbrauchen -- mit `htop --sort-key PERCENT_MEM` siehst du die schlimmsten Memory-Fresser ganz oben. Die verschiedenen Startoptionen lassen sich auch kombinieren, z.B. `htop -t -u deploy` fuer eine Tree-View nur fuer den Deploy-User.
+
 ```bash
 # Standard-Modus
 htop
@@ -132,6 +144,9 @@ htop --sort-key PERCENT_MEM
 ```
 
 #### 2. **Wichtigste Shortcuts**
+
+Die F-Tasten sind das Herzstück von htop und machen die Prozessverwaltung intuitiv. F3 sucht nach einem Prozessnamen, F4 filtert die Liste auf einen Begriff, F5 zeigt die Parent-Child-Beziehungen als Baum, F6 aendert die Sortierung, und F9 oeffnet das Kill-Menue. Die Buchstaben-Shortcuts M, P und T sortieren schnell nach Memory, CPU oder Time. Stell dir vor, du willst einen haengengebliebenen Node.js-Prozess beenden: Du drueckst F4, tippst "node", siehst den Prozess, drueckst F9, waehlst SIGTERM und Enter -- fertig. Space markiert einzelne Prozesse fuer Batch-Operationen, z.B. um mehrere Prozesse auf einmal zu killen.
+
 ```
 F1 oder ?   : Hilfe
 F2          : Setup (Anpassungen)
@@ -153,6 +168,9 @@ T           : Nach Time sortieren
 ```
 
 #### 3. **Navigation**
+
+Die Navigation in htop funktioniert sowohl mit Tastatur als auch mit der Maus. Die Pfeiltasten bewegen den Cursor durch die Prozessliste, PgUp/PgDn scrollt seitenweise, und Home/End springt zum Anfang oder Ende. Wenn Mouse-Support aktiviert ist, kannst du auch direkt auf einen Prozess klicken, um ihn auszuwaehlen, oder im Headerbereich auf CPU/Memory-Balken klicken, um Details zu sehen. Stell dir vor, du hast 200 laufende Prozesse und suchst einen bestimmten -- statt durch die Liste zu scrollen, nutzt du F3 fuer die Suche oder F4 fuer den Filter, was deutlich schneller ist.
+
 ```
 ↑↓          : Durch Prozesse bewegen
 PgUp/PgDn   : Seitenweise scrollen
@@ -161,6 +179,9 @@ Mouse       : Click & Scroll (falls aktiviert)
 ```
 
 #### 4. **Prozesse filtern**
+
+Filtern ist eine der nuetzlichsten Funktionen in htop, besonders auf Systemen mit hunderten von Prozessen. Mit dem `-u`-Flag filterst du beim Start auf einen bestimmten User, waehrend F4 innerhalb von htop einen Laufzeit-Filter setzt. Der F4-Filter ist besonders maechtig, da er in Echtzeit filtert -- du tippst ein paar Buchstaben und die Prozessliste wird sofort eingeschraenkt. Stell dir vor, du suchst auf einem Shared-Server den Python-Prozess eines bestimmten Users -- mit `htop -u postgres` siehst du nur die Prozesse des Postgres-Users, oder du drueckst F4 und tippst "python", um alle Python-Prozesse systemweit zu finden.
+
 ```bash
 # Nur eigene Prozesse
 htop -u $USER
@@ -173,6 +194,9 @@ htop -u postgres
 ```
 
 #### 5. **Config-File**
+
+Alle Einstellungen, die du in htop ueber F2 (Setup) vornimmst, werden automatisch in der Config-Datei `~/.config/htop/htoprc` gespeichert. Es ist empfehlenswert, ein Backup dieser Datei zu erstellen, bevor du groessere Aenderungen vornimmst. Die Config-Datei enthaelt alle Spalten-Definitionen, Sortiereinstellungen, Meter-Konfigurationen und Display-Optionen. Stell dir vor, du hast htop perfekt konfiguriert und willst diese Konfiguration auf einen anderen Server uebertragen -- du kopierst einfach die `htoprc`-Datei und hast die gleiche Ansicht. Bei einem fehlerhaften Setup stellst du das Backup wieder her und hast deine vorherige Konfiguration zurueck.
+
 ```bash
 # htop speichert Settings in
 ~/.config/htop/htoprc
@@ -186,6 +210,9 @@ cp ~/.config/htop/htoprc ~/.config/htop/htoprc.backup
 ### Advanced Usage
 
 #### 1. **Custom Columns konfigurieren**
+
+Ueber F2 (Setup) und dann "Columns" kannst du genau festlegen, welche Informationen fuer jeden Prozess angezeigt werden. Standardmaessig zeigt htop PID, User, CPU% und Memory%, aber du kannst beliebige weitere Spalten hinzufuegen oder entfernen. Besonders nuetzlich sind M_RESIDENT (tatsaechlich genutzter RAM), STATE (Prozess-Status: Running, Sleeping, Zombie) und COMMAND (vollstaendige Kommandozeile). Stell dir vor, du debuggst ein Memory-Problem und willst neben dem prozentualen Verbrauch auch die absoluten Zahlen in Megabyte sehen -- du fuegest M_RESIDENT und M_SHARE als Spalten hinzu. Die Reihenfolge der Spalten bestimmt auch, wie der Bildschirmplatz verteilt wird, also setze die wichtigsten Spalten an den Anfang.
+
 ```
 F2 → Setup → Columns
 
@@ -206,6 +233,9 @@ Verfügbare Columns:
 ```
 
 #### 2. **Color-Schemes anpassen**
+
+htop bietet verschiedene Farbschemata, die du an dein Terminal und deine Vorlieben anpassen kannst. Ueber F2 (Setup) und "Display options" gelangst du zur Farbauswahl. Das Standard-Theme funktioniert gut auf dunklen Terminals, waehrend "Light Terminal" fuer helle Hintergruende optimiert ist. Stell dir vor, du arbeitest tagsüeber mit einem hellen Terminal-Theme und nachts mit einem dunklen -- du kannst fuer jede Situation das passende Farbschema waehlen. "Monochrome" ist nuetzlich, wenn du htop ueber SSH nutzt und Farbprobleme auftreten, waehrend "Black Night" ein besonders kontrastreiches dunkles Theme bietet.
+
 ```
 F2 → Display options → Colors
 
@@ -220,6 +250,9 @@ Themes:
 ```
 
 #### 3. **Process-Tree mit Folding**
+
+Die Tree-View (F5) zeigt Parent-Child-Beziehungen zwischen Prozessen an, was besonders bei komplexen Anwendungen mit vielen Unterprozessen nuetzlich ist. Mit dem Folding-Feature kannst du Teilbaeume ein- und ausklappen, um die Ansicht uebersichtlich zu halten. Das ist besonders hilfreich bei Systemen mit Docker-Containern oder Webservern, die viele Worker-Prozesse spawnen. Stell dir vor, du hast einen Nginx-Server mit 16 Worker-Prozessen -- in der flachen Ansicht nehmen diese 16 Eintraege Platz weg, waehrend du sie im Tree-View zuklappen und nur den Parent sehen kannst. Die Tastenkombinationen + und - oder Space klappen Teilbaeume auf und zu.
+
 ```bash
 # Tree-View aktivieren
 F5 oder t
@@ -230,6 +263,9 @@ F5 oder t
 ```
 
 #### 4. **Multiple Prozesse auf einmal killen**
+
+Manchmal musst du mehrere Prozesse gleichzeitig beenden, z.B. wenn ein abgestuertztes Programm mehrere Unterprozesse hinterlassen hat. In htop markierst du die gewuenschten Prozesse einzeln mit Space, und sie werden farblich hervorgehoben. Danach oeffnest du mit F9 das Kill-Menue und waehlst das Signal, das an alle markierten Prozesse gesendet wird. Stell dir vor, du hast 5 haengengebliebene Node.js-Worker und willst sie alle auf einmal beenden -- du markierst jeden mit Space, drueckst F9, waehlst SIGTERM und alle 5 werden gleichzeitig beendet. Falls SIGTERM nicht wirkt, wiederholst du den Vorgang mit SIGKILL (Signal 9).
+
 ```
 # Prozesse markieren
 Space auf Prozess 1
@@ -241,6 +277,9 @@ F9 → Select Signal → SIGTERM oder SIGKILL
 ```
 
 #### 5. **CPU-Affinity setzen**
+
+CPU-Affinity bestimmt, auf welchen CPU-Cores ein Prozess laufen darf. Das ist nuetzlich fuer Performance-Testing, wenn du einen Prozess auf bestimmte Cores beschraenken willst, oder um wichtige Prozesse von CPU-intensiven Tasks zu isolieren. In htop waehlst du den Prozess aus und drueckst 'a', um den Affinity-Dialog zu oeffnen. Stell dir vor, du hast einen Production-Webserver und einen Batch-Job auf demselben Server -- du setzt die Affinity des Batch-Jobs auf Core 2-3 und den Webserver auf Core 0-1, damit der Batch-Job nicht den Webserver verlangsamt. Diese Einstellung ist temporaer und geht beim Neustart des Prozesses verloren.
+
 ```
 # Prozess auswählen
 a → CPU-Affinity Dialog
@@ -250,6 +289,9 @@ a → CPU-Affinity Dialog
 ```
 
 #### 6. **strace-Integration**
+
+Die strace-Integration ermoeglicht es, direkt aus htop heraus die System-Calls eines Prozesses zu beobachten. Das ist extrem nuetzlich beim Debugging, wenn ein Prozess sich unerwartet verhaelt und du verstehen willst, welche Dateien er oeffnet, welche Netzwerkverbindungen er aufbaut oder auf welche Ressourcen er wartet. Du waehlst den Prozess in htop aus und drueckst 's', um strace zu starten. Stell dir vor, ein Python-Script laeuft langsam und du willst wissen, ob es auf Datei-I/O oder Netzwerk wartet -- strace zeigt dir die einzelnen System-Calls in Echtzeit und du siehst sofort, wo der Engpass liegt. Beachte, dass strace auf macOS nicht verfuegbar ist -- dort kannst du stattdessen `dtruss` verwenden.
+
 ```
 # Prozess auswählen
 s → strace starten
@@ -559,17 +601,26 @@ jobs:
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Ressourcen waehrend Claude Code Session monitoren
+
+Waehrend Claude Code arbeitet, laufen im Hintergrund Node.js-Prozesse, die je nach Aufgabe erheblich CPU und Speicher verbrauchen koennen. Mit diesem Befehl filterst du htop auf genau die Claude-Code-bezogenen Prozesse, sodass du deren Ressourcenverbrauch in Echtzeit ueberwachen kannst. Der `-p`-Flag beschraenkt die Anzeige auf bestimmte Prozess-IDs, die `pgrep` anhand des Namensmusters findet. Stell dir vor, Claude Code fuehrt einen grossen Refactoring-Auftrag aus und dein System wird ploetzlich langsam -- mit diesem Befehl siehst du sofort, ob Claude Code der Verursacher ist und wie viel CPU und Memory er aktuell verbraucht. Starte diesen Befehl in einem separaten tmux-Pane, damit er neben deiner Hauptarbeit laeuft.
+
 ```bash
 # In separatem Terminal-Pane
 htop -p $(pgrep -f "node.*claude")
 ```
 
 ### Workflow 2: Speicherfresser identifizieren
+
+Mit dieser Sortierung siehst du sofort, welche Prozesse am meisten Arbeitsspeicher verbrauchen. Das ist besonders nuetzlich, wenn dein System langsam wird oder der Swap-Speicher anfaengt zu arbeiten. Die Prozesse mit dem hoechsten Speicherverbrauch stehen ganz oben, sodass du den Verursacher sofort identifizieren kannst. Stell dir vor, du hast 16 GB RAM und ploetzlich sind 14 GB belegt -- mit diesem Befehl findest du sofort den Chrome-Tab mit 4 GB oder den Docker-Container mit 6 GB. Kombiniere diese Ansicht mit der Tree-View (F5), um zu sehen, welcher Parent-Prozess fuer den hohen Verbrauch verantwortlich ist.
+
 ```bash
 htop --sort-key=PERCENT_MEM
 ```
 
 ### Workflow 3: Build-Prozesse ueberwachen
+
+Waehrend eines Builds laufen oft mehrere Node.js-, npm- und TypeScript-Compiler-Prozesse parallel. Dieser Filter zeigt nur die Build-relevanten Prozesse an, sodass du den Fortschritt und die Ressourcenauslastung des Builds ueberwachen kannst. Das ist besonders nuetzlich, um Bottlenecks in der Build-Pipeline zu identifizieren -- wenn z.B. der TypeScript-Compiler 100% CPU auf einem Core verbraucht, waehrend andere Cores idle sind, deutet das auf fehlende Parallelisierung hin. Stell dir vor, dein Build dauert ploetzlich doppelt so lang wie sonst -- mit diesem Filter siehst du sofort, welcher Build-Schritt die meiste Zeit verbraucht.
+
 ```bash
 htop --filter="node\|npm\|tsc"
 ```
@@ -694,6 +745,9 @@ F2 → Display options → Update process names: Disable
 ## 💎 Pro-Tipps
 
 ### Tipp 1: Quick-Filter mit F4
+
+Der F4-Filter ist das schnellste Werkzeug, um in einer langen Prozessliste den gesuchten Prozess zu finden. Sobald du F4 drueckst und einen Begriff eingibst, werden alle nicht-passenden Prozesse ausgeblendet. Der Filter wirkt auf den gesamten Command-String, sodass du auch nach Argumenten oder Pfaden filtern kannst. Stell dir vor, du hast 300 Prozesse auf einem Server und suchst den einen Python-Script, das zu viel CPU verbraucht -- mit F4 und "python" siehst du sofort nur die Python-Prozesse. Druecke Escape, um den Filter zurueckzusetzen und wieder alle Prozesse zu sehen.
+
 ```bash
 # htop starten
 htop
@@ -705,6 +759,9 @@ htop
 ```
 
 ### Tipp 2: Follow-Mode
+
+Der Follow-Mode ist nuetzlich, wenn du einen bestimmten Prozess laengere Zeit beobachten willst, der in der sortierten Liste seine Position aendert. Normalerweise springen Prozesse in der Liste nach oben oder unten, wenn sich ihre CPU- oder Memory-Nutzung aendert, was es schwer macht, einen einzelnen Prozess zu verfolgen. Mit F (Follow) bleibt der ausgewaehlte Prozess immer im Blick, egal wohin er sich in der Sortierung bewegt. Stell dir vor, du ueberwachst einen Java-Prozess, dessen CPU-Last zwischen 5% und 80% schwankt -- ohne Follow-Mode muestest du ihn staendig suchen, mit Follow-Mode scrollt htop automatisch zur aktuellen Position des Prozesses.
+
 ```bash
 # Prozess auswählen
 # F (Follow) drücken
@@ -713,6 +770,9 @@ htop
 ```
 
 ### Tipp 3: Space-Bar für Multi-Selection
+
+Die Space-Bar markiert einzelne Prozesse fuer Batch-Operationen, was besonders beim Aufraeumen von Zombie-Prozessen oder abgestuerzten Worker-Prozessen nuetzlich ist. Markierte Prozesse werden farblich hervorgehoben, und alle nachfolgenden Aktionen (Kill, Nice-Aenderung) wirken auf alle markierten Prozesse gleichzeitig. Stell dir vor, du hast 8 abgestuerzte PHP-Worker-Prozesse, die alle beendet werden muessen -- statt jeden einzeln zu killen, markierst du alle 8 mit Space, drueckst F9 und killst sie alle auf einmal. Du kannst die Markierung mit U (Unmark All) zuruecksetzen, wenn du von vorne anfangen willst.
+
 ```bash
 # Mehrere Prozesse markieren mit Space
 # Dann F9 → Alle auf einmal killen
@@ -720,6 +780,9 @@ htop
 ```
 
 ### Tipp 4: Custom-Setup per User
+
+Verschiedene Aufgaben erfordern verschiedene htop-Konfigurationen. Fuer die Entwicklung willst du vielleicht Tree-View mit CPU-Sortierung, waehrend du fuer DevOps-Aufgaben Memory-Sortierung und erweiterte Spalten bevorzugst. Indem du verschiedene Kopien der htoprc-Datei erstellst und ueber Aliase laedsst, wechselst du mit einem Befehl zwischen den Konfigurationen. Stell dir vor, du bist sowohl Entwickler als auch gelegentlicher Sysadmin -- mit `htop-dev` bekommst du eine Ansicht, die auf deine Anwendungsprozesse optimiert ist, und mit `htop-ops` eine Ansicht, die alle System-Metriken prominent anzeigt. So musst du nicht jedes Mal die Einstellungen manuell umschalten.
+
 ```bash
 # Verschiedene Configs für verschiedene Tasks
 cp ~/.config/htop/htoprc ~/.config/htop/htoprc-dev
@@ -731,6 +794,9 @@ alias htop-ops='htop --config ~/.config/htop/htoprc-ops'
 ```
 
 ### Tipp 5: SSH + htop für Remote-Monitoring
+
+htop laesst sich hervorragend ueber SSH fuer das Remote-Monitoring von Servern einsetzen. Der erste Befehl startet htop direkt auf dem Remote-Server und zeigt die Ausgabe in deinem lokalen Terminal an. Der zweite Befehl kombiniert SSH mit tmux, sodass die htop-Session persistent bleibt, auch wenn die SSH-Verbindung unterbrochen wird. Stell dir vor, du ueberwachst einen Production-Server und deine Internetverbindung bricht kurz ab -- mit tmux laeuft die htop-Session auf dem Server weiter, und du kannst dich einfach wieder verbinden. Das `-t`-Flag erzwingt eine Pseudo-Terminal-Allokation, was fuer interaktive Programme wie htop notwendig ist. Richte dir fuer haeufig ueberwachte Server SSH-Aliase ein, um den Login-Befehl zu verkuerzen.
+
 ```bash
 # Remote-Server monitoren
 ssh user@server htop

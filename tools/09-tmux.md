@@ -45,7 +45,9 @@ Problem: Tab wechseln nervt, Übersicht fehlt, Session nicht persistent.
 Hier siehst du die fuenf haeufigsten Einsatzszenarien fuer tmux -- von paralleler Projektarbeit bis hin zum Pair Programming. Jeder Zweck zeigt dir, welches Problem tmux konkret loest.
 
 ### 1. **Multi-Projekt-Development**
-Verschiedene Projekte, instant switch:
+
+Im Entwickleralltag arbeitest du haeufig an mehreren Projekten gleichzeitig -- zum Beispiel an einer API und einem Frontend. Ohne tmux musst du jedes Mal, wenn du zwischen Projekten wechselst, alle Terminal-Fenster schliessen und neu aufsetzen. Mit tmux erstellst du fuer jedes Projekt eine eigene benannte Session, die unabhaengig voneinander laufen. Stell dir vor, du arbeitest morgens am API-Backend und nachmittags meldet sich ein Kunde wegen des Frontends -- mit tmux wechselst du in Sekunden zur Frontend-Session, in der noch alles genau so ist, wie du es verlassen hast. Das Ergebnis: Null Setup-Zeit beim Wechsel, alle Editoren, Server und Terminal-Historien bleiben erhalten.
+
 ```bash
 tmux new -s api     # API-Projekt
 tmux new -s frontend # Frontend-Projekt
@@ -53,7 +55,9 @@ tmux attach -t api   # Zurück zu API
 ```
 
 ### 2. **Persistent Remote Sessions**
-SSH-Trennung = kein Problem:
+
+Wenn du ueber SSH auf einem Remote-Server arbeitest, verlierst du bei einer Verbindungsunterbrechung normalerweise deine gesamte Arbeit -- alle laufenden Prozesse werden beendet, die Terminal-Historie ist weg. tmux loest dieses Problem, indem die Session auf dem Server weiterlaeuft, auch wenn deine SSH-Verbindung abbricht. Stell dir vor, du fuehrst ein Datenbank-Migrations-Script auf einem Produktions-Server aus, und ploetzlich bricht dein WLAN ab. Ohne tmux waere das Script abgebrochen und die Datenbank moeglicherweise in einem inkonsistenten Zustand. Mit tmux laeuft das Script einfach weiter, und du verbindest dich spaeter wieder und siehst das Ergebnis. Das ist besonders wichtig bei zeitkritischen Aufgaben auf Remote-Servern.
+
 ```bash
 # Auf Server
 ssh user@server
@@ -66,7 +70,9 @@ tmux attach -t dev  # Alles noch da!
 ```
 
 ### 3. **Split-Screen Development**
-Alles auf einen Blick:
+
+Beim Entwickeln brauchst du oft mehrere Informationsquellen gleichzeitig sichtbar -- den Editor, die Server-Ausgabe und die Test-Ergebnisse. Ohne Split-Screen musst du staendig zwischen Terminal-Tabs hin- und herspringen, was den Kontext unterbricht und Zeit kostet. tmux teilt ein einzelnes Terminal-Fenster in mehrere Bereiche (Panes) auf, die gleichzeitig sichtbar sind. Stell dir vor, du debuggst einen API-Endpunkt: Oben siehst du den Code im Editor, unten links die Server-Logs, und unten rechts laufen die Tests. Jede Aenderung am Code zeigt sofort die Auswirkungen in den anderen Panes. Das Ergebnis ist ein deutlich schnellerer Feedback-Loop, weil du nie den Blick vom Bildschirm nehmen musst.
+
 ```bash
 # Editor oben, Server unten, Tests rechts
 tmux split-window -h
@@ -74,7 +80,9 @@ tmux split-window -v
 ```
 
 ### 4. **Long-Running Processes**
-Server/Jobs laufen lassen:
+
+Viele Entwicklungsaufgaben dauern laenger als eine Terminal-Sitzung -- ob ein Dev-Server, eine Datenbank-Migration oder ein Build-Prozess. Schliesst du das Terminal, werden alle diese Prozesse normalerweise sofort beendet. tmux ermoeglicht es dir, einen Prozess zu starten und dann die Session zu verlassen (Detach), waehrend der Prozess im Hintergrund weiterlaeuft. Stell dir vor, du startest einen npm-Dev-Server fuer dein Projekt und willst dann das Terminal fuer andere Aufgaben nutzen. Mit Ctrl+B D loest du dich von der Session, der Server laeuft weiter, und du kannst jederzeit mit tmux attach zurueckkehren. Das ist deutlich eleganter als nohup oder Screen und gibt dir volle Kontrolle ueber den laufenden Prozess.
+
 ```bash
 tmux new -s server
 npm start  # Server läuft
@@ -83,7 +91,9 @@ npm start  # Server läuft
 ```
 
 ### 5. **Pair Programming**
-Geteilter Screen:
+
+Pair Programming ueber das Netzwerk ist oft umstaendlich -- Screen-Sharing-Tools wie Zoom haben Latenz, und der Beobachter kann nicht direkt eingreifen. tmux ermoeglicht echtes geteiltes Terminal-Arbeiten: Beide Personen sehen exakt denselben Bildschirm in Echtzeit und koennen beide tippen. Stell dir vor, du hilfst einem Kollegen remote beim Debugging eines komplexen Problems. Statt per Zoom zuzuschauen und muehsam Anweisungen zu geben, verbindet ihr euch beide mit derselben tmux-Session. Dein Kollege sieht jeden Tastendruck sofort, und ihr koennt euch abwechselnd den Code anschauen und aendern. Das Ergebnis ist deutlich produktiveres Pair Programming, das sich fast wie gemeinsames Arbeiten am selben Rechner anfuehlt.
+
 ```bash
 # Person A
 tmux new -s pair
@@ -104,16 +114,25 @@ Dieser Abschnitt fuehrt dich von der Installation ueber die ersten Schritte bis 
 Die Installation ist auf allen gaengigen Systemen mit dem Paketmanager moeglich:
 
 **macOS (Homebrew)**:
+
+Auf macOS ist Homebrew der einfachste Weg, tmux zu installieren. Der Befehl laedt die neueste Version herunter, kompiliert sie falls noetig und fuegt das Binary zum PATH hinzu. Nach der Installation kannst du sofort `tmux` im Terminal eingeben. Homebrew kuemmert sich auch um Abhaengigkeiten wie libevent und ncurses automatisch. Wenn du Homebrew noch nicht installiert hast, findest du die Anleitung unter brew.sh.
+
 ```bash
 brew install tmux
 ```
 
 **Ubuntu/Debian**:
+
+Auf Debian-basierten Systemen ist tmux in den Standard-Repositories enthalten. Der apt-Paketmanager laedt tmux zusammen mit allen Abhaengigkeiten herunter und installiert es systemweit. Beachte, dass die Version in den Repositories manchmal etwas aelter ist als die aktuellste Release-Version. Fuer die meisten Anwendungsfaelle ist die Repository-Version aber vollkommen ausreichend. Nach der Installation ist tmux sofort verfuegbar.
+
 ```bash
 sudo apt install tmux
 ```
 
 **Arch Linux**:
+
+Auf Arch Linux wird tmux ueber den pacman-Paketmanager installiert. Arch liefert in der Regel die aktuellste Version, da es ein Rolling-Release-System nutzt. Der Befehl installiert tmux und alle noetige Abhaengigkeiten in einem Schritt. Alternativ kannst du auch das AUR (Arch User Repository) fuer Git-basierte Builds nutzen. Nach der Installation steht tmux sofort bereit.
+
 ```bash
 sudo pacman -S tmux
 ```
@@ -399,6 +418,9 @@ tmux attach -t api-backend
 ```
 
 ### 4. **Split-Screen Standard-Layout**
+
+Ein gut durchdachtes Standard-Layout spart dir jeden Tag erneutes Einrichten deiner Arbeitsumgebung. Fuer Web-Development hat sich ein Layout mit einem grossen Hauptbereich links (70% der Breite fuer den Editor) und zwei kleineren Bereichen rechts (fuer Logs und Tests) bewaehrt. Dieses Layout laesst sich mit wenigen tmux-Befehlen automatisiert aufbauen und als Script speichern. Stell dir vor, du startest jeden Morgen deine Arbeit und musst nur ein Script ausfuehren, um sofort drei Bereiche mit Editor, Server-Logs und Test-Runner bereit zu haben. Das spart taeglich 5-10 Minuten Setup-Zeit und stellt sicher, dass du immer das gleiche, produktive Layout hast.
+
 ```bash
 # Für Web-Dev:
 # ┌─────────────┬──────┐
@@ -438,7 +460,9 @@ Ctrl+B , → "tests"
 ```
 
 ### 7. **Claude Code Integration**
-Das optimale Claude Code Setup verteilt alle Werkzeuge auf separate Windows -- so hast du Claude, Tests, Server und Logs gleichzeitig im Blick:
+
+Das optimale Claude Code Setup verteilt alle Werkzeuge auf separate Windows, damit du zwischen Code-Generierung, Testing und Monitoring sofort wechseln kannst. In Window 1 laeuft Claude Code, in Window 2 ein File-Watcher der automatisch Tests ausfuehrt wenn sich Dateien aendern, in Window 3 der Dev-Server und in Window 4 die Live-Logs. Stell dir vor, du gibst Claude Code den Auftrag eine neue Komponente zu erstellen -- waehrend Claude arbeitet, siehst du im Test-Window sofort ob die Tests bestehen, im Server-Window ob der Build durchlaeuft, und im Log-Window ob Fehler auftreten. Mit Ctrl+B gefolgt von 0, 1, 2 oder 3 springst du in Sekundenbruchteilen zwischen diesen Ansichten hin und her. Dieses Setup ist der Grund, warum tmux + Claude Code als Kombination so maechtig ist.
+
 ```bash
 # Window 1: Claude Code
 claude-code
@@ -462,6 +486,8 @@ tail -f logs/app.log
 ### Beispiel 1: Full-Stack Development Setup
 
 **Szenario**: Next.js App mit Backend API.
+
+Dieses Script automatisiert das komplette Aufsetzen einer Full-Stack-Entwicklungsumgebung mit einem einzigen Befehl. Es erstellt 4 Windows fuer Frontend, Backend, Datenbank und Editor, startet in jedem die passenden Prozesse und wechselt zum Hauptfenster. Stell dir vor, du startest jeden Morgen deine Arbeit und musst normalerweise 4 Terminals oeffnen, in verschiedene Verzeichnisse navigieren und Befehle starten -- dieses Script erledigt alles in unter 3 Sekunden. Das Editor-Window hat sogar einen horizontalen Split mit Git-Status rechts, damit du Aenderungen sofort siehst. Speichere das Script als `dev-fullstack.sh` in deinem `~/bin`-Verzeichnis und mache es mit `chmod +x` ausfuehrbar.
 
 ```bash
 # Script: dev-fullstack.sh
@@ -501,6 +527,8 @@ tmux attach -t $SESSION
 ### Beispiel 2: Remote-Server-Monitoring
 
 **Szenario**: Production-Server, du willst Logs + Metrics monitoren.
+
+Dieses Setup erstellt ein 4-Pane-Dashboard zur Ueberwachung eines Produktions-Servers. Oben links laufen die Application-Logs, unten links die Error-Logs, oben rechts htop fuer System-Metriken und unten rechts eine Live-Ansicht der offenen Netzwerk-Ports. Das Entscheidende: Du kannst dich per Ctrl+B D von der Session loesen, und alle vier Monitoring-Views laufen auf dem Server weiter. Stell dir vor, es gibt um 3 Uhr morgens ein Incident und du verbindest dich per SSH vom Handy -- mit `tmux attach -t monitor` hast du sofort alle Logs und Metriken vor Augen, ohne irgendetwas neu aufsetzen zu muessen. Dieses Setup hat schon vielen Admins bei naechtlichen Notfaellen erheblich Zeit gespart.
 
 ```bash
 # Auf Remote-Server
@@ -542,6 +570,8 @@ tmux attach -t monitor  # Alles noch da!
 
 **Szenario**: Du und Kollege arbeiten remote zusammen.
 
+Fuer echtes Pair Programming reicht Screen-Sharing oft nicht aus -- der Beobachter hat Latenz und kann nicht direkt eingreifen. Mit einem geteilten tmux-Socket koennen beide Teilnehmer denselben Terminal-Bildschirm sehen und gleichzeitig darin arbeiten. Der Host erstellt die Session mit einem Custom-Socket-Pfad (`/tmp/pair`) und setzt die Berechtigungen, damit der Gast darauf zugreifen kann. Stell dir vor, du zeigst einem Junior-Entwickler, wie man einen Bug debuggt -- ihr seht beide den gleichen Code, und der Junior kann direkt Befehle eingeben, um sein Verstaendnis zu demonstrieren. Beachte, dass beide Personen SSH-Zugang zum selben Server benoetigen und der Socket-Pfad beschreibbar sein muss.
+
 ```bash
 # Setup (Person A - Host)
 ssh shared-server
@@ -564,6 +594,8 @@ tmux -S /tmp/pair attach -t pair
 ### Beispiel 4: Multi-Server-Deployment
 
 **Szenario**: Deploy auf 5 Servern parallel.
+
+tmux's Pane-Synchronisation ist eine der maechtigsten Funktionen fuer Server-Administratoren. Du erstellst 5 Panes, verbindest dich in jedem per SSH mit einem anderen Server und aktivierst dann die Synchronisation. Ab diesem Moment wird jeder Tastendruck gleichzeitig an alle 5 Panes gesendet. Stell dir vor, du musst auf 5 Produktions-Servern ein Security-Update einspielen -- statt den Befehl fuenfmal einzeln einzugeben, tippst du ihn einmal und er wird auf allen Servern parallel ausgefuehrt. Das spart nicht nur Zeit, sondern stellt auch sicher, dass auf jedem Server exakt derselbe Befehl ausgefuehrt wird. Vergiss nicht, die Synchronisation nach dem Deployment wieder auszuschalten, da sonst versehentlich Befehle an alle Server gehen.
 
 ```bash
 # Session erstellen
@@ -602,6 +634,8 @@ Ctrl+B : setw synchronize-panes off
 
 **Szenario**: ML-Training läuft 8 Stunden.
 
+Machine-Learning-Training, grosse Daten-Migrationen oder Build-Prozesse koennen Stunden oder sogar Tage dauern. Ohne tmux musst du dein Terminal die ganze Zeit offen halten, was bei Laptop-Nutzern problematisch ist. Mit tmux startest du den Prozess in einer benannten Session, loest dich mit Ctrl+B D, und der Prozess laeuft im Hintergrund weiter -- auch wenn du deinen Laptop zuklappst. Stell dir vor, du startest freitags ein ML-Training und willst erst montags das Ergebnis pruefen. Mit `tmux attach -t training` verbindest du dich wieder und nutzt den Copy Mode (Ctrl+B [), um durch die Ausgabe der letzten 8 Stunden zu scrollen. Das ist zuverlaessiger als nohup, weil du die volle Terminal-Historie behaltst und den Prozess jederzeit interaktiv steuern kannst.
+
 ```bash
 # Session starten
 tmux new -s training
@@ -629,6 +663,8 @@ q         # Exit
 ### Beispiel 6: Context-Switching zwischen Projekten
 
 **Szenario**: Du arbeitest an 3 Projekten parallel.
+
+Als Freelancer oder in einer Agentur arbeitest du oft an mehreren Kundenprojekten gleichzeitig. Jeder Projektwechsel bedeutet normalerweise: alle Terminals schliessen, ins richtige Verzeichnis navigieren, Server starten, Editor oeffnen. Mit tmux erstellst du fuer jedes Projekt eine eigene Session mit allen noetige Windows und Panes. Stell dir vor, Client A ruft an und braucht dringend eine Aenderung -- statt 10 Minuten Setup-Zeit brauchst du mit `tmux attach -t client-a` genau 0 Sekunden. Editor, Server, Tests und Terminal-Historie sind exakt so, wie du sie verlassen hast. Das ist der Grund, warum tmux als Context-Switching-Tool bei vielen professionellen Entwicklern als unverzichtbar gilt.
 
 ```bash
 # Morning:
@@ -661,6 +697,9 @@ tmux attach -t client-b
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Persistentes Claude Code Development-Setup
+
+Dieses Setup erstellt eine tmux-Session mit drei Panes: Claude Code links (60% Breite), Dev-Server rechts oben und Test-Runner rechts unten. So kannst du Claude Code Befehle geben, waehrend du gleichzeitig siehst, ob der Server fehlerfrei laeuft und die Tests bestehen. Stell dir vor, du laesst Claude Code eine neue API-Route erstellen -- im rechten oberen Pane siehst du sofort, ob der Server die Aenderung akzeptiert, und im unteren Pane, ob die Tests durchlaufen. Das Ergebnis ist ein nahtloser Entwicklungs-Feedback-Loop, bei dem du nie zwischen Fenstern wechseln musst. Dieses Script kannst du als Datei speichern und jeden Morgen mit einem Befehl dein komplettes Setup starten.
+
 ```bash
 # Claude Code Session: tmux fuer Multi-Pane Entwicklung
 tmux new-session -d -s claude -n code
@@ -673,6 +712,9 @@ tmux attach -t claude
 ```
 
 ### Workflow 2: Claude Code mit Live-Log-Monitoring
+
+Wenn Claude Code Aenderungen am Code vornimmt, ist es wichtig, die Auswirkungen in Echtzeit zu sehen. Dieses Setup teilt das Terminal in zwei Bereiche: oben laeuft Claude Code, unten werden die Server-Logs mit bat fuer Syntax-Highlighting dargestellt. So erkennst du sofort, wenn eine von Claude generierte Aenderung einen Fehler im Server verursacht. Stell dir vor, Claude refactored eine Datenbank-Query -- im unteren Pane siehst du live, ob die Query korrekt ausgefuehrt wird oder ob Fehler auftreten. Das spart dir den muehsamen Prozess, erst nach der gesamten Claude-Sitzung die Logs zu pruefen.
+
 ```bash
 # Pane 1: Claude Code laeuft und generiert Code
 # Pane 2: Echtzeit-Logs des Servers verfolgen
@@ -684,6 +726,9 @@ tmux attach -t dev
 ```
 
 ### Workflow 3: Projekt-Context-Switching mit Claude Code
+
+Wenn du an mehreren Projekten arbeitest, brauchst du fuer jedes Projekt eine eigene Claude Code Instanz mit dem richtigen Arbeitsverzeichnis. Dieses Setup erstellt separate tmux-Sessions pro Projekt, jeweils mit einem eigenen Claude Code Prozess. Stell dir vor, du arbeitest morgens am Frontend-Projekt und nachmittags am Backend -- mit Ctrl+B s kannst du zwischen den Sessions wechseln, und Claude Code ist in jeder Session bereits im richtigen Kontext. Das bedeutet, du musst Claude Code nicht jedes Mal neu starten und das Projekt-Verzeichnis erneut angeben. Der Session-Switcher zeigt dir alle laufenden Projekte in einer uebersichtlichen Liste.
+
 ```bash
 # Separate tmux Sessions pro Projekt, jede mit Claude Code
 tmux new-session -d -s projekt-a -n claude

@@ -69,22 +69,25 @@ Von der Installation ueber grundlegende Suchbefehle bis hin zu Regex-Patterns un
 Waehle den passenden Installationsweg fuer dein System:
 
 #### macOS (Homebrew)
-Die einfachste Installation auf macOS:
+Die einfachste Installation auf macOS. Homebrew laedt die vorkompilierte Binary herunter und verlinkt sie in den PATH. Nach der Installation ist der Befehl `rg` sofort verfuegbar. Homebrew kuemmert sich auch um spaetere Updates mit `brew upgrade ripgrep`. Pruefe nach der Installation die Version mit `rg --version`, um sicherzustellen, dass alles korrekt eingerichtet ist.
 ```bash
 brew install ripgrep
 ```
 
 #### Ubuntu/Debian
+Auf Debian-basierten Systemen ist ripgrep in den Standard-Repositories ab Ubuntu 18.10 verfuegbar. Der apt-Paketmanager installiert alle Abhaengigkeiten automatisch. Beachte, dass die Repository-Version manchmal etwas aelter sein kann als die aktuelle GitHub-Release. Wenn du die neueste Version brauchst, installiere ueber cargo oder lade die Binary direkt von GitHub Releases herunter. Nach der Installation steht der Befehl `rg` systemweit zur Verfuegung.
 ```bash
 apt-get install ripgrep
 ```
 
 #### Arch Linux
+Arch Linux liefert dank Rolling-Release in der Regel die aktuellste Version von ripgrep. Der Befehl installiert das Paket zusammen mit allen Abhaengigkeiten in einem Schritt. Bei Arch ist ripgrep besonders beliebt, da viele Arch-Nutzer Rust-basierte Tools bevorzugen. Nach der Installation ist `rg` sofort einsatzbereit und kann mit `pacman -Syu` auf dem neuesten Stand gehalten werden.
 ```bash
 pacman -S ripgrep
 ```
 
 #### Rust (plattformunabhängig)
+Wenn du bereits eine Rust-Toolchain (cargo) installiert hast, ist die Installation ueber cargo der plattformunabhaengigste Weg. Cargo kompiliert ripgrep aus dem Quellcode, was auf den meisten Systemen einige Minuten dauert. Der Vorteil ist, dass du immer die allerneueste Version bekommst. Beachte, dass das Binary unter `~/.cargo/bin/` installiert wird und dieser Pfad in deiner PATH-Variable enthalten sein muss.
 ```bash
 cargo install ripgrep
 ```
@@ -240,6 +243,9 @@ rg "(?i)(todo)" --replace 'DONE'
 ```
 
 #### Performance Tuning
+
+Bei sehr grossen Codebasen mit Hunderttausenden von Dateien kann auch ripgrep merklich langsamer werden. Diese Optionen helfen, die Suche zu optimieren, indem du die Suchtiefe begrenzt, das Threading anpasst und Memory-Mapping fuer grosse Dateien steuerst. Stell dir vor, du durchsuchst ein Monorepo mit 50 Unterprojekten, brauchst aber nur Ergebnisse aus den ersten drei Verzeichnisebenen. Mit `--max-depth 3` wird die Suche deutlich schneller, weil tief verschachtelte node_modules und Build-Verzeichnisse uebersprungen werden. Der `--threads`-Parameter ist nuetzlich, wenn du die CPU-Last auf CI-Servern kontrollieren musst.
+
 ```bash
 # Max-Depth limitieren
 rg "import" --max-depth 3
@@ -259,6 +265,9 @@ rg "data" --no-mmap
 ### Integration in Claude Code Workflows
 
 #### 1. Code-Analyse vor Änderungen
+
+Bevor du Claude Code mit einem Refactoring beauftragst, solltest du wissen, wie weit die Aenderung reicht. Dieser Befehl findet alle Dateien, die eine bestimmte Funktion referenzieren, und zaehlt die Vorkommen pro Datei. Das gibt dir ein klares Bild vom Scope der Aenderung. Stell dir vor, du willst die Funktion `getUserData` umbenennen -- mit diesem Befehl siehst du sofort, ob 3 oder 30 Dateien betroffen sind. Basierend auf dieser Information kannst du Claude Code gezielt anweisen, alle Vorkommen zu aktualisieren. Das Ergebnis ist ein sicheres Refactoring ohne vergessene Referenzen.
+
 ```bash
 # Alle Verwendungen einer Funktion finden
 echo "Suche alle Referenzen zu 'getUserData':"
@@ -269,6 +278,9 @@ rg "\bgetUserData\b" -t js -t ts --count
 ```
 
 #### 2. Security Audit
+
+Hardcodierte Secrets wie API-Keys, Passwoerter und Tokens sind eines der haeufigsten Sicherheitsrisiken in Codebases. Dieser Befehl durchsucht dein gesamtes Projekt nach verdaechtigen Patterns und schliesst dabei Dokumentations- und Beispieldateien aus, die False Positives erzeugen wuerden. Stell dir vor, du uebernimmst ein neues Projekt und willst sicherstellen, dass keine Secrets im Code stecken -- dieser Befehl findet sie in Sekunden. Die Ergebnisse kannst du direkt an Claude Code weiterleiten, der die gefundenen Stellen analysiert und Loesungen vorschlaegt (z.B. Umstellung auf Umgebungsvariablen). Fuehre diesen Check regelmaessig aus, idealerweise als Pre-Commit-Hook.
+
 ```bash
 # Potenzielle Secrets finden
 rg -i "api[_-]?key|secret|password|token" \
@@ -281,6 +293,9 @@ rg "TODO.*security" --json | claude "Analyse security TODOs"
 ```
 
 #### 3. Dependency Audit
+
+Wenn du eine Abhaengigkeit upgraden oder ersetzen willst, musst du zuerst wissen, wo und wie sie verwendet wird. Dieser Befehl findet alle Import-Statements einer bestimmten Library und zaehlt die Vorkommen pro Datei. Stell dir vor, du willst von der alten `ReactDOM.render`-API auf React 18 migrieren -- mit ripgrep findest du alle betroffenen Stellen und kannst Claude Code gezielt mit der Migration beauftragen. Der zweite Befehl mit `-C 2` zeigt den Kontext um jeden Treffer, sodass Claude Code den Code im Zusammenhang verstehen kann. Das Ergebnis ist eine vollstaendige Migrationsstrategie basierend auf tatsaechlicher Code-Nutzung.
+
 ```bash
 # Alle Imports eines Packages finden
 rg "from ['\"]react['\"]" -t js -t tsx --count
@@ -290,6 +305,9 @@ rg "ReactDOM\.render" -C 2 | claude "Suggest React 18 migration"
 ```
 
 #### 4. Documentation Generator
+
+ripgrep kann JSDoc-Kommentare und README-Headings extrahieren und als Eingabe fuer Claude Code nutzen, um automatisch Dokumentation zu generieren. Der erste Befehl findet alle JSDoc-Bloecke (erkennbar an `/**`) und zeigt die naechsten 10 Zeilen nach jedem Treffer. Der zweite Befehl extrahiert alle Markdown-Headings aus der README. Stell dir vor, du hast ein Projekt mit 50 Funktionen, die zwar JSDoc-Kommentare haben, aber keine zusammenhaengende API-Dokumentation -- Claude Code kann aus den extrahierten Kommentaren eine vollstaendige Dokumentation erstellen. Das spart Stunden manueller Dokumentationsarbeit.
+
 ```bash
 # Alle JSDoc-Kommentare extrahieren
 rg "/\*\*" -A 10 -t js | claude "Generate API documentation"
@@ -356,6 +374,8 @@ rg "error" --json | jq -r '.data.lines.text'
 
 ### 4. Performance-Optimierungen
 
+Bei sehr grossen Repositories mit ueber 10.000 Dateien kannst du mit diesen Einstellungen die Suchgeschwindigkeit deutlich verbessern. Die Tiefenbegrenzung verhindert das Durchsuchen tief verschachtelter Verzeichnisse wie node_modules. Memory-Mapping kann bei einzelnen sehr grossen Dateien (z.B. Logfiles) die Performance verbessern, da der Kernel das Lesen optimiert. Die Thread-Anzahl sollte der Anzahl deiner CPU-Kerne entsprechen. Stell dir vor, du durchsuchst ein Monorepo mit 100k Dateien -- mit `--max-depth 5` und korrektem Threading kann die Suche von 10 auf 2 Sekunden sinken.
+
 ```bash
 # Große Codebasen: Limitiere Depth
 rg "import" --max-depth 5
@@ -368,6 +388,8 @@ rg "function" --threads $(nproc)
 ```
 
 ### 5. Sicherheit
+
+Security-Scans mit ripgrep sind ein schneller erster Schritt, um potenzielle Secrets in deiner Codebase zu finden. Der Befehl sucht nach typischen Patterns wie "password", "secret" und "key", schliesst aber Markdown-Dokumentation und Beispieldateien aus, die viele False Positives erzeugen wuerden. Stell dir vor, ein neuer Entwickler hat versehentlich einen API-Key hardcodiert -- dieser Scan findet es, bevor der Code committed wird. Der zweite Befehl filtert zusaetzlich Test- und Docs-Verzeichnisse heraus, da dort oft Platzhalter-Secrets stehen. Integriere diesen Check als Pre-Commit-Hook, um Secrets automatisch vor dem Commit abzufangen.
 
 ```bash
 # Secrets finden (aber nie committen!)
@@ -385,6 +407,8 @@ rg "API_KEY" --glob '!test/*' --glob '!docs/*'
 ## Beispiele
 
 ### 1. React Codebase: Hook-Usage analysieren
+
+In React-Projekten ist es wichtig zu wissen, welche Komponenten wie viele State-Hooks verwenden -- zu viele useState-Aufrufe in einer Komponente deuten darauf hin, dass useReducer besser geeignet waere. Dieser Befehl findet alle useState-Aufrufe mit generischem Typ-Parameter in TSX-Dateien, zaehlt sie pro Datei und sortiert nach Haeufigkeit. Stell dir vor, du willst die State-Management-Strategie deines Projekts verbessern -- die Dateien mit den meisten useState-Aufrufen sind die besten Kandidaten fuer ein Refactoring zu useReducer oder zustand. Der letzte Befehl uebergibt die Ergebnisse direkt an Claude Code fuer eine automatisierte Analyse. So bekommst du konkrete Optimierungsvorschlaege basierend auf deinem tatsaechlichen Code.
 
 ```bash
 # Alle useState Calls finden
@@ -405,6 +429,8 @@ rg "useState" -t tsx -A 3 | \
 
 ### 2. Node.js: Deprecated Dependencies finden
 
+Veraltete Dependencies sind ein haeufiges Sicherheitsrisiko und koennen zu Kompatibilitaetsproblemen fuehren. Dieser Befehl sucht nach dem veralteten `request`-Paket, das seit 2020 nicht mehr gewartet wird und durch axios oder node-fetch ersetzt werden sollte. Der erste Befehl findet alle Dateien, die `request` importieren, der zweite listet nur die Dateinamen, und der dritte erstellt einen strukturierten Migrationsreport. Stell dir vor, du uebernimmst ein aelteres Node.js-Projekt und willst wissen, welche veralteten Pakete noch verwendet werden -- mit ripgrep hast du in Sekunden eine vollstaendige Liste. Der JSON-Output und jq erzeugen eine sortierte, deduplizierte TODO-Liste fuer die Migration.
+
 ```bash
 # Suche nach veralteten Packages
 rg "request\(" -t js -g '!node_modules/*'
@@ -420,6 +446,8 @@ rg "require\(['\"]request['\"]\)" --json | \
 ```
 
 ### 3. Python: Type-Hint Coverage
+
+Type Hints verbessern die Code-Qualitaet und ermoglichen bessere IDE-Unterstuetzung, sind in aelteren Python-Codebases aber oft nicht vorhanden. Diese Befehle analysieren, wie viele Funktionen Type Hints haben und wie viele noch fehlen. Der erste Befehl zaehlt Funktionsdefinitionen ohne Parameter-Typ-Annotationen, der zweite findet Funktionen ohne Return-Type, und der dritte generiert eine TODO-Liste. Stell dir vor, dein Team hat beschlossen, schrittweise Type Hints einzufuehren -- mit diesen Befehlen siehst du sofort den aktuellen Status und kannst den Fortschritt ueber die Zeit verfolgen. Der Replace-Befehl erzeugt eine Datei mit konkreten TODO-Eintraegen fuer jede Funktion.
 
 ```bash
 # Funktionen ohne Type-Hints finden
@@ -437,6 +465,8 @@ rg "def (\w+)\(" -t py --replace 'TODO: Add types to $1' > type_todos.txt
 ```
 
 ### 4. Configuration Audit
+
+Ein Configuration Audit deckt potenzielle Probleme in Konfigurationsdateien auf: Hardcodierte Produktions-URLs, umgebungsspezifische Einstellungen und fehlende Abstraktionen. Der erste Befehl findet alle Config-Dateien, die das Wort "production" enthalten, der zweite analysiert umgebungsspezifischen Code, und der dritte extrahiert alle hardcodierten URLs. Stell dir vor, du willst sicherstellen, dass keine Produktions-Credentials in der Development-Konfiguration stecken -- dieser Audit zeigt dir alle verdaechtigen Stellen. Besonders der dritte Befehl mit `-o` (only matching) extrahiert ausschliesslich die URLs, sortiert und dedupliziert sie fuer einen schnellen Ueberblick.
 
 ```bash
 # Alle Config-Files mit "production" Setting
@@ -456,6 +486,8 @@ rg "https?://[a-zA-Z0-9.-]+" \
 > 💡 **Tipp**: Nutze `rg "TODO|FIXME|HACK" --json | jq` fuer maschinenlesbare Ausgabe -- perfekt fuer die Integration in CI/CD-Pipelines oder automatisierte Code-Quality-Reports.
 
 ### 5. Code Quality: TODO/FIXME Tracking
+
+Technische Schulden in Form von TODO-, FIXME- und HACK-Kommentaren sammeln sich in jedem Projekt an und sollten regelmaessig aufgeraeumt werden. Diese Befehle geben dir einen strukturierten Ueberblick: der erste zeigt alle Kommentare mit Kontext, der zweite zaehlt nach Typ, und der dritte ordnet jedem TODO den verantwortlichen Autor zu per git blame. Stell dir vor, du bereitest einen Sprint vor und willst die angesammelten TODOs priorisieren -- die Kombination aus ripgrep und git blame zeigt dir nicht nur was zu tun ist, sondern auch wer den TODO geschrieben hat. Der letzte Befehl generiert eine Issue-Liste im Markdown-Format, die du direkt in dein Tracking-Tool importieren kannst.
 
 ```bash
 # Alle TODOs mit Context
@@ -581,17 +613,26 @@ exit 0
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Codebase durchsuchen vor Refactoring
+
+Bevor du Claude Code eine Funktion umbenennen oder refactoren laesst, zeigt dir dieser Befehl alle Dateien, die die Funktion verwenden. Das `-l` Flag listet nur Dateinamen ohne die Treffer selbst, was dir einen schnellen Ueberblick ueber den Scope gibt. Stell dir vor, du willst `getUserById` durch `fetchUserById` ersetzen -- zuerst siehst du mit diesem Befehl, welche 12 Dateien betroffen sind, dann beauftragst du Claude Code mit dem Rename. So vermeidest du vergessene Referenzen und kaputte Imports.
+
 ```bash
 # Alle Verwendungen einer Funktion finden
 rg "getUserById" --type ts -l
 ```
 
 ### Workflow 2: TODO-Kommentare sammeln
+
+Dieser Befehl findet alle TODO-, FIXME- und HACK-Kommentare in deinen Source-Dateien und zeigt Statistiken dazu an. Das `--type-add` Flag definiert einen benutzerdefinierten Dateityp "src", der alle gaengigen JavaScript/TypeScript-Dateien umfasst. Stell dir vor, du willst am Ende eines Sprints alle offenen TODOs aufarbeiten -- dieser Befehl gibt dir eine sofortige Uebersicht mit Gesamtzahl und betroffenen Dateien. Die Ergebnisse kannst du an Claude Code weiterleiten, der die TODOs priorisiert und Loesungsvorschlaege macht.
+
 ```bash
 rg "TODO|FIXME|HACK" --type-add 'src:*.{ts,tsx,js,jsx}' -t src --stats
 ```
 
 ### Workflow 3: Import-Analyse
+
+Dieser Befehl analysiert die internen Import-Strukturen deines TypeScript-Projekts, indem er alle relativen Imports zaehlt und nach Haeufigkeit sortiert. Die Dateien mit den meisten Imports sind oft zentrale Module, die bei Refactorings besondere Aufmerksamkeit benoetigen. Stell dir vor, du willst herausfinden, welche Dateien am staerksten vernetzt sind -- die Top-20-Liste zeigt dir die "Hub"-Dateien deines Projekts. Diese Information hilft Claude Code, die Projektstruktur zu verstehen und bei Refactorings die richtigen Prioritaeten zu setzen.
+
 ```bash
 rg "from ['\"]\./" --type ts -c | sort -t: -k2 -rn | head -20
 ```
@@ -822,6 +863,8 @@ iconv -f ISO-8859-1 -t UTF-8 file.txt | rg "função"
 
 ### 1. ripgrep als Standard-Search
 
+ripgrep kann als Standard-Suche fuer mehrere Tools gleichzeitig eingesetzt werden: als FZF_DEFAULT_COMMAND fuer schnelle Datei-Auflistung, als Suchmaschine in VS Code und als grepprg in Neovim. Diese Konfigurationen sorgen dafuer, dass du ueberall dieselbe schnelle, .gitignore-respektierende Suche nutzt. Stell dir vor, du nutzt `Ctrl+T` in fzf, suchst in VS Code und greifst in Neovim -- ueberall arbeitet ripgrep im Hintergrund. Fuer Neovim ist besonders das `--vimgrep` Format wichtig, das Datei, Zeile, Spalte und Treffer in einem von Vim verstandenen Format ausgibt.
+
 ```bash
 # In ~/.bashrc oder ~/.zshrc
 export FZF_DEFAULT_COMMAND='rg --files --hidden --follow --glob "!.git/*"'
@@ -838,6 +881,8 @@ vim.o.grepformat = '%f:%l:%c:%m'
 ```
 
 ### 2. Custom File-Types definieren
+
+ripgrep erlaubt dir, eigene Dateityp-Gruppen zu definieren, die du dann mit dem `-t` Flag verwenden kannst. Statt jedes Mal `-e html -e css -e js -e jsx -e ts -e tsx` zu tippen, definierst du einmal den Typ "web" und nutzt dann einfach `rg "api" -t web`. Stell dir vor, du arbeitest an einem Full-Stack-Projekt und willst nur in Frontend-Dateien suchen -- der benutzerdefinierte Typ "web" deckt alle relevanten Dateitypen ab. Speichere diese Definitionen in deiner `~/.ripgreprc`, damit sie in jedem Projekt verfuegbar sind. Du kannst so viele Custom-Types definieren, wie du brauchst.
 
 ```bash
 # In ~/.ripgreprc
@@ -865,6 +910,8 @@ rg "port" -t config
 
 ### 4. Kombiniere mit Watchman für Live-Search
 
+Dieses Script kombiniert Facebooks Watchman (ein File-Watching-Tool) mit ripgrep fuer Echtzeit-Suche. Jedes Mal, wenn sich eine JavaScript- oder TypeScript-Datei aendert, wird automatisch die ripgrep-Suche erneut ausgefuehrt. Stell dir vor, du refactorst eine Funktion und willst in Echtzeit sehen, wie viele Referenzen noch uebrig sind -- jede gespeicherte Aenderung loest eine neue Suche aus. Das ist besonders nuetzlich fuer grosse Umbenennungen, bei denen du den Fortschritt verfolgen willst. Beachte, dass Watchman separat installiert werden muss (`brew install watchman` auf macOS).
+
 ```bash
 #!/bin/bash
 # live-search.sh - Real-time Code-Suche
@@ -875,6 +922,8 @@ watchman-make -p '**/*.js' '**/*.ts' --run "rg $1 -t js -t ts"
 ```
 
 ### 5. JSON Output für Automatisierung
+
+ripgreps JSON-Output-Modus erzeugt maschinenlesbaren Output, der sich perfekt fuer automatisierte Pipelines und Reporting eignet. Jede Zeile ist ein JSON-Objekt mit Typ, Dateipfad, Zeilennummer und Treffer-Text. Durch Piping in jq kannst du die Ergebnisse filtern, transformieren und in strukturierte Reports umwandeln. Stell dir vor, du willst ein automatisiertes TODO-Tracking-System bauen, das alle TODOs im Projekt als JSON-Datei exportiert und in ein Issue-Tracking-Tool importiert. Der folgende Befehl extrahiert alle Matches, erstellt ein JSON-Array und speichert es als Datei.
 
 ```bash
 # Generiere Structured Report
@@ -891,6 +940,8 @@ cat todos.json | jq -r '.[] | "\(.file):\(.line):\(.text)"'
 
 ### 6. Regex-Tester Funktion
 
+Diese Shell-Funktion ist ein schneller Regex-Tester direkt im Terminal. Statt dein Regex-Pattern direkt auf die gesamte Codebase loszulassen und tausende Treffer zu bekommen, testest du es zuerst gegen einen Sample-String. Stell dir vor, du bist dir nicht sicher, ob `v\d+\.\d+` sowohl `v1.2` als auch `v12.345` matcht -- mit `rgtest` pruefst du das in Sekundenbruchteilen. Das spart frustrierende Iterationen, bei denen du den Befehl immer wieder anpassen musst. Die Funktion gibt den Match farblich hervorgehoben aus, sodass du sofort siehst, was getroffen wird.
+
 ```bash
 # ~/.bashrc
 rgtest() {
@@ -904,6 +955,8 @@ rgtest "v\d+\.\d+" "v1.2.3 and v2.0"
 ```
 
 ### 7. Code-Statistiken generieren
+
+Diese Funktionen nutzen ripgrep, um statistische Analysen ueber deine Codebase zu erstellen. Die Funktion `count_functions` zaehlt Funktionsdefinitionen pro Datei und zeigt die Top 10 -- Dateien mit vielen Funktionen sind Kandidaten fuer Aufspaltung. Die `todo_ratio` Funktion berechnet das Verhaeltnis von TODOs zu Funktionen als Qualitaetsindikator. Stell dir vor, du willst deinem Team zeigen, welche Dateien die meiste technische Schuld tragen -- ein hoher TODO-Ratio zeigt genau das. Diese Metriken koennen auch in CI/CD-Pipelines integriert werden, um die Code-Qualitaet ueber die Zeit zu verfolgen.
 
 ```bash
 # Function-Count pro File

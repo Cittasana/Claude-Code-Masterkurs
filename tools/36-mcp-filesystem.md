@@ -41,6 +41,9 @@ In diesem Abschnitt erfaehrst du, warum der Filesystem MCP Server fuer produktiv
 Dieses Beispiel zeigt den Unterschied zwischen klassischen Shell-Commands und strukturierten MCP-Aufrufen. Ohne MCP muss Claude Text-Output parsen, mit MCP erhaelt es direkt maschinenlesbare JSON-Daten.
 
 **Ohne MCP**:
+
+Ohne MCP muss Claude klassische Shell-Commands wie `ls -la` generieren, um auf das Dateisystem zuzugreifen. Das Problem dabei ist, dass der Output reiner Text ist, den Claude erst muehsam parsen muss, um nuetzliche Informationen zu extrahieren. Stell dir vor, du fragst Claude nach der Struktur deines `src/`-Ordners -- es muss dann den gesamten `ls`-Output als String interpretieren, was fehleranfaellig ist. Bei komplexen Verzeichnisstrukturen mit vielen Unterordnern wird dieses Text-Parsing schnell unzuverlaessig. Besonders problematisch wird es, wenn Dateinamen Sonderzeichen oder Leerzeichen enthalten.
+
 ```bash
 # Claude muss Shell-Commands generieren
 claude: "Kann ich mal schauen, was in deinem src/ Ordner ist?"
@@ -49,6 +52,9 @@ claude: "Kann ich mal schauen, was in deinem src/ Ordner ist?"
 ```
 
 **Mit MCP Filesystem**:
+
+Mit dem MCP Filesystem Server erhaelt Claude stattdessen eine strukturierte JSON-Antwort, die alle Dateien und deren Metadaten maschinenlesbar enthaelt. Der `read_directory`-Aufruf nimmt den Pfad als Parameter und liefert ein Array von Objekten zurueck, wobei jedes Objekt den Dateinamen, den Typ (Datei oder Verzeichnis), die Groesse und das Aenderungsdatum enthaelt. Claude kann diese JSON-Daten sofort weiterverarbeiten, ohne fehleranfaelliges Text-Parsing. Das Ergebnis ist ein zuverlaessigerer und schnellerer Workflow, der auch bei grossen Projekten mit tausenden Dateien funktioniert. Der Parameter `recursive: false` sorgt dafuer, dass nur die oberste Ebene gelesen wird, was bei der initialen Exploration sinnvoll ist.
+
 ```json
 {
   "method": "read_directory",
@@ -102,7 +108,8 @@ In diesem Abschnitt lernst du die Installation, Konfiguration und praktische Nut
 
 ### Installation
 
-Die folgenden Befehle installieren den MCP Server global oder starten ihn direkt ueber npx, was keine dauerhafte Installation erfordert:
+Die folgenden Befehle installieren den MCP Server global oder starten ihn direkt ueber npx, was keine dauerhafte Installation erfordert. Der erste Befehl (`npm install -g`) installiert das Paket dauerhaft auf deinem System, sodass du es jederzeit ohne Wartezeit starten kannst. Die npx-Variante ist dagegen ideal zum Ausprobieren, da sie das Paket temporaer herunterlaed und ausfuehrt, ohne es permanent zu installieren. Der letzte Befehl erstellt das Konfigurationsverzeichnis `~/.config/mcp`, in dem die Einstellungen fuer alle MCP Server gespeichert werden. Falls du mehrere MCP Server nutzt, liegen alle Konfigurationsdateien gebuendelt in diesem Verzeichnis. Nach der Installation kannst du sofort mit der Konfiguration beginnen.
+
 ```bash
 # NPM Package installieren
 npm install -g @modelcontextprotocol/server-filesystem
@@ -116,7 +123,7 @@ mkdir -p ~/.config/mcp
 
 ### Konfiguration
 
-Die zentrale Konfigurationsdatei legt fest, auf welche Verzeichnisse Claude zugreifen darf und welche Berechtigungen gelten. Passe die Pfade an deine Projektstruktur an.
+Die zentrale Konfigurationsdatei legt fest, auf welche Verzeichnisse Claude zugreifen darf und welche Berechtigungen gelten. In der `args`-Liste befinden sich die erlaubten Pfade -- der MCP Server kann ausschliesslich auf Dateien innerhalb dieser Verzeichnisse zugreifen, was ein wichtiger Sicherheitsmechanismus ist. Die `permissions`-Sektion steuert granular, welche Operationen erlaubt sind: `read` mit `**/*` erlaubt das Lesen aller Dateien, waehrend `write` nur Markdown- und Textdateien freigibt. Mit `execute: []` verhinderst du, dass Dateien ausgefuehrt werden koennen. In den `options` schuetzt `maxFileSize` vor dem Lesen sehr grosser Dateien, `followSymlinks: false` verhindert das Folgen symbolischer Links (was Endlosschleifen vermeidet), und `gitignore: true` sorgt dafuer, dass Dateien aus `.gitignore` automatisch ausgeblendet werden. Passe die Pfade unbedingt an deine eigene Projektstruktur an -- du kannst beliebig viele Verzeichnisse als separate Eintraege in der `args`-Liste angeben.
 
 **~/.config/mcp/filesystem.json**:
 ```json
@@ -156,6 +163,9 @@ Die zentrale Konfigurationsdatei legt fest, auf welche Verzeichnisse Claude zugr
 ### Claude Code Integration
 
 **1. MCP Server starten**:
+
+Der Filesystem MCP Server startet normalerweise automatisch, wenn du eine Claude Code Session oeffnest und die Konfiguration korrekt hinterlegt ist. Falls der Server nicht automatisch laeuft, kannst du ihn mit dem folgenden Befehl manuell starten. Der Server bleibt dann im Hintergrund aktiv, bis du die Session beendest. Sollte der Start fehlschlagen, pruefe zuerst, ob das npm-Paket korrekt installiert ist (siehe Troubleshooting weiter unten). Beachte, dass der Server erst nach einem Neustart von Claude Code neue Konfigurationsaenderungen uebernimmt.
+
 ```bash
 # Automatisch beim Claude Code Start
 # Oder manuell:
@@ -163,6 +173,9 @@ mcp start filesystem
 ```
 
 **2. Im Claude Code Chat**:
+
+So sieht die Interaktion in der Praxis aus: Du stellst Claude eine Frage in natuerlicher Sprache, und Claude waehlt automatisch das passende MCP Tool aus. Im ersten Beispiel nutzt Claude `read_directory`, um die Verzeichnisstruktur aufzulisten, und im zweiten Beispiel `search`, um den Inhalt von Dateien zu durchsuchen. Du musst die Tool-Namen nicht kennen -- Claude entscheidet selbst, welches Tool fuer deine Anfrage am besten geeignet ist. Das Ergebnis wird dir in menschenlesbarer Form praesentiert, waehrend Claude intern mit strukturierten JSON-Daten arbeitet.
+
 ```
 Du: "Zeig mir die Struktur von src/"
 Claude: [nutzt filesystem.read_directory MCP Tool]
@@ -179,7 +192,8 @@ Der Filesystem Server stellt folgende Tools bereit:
 
 #### 1. `read_file`
 
-Liest den Inhalt einer Datei und gibt ihn im angegebenen Encoding zurueck. Ideal, wenn Claude den Quellcode einer bestimmten Datei analysieren soll.
+Dieses Tool liest den Inhalt einer Datei und gibt ihn im angegebenen Encoding zurueck. Es ist das am haeufigsten verwendete MCP-Tool, da Claude fast immer Dateien lesen muss, um den Code zu verstehen, bevor es Aenderungen vorschlagen kann. Der `path`-Parameter erwartet einen relativen oder absoluten Pfad zur Datei, waehrend `encoding` das Zeichenformat bestimmt -- in fast allen Faellen ist `utf-8` die richtige Wahl. Stell dir vor, du fragst Claude "Analysiere meine App.tsx" -- Claude ruft dann `read_file` auf, liest den gesamten Inhalt und kann dir anschliessend Verbesserungsvorschlaege machen. Falls die Datei zu gross ist (ueber das konfigurierte `maxFileSize`-Limit), schlaegt der Aufruf fehl, und du musst das Limit erhoehen oder die Datei in kleinere Teile aufteilen.
+
 ```json
 {
   "name": "read_file",
@@ -193,7 +207,8 @@ Liest den Inhalt einer Datei und gibt ihn im angegebenen Encoding zurueck. Ideal
 
 #### 2. `write_file`
 
-Schreibt Inhalt in eine Datei. Mit `createDirs: true` werden fehlende Verzeichnisse automatisch angelegt.
+Dieses Tool schreibt Inhalt in eine Datei und erstellt sie, falls sie noch nicht existiert. Mit dem Parameter `createDirs: true` werden auch fehlende Verzeichnisse im Pfad automatisch angelegt -- wenn du zum Beispiel `docs/api/README.md` schreibst und der Ordner `docs/api/` noch nicht existiert, wird er fuer dich erstellt. Das ist besonders nuetzlich, wenn Claude neue Dokumentationsdateien oder Konfigurationen generiert. Beachte, dass der geschriebene Inhalt die bestehende Datei komplett ueberschreibt, nicht anhaengt. Falls du die Berechtigung `write` in der Konfiguration auf bestimmte Dateitypen eingeschraenkt hast (z.B. nur `*.md`), wird der Schreibvorgang bei anderen Dateitypen mit einem Fehler abgelehnt.
+
 ```json
 {
   "name": "write_file",
@@ -208,7 +223,8 @@ Schreibt Inhalt in eine Datei. Mit `createDirs: true` werden fehlende Verzeichni
 
 #### 3. `read_directory`
 
-Listet den Inhalt eines Verzeichnisses auf. Mit `recursive: true` werden auch Unterverzeichnisse durchsucht.
+Dieses Tool listet den Inhalt eines Verzeichnisses auf und liefert fuer jeden Eintrag den Namen, den Typ (Datei oder Verzeichnis) und Metadaten zurueck. Mit `recursive: true` werden auch alle Unterverzeichnisse durchsucht, was dir eine komplette Baumstruktur des Projekts liefert -- allerdings kann das bei grossen Projekten mit vielen Dateien langsam werden. Der Parameter `includeHidden: false` blendet Dateien und Ordner aus, die mit einem Punkt beginnen (wie `.git`, `.env`), was meistens die gewuenschte Einstellung ist. Stell dir vor, du oeffnest ein neues Projekt zum ersten Mal -- `read_directory` ist dann der erste Schritt, den Claude ausfuehrt, um die Projektstruktur zu verstehen. Das Ergebnis gibt Claude die noetige Orientierung, um zu wissen, welche Dateien es als naechstes lesen sollte.
+
 ```json
 {
   "name": "read_directory",
@@ -223,7 +239,8 @@ Listet den Inhalt eines Verzeichnisses auf. Mit `recursive: true` werden auch Un
 
 #### 4. `search_files`
 
-Sucht nach Dateien anhand ihres Namens oder einer Glob-Pattern. Nuetzlich, um bestimmte Dateitypen in einem Projektbaum zu finden.
+Dieses Tool sucht nach Dateien anhand ihres Namens oder einer Glob-Pattern und ist besonders nuetzlich, um bestimmte Dateitypen in einem Projektbaum zu finden. Der `pattern`-Parameter unterstuetzt Glob-Syntax: `*.tsx` findet alle TypeScript-React-Dateien, `**/*.test.ts` findet alle Testdateien in beliebiger Verzeichnistiefe. Stell dir vor, du willst wissen, wie viele React-Komponenten dein Projekt hat -- mit `search_files` und dem Pattern `*.tsx` bekommst du sofort eine Liste aller Dateien. Mit `recursive: true` werden auch alle Unterverzeichnisse durchsucht, was bei komplexen Projektstrukturen mit verschachtelten Ordnern wichtig ist. Das Ergebnis enthaelt die vollstaendigen Pfade aller gefundenen Dateien, die Claude dann gezielt mit `read_file` oeffnen kann.
+
 ```json
 {
   "name": "search_files",
@@ -238,7 +255,8 @@ Sucht nach Dateien anhand ihres Namens oder einer Glob-Pattern. Nuetzlich, um be
 
 #### 5. `search_content`
 
-Durchsucht den Inhalt von Dateien nach einem Suchbegriff -- aehnlich wie grep, aber mit strukturiertem JSON-Output.
+Dieses Tool durchsucht den Inhalt von Dateien nach einem Suchbegriff -- aehnlich wie `grep`, aber mit strukturiertem JSON-Output, der die Dateinamen, Zeilennummern und den umgebenden Kontext enthaelt. Der `query`-Parameter ist der Suchbegriff, waehrend `filePattern` die Suche auf bestimmte Dateitypen einschraenkt (hier nur `.tsx`-Dateien). Mit `caseSensitive: false` findet das Tool sowohl `useEffect` als auch `UseEffect` oder `USEEFFECT`. Stell dir vor, du willst alle Stellen finden, an denen `useEffect` in deinem Projekt verwendet wird, um Performance-Probleme durch fehlende Dependency-Arrays aufzuspueren -- genau dafuer ist dieses Tool gemacht. Das Ergebnis liefert Claude nicht nur die Fundstellen, sondern auch den Code-Kontext drumherum, sodass es sofort sinnvolle Optimierungsvorschlaege machen kann.
+
 ```json
 {
   "name": "search_content",
@@ -254,7 +272,8 @@ Durchsucht den Inhalt von Dateien nach einem Suchbegriff -- aehnlich wie grep, a
 
 #### 6. `get_file_info`
 
-Ruft Metadaten einer Datei ab, wie Groesse, Aenderungsdatum und Berechtigungen.
+Dieses Tool ruft Metadaten einer Datei ab, ohne den eigentlichen Inhalt zu lesen -- dazu gehoeren Dateigroesse, Aenderungsdatum, Erstellungsdatum und Berechtigungen. Das ist besonders nuetzlich, wenn Claude wissen muss, ob eine Datei kuerzlich geaendert wurde, ohne sie komplett laden zu muessen. Stell dir vor, du fragst Claude "Welche Dateien wurden heute geaendert?" -- Claude kann dann `get_file_info` fuer mehrere Dateien aufrufen und anhand des `modifiedAt`-Timestamps filtern, ohne jede Datei komplett zu lesen. Das spart sowohl Zeit als auch Token-Verbrauch, besonders in grossen Projekten. Beachte, dass die zurueckgegebenen Berechtigungen das Betriebssystem-Level widerspiegeln, nicht die MCP-Konfiguration.
+
 ```json
 {
   "name": "get_file_info",
@@ -267,7 +286,8 @@ Ruft Metadaten einer Datei ab, wie Groesse, Aenderungsdatum und Berechtigungen.
 
 #### 7. `create_directory`
 
-Erstellt ein neues Verzeichnis. Mit `recursive: true` werden auch fehlende Eltern-Verzeichnisse angelegt.
+Dieses Tool erstellt ein neues Verzeichnis im Dateisystem und ist besonders wichtig, wenn Claude eine neue Feature-Struktur oder ein Komponenten-Verzeichnis anlegen soll. Mit `recursive: true` werden auch alle fehlenden Eltern-Verzeichnisse automatisch angelegt -- wenn du `src/components/new-feature` erstellst und `components/` noch nicht existiert, wird es gleich mit angelegt. Stell dir vor, Claude soll eine neue Feature-Struktur mit separaten Ordnern fuer Komponenten, Hooks und Tests erstellen -- mit mehreren `create_directory`-Aufrufen kann es die komplette Verzeichnisstruktur in Sekunden aufbauen. Der Aufruf schlaegt nicht fehl, wenn das Verzeichnis bereits existiert, was ihn sicher fuer wiederholte Ausfuehrungen macht. Achte darauf, dass die MCP-Konfiguration Schreibzugriff auf das uebergeordnete Verzeichnis erlaubt, sonst wird die Operation mit einem Berechtigungsfehler abgelehnt.
+
 ```json
 {
   "name": "create_directory",
@@ -287,7 +307,8 @@ Die folgenden Best Practices helfen dir, den Filesystem MCP Server sicher und ef
 
 ### 1. **Permission-Basierte Sicherheit**
 
-Definiere granulare Berechtigungen, damit Claude nur die Dateitypen lesen und schreiben kann, die es wirklich braucht. Das Ausrufezeichen (`!`) vor einem Pattern schliesst bestimmte Dateien explizit aus.
+Definiere granulare Berechtigungen, damit Claude nur die Dateitypen lesen und schreiben kann, die es wirklich braucht. Das Ausrufezeichen (`!`) vor einem Pattern schliesst bestimmte Dateien explizit aus. In diesem Beispiel darf Claude alle Dateien lesen (`read: ["**/*"]`), aber nur React-Komponenten und Dokumentationsdateien schreiben. Config-Dateien im `src/config/`-Verzeichnis sind explizit geschuetzt -- selbst wenn Claude Aenderungen vorschlaegt, kann es die Dateien nicht ueberschreiben. Stell dir vor, du arbeitest an einem Team-Projekt, in dem die Datenbank-Konfiguration nicht versehentlich geaendert werden darf: Mit `!src/config/*.json` stellst du sicher, dass Claude die Konfiguration lesen, aber nicht veraendern kann. Die `execute`-Berechtigung steht auf leer, weil Claude in der Regel keine Dateien ausfuehren muss.
+
 ```json
 {
   "permissions": {
@@ -309,7 +330,8 @@ Definiere granulare Berechtigungen, damit Claude nur die Dateitypen lesen und sc
 
 ### 2. **Arbeite mit .mcpignore**
 
-Eine `.mcpignore`-Datei funktioniert wie `.gitignore` und verhindert, dass Claude unnoetige oder sensible Dateien sieht. Das verbessert sowohl Sicherheit als auch Performance.
+Eine `.mcpignore`-Datei funktioniert wie `.gitignore` und verhindert, dass Claude unnoetige oder sensible Dateien sieht. Das verbessert sowohl Sicherheit als auch Performance. Du legst diese Datei im Root-Verzeichnis deines Projekts an, und der MCP Server blendet alle passenden Dateien automatisch aus. `node_modules/` und `dist/` sind typische Kandidaten, weil sie tausende generierter Dateien enthalten, die Claude nur verwirren wuerden und die Analyse verlangsamen. Besonders wichtig ist `.env` -- darin stehen haeufig API-Keys und Passwoerter, die Claude auf keinen Fall sehen sollte. Du kannst auch Platzhalter wie `*.log` verwenden, um alle Log-Dateien auf einmal auszuschliessen.
+
 ```bash
 # .mcpignore (ähnlich wie .gitignore)
 node_modules/
@@ -328,7 +350,8 @@ build/
 
 ### 3. **Nutze relative Pfade**
 
-Absolute Pfade sind an eine bestimmte Maschine gebunden und brechen, wenn das Projekt auf einem anderen System geoeffnet wird. Relative Pfade machen deine Konfiguration portabel.
+Absolute Pfade sind an eine bestimmte Maschine gebunden und brechen, wenn das Projekt auf einem anderen System geoeffnet wird. Relative Pfade machen deine Konfiguration portabel und funktionieren auf jedem Rechner, unabhaengig vom Betriebssystem. Stell dir vor, du gibst einem Kollegen dein Projekt -- mit absoluten Pfaden wie `/Users/cosmo/projects/...` wuerde bei ihm nichts funktionieren, weil der Pfad auf seinem System nicht existiert. Relative Pfade beziehen sich immer auf das aktuelle Arbeitsverzeichnis, das automatisch auf das Projekt-Root gesetzt wird. Das gilt sowohl fuer MCP-Aufrufe als auch fuer Konfigurationsdateien. Einzige Ausnahme: Die erlaubten Pfade in der MCP-Konfiguration selbst muessen absolut sein, damit der Server weiss, wo er suchen darf.
+
 ```javascript
 // ❌ Absolute Pfade sind fragil
 const config = await mcp.readFile("/Users/cosmo/projects/app/config.json");
@@ -341,7 +364,8 @@ const config = await mcp.readFile("config.json");
 
 ### 4. **Batch Operations**
 
-Einzelne Requests fuer jede Datei erzeugen unnoetig viel Overhead. Batch-Operationen lesen mehrere Dateien in einem einzigen Aufruf, was deutlich schneller ist.
+Einzelne Requests fuer jede Datei erzeugen unnoetig viel Overhead, weil jeder Aufruf eine eigene Kommunikationsrunde zwischen Claude und dem MCP Server erfordert. Batch-Operationen lesen mehrere Dateien in einem einzigen Aufruf, was deutlich schneller ist -- bei 20 Dateien kann der Unterschied zwischen 2 Sekunden und 20 Sekunden liegen. Die `readMultipleFiles`-Methode nimmt ein Array von Dateipfaden entgegen und gibt ein Array mit den Inhalten zurueck. Stell dir vor, Claude analysiert alle Komponenten in einem Ordner -- statt 15 einzelne `readFile`-Aufrufe zu machen, liest ein einziger Batch-Aufruf alle Dateien auf einmal. Das spart nicht nur Zeit, sondern auch API-Token, da weniger Overhead fuer die Tool-Aufrufe anfaellt.
+
 ```javascript
 // ❌ Einzelne Requests
 for (const file of files) {
@@ -354,7 +378,8 @@ const contents = await mcp.readMultipleFiles(files);
 
 ### 5. **Error Handling**
 
-Fange typische Fehler wie fehlende Dateien (`ENOENT`) oder fehlende Berechtigungen (`EACCES`) gezielt ab, anstatt sie generisch zu behandeln. So kann Claude sinnvoll auf Probleme reagieren.
+Fange typische Fehler wie fehlende Dateien (`ENOENT`) oder fehlende Berechtigungen (`EACCES`) gezielt ab, anstatt sie generisch zu behandeln. So kann Claude sinnvoll auf Probleme reagieren, anstatt mit einer kryptischen Fehlermeldung abzubrechen. Im folgenden Beispiel wird bei einer fehlenden Datei automatisch eine Default-Konfiguration erstellt, waehrend bei Berechtigungsfehlern eine hilfreiche Meldung ausgegeben wird. Dieses Muster ist besonders wichtig, wenn Claude in einem neuen Projekt arbeitet, in dem nicht alle erwarteten Dateien vorhanden sind. Du kannst den Error Handler auch um weitere Fehlercodes erweitern, z.B. `EISDIR` (Verzeichnis statt Datei) oder `EMFILE` (zu viele offene Dateien).
+
 ```javascript
 try {
   const content = await mcp.readFile("config.json");
@@ -372,7 +397,8 @@ try {
 
 ### 6. **Atomic Writes mit Backup**
 
-Bei kritischen Dateien solltest du vor dem Schreiben ein Backup erstellen. Falls der Schreibvorgang fehlschlaegt, kann die Originaldatei wiederhergestellt werden.
+Bei kritischen Dateien solltest du vor dem Schreiben ein Backup erstellen, damit die Originaldatei im Fehlerfall wiederhergestellt werden kann. Diese Funktion implementiert ein dreistufiges Sicherheitsmuster: Zuerst wird ein Backup der bestehenden Datei angelegt, dann der neue Inhalt geschrieben und bei Erfolg das Backup wieder geloescht. Falls der Schreibvorgang fehlschlaegt, wird automatisch das Backup zurueckgespielt -- ein sogenannter Rollback. Stell dir vor, Claude aktualisiert deine `package.json` und der Prozess wird mittendrin unterbrochen -- ohne Backup haettest du eine korrupte Datei. Dieses Pattern ist besonders wichtig fuer Konfigurationsdateien, Migrations-Scripts und andere Dateien, die nicht einfach neu generiert werden koennen.
+
 ```javascript
 // Best Practice: Backup vor Änderung
 async function safeWrite(path, content) {
@@ -400,7 +426,8 @@ async function safeWrite(path, content) {
 
 ### 7. **Watch mit MCP**
 
-Mit einem File Watcher kannst du auf Datei-Aenderungen in Echtzeit reagieren, z.B. automatisch Tests starten oder einen Rebuild ausloesen.
+Mit einem File Watcher kannst du auf Datei-Aenderungen in Echtzeit reagieren, z.B. automatisch Tests starten oder einen Rebuild ausloesen, sobald eine Datei gespeichert wird. Der Watcher ueberwacht das angegebene Verzeichnis und feuert Events bei Erstellung, Aenderung oder Loeschung von Dateien. Mit dem `patterns`-Array kannst du einschraenken, welche Dateitypen ueberwacht werden -- in diesem Fall nur TypeScript-Dateien. Stell dir vor, du arbeitest an einer React-App und willst, dass Claude automatisch den betroffenen Component-Test ausfuehrt, sobald du eine Datei aenderst. Der Watcher macht genau das moeglich und spart dir den manuellen Schritt, Tests nach jeder Aenderung neu zu starten. Beachte, dass der Watcher Systemressourcen verbraucht und bei sehr grossen Verzeichnissen die Performance beeintraechtigen kann.
+
 ```javascript
 // Setup File Watcher via MCP
 const watcher = await mcp.watchDirectory("src/", {
@@ -774,6 +801,9 @@ Claude:
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Projekt-Exploration mit MCP Filesystem
+
+Dieser Workflow zeigt, wie Claude beim ersten Oeffnen eines Projekts automatisch die Verzeichnisstruktur analysiert. Claude nutzt `read_directory` rekursiv, um alle Ordner und Dateien zu erfassen, und erstellt daraus eine verstaendliche Uebersicht der Architektur. Das ist besonders hilfreich, wenn du ein fremdes Projekt uebernimmst und schnell verstehen willst, wie es aufgebaut ist. Claude erkennt dabei typische Patterns wie MVC-Strukturen, Feature-basierte Organisation oder monorepo-Setups. Das Ergebnis ist eine klare Zusammenfassung, die dir den Einstieg in jedes Projekt erleichtert.
+
 ```bash
 # In Claude Code Session:
 # "Zeige mir die Struktur des src/ Verzeichnisses und erklaere die Architektur"
@@ -781,6 +811,9 @@ Claude:
 ```
 
 ### Workflow 2: MCP Konfiguration in claude_desktop_config.json
+
+Diese minimale Konfiguration ist alles, was du brauchst, um den Filesystem MCP Server in Claude Desktop einzurichten. Der `command`-Key gibt an, dass `npx` zum Starten verwendet wird, und `-y` bestaetigt automatisch die Installation. Der letzte Eintrag im `args`-Array ist der Pfad zu deinem Projektverzeichnis -- aendere `/Users/dein-name/projekte` auf deinen tatsaechlichen Pfad. Du kannst mehrere Pfade als weitere Array-Eintraege hinzufuegen, wenn du auf mehrere Verzeichnisse zugreifen willst. Die Datei `claude_desktop_config.json` findest du unter macOS unter `~/Library/Application Support/Claude/`. Aenderungen an dieser Datei werden erst nach einem Neustart von Claude Desktop wirksam.
+
 ```json
 {
   "mcpServers": {
@@ -793,6 +826,9 @@ Claude:
 ```
 
 ### Workflow 3: Sichere Datei-Operationen
+
+In diesem Workflow nutzt Claude den MCP Server, um Dateien sicher zu lesen und zu aktualisieren. Das Schluesselprinzip ist, nur die Verzeichnisse freizugeben, die Claude tatsaechlich benoetigt -- je weniger Zugriff, desto geringer das Risiko versehentlicher Aenderungen. Stell dir vor, du bittest Claude, deine README.md mit neuen API-Endpunkten zu aktualisieren: Claude liest zuerst die bestehende Datei, analysiert die Struktur und fuegt die neuen Informationen an der richtigen Stelle ein. Dabei behalt es die bestehende Formatierung bei und ueberschreibt nur die relevanten Abschnitte. Achte darauf, dass sensible Dateien wie `.env` oder Credential-Dateien nicht im erlaubten Pfad liegen.
+
 ```bash
 # Claude kann ueber MCP Filesystem sicher Dateien lesen und schreiben
 # Wichtig: Nur die Verzeichnisse freigeben, die Claude braucht
@@ -1039,7 +1075,8 @@ Wenn du berufliche und persoenliche Projekte getrennt halten willst, kannst du m
 
 ### 2. Custom File Filters
 
-Mit ignore-Patterns schliesst du generierte und temporaere Dateien aus, damit Claude sich auf den relevanten Quellcode konzentrieren kann:
+Mit ignore-Patterns schliesst du generierte und temporaere Dateien aus, damit Claude sich auf den relevanten Quellcode konzentrieren kann. Diese Patterns funktionieren nach dem gleichen Glob-Prinzip wie `.gitignore`: `**/*.log` ignoriert alle Log-Dateien in jedem Unterverzeichnis, waehrend `**/dist/**` den gesamten Build-Output ausschliesst. Das ist besonders bei grossen Projekten wichtig, in denen `dist/` oder `build/` oft Tausende generierte Dateien enthalten, die Claude nur verwirren wuerden. Stell dir ein Next.js-Projekt vor, in dem `.next/` allein ueber 10.000 Dateien enthalten kann -- ohne ignore-Pattern wuerde Claude diese bei jeder `read_directory`-Suche mitlesen. Die Performance-Verbesserung kann bei grossen Projekten dramatisch sein, da der MCP Server die ignorierten Dateien gar nicht erst auflistet.
+
 ```json
 {
   "options": {
@@ -1058,7 +1095,8 @@ Mit ignore-Patterns schliesst du generierte und temporaere Dateien aus, damit Cl
 
 ### 3. Performance Optimization
 
-Bei grossen Projekten hilft es, die Suchtiefe und Anzahl der Ergebnisse zu begrenzen, damit der MCP Server schnell antwortet:
+Bei grossen Projekten hilft es, die Suchtiefe und Anzahl der Ergebnisse zu begrenzen, damit der MCP Server schnell antwortet. Der `maxDepth`-Parameter begrenzt, wie tief in Unterverzeichnisse hinabgestiegen wird -- bei `maxDepth: 3` werden nur drei Ebenen tief Dateien aufgelistet. Der `limit`-Parameter begrenzt die Gesamtanzahl der zurueckgegebenen Eintraege auf maximal 100, was verhindert, dass bei Projekten mit Tausenden von Dateien der gesamte Baum geladen wird. Stell dir ein Monorepo mit 50 Paketen und jeweils hunderten Dateien vor -- ohne diese Begrenzungen wuerde der Aufruf minutenlang dauern. Die Kombination aus beiden Parametern ist die effektivste Methode, um die Antwortzeit des MCP Servers unter einer Sekunde zu halten.
+
 ```bash
 # Nutze read_directory mit limit
 {

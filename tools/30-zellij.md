@@ -511,7 +511,7 @@ Die folgenden Beispiele zeigen typische zellij-Workflows vom einfachen Developme
 
 ### Beispiel 1: Basic Development Session
 
-Eine einfache Entwicklungs-Session mit Editor, Dev-Server und Git in separaten Bereichen:
+Dieses Beispiel zeigt den typischen Einstieg in eine zellij-Session fuer Web Development. Du startest eine benannte Session, splittest das Terminal in mehrere Bereiche und ordnest jedem Bereich eine Aufgabe zu. Das ist besonders nuetzlich, wenn du gleichzeitig Code editieren, den Dev-Server beobachten und Git-Status im Blick behalten willst. Ohne Multiplexer muessstest du staendig zwischen Terminals wechseln oder mehrere Fenster offen haben. Mit zellij hast du alles auf einem Blick und kannst mit Keybindings sofort zwischen den Panes wechseln. Im Terminal siehst du nach dem Start die zellij-Statusleiste mit den verfuegbaren Shortcuts.
 
 ```bash
 # Session für Web Development starten
@@ -525,6 +525,8 @@ zellij --session webapp-dev
 ```
 
 ### Beispiel 2: Full-Stack mit Layout
+
+Bei einem Full-Stack-Projekt brauchst du typischerweise drei Services gleichzeitig: Datenbank, Backend-API und Frontend. Manuell jedes Mal Panes zu erstellen und die richtigen Befehle einzugeben ist zeitaufwaendig und fehleranfaellig. Mit einem zellij-Layout definierst du die gesamte Anordnung einmal in einer KDL-Datei, und beim Start werden alle Panes automatisch erstellt und die Services gestartet. Stell dir vor, du arbeitest an einem MERN-Stack-Projekt (MongoDB, Express, React, Node): MongoDB laeuft links, die Express-API in der Mitte und die React-App rechts. Wenn du am naechsten Morgen weiterarbeitest, startest du mit einem einzigen Befehl die komplette Umgebung. Das spart taeglich mehrere Minuten Setup-Zeit und verhindert, dass du einen Service vergisst zu starten.
 
 **Layout erstellen:**
 ```kdl
@@ -555,11 +557,16 @@ layout {
 ```
 
 **Session starten:**
+
+Nachdem du das Layout als KDL-Datei gespeichert hast, startest du die gesamte Full-Stack-Umgebung mit einem einzigen Befehl. zellij liest die Layout-Datei, erstellt alle definierten Panes und fuehrt die angegebenen Commands automatisch aus. Du siehst sofort alle drei Services laufen -- MongoDB, die Express-API und die React-App. Falls ein Service nicht startet, erkennst du das direkt im entsprechenden Pane, ohne zwischen Terminals wechseln zu muessen. Diesen Befehl kannst du auch als Shell-Alias abspeichern, damit du die Umgebung noch schneller starten kannst.
+
 ```bash
 zellij --session mern-stack --layout mern
 ```
 
 ### Beispiel 3: DevOps Monitoring Dashboard
+
+Ein DevOps-Monitoring-Dashboard zeigt dir System-Ressourcen, Docker-Container und Logs gleichzeitig auf einem Bildschirm. Das ist besonders wertvoll, wenn du einen Deployment-Prozess ueberwachst oder nach der Ursache eines Produktions-Problems suchst. Stell dir vor, eine Anwendung wird langsam und du musst schnell pruefen, ob die CPU-Last zu hoch ist, ob ein Docker-Container abgestuerzt ist, oder ob Fehlermeldungen in den Logs auftauchen. Mit diesem Layout siehst du btop fuer Systemressourcen links, Docker-Container-Status rechts oben und Live-Logs rechts unten. Du kannst zwischen den Panes wechseln und bei Bedarf einzelne Bereiche im Vollbildmodus ansehen. Das erwartet dich im Terminal: Drei Live-Ansichten, die sich automatisch aktualisieren.
 
 ```kdl
 // ~/.config/zellij/layouts/devops.kdl
@@ -586,6 +593,8 @@ layout {
 
 ### Beispiel 4: Remote Development Session
 
+Remote Development ueber SSH ist einer der wichtigsten Anwendungsfaelle fuer Terminal Multiplexer. Wenn du auf einem Server arbeitest und die SSH-Verbindung abbricht -- sei es durch ein instabiles Netzwerk, einen Laptop der in den Schlafmodus geht, oder einen Router-Neustart -- verlierst du normalerweise deine gesamte Arbeit. Mit zellij laeuft deine Session auf dem Server weiter, egal was mit deiner lokalen Verbindung passiert. Stell dir vor, du fuehrst ein Datenbank-Schema-Update auf einem Produktionsserver durch, das 20 Minuten dauert. Ohne zellij muessstest du den gesamten Prozess neu starten, wenn die Verbindung abbricht. Mit zellij verbindest du dich einfach per SSH erneut, fuehrst `zellij attach` aus, und siehst genau den Stand, an dem du aufgehoert hast. Im Terminal siehst du nach dem Attach die vollstaendige Session mit allen Panes und ihrer Ausgabe.
+
 ```bash
 # SSH in Remote-Server
 ssh user@remote-server
@@ -606,6 +615,8 @@ zellij attach project-work
 
 ### Beispiel 5: Pair Programming Setup
 
+Pair Programming ueber die Kommandozeile funktioniert mit zellij besonders einfach. Der Host startet eine benannte Session, und der Kollege verbindet sich per SSH auf die gleiche Maschine und attachet sich an dieselbe Session. Beide sehen exakt den gleichen Bildschirminhalt und koennen gleichzeitig tippen -- perfekt fuer Code Reviews, gemeinsames Debugging oder das Einarbeiten neuer Teammitglieder. Im Vergleich zu Screen-Sharing-Tools wie Zoom gibt es keine Verzoegerung bei der Bildschirmaktualisierung, da beide direkt mit dem gleichen Terminal-Prozess verbunden sind. Das funktioniert besonders gut in Kombination mit einem Editor wie neovim, wo beide Personen in Echtzeit Aenderungen sehen. Beachte, dass der Gast SSH-Zugriff auf die Host-Maschine benoetigt.
+
 ```bash
 # Host startet geteilte Session
 zellij --session pair-coding
@@ -623,6 +634,8 @@ zellij attach pair-coding
 ```
 
 ### Beispiel 6: Multi-Project Workflow
+
+Wenn du an mehreren Projekten gleichzeitig arbeitest, kannst du jedes Projekt in einer eigenen zellij-Session mit eigenem Layout verwalten. Dieses Script automatisiert den morgendlichen Arbeitsstart: Es erstellt Sessions fuer jedes Projekt im Hintergrund (--daemon), jede mit dem passenden Layout. So stehen dir sofort alle Arbeitsumgebungen zur Verfuegung, ohne dass du sie manuell aufsetzen musst. Stell dir vor, du arbeitest an einer Haupt-App, einer API und einer Dokumentation gleichzeitig. Statt jeden Morgen 10 Minuten mit dem Setup zu verbringen, fuehrst du ein einziges Script aus und bist sofort arbeitsfaehig. Das Script attached am Ende automatisch zur Haupt-Session, und du kannst mit `zellij attach` jederzeit zu einer anderen Session wechseln. Tipp: Lege dieses Script als Alias in deiner Shell-Konfiguration ab.
 
 ```bash
 # Script für Morning Setup
@@ -654,6 +667,8 @@ zellij attach main-app
 
 ### Beispiel 7: Testing Workflow
 
+Ein Testing-Layout ist essenziell fuer testgetriebene Entwicklung (TDD). Mit diesem Layout siehst du deinen Code-Editor links (60% der Breite), den Test-Runner rechts oben und die Code-Coverage rechts unten. Der Test-Runner laeuft im Watch-Modus und fuehrt Tests automatisch aus, sobald du eine Datei speicherst. Die Coverage wird alle 5 Sekunden aktualisiert, sodass du sofort siehst, welche Bereiche deines Codes noch nicht getestet sind. Dieses Setup eliminiert den staendigen Wechsel zwischen Editor und Terminal und gibt dir sofortiges Feedback zu deinen Aenderungen. Im Terminal siehst du nach dem Start drei Panes: links einen leeren Editor-Bereich, rechts oben die laufenden Tests und rechts unten die Coverage-Uebersicht.
+
 ```kdl
 // ~/.config/zellij/layouts/testing.kdl
 layout {
@@ -675,7 +690,8 @@ layout {
 }
 ```
 
-Verwenden:
+Mit dem folgenden Befehl startest du die Testing-Session. Im Editor-Pane oeffnest du deine Quellcode-Dateien, waehrend der Test-Runner und die Coverage-Ansicht automatisch im Hintergrund aktualisiert werden. Du kannst mit den zellij-Keybindings zwischen den Panes wechseln, um Test-Ergebnisse im Detail zu pruefen. Besonders praktisch: Wenn ein Test fehlschlaegt, siehst du die Fehlermeldung sofort im Test-Runner-Pane, ohne den Editor zu verlassen. Durch den Watch-Modus wird jede Aenderung sofort validiert.
+
 ```bash
 zellij --session testing --layout testing
 
@@ -685,6 +701,8 @@ zellij --session testing --layout testing
 ```
 
 ### Beispiel 8: Data Science Workflow
+
+Data-Science-Projekte erfordern oft mehrere Tools gleichzeitig: Jupyter fuer interaktive Analyse, eine Python-REPL fuer schnelle Experimente, ein Daten-Viewer fuer CSV-Dateien und einen Systemmonitor um die Ressourcen-Auslastung zu beobachten. Dieses Layout organisiert alle vier Komponenten in einem einzigen Terminal-Fenster. Jupyter Lab nimmt den groessten Bereich ein (40%), da es das Hauptwerkzeug ist. Rechts daneben findest du IPython fuer schnelle Code-Snippets, VisiData fuer tabellarische Datenansicht und btop zur Ueberwachung der CPU- und RAM-Auslastung -- besonders wichtig bei grossen Datensaetzen. Stell dir vor, du trainierst ein Machine-Learning-Modell: Im Jupyter-Pane laeuft das Training, im btop-Pane siehst du ob der RAM knapp wird, und in der Python-REPL kannst du schnell Zwischenergebnisse inspizieren.
 
 ```kdl
 // ~/.config/zellij/layouts/ds.kdl
@@ -715,6 +733,8 @@ layout {
 
 ### Beispiel 9: Git Workflow Integration
 
+Git-intensive Arbeit profitiert enorm von einem Multi-Pane-Setup. In diesem Workflow hast du drei Bereiche: den Code-Editor fuer Aenderungen, lazygit als interaktive Git-Oberflaeche fuer Staging und Commits, und eine Live-Ansicht des Git-Graphen fuer den Branch-Ueberblick. Das ist besonders nuetzlich bei komplexen Merge-Situationen oder wenn du an mehreren Feature-Branches arbeitest. Stell dir vor, du reviewst Aenderungen vor einem Merge: Im Editor siehst du den Code, in lazygit kannst du einzelne Hunks stagen, und im Graph siehst du, wie sich die Branches zueinander verhalten. Durch das schnelle Umschalten zwischen den Panes kannst du in Sekunden zwischen Code-Aenderung, Commit und History-Pruefung wechseln.
+
 ```bash
 # Session für Git-intensive Arbeit
 zellij --session git-work
@@ -731,6 +751,8 @@ zellij --session git-work
 ```
 
 ### Beispiel 10: Docker Development
+
+Docker-basierte Entwicklung erfordert staendige Sichtbarkeit auf Container-Status, Logs und den eigentlichen Code. Dieses Layout zeigt dir links den Editor fuer Code-Aenderungen und rechts drei Panes fuer Docker Compose (Container starten), Live-Logs aller Container und eine aktualisierte Uebersicht aller laufenden Container. Das ist besonders hilfreich beim Debugging von Multi-Container-Anwendungen, wo du sehen musst, welcher Container Fehler wirft oder welcher nicht startet. Stell dir vor, du entwickelst eine Microservice-Architektur mit 5 Services: Wenn du einen Service aenderst und neu startest, siehst du sofort in den Logs ob er korrekt hochfaehrt, und im Container-Status ob er healthy wird. Der watch-Befehl aktualisiert die Container-Liste alle 3 Sekunden automatisch.
 
 ```kdl
 // ~/.config/zellij/layouts/docker-dev.kdl
@@ -757,7 +779,9 @@ layout {
 }
 ```
 
-### Beispiel 11: Floating Panes für Quick Tasks
+### Beispiel 11: Floating Panes fuer Quick Tasks
+
+Floating Panes sind temporaere Fenster, die ueber dem bestehenden Layout schweben und sich perfekt fuer schnelle Einmal-Aktionen eignen. Anders als regulaere Panes veraendern sie die bestehende Anordnung nicht. Du oeffnest ein Floating Pane mit Ctrl+p w, fuehrst deinen Befehl aus und schliesst es mit exit -- dein Layout bleibt unberuehrt. Das ist besonders nuetzlich, wenn du mitten in der Arbeit kurz etwas nachschauen musst: den Git-Status pruefen, eine Datei suchen oder einen API-Endpunkt testen. Stell dir vor, du editierst gerade eine Datei und willst schnell pruefen, ob ein bestimmtes File im Projekt existiert. Statt ein neues Pane zu splitten und danach wieder zusammenzufuegen, nutzt du einfach ein Floating Pane. Es verschwindet nach dem Schliessen spurlos.
 
 ```bash
 # In laufender Session:
@@ -786,7 +810,9 @@ exit
 
 > 💡 **Tipp**: Floating Panes (Ctrl+p w) eignen sich hervorragend fuer schnelle Git-Checks oder Log-Abfragen, ohne das aktuelle Layout zu stoeren.
 
-### Beispiel 12: Session als Daemon für Background Tasks
+### Beispiel 12: Session als Daemon fuer Background Tasks
+
+Der Daemon-Modus startet eine zellij-Session im Hintergrund, ohne ein Terminal-Fenster zu blockieren. Das ist ideal fuer langlebige Prozesse wie Build-Watcher, die kontinuierlich laufen sollen waehrend du in anderen Terminals arbeitest. Der Befehl startet den Build-Watch-Prozess in einer eigenen Session und gibt dir sofort die Kontrolle zurueck. Du kannst jederzeit mit `zellij attach` die Session oeffnen und den Output inspizieren, und mit Ctrl+o d wieder detachen. Stell dir vor, du hast ein grosses TypeScript-Projekt: Der Build-Watcher kompiliert bei jeder Datei-Aenderung automatisch, und du kannst bei Bedarf in die Session schauen, um Compile-Errors zu pruefen. Mit `zellij list-sessions` siehst du alle laufenden Daemon-Sessions auf einen Blick.
 
 ```bash
 # Long-running Process im Hintergrund
@@ -811,6 +837,9 @@ Ctrl+o d
 ### Claude kann zellij nutzen für:
 
 1. **Persistent Development Sessions**
+
+Claude Code kann in einer zellij-Session laufen, die Neustarts und Verbindungsabbrueche ueberlebt. Das ist besonders wertvoll bei langen Refactoring-Aufgaben oder Code-Analysen, die Stunden dauern koennen. Du startest die Session einmal, und selbst wenn dein Terminal abstuerzt oder du den Laptop zuklappt, laeuft Claude Code auf dem Server weiter. Beim naechsten Attach siehst du den gesamten bisherigen Output und kannst nahtlos weiterarbeiten. Das eliminiert das Risiko, Arbeit durch Verbindungsabbrueche zu verlieren.
+
 ```bash
 # Claude startet Development-Session
 zellij --session claude-dev --layout dev
@@ -820,6 +849,9 @@ zellij --session claude-dev --layout dev
 ```
 
 2. **Multi-Pane Code Analysis**
+
+Ein Multi-Pane-Setup ist ideal, wenn Claude Code Aenderungen vornimmt, die du sofort validieren willst. In Pane 1 editierst du Code oder beobachtest Claude Codes Aenderungen, in Pane 2 laufen die Tests automatisch im Watch-Modus, und in Pane 3 siehst du die Anwendungs-Logs. So erkennst du sofort, ob eine Aenderung Tests bricht oder Laufzeitfehler verursacht. Dieses Setup beschleunigt den Feedback-Zyklus erheblich, da du nicht zwischen verschiedenen Terminals wechseln musst.
+
 ```python
 # In Pane 1: Code editieren
 # In Pane 2: Tests laufen
@@ -828,6 +860,9 @@ zellij --session claude-dev --layout dev
 ```
 
 3. **Layout-basierte Workflows**
+
+Ein speziell fuer Claude Code optimiertes Layout teilt den Bildschirm in einen grossen Code-Bereich und kleinere Bereiche fuer Ausfuehrung und Analyse. Der Code-Bereich nimmt 60% der Breite ein, da dort die meiste visuelle Aufmerksamkeit benoetigt wird. Die rechte Seite ist horizontal geteilt: oben laufen die Befehle, die Claude Code ausfuehrt, und unten siehst du die Analyse-Ergebnisse. Dieses Layout laesst sich als KDL-Datei speichern und bei jedem Projektstart automatisch laden. Du sparst dir so das manuelle Aufteilen und hast sofort eine produktive Arbeitsumgebung.
+
 ```kdl
 // Claude-optimiertes Layout
 layout {
@@ -848,6 +883,9 @@ layout {
 ```
 
 4. **Automatisierte Session-Management**
+
+Dieses Script automatisiert das Erstellen von Projekt-Sessions mit dem passenden Layout. Du uebergibst den Projektnamen und optional ein Layout, und das Script startet eine benannte zellij-Session. Das ist besonders nuetzlich, wenn du haeufig zwischen Projekten wechselst und jedes Projekt ein anderes Layout braucht. Lege das Script in deinem PATH ab und rufe es einfach mit `start-session myproject fullstack` auf. Ohne Layout-Angabe wird das Standard-Layout "dev" verwendet.
+
 ```bash
 # Claude Script für Session-Setup
 #!/bin/bash
@@ -861,7 +899,10 @@ zellij --session "$PROJECT" --layout "$LAYOUT"
 # Claude arbeitet in strukturierter Umgebung
 ```
 
-5. **Floating Panes für Quick Checks**
+5. **Floating Panes fuer Quick Checks**
+
+Floating Panes eignen sich ideal fuer kurze Pruefungen, die Claude Code zwischendurch ausfuehren muss, ohne das bestehende Layout zu veraendern. Du oeffnest ein schwebendes Fenster, fuehrst schnell einen Test, eine Dateisuche oder einen Git-Status-Check durch und schliesst es wieder. Das Hauptlayout bleibt dabei vollstaendig erhalten. Das ist besonders nuetzlich bei iterativen Entwicklungsprozessen, wo du haeufig kleine Validierungen brauchst. Tipp: Nutze Ctrl+p w zum Oeffnen und tippe einfach exit wenn du fertig bist.
+
 ```bash
 # Claude öffnet floating pane für:
 # - Quick tests
@@ -871,6 +912,8 @@ zellij --session "$PROJECT" --layout "$LAYOUT"
 ```
 
 ### Workflow-Beispiel: Claude Code Review
+
+Ein Code-Review-Workflow in zellij nutzt vier Panes, um verschiedene Perspektiven auf die Aenderungen gleichzeitig zu zeigen. Im ersten Pane siehst du den Original-Code, im zweiten die modifizierte Version, im dritten eine Diff-Ansicht mit delta fuer farbkodierte Unterschiede, und im vierten den Test-Output. Claude Code navigiert zwischen diesen Panes und kann so fundiertes Feedback geben, das sowohl den Code-Stil als auch die funktionale Korrektheit beruecksichtigt. Dieses Setup ist besonders wertvoll bei grossen Pull Requests mit vielen geaenderten Dateien, wo ein einzelnes Terminal-Fenster nicht ausreicht.
 
 ```bash
 # 1. Session für Code Review starten
@@ -891,6 +934,9 @@ zellij --session code-review --layout review
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code + Test-Runner parallel
+
+Dieser Workflow zeigt die effektivste Art, Claude Code mit automatisierten Tests zu kombinieren. Du startest zellij mit zwei Panes: links laeuft Claude Code und nimmt Code-Aenderungen vor, rechts laufen die Tests im Watch-Modus. Sobald Claude Code eine Datei aendert, erkennt der Test-Runner die Aenderung und fuehrt die betroffenen Tests automatisch aus. So siehst du sofort, ob die Aenderung Tests bricht. Dieses Setup ist besonders wertvoll bei testgetriebener Entwicklung, wo schnelles Feedback der Schluessel zu Qualitaet ist.
+
 ```bash
 # zellij starten mit zwei Panes: Claude Code links, Tests rechts
 zellij --session claude-dev
@@ -901,6 +947,9 @@ npm test -- --watch
 ```
 
 ### Workflow 2: Layout fuer Claude Code Reviews
+
+Fuer Code Reviews laedst du ein spezielles Review-Layout, das drei Panes bereitstellt: eines fuer die Git-Diff-Ansicht, eines fuer Claude Code zur Analyse und eines fuer die Test-Ergebnisse. Claude Code kann die Aenderungen im Diff-Pane sehen und gleichzeitig die Test-Ergebnisse beruecksichtigen, um fundierte Review-Kommentare zu geben. Dieses Layout eignet sich besonders gut fuer Pull-Request-Reviews, wo du den Kontext der Aenderungen und deren Auswirkungen auf die Tests gleichzeitig sehen musst. Speichere das Layout als review.kdl in deinem zellij-Konfigurationsverzeichnis.
+
 ```bash
 # Review-Layout: Code-Aenderungen, Diff und Claude Code parallel
 zellij --layout ~/.config/zellij/layouts/review.kdl --session code-review
@@ -910,6 +959,9 @@ zellij --layout ~/.config/zellij/layouts/review.kdl --session code-review
 ```
 
 ### Workflow 3: Persistente Claude Code Session fuer lange Aufgaben
+
+Fuer langfristige Aufgaben wie das Refactoring eines gesamten Moduls startest du eine zellij-Session im Daemon-Modus. Die Session laeuft im Hintergrund auf dem Server weiter, auch wenn du dein Terminal schliesst oder die SSH-Verbindung abbricht. Claude Code kann darin stundenlang arbeiten, waehrend du andere Dinge erledigst. Wenn du den Fortschritt pruefen willst, verbindest du dich einfach mit `zellij attach` und siehst den gesamten bisherigen Output. Beachte, dass Sessions mit --daemon keinen Terminal-Fokus benoetigen und auch System-Neustarts ueberleben koennen.
+
 ```bash
 # Session im Hintergrund starten fuer langfristige Aufgaben
 zellij --session claude-longrun --daemon
@@ -1131,7 +1183,10 @@ theme "default"  # oder "dracula", "nord", etc.
 
 ## 💡 Pro-Tipps
 
-### Tipp 1: Layouts für jeden Workflow
+### Tipp 1: Layouts fuer jeden Workflow
+
+Eine gut organisierte Layout-Bibliothek ist das Fundament fuer produktive Arbeit mit zellij. Erstelle fuer jeden Workflow-Typ ein eigenes Layout und lege alle Dateien in einem zentralen Verzeichnis ab. So kannst du mit einem kurzen Alias-Befehl sofort das passende Layout starten. Die Layouts decken verschiedene Szenarien ab: Standard-Entwicklung, Full-Stack mit mehreren Services, Debugging mit Extra-Panes fuer Logs, Code Review mit Diff-Ansichten, und DevOps-Monitoring. Mit Shell-Aliases wie `zd` fuer Development oder `zf` fuer Fullstack sparst du weitere Tipparbeit. Im Laufe der Zeit wirst du deine Layouts verfeinern und an deine Beduerfnisse anpassen.
+
 ```bash
 # Erstelle Layout-Bibliothek
 ~/.config/zellij/layouts/
@@ -1150,6 +1205,9 @@ alias zo='zellij --layout ops'
 ```
 
 ### Tipp 2: Session-Namenkonvention
+
+Konsistente Session-Namen sind entscheidend, wenn du viele Sessions parallel betreibst. Zwei bewaehrte Formate sind `<project>-<context>-<date>` fuer zeitbezogene Sessions und `<team>-<project>-<type>` fuer Team-Umgebungen. So siehst du bei `zellij list-sessions` sofort, welche Session zu welchem Projekt und welchem Zweck gehoert. Das Datum im Namen ist besonders nuetzlich bei Debug-Sessions, die du nach einigen Tagen aufraumen willst. Vermeide generische Namen wie "dev" oder "work", da diese bei mehreren Projekten schnell zu Verwechslungen fuehren.
+
 ```bash
 # Format: <project>-<context>-<date>
 zellij --session webapp-dev-20240215
@@ -1163,6 +1221,9 @@ zellij --session devops-monitoring-main
 ```
 
 ### Tipp 3: Floating Panes als Scratchpad
+
+Ein Floating Pane als Scratchpad ist wie ein digitaler Notizblock, den du mit einem Tastendruck oeffnest. Mit dem Keybinding Alt+Space startest du sofort ein schwebendes Terminal-Fenster, in dem du schnelle Berechnungen mit bc durchfuehren, temporaere Notizen machen, den Git-Status pruefen oder Dateien in der Vorschau betrachten kannst. Das Scratchpad blockiert dein Hauptlayout nicht und schliesst sich beim Beenden automatisch. Im Gegensatz zu einem regulaeren Split wird die bestehende Pane-Anordnung nicht veraendert. Definiere den Keybinding in deiner config.kdl, um dieses Feature zu aktivieren.
+
 ```bash
 # Keybinding für instant scratchpad
 # In config.kdl:
@@ -1180,6 +1241,9 @@ bind "Alt Space" {
 ```
 
 ### Tipp 4: Auto-Start Sessions
+
+Mit diesem Snippet in deiner Shell-Konfiguration startest du automatisch eine zellij-Session, sobald du ein Terminal oeffnest. Das Script prueft zuerst, ob du bereits in einer zellij-Session bist (Variable ZELLIJ), um verschachtelte Sessions zu vermeiden. Dann schaut es, ob eine Session namens "main" existiert, und verbindet sich entweder damit oder erstellt eine neue mit dem dev-Layout. So arbeitest du immer innerhalb von zellij, ohne es manuell starten zu muessen. Das ist besonders nuetzlich, wenn du dein Terminal haeufig oeffnest und schliesst -- du landest immer in deiner bestehenden Arbeitsumgebung. Beachte, dass du die ZELLIJ-Variable pruefst, um Endlos-Schleifen zu vermeiden.
+
 ```bash
 # In ~/.zshrc oder ~/.bashrc
 if [[ -z "$ZELLIJ" ]]; then
@@ -1193,6 +1257,9 @@ fi
 ```
 
 ### Tipp 5: Session-Backup-Script
+
+Dieses Script sichert die Namen aller laufenden Sessions in eine Textdatei und kann sie nach einem System-Restart wieder erstellen. Das ist besonders nuetzlich auf Workstations, die regelmaessig neu gestartet werden, oder als Teil eines Backup-Workflows. Die Session-Namen werden in eine Backup-Datei geschrieben, und beim Wiederherstellen liest das Script die Datei Zeile fuer Zeile und erstellt jede Session im Daemon-Modus. Beachte, dass dabei nur die Session-Namen wiederhergestellt werden, nicht der Inhalt der Panes -- dafuer muessstest du die Sessions mit Layouts kombinieren. Fuehre das Backup-Script regelmaessig aus, z.B. als Cronjob vor dem Herunterfahren.
+
 ```bash
 #!/bin/bash
 # ~/.local/bin/zellij-backup
@@ -1209,6 +1276,9 @@ done < ~/.config/zellij/sessions-backup.txt
 ```
 
 ### Tipp 6: Custom Status Bar
+
+Die Status-Bar in zellij laesst sich umfangreich anpassen, um genau die Informationen anzuzeigen, die du brauchst. Im folgenden Beispiel wird links der aktuelle Modus und die Tab-Liste angezeigt, in der Mitte Benachrichtigungen und rechts Datum und Uhrzeit. Die Farben werden mit Hex-Codes definiert -- hier Blau fuer Tabs und Pink fuer die Zeit. Das ist besonders nuetzlich, wenn du sofort sehen willst, in welchem Modus du bist oder welcher Tab aktiv ist. Experimentiere mit den Format-Strings, um deine perfekte Status-Bar zu finden.
+
 ```kdl
 // Eigene Status-Informationen
 pane {
@@ -1221,6 +1291,9 @@ pane {
 ```
 
 ### Tipp 7: Copy Mode Mastery
+
+Der Copy Mode in zellij funktioniert wie der Visual Mode in vim und erlaubt es dir, durch den Scrollback-Buffer zu navigieren, Text zu suchen und in die Zwischenablage zu kopieren. Du aktivierst ihn mit Ctrl+s und kannst dann mit vim-artigen Keybindings navigieren. Die Wort-Navigation mit w und b ist besonders nuetzlich, um schnell durch Logzeilen zu springen. Mit / kannst du nach Patterns suchen und mit n/N zwischen den Treffern wechseln. Fuer das Kopieren drueckst du v fuer den Visual Mode, markierst den gewuenschten Text und drueckst y zum Kopieren. Der kopierte Text landet in der System-Zwischenablage, wenn du `copy_command` in deiner Config korrekt eingestellt hast.
+
 ```bash
 # In Copy Mode (Ctrl+s):
 # Navigation wie in Vim
@@ -1239,6 +1312,9 @@ q              # Quit copy mode
 ```
 
 ### Tipp 8: zellij + fzf Integration
+
+Die Kombination von zellij mit fzf (Fuzzy Finder) ermoeglicht blitzschnelles Wechseln zwischen Sessions und Layouts. Die Funktion `zs` listet alle laufenden Sessions auf, zeigt sie in einer fzf-Auswahl an und verbindet dich mit der ausgewaehlten Session. Die Funktion `zl` macht dasselbe fuer Layouts: Sie listet alle KDL-Dateien im Layout-Verzeichnis, laesst dich per Fuzzy-Search auswaehlen und startet zellij mit dem gewaehlten Layout. Das ist besonders nuetzlich, wenn du viele Sessions oder Layouts hast und den genauen Namen nicht im Kopf hast. Fuge diese Funktionen in deine Shell-Konfiguration ein, um sie dauerhaft verfuegbar zu machen.
+
 ```bash
 # Fuzzy session switcher
 function zs() {
@@ -1267,6 +1343,9 @@ function zl() {
 ```
 
 ### Tipp 9: Resize Shortcuts
+
+Im Resize-Modus von zellij kannst du die Groesse einzelner Panes anpassen. Mit diesen Keybindings verwendest du vim-artige Buchstaben (H, J, K, L) fuer die Richtung und = / - fuer allgemeines Vergroessern bzw. Verkleinern. Das ist schneller als die Standard-Methode mit Pfeiltasten und fuehlt sich fuer vim-Nutzer natuerlich an. Du aktivierst den Resize-Modus in zellij und verwendest dann diese Bindings, um Panes pixelgenau anzupassen. Das ist besonders nuetzlich, wenn du einem Pane temporaer mehr Platz geben willst, z.B. um eine lange Log-Ausgabe zu lesen.
+
 ```kdl
 // Schnelleres Resize
 keybinds {
@@ -1282,6 +1361,9 @@ keybinds {
 ```
 
 ### Tipp 10: Project-Specific Configs
+
+Projekt-spezifische zellij-Konfigurationen erlauben es dir, fuer jedes Projekt eigene Settings und Layouts zu definieren. Erstelle dafuer ein `.zellij/`-Verzeichnis im Projekt-Root mit einer config.kdl und einer layout.kdl. Wenn du zellij aus dem Projektverzeichnis startest und die Config-Dateien angibst, werden die projektspezifischen Einstellungen verwendet. Das ist besonders nuetzlich, wenn verschiedene Projekte unterschiedliche Layout-Anforderungen haben -- ein Frontend-Projekt braucht vielleicht einen Dev-Server-Pane, waehrend ein Backend-Projekt einen Datenbank-Pane benoetigt. Committe das `.zellij/`-Verzeichnis in dein Repository, damit auch Teammitglieder die gleiche Konfiguration verwenden koennen.
+
 ```bash
 # Per-Project zellij config
 project/

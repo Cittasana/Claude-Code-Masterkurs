@@ -651,7 +651,9 @@ curl -o /dev/null https://speed.cloudflare.com/__down?bytes=100000000
 
 ### bandwhich für Network-Debugging in AI-Workflows
 
-#### Monitoring-Setup für Development
+#### Monitoring-Setup fuer Development
+
+In einem typischen AI-Entwicklungs-Workflow nutzt du drei Terminals parallel: eines fuer bandwhich zur Netzwerk-Ueberwachung, eines fuer den Development-Server und eines fuer Tests und AI-Requests. bandwhich zeigt dir in Echtzeit, welche API-Endpunkte dein Server anspricht, wie viel Bandbreite jeder Request verbraucht und ob es Retry-Verhalten bei Fehlern gibt. Stell dir vor, du entwickelst eine Anwendung, die sowohl Anthropic als auch OpenAI APIs nutzt: bandwhich zeigt dir genau, welche API mehr Traffic erzeugt und ob die Requests effizient gebuendelt werden. Diese Erkenntnisse helfen bei der Optimierung deiner API-Nutzung.
 
 ```bash
 # Workflow: AI-App entwickeln, API-Calls analysieren
@@ -676,7 +678,9 @@ npm run dev
 # - Retry-Verhalten bei Failures?
 ```
 
-#### Context-Export für AI-Analyse
+#### Context-Export fuer AI-Analyse
+
+Dieses Script exportiert den aktuellen Netzwerk-Status als Text-Datei, die du als Kontext fuer Claude Code verwenden kannst. Es nimmt einen 10-Sekunden-Snapshot mit bandwhich auf und kombiniert ihn mit einer Liste aller etablierten Verbindungen via netstat. Die Ausgabe wird in die Zwischenablage kopiert, sodass du sie direkt in einen Claude Code Prompt einfuegen kannst. Das ist besonders nuetzlich, wenn du Netzwerk-Probleme debuggst und Claude Code um eine Analyse bitten willst. Claude Code kann aus den Daten erkennen, welche Prozesse unerwartet viel Traffic erzeugen oder ob Verbindungen zu verdaechtigen Servern bestehen.
 
 ```bash
 # Script: bandwidth-context-export.sh
@@ -707,18 +711,27 @@ cat $OUTPUT | xclip -selection clipboard  # Linux
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: API-Traffic waehrend Claude Code monitoren
+
+Wenn du Claude Code verwendest, generiert es API-Requests an die Anthropic-Server. Mit bandwhich siehst du in Echtzeit, wie viel Bandbreite diese Requests verbrauchen, wie haeufig Verbindungen aufgebaut werden und ob es Retry-Versuche gibt. Starte bandwhich in einem separaten Terminal-Pane und beobachte den Traffic waehrend Claude Code arbeitet. So erkennst du, ob langsame Antworten an Netzwerk-Engpaessen liegen oder an der Server-Seite. Der Prozess-Name zeigt dir genau, welche Anwendung den Traffic erzeugt.
+
 ```bash
 sudo bandwhich
 # Zeigt welche Prozesse Netzwerk-Traffic generieren
 ```
 
 ### Workflow 2: Netzwerk-Debugging bei langsamen Responses
+
+Wenn Claude Code langsam antwortet, hilft bandwhich bei der Ursachenanalyse. Mit dem grep-Filter siehst du nur den Traffic, der mit Anthropic oder Claude zusammenhaengt. Der --raw-Modus gibt die Daten in einem Format aus, das sich gut mit grep filtern laesst. So erkennst du sofort, ob die Verbindung zu den API-Servern steht, wie viel Daten uebertragen werden und ob es Verbindungsabbrueche gibt. Das ist besonders nuetzlich, wenn du zwischen Netzwerk-Problemen und API-Rate-Limits unterscheiden musst.
+
 ```bash
 # Bandwhich in separatem Terminal-Pane
 sudo bandwhich --raw | grep -i "anthropic\|claude"
 ```
 
 ### Workflow 3: Traffic-Analyse nach Interface
+
+Wenn du ueber VPN oder einen spezifischen Netzwerkadapter arbeitest, kannst du bandwhich auf ein bestimmtes Interface beschraenken. Das ist nuetzlich, um den Traffic durch den VPN-Tunnel isoliert zu betrachten oder um WiFi- und Ethernet-Traffic separat zu analysieren. Auf macOS ist en0 typischerweise das WiFi-Interface, auf Linux heisst es oft wlan0. Mit `ifconfig` oder `ip link show` findest du den richtigen Interface-Namen fuer dein System.
+
 ```bash
 sudo bandwhich -i en0
 ```
@@ -934,6 +947,8 @@ sudo nethogs
 
 ### 1. **Alias mit Interface-Detection**
 
+Diese Shell-Funktion erkennt automatisch das primaere Netzwerk-Interface und startet bandwhich darauf. Unter Linux liest sie den Interface-Namen aus der Default-Route, auf macOS faellt sie auf en0 zurueck. So musst du den Interface-Namen nie manuell angeben -- ein einfaches `bw` reicht. Die Funktion leitet auch zusaetzliche Argumente weiter, sodass du z.B. `bw --no-resolve` verwenden kannst. Fuege die Funktion in deine Shell-Konfiguration ein, um sie dauerhaft verfuegbar zu machen.
+
 ```bash
 # ~/.bashrc
 function bw() {
@@ -950,6 +965,8 @@ function bw() {
 
 ### 2. **Monitoring-Dashboard mit tmux**
 
+Dieses tmux-Setup erstellt ein umfassendes Monitoring-Dashboard mit drei Bereichen: bandwhich fuer Netzwerk-Traffic, htop fuer CPU- und Speicher-Auslastung und ein Ping-Monitor fuer Latenzmessungen. Alle drei Tools laufen gleichzeitig und geben dir ein vollstaendiges Bild der Systemleistung. Die tmux-Konfiguration kann als Datei gespeichert und bei Bedarf mit `tmux attach -t bandwidth` wieder aufgerufen werden. Das Dashboard eignet sich besonders fuer die Diagnose von Performance-Problemen, wo du Netzwerk, CPU und Latenz gleichzeitig beobachten musst.
+
 ```bash
 # ~/.tmux-bandwidth.conf
 new-session -s bandwidth \; \
@@ -964,6 +981,8 @@ new-session -s bandwidth \; \
 ```
 
 ### 3. **Bandwidth-Budget Tracking**
+
+Dieses Script kombiniert bandwhich (aktuelle Nutzung) mit vnstat (historische Daten) fuer ein umfassendes Bandwidth-Budget-Tracking. Der aktuelle Verbrauch wird mit einem 10-Sekunden-Snapshot gemessen, waehrend vnstat die monatlichen und taeglichen Gesamtwerte liefert. Das ist besonders nuetzlich, wenn du ein begrenztes Datenvolumen hast (z.B. bei mobilen Hotspots oder Cloud-Servern mit Traffic-Limits). Fuehre das Script regelmaessig aus oder integriere es in einen Cronjob, um den Verbrauch im Auge zu behalten.
 
 ```bash
 #!/bin/bash
@@ -983,7 +1002,9 @@ echo "=== Top Talkers Today ==="
 vnstat -d | tail -5
 ```
 
-### 4. **Process-Whitelist für Alerts**
+### 4. **Process-Whitelist fuer Alerts**
+
+Dieses Script ueberprueft den Netzwerk-Traffic gegen eine Whitelist bekannter Prozesse und loest einen Alarm aus, wenn ein unbekannter Prozess hohe Bandbreite verbraucht. Das ist ein einfaches Security-Monitoring-Tool: Wenn ploetzlich ein unbekannter Prozess Megabytes an Daten hochlaedt, koennte das auf Malware oder Datenleck hindeuten. Du definierst die erlaubten Prozesse in der WHITELIST-Variable und das Script prueft alle aktiven Verbindungen dagegen. Erweitere die Whitelist um alle Anwendungen, die in deiner Umgebung legitim Netzwerk-Traffic erzeugen.
 
 ```bash
 #!/bin/bash
@@ -1008,7 +1029,9 @@ while read -r line; do
 done <<< "$bandwhich_output"
 ```
 
-### 5. **Connection-Logger für Forensics**
+### 5. **Connection-Logger fuer Forensics**
+
+Fuer forensische Analysen ist ein kontinuierlicher Connection-Logger unverzichtbar. Dieses Script nimmt alle 5 Minuten einen Snapshot des Netzwerk-Traffics auf und speichert ihn mit Zeitstempel in einer taeglichen Log-Datei. Nach einem Sicherheitsvorfall kannst du die Logs durchsuchen und herausfinden, wann ein verdaechtiger Prozess aktiv war und mit welchen Servern er kommuniziert hat. Die Log-Dateien werden nach Datum benannt, sodass du sie leicht durchsuchen und bei Bedarf archivieren kannst. Fuehre das Script als Systemd-Service oder Cronjob aus.
 
 ```bash
 #!/bin/bash
@@ -1025,6 +1048,8 @@ done
 ```
 
 ### 6. **VPN-Performance-Tracker**
+
+Dieses Script misst die Netzwerk-Performance vor und nach der VPN-Aktivierung, sodass du den Performance-Impact deines VPN quantifizieren kannst. Es nimmt jeweils einen bandwhich-Snapshot und fuehrt einen Speedtest durch, einmal ohne VPN und einmal mit VPN. So siehst du genau, wie viel Bandbreite und Latenz der VPN-Tunnel kostet. Das ist besonders nuetzlich, wenn du entscheiden musst, ob du einen Split-Tunnel (nur bestimmter Traffic durch VPN) oder Full-Tunnel (aller Traffic durch VPN) verwenden sollst. Die Ergebnisse werden direkt auf der Konsole ausgegeben und koennen in eine Datei umgeleitet werden.
 
 ```bash
 #!/bin/bash
@@ -1048,6 +1073,8 @@ speedtest-cli --simple
 
 ### 7. **Container-Network-Debugging**
 
+Um den Netzwerk-Traffic innerhalb eines Docker-Containers zu analysieren, musst du bandwhich im Container selbst ausfuehren. Das Dockerfile installiert bandwhich und setzt die noetigen Capabilities. Beim Starten des Containers musst du die `--cap-add`-Flags fuer NET_RAW und NET_ADMIN setzen, damit bandwhich Netzwerk-Pakete lesen kann. Das ist besonders nuetzlich, wenn du Microservices debuggst und wissen willst, welche Verbindungen ein bestimmter Container aufbaut und wie viel Bandbreite er verbraucht. Alternativ kannst du bandwhich auch auf dem Host ausfuehren und nach docker-proxy-Prozessen filtern.
+
 ```bash
 # Docker-Container mit bandwhich-Access
 
@@ -1060,7 +1087,9 @@ RUN setcap cap_net_raw,cap_net_admin=+eip /usr/local/cargo/bin/bandwhich
 docker run --cap-add=NET_RAW --cap-add=NET_ADMIN myimage bandwhich
 ```
 
-### 8. **Systemd-Service für Continuous Monitoring**
+### 8. **Systemd-Service fuer Continuous Monitoring**
+
+Ein Systemd-Service ermoeglicht kontinuierliches Bandwidth-Monitoring, das beim Systemstart automatisch beginnt und bei Abstuerzen neu gestartet wird. Die Service-Unit definiert den Logger als einfachen Service, der als Root laeuft (noetig fuer Netzwerk-Capture) und bei Fehlern automatisch neu startet. Mit `systemctl enable` wird der Service fuer den automatischen Start konfiguriert, mit `systemctl start` sofort gestartet. Die Logs kannst du mit `journalctl -u bandwidth-monitor` einsehen. Das ist die professionelle Loesung fuer Server, auf denen du dauerhaft den Netzwerk-Traffic protokollieren willst.
 
 ```bash
 # /etc/systemd/system/bandwidth-monitor.service

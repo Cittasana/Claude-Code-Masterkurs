@@ -16,12 +16,18 @@ Der **SQLite MCP Server** gibt Claude Code Zugriff auf SQLite Datenbanken - perf
 ### Warum SQLite via MCP?
 
 **Ohne MCP**:
+
+Ohne den MCP Server muss Claude das `sqlite3`-Kommandozeilen-Tool verwenden und den Text-Output parsen. Die Ausgabe von `sqlite3` ist standardmaessig als Pipe-getrennte Tabelle formatiert, was fuer Menschen schwer lesbar und fuer Maschinen schwer parsbar ist. Stell dir vor, eine Spalte enthaelt ein Pipe-Zeichen (`|`) -- dann bricht das gesamte Parsing zusammen. Ausserdem erhaelt Claude keine Informationen ueber die Datentypen der Spalten. Fuer einfache Abfragen mag das funktionieren, aber bei komplexeren Queries mit Joins und Aggregationen wird der Text-Output schnell unuebersichtlich.
+
 ```bash
 sqlite3 mydb.sqlite "SELECT * FROM users"
 → Text-Output, schwer zu parsen
 ```
 
 **Mit MCP**:
+
+Mit dem SQLite MCP Server fuehrt Claude Queries ueber die MCP-Schnittstelle aus und erhaelt eine strukturierte JSON-Response zurueck, die sofort weiterverarbeitet werden kann. Der `database`-Parameter gibt den Pfad zur SQLite-Datei an, und `query` enthaelt die SQL-Abfrage. Claude kann die Ergebnisse direkt als Tabelle praesentieren, Charts erstellen oder weitere Analysen durchfuehren. Ein besonderer Vorteil: Der MCP Server kann auch In-Memory-Datenbanken (`:memory:`) verwenden, was perfekt fuer schnelle Prototypen und Tests ist. Die Fehlerbehandlung ist ebenfalls besser, da SQL-Fehler als strukturierte JSON-Objekte mit Fehlercode und Beschreibung zurueckkommen.
+
 ```json
 {
   "method": "sqlite_query",
@@ -61,7 +67,8 @@ Von der Installation bis zu den verfuegbaren MCP Tools -- SQLite ist oft bereits
 
 ### Installation & Setup
 
-Die folgenden Befehle installieren den SQLite MCP Server. SQLite selbst ist auf macOS und Linux meist schon vorhanden:
+Die folgenden Befehle installieren den SQLite MCP Server auf deinem System. Der erste Befehl installiert das npm-Paket global, und der zweite prueft, ob SQLite bereits auf deinem System vorhanden ist -- auf macOS und den meisten Linux-Distributionen ist es standardmaessig vorinstalliert. Im Gegensatz zu PostgreSQL brauchst du keinen separaten Datenbankserver zu starten, da SQLite direkt auf Dateiebene arbeitet. Stell dir vor, du willst schnell einen Prototyp mit Datenbankanbindung bauen -- mit SQLite erstellst du die Datenbank einfach als Datei in deinem Projektordner, ohne irgendetwas zu konfigurieren. Falls `sqlite3 --version` einen Fehler ausgibt, kannst du SQLite ueber deinen Paketmanager nachinstallieren (z.B. `brew install sqlite3` auf macOS).
+
 ```bash
 # MCP Server installieren
 npm install -g @modelcontextprotocol/server-sqlite
@@ -104,7 +111,8 @@ Die Konfiguration listet die erlaubten Datenbank-Dateien auf. Beachte, dass SQLi
 
 #### 1. `sqlite_query`
 
-Fuehrt eine SQL-Query auf einer bestimmten Datenbank-Datei aus und gibt die Ergebnisse als JSON zurueck:
+Dieses Tool fuehrt eine SQL-Query auf einer bestimmten Datenbank-Datei aus und gibt die Ergebnisse als JSON zurueck. Der `database`-Parameter erwartet den Dateinamen oder Pfad zur SQLite-Datei, die in der `databases`-Liste der Konfiguration eingetragen sein muss. Claude kann damit sowohl Lese- als auch Schreiboperationen durchfuehren, abhaengig von der `readOnly`-Einstellung. Stell dir vor, du hast eine `dev.db` mit Testdaten und fragst Claude "Wie viele Benutzer haben sich diese Woche registriert?" -- Claude formuliert die passende SQL-Query mit Datumsfilter und fuehrt sie aus. Das Ergebnis wird als JSON-Array zurueckgegeben, das Claude sofort in eine lesbare Tabelle umwandeln kann.
+
 ```json
 {
   "name": "sqlite_query",
@@ -118,7 +126,8 @@ Fuehrt eine SQL-Query auf einer bestimmten Datenbank-Datei aus und gibt die Erge
 
 #### 2. `sqlite_schema`
 
-Liest das Schema der gesamten Datenbank oder einer bestimmten Tabelle aus:
+Dieses Tool liest das Schema der gesamten Datenbank oder einer bestimmten Tabelle aus und liefert Informationen ueber alle Tabellen, Spalten, Datentypen und Indexes. Claude nutzt es typischerweise als ersten Schritt, um die Struktur einer SQLite-Datenbank zu verstehen, bevor es Queries schreibt. Stell dir vor, du hast eine SQLite-Datei aus einem anderen Projekt erhalten und willst wissen, welche Tabellen und Spalten sie enthaelt -- `sqlite_schema` gibt dir sofort eine vollstaendige Uebersicht. Die Response enthaelt die CREATE-Statements, die Claude nutzen kann, um die gleiche Struktur in einer neuen Datenbank zu replizieren. Das ist auch nuetzlich, um zu pruefen, ob eine Migration korrekt ausgefuehrt wurde.
+
 ```json
 {
   "name": "sqlite_schema",
@@ -131,7 +140,8 @@ Liest das Schema der gesamten Datenbank oder einer bestimmten Tabelle aus:
 
 #### 3. `sqlite_transaction`
 
-Fuehrt mehrere Queries als Transaktion aus -- entweder werden alle erfolgreich oder keine:
+Dieses Tool fuehrt mehrere Queries als eine atomare Transaktion aus -- entweder werden alle erfolgreich ausgefuehrt oder keine. Das ist besonders wichtig bei zusammenhaengenden Operationen, die nicht isoliert sinnvoll sind. In diesem Beispiel wird ein neuer User erstellt und gleichzeitig eine zugehoerige Bestellung angelegt, wobei `last_insert_rowid()` automatisch die ID des gerade erstellten Users verwendet. Stell dir vor, der INSERT in die `orders`-Tabelle schlaegt fehl -- ohne Transaktion haettest du einen User ohne Bestellung, mit Transaktion wird auch der User-INSERT zurueckgerollt. Claude nutzt Transaktionen automatisch, wenn es zusammengehoerige Datenoperationen ausfuehrt.
+
 ```json
 {
   "name": "sqlite_transaction",
@@ -154,7 +164,8 @@ Die folgenden Best Practices helfen dir, SQLite effizient und sicher einzusetzen
 
 ### 1. **In-Memory für Tests**
 
-In-Memory-Datenbanken existieren nur im Arbeitsspeicher und werden nach dem Test automatisch geloescht. Perfekt fuer schnelle Unit Tests:
+In-Memory-Datenbanken existieren nur im Arbeitsspeicher und werden nach dem Test automatisch geloescht, ohne Spuren auf der Festplatte zu hinterlassen. Perfekt fuer schnelle Unit Tests, da jeder Test mit einer frischen, leeren Datenbank startet und keine Aufraeum-Logik benoetigt wird. Der spezielle Datenbankname `:memory:` signalisiert SQLite, die Datenbank im RAM statt auf der Festplatte anzulegen. Stell dir vor, du hast 200 Unit Tests, die jeweils eine saubere Datenbank brauchen -- mit In-Memory-Datenbanken dauert das Erstellen und Befuellen jeweils nur Millisekunden statt Sekunden. Beachte, dass In-Memory-Datenbanken nicht zwischen verschiedenen Verbindungen geteilt werden koennen und alle Daten beim Schliessen der Verbindung verloren gehen.
+
 ```javascript
 // Perfekt für Unit Tests
 const testDb = ':memory:';  // In-Memory DB
@@ -169,7 +180,8 @@ await sqlite.query({
 
 ### 2. **WAL Mode für Concurrency**
 
-Write-Ahead Logging erlaubt gleichzeitiges Lesen und Schreiben, was die Standard-Sperre deutlich entschaerft:
+Write-Ahead Logging (WAL) erlaubt gleichzeitiges Lesen und Schreiben, was die Standard-Sperre deutlich entschaerft. Im Default-Modus sperrt SQLite die gesamte Datenbank bei jedem Schreibvorgang, sodass Leser warten muessen. Mit WAL koennen Leser parallel zum Schreiber arbeiten, weil Aenderungen erst in eine separate WAL-Datei geschrieben und spaeter in die Hauptdatenbank uebernommen werden. Stell dir vor, deine Anwendung liest Daten, waehrend der MCP Server gleichzeitig schreibt -- ohne WAL wuerde einer von beiden mit einem "database is locked"-Fehler abbrechen. Aktiviere WAL einmalig pro Datenbank, die Einstellung bleibt dauerhaft gespeichert. Die WAL-Datei wird automatisch verwaltet und braucht keinen manuellen Eingriff.
+
 ```sql
 -- Enable Write-Ahead Logging für bessere Concurrency
 PRAGMA journal_mode=WAL;
@@ -177,7 +189,8 @@ PRAGMA journal_mode=WAL;
 
 ### 3. **Foreign Keys aktivieren**
 
-SQLite erzwingt Foreign Keys standardmaessig nicht. Aktiviere sie explizit, um referentielle Integritaet sicherzustellen:
+SQLite erzwingt Foreign Keys standardmaessig nicht, was bedeutet, dass du ohne diese Einstellung problemlos Bestellungen fuer nicht-existierende Benutzer erstellen koenntest. Aktiviere Foreign Keys explizit mit diesem PRAGMA-Befehl, um referentielle Integritaet sicherzustellen. Beachte, dass dieser Befehl bei jeder neuen Verbindung erneut ausgefuehrt werden muss -- er wird nicht dauerhaft gespeichert. Stell dir vor, du loeschst einen User, der noch aktive Bestellungen hat -- ohne Foreign Keys bleiben verwaiste Bestellungen in der Datenbank zurueck, mit Foreign Keys wird das Loeschen blockiert oder die Bestellungen werden kaskadiert geloescht (je nach ON DELETE-Regel). Claude aktiviert diese Option automatisch, wenn es eine Datenbank mit Relationen erstellt.
+
 ```sql
 -- Foreign Keys sind default OFF in SQLite
 PRAGMA foreign_keys = ON;
@@ -406,12 +419,18 @@ FROM users;
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Lokale Datenbank erstellen
+
+Claude kann ueber den SQLite MCP Server komplette Datenbankstrukturen erstellen, von der Tabellendefinition bis zur Befuellung mit Testdaten. Du beschreibst einfach, was du brauchst, z.B. "Erstelle eine SQLite-Datenbank fuer eine Todo-App", und Claude generiert die CREATE TABLE Statements mit sinnvollen Spalten, Datentypen und Constraints. Stell dir vor, du willst in 5 Minuten einen Prototyp mit persistenter Datenhaltung haben -- Claude erstellt die Datenbank, fuellt sie mit Beispieldaten und gibt dir die fertigen CRUD-Queries. Die Datenbankdatei wird direkt in deinem Projektverzeichnis angelegt und kann sofort von deiner Anwendung verwendet werden.
+
 ```bash
 # Claude Code erstellt und verwaltet SQLite-Datenbanken ueber MCP
 # "Erstelle eine SQLite-Datenbank fuer eine Todo-App"
 ```
 
 ### Workflow 2: MCP Konfiguration
+
+Diese minimale Konfiguration verbindet den SQLite MCP Server mit einer bestimmten Datenbankdatei. Der Pfad zur `.db`-Datei wird als letztes Argument im `args`-Array uebergeben und muss entweder absolut oder relativ zum Arbeitsverzeichnis sein. Falls die Datei noch nicht existiert, wird sie beim ersten Zugriff automatisch erstellt -- das ist ein grosser Vorteil von SQLite gegenueber PostgreSQL, wo du die Datenbank erst manuell anlegen musst. Du kannst den Pfad auch auf `:memory:` setzen, um eine reine In-Memory-Datenbank ohne Festplattennutzung zu verwenden. Fuer mehrere Datenbanken fuege einfach weitere Pfade als Argumente hinzu oder nutze die `databases`-Konfiguration aus der ausfuehrlichen Konfiguration weiter oben.
+
 ```json
 {
   "mcpServers": {
@@ -424,6 +443,9 @@ FROM users;
 ```
 
 ### Workflow 3: Daten-Analyse
+
+Claude kann SQLite-Datenbanken als Analysetool nutzen, indem es SQL-Aggregationen, Gruppierungen und Berechnungen ausfuehrt und die Ergebnisse als Reports praesentiert. Stell dir vor, du hast Verkaufsdaten in einer SQLite-Datenbank und fragst Claude "Welche Produkte laufen am besten?" -- Claude schreibt die passende SQL-Query mit GROUP BY und ORDER BY und praesentiert die Ergebnisse als uebersichtliche Tabelle. Claude kann auch Trends erkennen, indem es Zeitreihen analysiert und Veraenderungen gegenueber der Vorperiode berechnet. Das macht SQLite mit dem MCP Server zu einem schnellen, lokalen Analyse-Tool, das ohne externe BI-Software funktioniert.
+
 ```bash
 # "Analysiere die Verkaufsdaten in der SQLite-Datenbank und zeige Trends"
 # Claude liest Tabellen, fuehrt Queries aus und erstellt Reports

@@ -61,7 +61,8 @@ Das Setup erfordert einen GitHub Personal Access Token und die MCP-Server-Konfig
 
 #### 2. MCP Server installieren
 
-Der folgende Befehl installiert den GitHub MCP Server global:
+Der folgende Befehl installiert den GitHub MCP Server global auf deinem System. Im Gegensatz zu manchen anderen MCP Servern benoetigt der GitHub Server zwingend einen Personal Access Token, um mit der GitHub API zu kommunizieren -- ohne Token funktioniert keine einzige Operation. Das Paket selbst ist leichtgewichtig und fungiert nur als Vermittler zwischen Claude und der GitHub REST API. Nach der Installation musst du den Token in der Konfiguration hinterlegen (siehe naechster Schritt). Beachte, dass der Server auch mit GitHub Enterprise funktioniert, wenn du die Base-URL entsprechend anpasst.
+
 ```bash
 npm install -g @modelcontextprotocol/server-github
 ```
@@ -96,7 +97,8 @@ Die Konfiguration verbindet den MCP Server mit deinem GitHub Account. Der Token 
 
 #### 1. `github_create_pr`
 
-Erstellt einen Pull Request mit Titel, Beschreibung und Quell-/Ziel-Branch:
+Dieses Tool erstellt einen Pull Request mit Titel, Beschreibung und Quell-/Ziel-Branch auf GitHub. Der `head`-Parameter ist der Branch mit deinen Aenderungen, und `base` ist der Ziel-Branch (meistens `main`). Der `body`-Parameter akzeptiert Markdown-Formatierung, sodass Claude strukturierte PR-Beschreibungen mit Checklisten, Code-Snippets und Links erstellen kann. Stell dir vor, du hast ein Feature auf einem Branch implementiert und sagst Claude "Erstelle einen PR" -- Claude analysiert die Diffs, generiert eine ausfuehrliche Beschreibung mit Zusammenfassung, Aenderungsliste und Testhinweisen. Das spart dir die manuelle PR-Erstellung und sorgt fuer einheitlich formatierte Beschreibungen. Beachte, dass der Branch vorher gepusht sein muss, damit GitHub ihn kennt.
+
 ```json
 {
   "name": "github_create_pr",
@@ -113,7 +115,8 @@ Erstellt einen Pull Request mit Titel, Beschreibung und Quell-/Ziel-Branch:
 
 #### 2. `github_list_issues`
 
-Listet Issues nach Status und Labels gefiltert auf. Ideal fuer Issue-Triage und Uebersicht:
+Dieses Tool listet Issues nach Status und Labels gefiltert auf und ist ideal fuer Issue-Triage, Sprint-Planung und Uebersichten. Der `state`-Parameter filtert nach offenen, geschlossenen oder allen Issues, waehrend `labels` nach spezifischen Labels filtert -- z.B. nur Issues mit `bug` und `priority-high`. Stell dir vor, du willst wissen, welche kritischen Bugs noch offen sind -- mit den richtigen Filtern bekommst du sofort eine priorisierte Liste. Claude kann die Ergebnisse automatisch zusammenfassen und nach Dringlichkeit sortieren. Die Response enthaelt fuer jedes Issue den Titel, die Beschreibung, Labels, Zuweisungen und den Zeitpunkt der letzten Aktivitaet.
+
 ```json
 {
   "name": "github_list_issues",
@@ -128,7 +131,8 @@ Listet Issues nach Status und Labels gefiltert auf. Ideal fuer Issue-Triage und 
 
 #### 3. `github_create_issue`
 
-Erstellt ein neues Issue mit Titel, Beschreibung, Labels und Zuweisungen:
+Dieses Tool erstellt ein neues Issue auf GitHub mit Titel, Beschreibung, Labels und Zuweisungen. Der `body`-Parameter unterstuetzt Markdown-Formatierung fuer strukturierte Bug-Reports oder Feature-Requests mit Checklisten und Code-Beispielen. Mit `labels` kategorisierst du das Issue sofort, und `assignees` weist es einem oder mehreren Teammitgliedern zu. Stell dir vor, Claude findet beim Code Review einen Bug -- es kann automatisch ein Issue mit allen relevanten Details erstellen, den betroffenen Code verlinken und das Issue dem zustaendigen Entwickler zuweisen. Das spart den manuellen Schritt, zwischen Code Editor und GitHub-Webinterface zu wechseln.
+
 ```json
 {
   "name": "github_create_issue",
@@ -145,7 +149,8 @@ Erstellt ein neues Issue mit Titel, Beschreibung, Labels und Zuweisungen:
 
 #### 4. `github_review_pr`
 
-Erstellt ein Review fuer einen Pull Request. Der `event`-Parameter bestimmt, ob es ein Kommentar, eine Genehmigung oder eine Aenderungsanforderung ist:
+Dieses Tool erstellt ein Review fuer einen Pull Request, was den Kern des Code-Review-Workflows darstellt. Der `event`-Parameter bestimmt den Typ des Reviews: `COMMENT` fuer allgemeines Feedback, `APPROVE` fuer eine Genehmigung und `REQUEST_CHANGES` fuer eine Aenderungsanforderung. Claude kann den PR-Diff analysieren, potenzielle Probleme identifizieren (fehlende Fehlerbehandlung, Performance-Issues, Sicherheitsluecken) und ein detailliertes Review mit Inline-Kommentaren erstellen. Stell dir vor, du bittest Claude "Review den PR #123" -- es liest alle geaenderten Dateien, prueft Best Practices und gibt konstruktives Feedback. Das ersetzt zwar nicht das menschliche Review, beschleunigt aber den Prozess erheblich, indem offensichtliche Probleme frueh erkannt werden.
+
 ```json
 {
   "name": "github_review_pr",
@@ -161,7 +166,8 @@ Erstellt ein Review fuer einen Pull Request. Der `event`-Parameter bestimmt, ob 
 
 #### 5. `github_get_repo_stats`
 
-Ruft allgemeine Repository-Statistiken wie Stars, Forks und Contributor-Anzahl ab:
+Dieses Tool ruft allgemeine Repository-Statistiken wie Stars, Forks, offene Issues und Contributor-Anzahl ab. Es ist besonders nuetzlich, um einen schnellen Ueberblick ueber den Zustand und die Aktivitaet eines Projekts zu bekommen. Stell dir vor, du willst wissen, ob ein Open-Source-Projekt aktiv gepflegt wird -- die Anzahl der Stars, Commits und Contributors gibt dir schnell Aufschluss. Claude kann diese Daten nutzen, um woechentliche Reports ueber die Projektaktivitaet zu erstellen oder Trends ueber die Zeit zu verfolgen. Die Response enthaelt alle wichtigen Metriken in einem einzelnen, kompakten JSON-Objekt.
+
 ```json
 {
   "name": "github_get_repo_stats",
@@ -190,6 +196,8 @@ Ruft allgemeine Repository-Statistiken wie Stars, Forks und Contributor-Anzahl a
 
 ### 1. **Structured PR Descriptions**
 
+Einheitlich strukturierte PR-Beschreibungen machen Code Reviews effizienter, weil der Reviewer sofort weiss, wo er die wichtigen Informationen findet. Dieses Template enthaelt die fuenf wichtigsten Sektionen: eine kurze Zusammenfassung, die Liste der Aenderungen, den Testplan, optionale Screenshots und zugehoerige Issues. Claude kann dieses Template automatisch befuellen, indem es die Diffs analysiert und die relevanten Informationen extrahiert. Stell dir vor, jeder PR in deinem Projekt sieht gleich aus -- Reviews werden schneller, weil der Reviewer das Format kennt und nicht nach Informationen suchen muss. Definiere das Template als `.github/PULL_REQUEST_TEMPLATE.md` in deinem Repository, damit es bei jedem neuen PR automatisch vorausgefuellt wird.
+
 ```javascript
 // Template für PR Descriptions
 const prTemplate = {
@@ -204,6 +212,8 @@ const prTemplate = {
 
 ### 2. **Auto-Labeling Issues**
 
+Automatisches Labeling spart Zeit bei der Issue-Triage, indem Claude anhand des Titels und der Beschreibung die passenden Labels zuweist. Die Funktion prueft den Issue-Titel auf Keywords wie "bug", "feat" oder "urgent" und fuegt die entsprechenden Labels hinzu. Stell dir vor, 20 neue Issues kommen rein -- anstatt jedes einzeln zu lesen und zu labeln, kann Claude alle in Sekunden kategorisieren. Du kannst die Keyword-Erkennung beliebig erweitern, z.B. "crash" oder "error" automatisch als `bug` labeln. Claude kann auch den Issue-Body analysieren, um genauere Labels zu vergeben, z.B. `frontend` oder `backend` basierend auf den erwaenhnten Dateien.
+
 ```javascript
 async function autoLabel(issue) {
   const labels = [];
@@ -217,6 +227,8 @@ async function autoLabel(issue) {
 ```
 
 ### 3. **PR Size Limits**
+
+Grosse Pull Requests mit Hunderten von geaenderten Zeilen sind schwer zu reviewen und fuehren haeufig dazu, dass Reviewer oberlaechlich drueberschauen und Probleme uebersehen. Diese Funktion prueft die Groesse eines PRs und postet automatisch eine Warnung, wenn mehr als 500 Zeilen geaendert wurden. Stell dir vor, ein Entwickler reicht einen PR mit 2.000 geaenderten Zeilen ein -- Claude weist freundlich darauf hin, dass der PR in kleinere, leichter reviewbare Teile aufgeteilt werden sollte. Die Schwelle von 500 Zeilen ist ein gaengiger Richtwert, den du an die Praeferenzen deines Teams anpassen kannst. Studien zeigen, dass die Review-Qualitaet ab 200-400 geaenderten Zeilen deutlich abnimmt.
 
 ```javascript
 async function checkPRSize(pr) {
@@ -506,12 +518,18 @@ github.update_branch_protection({
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Issues als Context laden
+
+In diesem maechtigsten Workflow nutzt Claude GitHub Issues als Aufgabenbeschreibung und implementiert die gewuenschte Funktion direkt. Claude liest zuerst das Issue mit allen Details, Kommentaren und verlinkten Diskussionen, versteht dann die Anforderung und generiert den passenden Code. Stell dir vor, du hast ein Issue "Implementiere Dark Mode" -- Claude liest die Beschreibung, sieht die Akzeptanzkriterien und die Design-Referenzen, und erstellt dann den kompletten Code inklusive Tests. Das verbindet Issue-Tracking nahtlos mit der Code-Generierung, ohne dass du die Anforderungen nochmal separat beschreiben musst.
+
 ```bash
 # "Lies Issue #42 und implementiere die beschriebene Funktion"
 # Claude nutzt GitHub MCP um Issue-Details zu laden
 ```
 
 ### Workflow 2: MCP Konfiguration
+
+Diese Konfiguration verbindet den GitHub MCP Server mit deinem GitHub Account ueber einen Personal Access Token. Der Token wird als Umgebungsvariable `GITHUB_PERSONAL_ACCESS_TOKEN` uebergeben und muss die Berechtigungen `repo`, `workflow` und `read:org` haben. Ersetze `ghp_xxxx` durch deinen tatsaechlichen Token, den du unter GitHub Settings > Developer settings > Personal Access Tokens erstellen kannst. Beachte, dass der Token im Klartext in der Konfigurationsdatei steht -- speichere die Datei deshalb nicht in einem Git-Repository, oder nutze stattdessen eine Umgebungsvariable aus deiner Shell-Konfiguration. Fuer Teams empfiehlt sich ein GitHub App Token statt eines persoenlichen Tokens, da dieser feinere Berechtigungen erlaubt.
+
 ```json
 {
   "mcpServers": {
@@ -527,6 +545,9 @@ github.update_branch_protection({
 ```
 
 ### Workflow 3: PR-Review Workflow
+
+Claude kann Pull Requests umfassend reviewen, indem es den Diff liest, den Code analysiert und ein strukturiertes Review mit Inline-Kommentaren erstellt. Claude prueft dabei typische Probleme wie fehlende Fehlerbehandlung, potenzielle Performance-Issues, Sicherheitsluecken und Abweichungen von Best Practices. Stell dir vor, du bittest Claude "Review PR #15" -- es liest alle geaenderten Dateien, versteht den Kontext anhand der PR-Beschreibung und gibt konstruktives, spezifisches Feedback zu jeder problematischen Stelle. Das Review wird direkt auf GitHub gepostet, sodass der PR-Autor die Kommentare inline sehen kann. Claude kann auch vorherige Review-Kommentare lesen und pruefen, ob sie adressiert wurden.
+
 ```bash
 # "Review den PR #15 und schlage Verbesserungen vor"
 # Claude liest PR-Diffs, Kommentare und erstellt Review
@@ -542,7 +563,12 @@ github.update_branch_protection({
 
 **Symptom**: `Error: 401 Unauthorized`
 
-**Lösung**:
+**Ursache**: Der Personal Access Token ist ungueltig, abgelaufen oder hat nicht die benoetigten Berechtigungen. GitHub Tokens koennen ein Ablaufdatum haben, das du beim Erstellen festlegst.
+
+**Loesung**:
+
+Pruefe zuerst, ob der Token die benoetigten Scopes hat: `repo` fuer Repository-Zugriff, `workflow` fuer GitHub Actions und `read:org` fuer Organisations-Daten. Falls der Token abgelaufen ist, musst du auf der GitHub-Website einen neuen generieren und ihn in der MCP-Konfiguration aktualisieren. Stelle sicher, dass keine zusaetzlichen Leerzeichen oder Zeilenumbrueche im Token-Wert enthalten sind. Teste den Token mit `curl -H "Authorization: token ghp_xxxx" https://api.github.com/user`, um zu pruefen, ob er funktioniert.
+
 ```bash
 # Check Token Permissions
 # Benötigt: repo, workflow, read:org
@@ -555,7 +581,12 @@ https://github.com/settings/tokens
 
 **Symptom**: `Error: 403 API rate limit exceeded`
 
-**Lösung**:
+**Ursache**: Du hast die GitHub API Rate Limits ueberschritten. Authentifizierte Anfragen erlauben 5.000 Requests pro Stunde, nicht-authentifizierte nur 60. Bei intensiver Nutzung (z.B. Issue-Triage mit vielen API-Aufrufen) kann das Limit schnell erreicht werden.
+
+**Loesung**:
+
+Pruefe den aktuellen Rate-Limit-Status und warte, bis das Limit zurueckgesetzt wird. Die Reset-Zeit wird im Response-Header mitgeteilt. Du kannst auch die Anzahl der API-Aufrufe reduzieren, indem du Batch-Anfragen nutzt und Ergebnisse cachest.
+
 ```javascript
 // Check Rate Limit
 const rateLimit = await github.getRateLimit();
@@ -571,7 +602,12 @@ if (rateLimit.remaining < 10) {
 
 **Symptom**: Can't create PR
 
-**Lösung**:
+**Ursache**: Der Quell-Branch existiert nicht auf dem Remote, es gibt bereits einen PR fuer diesen Branch, oder der Ziel-Branch (base) ist falsch konfiguriert. Haeufig wird vergessen, den lokalen Branch vor der PR-Erstellung zu pushen.
+
+**Loesung**:
+
+Pruefe zuerst, ob der Branch auf dem Remote existiert, und ob bereits ein PR fuer diesen Branch offen ist. Falls der Branch noch nicht gepusht wurde, fuehre `git push -u origin feature-name` aus. Wenn bereits ein PR existiert, musst du den bestehenden PR aktualisieren statt einen neuen zu erstellen.
+
 ```bash
 # Check if Branch exists
 git branch -r | grep feature-name
@@ -607,6 +643,8 @@ gh pr list --head feature-name
 
 ### 1. Combine Git + GitHub MCP
 
+Die Kombination von Git MCP (fuer lokale Operationen) und GitHub MCP (fuer Remote-Operationen) ergibt einen vollstaendigen End-to-End-Workflow. Claude kann lokal committen, pushen und dann automatisch einen PR auf GitHub erstellen -- alles in einer einzigen Interaktion. Stell dir vor, du sagst Claude "Committe meine Aenderungen und erstelle einen PR" -- es fuehrt den lokalen Commit mit einer generierten Message durch, pusht den Branch und erstellt den PR mit einer ausfuehrlichen Beschreibung. Dieser kombinierte Workflow spart mehrere manuelle Schritte und stellt sicher, dass PR-Beschreibung und Commit-Messages konsistent sind.
+
 ```javascript
 // Local: Git MCP
 await git.commit({ message: "feat: Add feature" });
@@ -621,6 +659,8 @@ await github.create_pr({
 
 ### 2. Automated PR Templates
 
+Claude kann bestehende PR-Templates aus deinem Repository automatisch lesen und befuellen, sodass jeder PR deinem Team-Standard entspricht. Das Template wird aus `.github/pull_request_template.md` gelesen, und Claude fuellt die Platzhalter basierend auf den tatsaechlichen Code-Aenderungen aus. Stell dir vor, dein Template hat Sektionen fuer "Changes", "Testing" und "Breaking Changes" -- Claude analysiert den Diff und befuellt jede Sektion mit den relevanten Informationen. Das stellt sicher, dass keine wichtige Information vergessen wird und jeder PR die gleiche Struktur hat. Du musst nur einmal das Template definieren, und Claude kuemmert sich um den Rest.
+
 ```javascript
 const prTemplate = await filesystem.read_file(".github/pull_request_template.md");
 
@@ -631,6 +671,8 @@ await github.create_pr({
 ```
 
 ### 3. CI Status Checker
+
+Diese Funktion wartet darauf, dass alle CI-Checks fuer einen PR abgeschlossen sind, und gibt das Ergebnis zurueck. Das ist nuetzlich in automatisierten Workflows, in denen Claude nach dem Erstellen eines PRs warten soll, bis die Tests durchgelaufen sind, bevor es weitere Aktionen ausfuehrt. Die Funktion pollt alle 30 Sekunden den Check-Status, bis er `completed` ist. Stell dir vor, Claude erstellt einen PR und wartet automatisch auf die CI-Ergebnisse -- bei Erfolg merged es den PR, bei Fehlschlag analysiert es die Logs und schlaegt Fixes vor. Beachte, dass das Polling-Intervall von 30 Sekunden an die typische CI-Laufzeit angepasst werden sollte.
 
 ```javascript
 async function waitForCI(pr_number) {

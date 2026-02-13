@@ -775,16 +775,25 @@ cat pyproject.toml | claude "Migrate black/isort config to ruff.toml"
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Python-Code nach Claude Code pruefen
+
+Nachdem Claude Code Python-Dateien generiert oder geaendert hat, prueft dieser Befehl den Code auf PEP-8-Violations, ungenutzte Imports, Sicherheitsprobleme und andere Best-Practice-Verstoesse. Der `--fix`-Flag behebt automatisch alle sicher fixbaren Probleme, wie z.B. das Entfernen ungenutzter Imports oder die Modernisierung alter String-Formatierung zu F-Strings. Stell dir vor, Claude hat ein neues Python-Modul mit 10 Funktionen erstellt -- ruff prueft in unter einer Sekunde, ob der Code den Projektstandards entspricht, und fixt einfache Probleme automatisch. Das ist deutlich schneller als flake8 oder pylint und gibt dir sofortiges Feedback zur Code-Qualitaet.
+
 ```bash
 ruff check src/ --fix
 ```
 
 ### Workflow 2: Formatierung korrigieren
+
+Ruff format ist ein Drop-in-Replacement fuer black und formatiert Python-Code in einen einheitlichen, gut lesbaren Stil. Nach einer Claude Code Session kann der generierte Code leicht von deinem Projektstil abweichen, z.B. bei der Zeilenlaenge oder dem String-Quoting. Dieser Befehl bringt alle Dateien im src-Verzeichnis auf den gleichen Stand, sodass AI-generierter und manuell geschriebener Code nicht mehr unterscheidbar sind. Stell dir vor, Claude hat eine Funktion mit 120 Zeichen langen Zeilen generiert, waehrend dein Projekt eine Grenze von 100 Zeichen hat -- ruff format bricht die Zeilen automatisch um. Die Formatierung dauert selbst bei tausenden Dateien nur Bruchteile einer Sekunde.
+
 ```bash
 ruff format src/
 ```
 
 ### Workflow 3: Spezifische Regeln erzwingen
+
+Mit der `--select`-Option kannst du gezielt bestimmte Rule-Kategorien pruefen, ohne die gesamte Konfiguration zu laden. E steht fuer pycodestyle-Errors, W fuer Warnings und F fuer Pyflakes-Checks wie ungenutzte Variablen und undefinierte Namen. Das ist nuetzlich, wenn du einen schnellen Basis-Check machen willst, ohne von hunderten Warnings ueberwaeltigt zu werden. Stell dir vor, du hast Claude Code gebeten, eine groessere Refaktorierung durchzufuehren, und willst nur die grundlegendsten Fehler pruefen -- dieser Befehl konzentriert sich auf die wichtigsten Checks und ignoriert stilistische Regeln. Der `--fix`-Flag behebt gefundene Probleme automatisch, wo moeglich.
+
 ```bash
 ruff check --select E,W,F --fix .
 ```
@@ -941,6 +950,9 @@ extend-exclude = ["generated_file.py"]
 ## 💎 Pro-Tipps
 
 ### Tipp 1: Ruff im Watch-Mode (Development)
+
+Im Entwicklungsalltag willst du bei jeder Dateiaeenderung sofort Feedback zu Linting und Formatierung bekommen. Dieser Watch-Mode nutzt entr (aus Lektion 19), um bei jeder Aenderung an Python-Dateien automatisch Linting und Formatting auszufuehren. Der erste Befehl fixt die geaenderte Datei und formatiert sie, der zweite nutzt nodemon fuer dasselbe Ergebnis. Stell dir vor, du arbeitest an einer FastAPI-Anwendung und speicherst eine Datei -- innerhalb von Millisekunden werden ungenutzte Imports entfernt, Strings zu F-Strings modernisiert und der Code formatiert. Das macht manuelle `ruff check` und `ruff format`-Aufrufe ueberfluessig und beschleunigt deinen Entwicklungs-Workflow erheblich.
+
 ```bash
 # Auto-format bei jedem Save (mit entr)
 fd -e py | entr -c sh -c 'ruff check --fix /_ && ruff format /_'
@@ -954,6 +966,9 @@ fd -e py | entr -c sh -c 'ruff check --fix /_ && ruff format /_'
 ```
 
 ### Tipp 2: Ruff + mypy = Perfect Combo
+
+Ruff deckt Linting und Formatting ab, aber fuer vollstaendiges Type-Checking brauchst du mypy. Die Kombination beider Tools gibt dir den umfassendsten Python-Qualitaetscheck, der verfuegbar ist. Der erste Befehl fuehrt alle drei Schritte sequenziell aus: Linting mit Auto-Fix, Formatierung und Type-Checking. Die Pre-Commit-Konfiguration stellt sicher, dass alle drei Checks bei jedem Commit automatisch laufen. Stell dir vor, du hast eine Funktion, die einen String zurueckgibt, aber der Caller erwartet einen Integer -- ruff wuerde das nicht finden, aber mypy erkennt den Type-Mismatch sofort. Zusammen decken die beiden Tools Syntax, Style, Best Practices und Type-Safety ab, was die meisten Bugs schon vor der Ausfuehrung auffaengt.
+
 ```bash
 # ruff für Linting/Formatting, mypy für Types
 ruff check --fix . && ruff format . && mypy .
@@ -972,6 +987,9 @@ repos:
 ```
 
 ### Tipp 3: Inline-Config für Edge-Cases
+
+Manchmal gibt es berechtigte Gruende, eine bestimmte Ruff-Regel fuer eine einzelne Zeile oder eine ganze Datei zu deaktivieren. Der `# noqa`-Kommentar mit Regel-ID ist die praeziseste Methode und dokumentiert gleichzeitig, warum die Regel ignoriert wird. Du kannst eine einzelne Zeile, einen bestimmten Regelbereich oder eine komplette Datei von der Pruefung ausschliessen. Stell dir vor, du musst in einem Legacy-System tatsaechlich `eval()` verwenden, weil es keine Alternative gibt -- statt die Regel global zu deaktivieren, markierst du nur diese eine Zeile mit `# noqa: S307`. Verwende `noqa`-Kommentare sparsam und immer mit der spezifischen Regel-ID, damit klar ist, welche Regel deaktiviert wird und warum.
+
 ```python
 # Einzelne Zeile deaktivieren
 result = eval(user_input)  # noqa: S307
@@ -988,6 +1006,9 @@ very_long_line = "This line is very long but I need it exactly like this for som
 ```
 
 ### Tipp 4: Ruff als Git Pre-push Hook (strenger)
+
+Waehrend Pre-Commit-Hooks mit `--fix` automatisch Probleme beheben, laeuft dieser Pre-Push-Hook ohne Fix und blockiert den Push bei Fehlern. Das stellt sicher, dass der Code nicht nur formatiert, sondern auch manuell von Lint-Violations befreit wurde. Der Hook prueft sowohl Linting als auch Formatting -- beides muss bestehen, damit der Push durchgeht. Stell dir vor, ein Entwickler hat mit `git commit --no-verify` den Pre-Commit-Hook umgangen -- der Pre-Push-Hook faengt die Probleme trotzdem ab, bevor sie ins Remote-Repository gelangen. Die separaten Fehlermeldungen fuer Linting und Formatting machen klar, welcher Schritt fehlgeschlagen ist und wie das Problem behoben werden kann.
+
 ```bash
 # .husky/pre-push
 #!/usr/bin/env sh
@@ -1006,6 +1027,9 @@ ruff format --check . || {
 ```
 
 ### Tipp 5: Ruff für Jupyter Notebooks
+
+Ruff kann nicht nur Python-Dateien, sondern auch Jupyter Notebooks (.ipynb) linten und formatieren. Das ist besonders fuer Data Scientists und ML-Engineers nuetzlich, die viel in Notebooks arbeiten und oft weniger auf Code-Qualitaet achten als bei regulaeren Python-Dateien. Mit der `extend-include`-Konfiguration werden Notebooks automatisch in den Ruff-Workflow eingebunden. Stell dir vor, du hast ein Data-Science-Team, das dutzende Notebooks mit ungenutzten Imports, Print-Statements und unsortiertem Code produziert -- Ruff bringt auch diese Notebooks in einen sauberen Zustand. Die Linting-Regeln werden auf jede Code-Zelle einzeln angewendet, und Formatierung normalisiert den Code-Stil ueber alle Zellen hinweg.
+
 ```bash
 # Ruff kann auch .ipynb Dateien linten!
 ruff check notebook.ipynb

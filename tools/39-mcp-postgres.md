@@ -16,6 +16,9 @@ Der **PostgreSQL MCP Server** gibt Claude Code direkten Zugriff auf deine Postgr
 ### Warum PostgreSQL via MCP?
 
 **Ohne MCP**:
+
+Ohne den PostgreSQL MCP Server muss Claude SQL-Queries als Shell-Befehle ueber `psql` ausfuehren und den Text-Output parsen. Das ist fehleranfaellig, weil das Ausgabeformat von der psql-Konfiguration abhaengt und sich bei verschiedenen PostgreSQL-Versionen unterscheiden kann. Ausserdem erhaelt Claude keine typisierten Daten -- alles kommt als String zurueck, und Claude muss raten, ob eine Spalte ein Integer, ein Datum oder ein Text ist. Bei grossen Ergebnismengen wird der Text-Output unleserlich, und bei Fehlern erhaelt Claude nur eine kryptische Fehlermeldung. Der MCP-Ansatz loest all diese Probleme.
+
 ```bash
 # Claude generiert SQL + Shell-Command
 psql -U user -d mydb -c "SELECT * FROM users WHERE id = 1"
@@ -23,6 +26,9 @@ psql -U user -d mydb -c "SELECT * FROM users WHERE id = 1"
 ```
 
 **Mit MCP**:
+
+Mit dem PostgreSQL MCP Server fuehrt Claude SQL-Queries direkt ueber die MCP-Schnittstelle aus und erhaelt eine strukturierte JSON-Response zurueck. Die Response enthaelt nicht nur die Ergebnis-Rows als JSON-Objekte, sondern auch Metadaten wie die Feldnamen, Datentypen und die Anzahl der betroffenen Zeilen. Claude kann diese Daten sofort weiterverarbeiten, ohne Text-Parsing betreiben zu muessen. Stell dir vor, Claude fragt die Users-Tabelle ab -- es erhaelt ein sauberes Array von Objekten mit typisierten Werten, die es direkt analysieren und praesentieren kann. Die strukturierte Fehlerbehandlung liefert bei Problemen klare, maschinenlesbare Fehlermeldungen statt kryptischer psql-Ausgaben.
+
 ```json
 {
   "method": "postgres_query",
@@ -61,7 +67,8 @@ Von der Installation bis zu den verfuegbaren MCP Tools -- dieser Abschnitt zeigt
 
 ### Installation & Setup
 
-Der folgende Befehl installiert den PostgreSQL MCP Server. Der Connection String folgt dem Format `postgresql://user:password@host:port/database`:
+Der folgende Befehl installiert den PostgreSQL MCP Server global auf deinem System. Der Connection String folgt dem standardisierten Format `postgresql://user:password@host:port/database`, das von allen PostgreSQL-Tools verwendet wird. Bevor du den MCP Server nutzen kannst, muss PostgreSQL selbst natuerlich installiert und gestartet sein -- pruefe das mit `pg_isready`. Falls du einen Cloud-Dienst wie Supabase, Neon oder Railway verwendest, findest du den Connection String in den Dashboard-Einstellungen deines Providers. Beachte, dass der Connection String das Passwort im Klartext enthaelt -- speichere ihn deshalb niemals direkt in einer Konfigurationsdatei, die in Git committed wird, sondern nutze Umgebungsvariablen.
+
 ```bash
 # MCP Server installieren
 npm install -g @modelcontextprotocol/server-postgres
@@ -109,7 +116,8 @@ Die Konfiguration verbindet den MCP Server mit deiner Datenbank und legt Sicherh
 
 #### 1. `postgres_query`
 
-Fuehrt eine SQL-Query aus und gibt die Ergebnisse als strukturiertes JSON mit Rows und Feldtypen zurueck:
+Dieses Tool fuehrt eine beliebige SQL-Query aus und gibt die Ergebnisse als strukturiertes JSON mit Rows, Feldtypen und Zeilenanzahl zurueck. Es ist das Haupt-Tool des PostgreSQL MCP Servers und wird fuer alle Lese- und Schreiboperationen verwendet. Die Response enthaelt neben den eigentlichen Daten auch die Spaltennamen und ihre PostgreSQL-Datentypen, sodass Claude die Struktur der Ergebnisse versteht. Stell dir vor, du fragst Claude "Zeige mir die letzten 10 Bestellungen" -- Claude formuliert die SQL-Query, fuehrt sie aus und praesentiert die Ergebnisse in einer lesbaren Tabelle. Beachte, dass bei aktiviertem `safeMode` destruktive Queries (DELETE, DROP, TRUNCATE) eine Bestaetigung erfordern.
+
 ```json
 {
   "name": "postgres_query",
@@ -137,7 +145,8 @@ Fuehrt eine SQL-Query aus und gibt die Ergebnisse als strukturiertes JSON mit Ro
 
 #### 2. `postgres_schema`
 
-Liest das Datenbankschema aus -- Tabellen, Spalten, Datentypen und Beziehungen. Ohne `table`-Parameter werden alle Tabellen aufgelistet:
+Dieses Tool liest das Datenbankschema aus und liefert Informationen ueber Tabellen, Spalten, Datentypen, Constraints und Beziehungen. Ohne den `table`-Parameter werden alle Tabellen der Datenbank aufgelistet, mit dem Parameter erhaeltst du die detaillierte Struktur einer bestimmten Tabelle. Claude nutzt dieses Tool typischerweise als ersten Schritt, um die Datenbankstruktur zu verstehen, bevor es Queries schreibt oder Migrationen erstellt. Stell dir vor, du uebernimmst ein bestehendes Projekt und willst wissen, wie die Datenbank aufgebaut ist -- `postgres_schema` gibt dir sofort eine vollstaendige Uebersicht aller Tabellen und ihrer Relationen. Die Response enthaelt auch Informationen ueber Indexes, Foreign Keys und Constraints, was Claude hilft, performante und korrekte Queries zu schreiben.
+
 ```json
 {
   "name": "postgres_schema",
@@ -150,7 +159,8 @@ Liest das Datenbankschema aus -- Tabellen, Spalten, Datentypen und Beziehungen. 
 
 #### 3. `postgres_explain`
 
-Analysiert den Ausfuehrungsplan einer Query, um Performance-Engpaesse und fehlende Indexes zu identifizieren:
+Dieses Tool analysiert den Ausfuehrungsplan einer Query, ohne sie tatsaechlich auszufuehren, und identifiziert dabei Performance-Engpaesse und fehlende Indexes. Das Ergebnis zeigt, ob PostgreSQL einen Sequential Scan (langsam, liest die gesamte Tabelle) oder einen Index Scan (schnell, nutzt den Index) verwendet. Stell dir vor, eine Query dauert 5 Sekunden statt 50 Millisekunden -- mit `postgres_explain` kann Claude den Ausfuehrungsplan analysieren und feststellen, dass ein Index auf der `user_id`-Spalte fehlt. Claude schlaegt dann das passende `CREATE INDEX`-Statement vor und erklaert die erwartete Performance-Verbesserung. Dieses Tool ist unverzichtbar fuer die Optimierung langsamer Queries in Produktionsdatenbanken.
+
 ```json
 {
   "name": "postgres_explain",
@@ -169,7 +179,8 @@ Sicherheit und Performance sind bei Datenbank-Operationen besonders wichtig. Die
 
 ### 1. **Parameterized Queries**
 
-Parameterisierte Queries verhindern SQL Injection, indem Benutzereingaben nie direkt in den SQL-String eingefuegt werden. Stattdessen werden Platzhalter (`$1`, `$2`) verwendet:
+Parameterisierte Queries verhindern SQL Injection, indem Benutzereingaben nie direkt in den SQL-String eingefuegt werden. Stattdessen werden Platzhalter (`$1`, `$2`) verwendet, und die Werte werden separat als Array uebergeben. Das ist die wichtigste Sicherheitsmassnahme bei Datenbankzugriffen, da ein Angreifer ueber nicht-parametrisierte Queries beliebigen SQL-Code einschleusen koennte. Stell dir vor, ein User gibt als Suchbegriff `'; DROP TABLE users; --` ein -- ohne Parametrisierung wuerde das die gesamte Users-Tabelle loeschen. Mit Platzhaltern wird die Eingabe als reiner Text behandelt, unabhaengig vom Inhalt. Claude verwendet standardmaessig parametrisierte Queries, aber es ist wichtig, das Pattern zu kennen, falls du eigene Queries schreibst.
+
 ```javascript
 // ❌ SQL Injection Risk
 const query = `SELECT * FROM users WHERE id = ${userId}`;
@@ -185,7 +196,8 @@ const query = {
 
 ### 2. **Transaction Safety**
 
-Zusammengehoerige Operationen sollten in einer Transaktion ausgefuehrt werden, damit bei einem Fehler alle Aenderungen zurueckgerollt werden:
+Zusammengehoerige Operationen sollten in einer Transaktion ausgefuehrt werden, damit bei einem Fehler alle Aenderungen zurueckgerollt werden. Ohne Transaktion koennten die Daten in einem inkonsistenten Zustand landen, z.B. wenn eine Bestellung erstellt wurde, aber das Inventar nicht aktualisiert werden konnte. Die `transaction`-Methode fuehrt alle enthaltenen Queries als atomare Einheit aus: Entweder sind alle erfolgreich, oder keine wird ausgefuehrt. Stell dir vor, du ueberweist Geld von einem Konto auf ein anderes -- ohne Transaktion koennte das Geld von einem Konto abgebucht werden, ohne auf dem anderen anzukommen. Claude nutzt Transaktionen automatisch bei zusammenhaengenden Operationen wie dem Erstellen einer Bestellung mit Inventaraktualisierung.
+
 ```javascript
 // Wrap Related Operations in Transaction
 await postgres.transaction(async (client) => {
@@ -197,7 +209,8 @@ await postgres.transaction(async (client) => {
 
 ### 3. **Schema Migrations**
 
-Migrationen dokumentieren Schema-Aenderungen als SQL-Dateien, die versioniert und reproduzierbar sind. Erstelle immer einen Index fuer haeufig abgefragte Spalten:
+Migrationen dokumentieren Schema-Aenderungen als nummerierte SQL-Dateien, die versioniert und reproduzierbar sind. Jede Migration erhaelt eine aufsteigende Nummer (hier `001_`), damit die Reihenfolge klar ist und Migrationen auf jeder Umgebung in der gleichen Reihenfolge ausgefuehrt werden. Das `CREATE TABLE`-Statement definiert die Tabellenstruktur mit Spaltentypen und Constraints wie `UNIQUE` und `NOT NULL`. Besonders wichtig ist der Index auf der `email`-Spalte: Ohne ihn muesste PostgreSQL bei jeder Suche nach einer E-Mail-Adresse die gesamte Tabelle durchscannen (Sequential Scan), was bei Millionen von Zeilen sehr langsam wird. Stell dir vor, du deployst deine App auf einem neuen Server -- die Migrationen erstellen die Datenbankstruktur automatisch in der richtigen Reihenfolge, ohne dass du manuell eingreifen musst.
+
 ```sql
 -- Migration: 001_create_users.sql
 CREATE TABLE users (
@@ -407,6 +420,9 @@ DROP INDEX IF EXISTS idx_users_role;
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Datenbank-Schema explorieren
+
+In diesem Workflow nutzt Claude den PostgreSQL MCP Server, um die gesamte Datenbankstruktur zu analysieren und dir eine verstaendliche Uebersicht zu geben. Claude liest alle Tabellen, ihre Spalten, Datentypen und die Beziehungen (Foreign Keys) zwischen ihnen. Stell dir vor, du uebernimmst ein Legacy-Projekt mit 50 Tabellen -- Claude erstellt dir in Sekunden ein Entity-Relationship-Diagramm und erklaert die Architektur. Das ist besonders wertvoll, wenn keine aktuelle Dokumentation vorhanden ist. Claude kann auch Optimierungsvorschlaege machen, z.B. fehlende Indexes oder redundante Spalten identifizieren.
+
 ```bash
 # In Claude Code Session:
 # "Zeige mir alle Tabellen und ihre Relationen in der Datenbank"
@@ -414,6 +430,9 @@ DROP INDEX IF EXISTS idx_users_role;
 ```
 
 ### Workflow 2: MCP Konfiguration
+
+Diese minimale Konfiguration verbindet den PostgreSQL MCP Server mit deiner lokalen Datenbank. Der Connection String `postgresql://user:pass@localhost/mydb` wird als letztes Argument im `args`-Array uebergeben. Aendere `user` und `pass` auf deine tatsaechlichen PostgreSQL-Credentials und `mydb` auf den Namen deiner Datenbank. Fuer Cloud-Datenbanken (Supabase, Neon, Railway) ersetze `localhost` durch den Hostnamen deines Providers. Beachte, dass der Connection String das Passwort im Klartext enthaelt -- nutze fuer Produktionsumgebungen stattdessen die `env`-Sektion mit einer Umgebungsvariable wie `DATABASE_URL`.
+
 ```json
 {
   "mcpServers": {
@@ -426,6 +445,9 @@ DROP INDEX IF EXISTS idx_users_role;
 ```
 
 ### Workflow 3: Daten-Migration mit Claude Code
+
+Claude kann ueber den MCP Server nicht nur Daten abfragen, sondern auch Schema-Aenderungen als Migrationen erstellen und ausfuehren. Du beschreibst die gewuenschte Aenderung in natuerlicher Sprache, und Claude generiert das passende SQL-Statement mit korrekten Datentypen, Constraints und Indexes. Stell dir vor, du sagst "Fuege eine Spalte fuer die Benutzerrolle zur Users-Tabelle hinzu" -- Claude erstellt ein `ALTER TABLE`-Statement mit einem sinnvollen Default-Wert und einem CHECK-Constraint fuer die erlaubten Rollen. Claude kann auch Rollback-Statements generieren, damit du die Aenderung bei Bedarf rueckgaengig machen kannst.
+
 ```bash
 # Claude Code kann SQL-Queries ueber MCP ausfuehren:
 # "Erstelle eine Migration die eine 'users' Tabelle mit email und name erstellt"

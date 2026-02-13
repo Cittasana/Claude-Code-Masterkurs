@@ -729,16 +729,25 @@ cat old-dockerfile | claude "Modernize this Dockerfile to pass hadolint checks a
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Dockerfile nach Claude Code pruefen
+
+Nachdem Claude Code ein Dockerfile generiert oder modifiziert hat, prueft dieser Befehl es sofort gegen ueber 50 Best-Practice-Regeln. AI-generierte Dockerfiles sind oft funktional korrekt, aber nicht immer optimal in Bezug auf Sicherheit, Image-Groesse und Layer-Caching. Hadolint findet Probleme wie ungepinnte Base-Images, fehlende Cache-Bereinigung und unsichere User-Konfigurationen. Stell dir vor, Claude generiert ein Dockerfile fuer eine Python-App und verwendet `FROM python` ohne Version-Tag -- hadolint meldet sofort DL3006 und du kannst Claude bitten, die Version zu pinnen. Das gibt dir ein automatisches Qualitaetsgate fuer Container-Konfigurationen.
+
 ```bash
 hadolint Dockerfile
 ```
 
 ### Workflow 2: Alle Dockerfiles im Projekt linten
+
+In Microservice-Architekturen hat jeder Service sein eigenes Dockerfile, und es ist wichtig, dass alle den gleichen Best-Practice-Standards folgen. Dieser Befehl findet mit `fd` alle Dockerfiles im Projekt und prueft sie einzeln mit hadolint. Das ist besonders nuetzlich vor einem Release oder als Teil einer CI/CD-Pipeline, um sicherzustellen, dass kein Dockerfile uebersehen wird. Stell dir vor, du hast 8 Microservices mit je einem Dockerfile -- statt jeden einzeln zu pruefen, findet dieser Befehl alle automatisch und zeigt eine konsolidierte Ausgabe. So stellst du sicher, dass alle Container-Images den Sicherheits- und Performance-Standards entsprechen.
+
 ```bash
 fd Dockerfile | xargs hadolint
 ```
 
 ### Workflow 3: Bestimmte Regeln ignorieren
+
+In manchen Situationen sind bestimmte hadolint-Regeln nicht relevant, z.B. wenn du ein Development-Image baust, bei dem Version-Pinning nicht kritisch ist. Mit `--ignore` kannst du einzelne Regeln fuer einen bestimmten Aufruf deaktivieren, ohne die globale Konfiguration zu aendern. DL3008 (Pin versions in apt-get) und DL3015 (Use --no-install-recommends) sind typische Kandidaten fuer Development-Images. Stell dir vor, du baust ein Debug-Image, das moeglichst viele Tools enthalten soll -- in diesem Fall ist Version-Pinning kontraproduktiv, und du ignorierst die Regel gezielt. Fuer dauerhafte Ausnahmen empfiehlt sich eine `.hadolint.yaml`-Datei statt Kommandozeilen-Flags.
+
 ```bash
 hadolint --ignore DL3008 --ignore DL3015 Dockerfile
 ```
@@ -873,6 +882,9 @@ RUN make build
 ## 💎 Pro-Tipps
 
 ### Tipp 1: hadolint in Watch-Mode
+
+Beim iterativen Entwickeln eines Dockerfiles willst du sofort sehen, ob deine Aenderungen den Best-Practice-Checks entsprechen. Dieser Watch-Mode nutzt entr, um bei jeder Aenderung am Dockerfile automatisch hadolint auszufuehren. Der `-c`-Flag loescht den Bildschirm vor jedem Durchlauf, sodass du immer eine saubere Ausgabe siehst. Stell dir vor, du optimierst ein Dockerfile Schritt fuer Schritt -- du fuegest die Cache-Bereinigung hinzu, speicherst, und siehst sofort, dass DL3009 verschwindet. Der `|| true` am Ende verhindert, dass entr beendet wird, wenn hadolint Warnings meldet. Das ist besonders nuetzlich, wenn du ein neues Dockerfile von Grund auf schreibst und es iterativ verbessern willst.
+
 ```bash
 # Auto-lint bei jedem Dockerfile-Save
 fd -e dockerfile -e Dockerfile | entr -c hadolint /_
@@ -882,6 +894,9 @@ fd Dockerfile | entr -c sh -c 'hadolint --format tty /_ || true'
 ```
 
 ### Tipp 2: hadolint + trivy Pipeline
+
+Die beste Docker-Security-Pipeline kombiniert drei Tools fuer verschiedene Pruefungsphasen. Hadolint prueft das Dockerfile vor dem Build auf Best-Practice-Verstoesse, trivy scannt das gebaute Image auf bekannte Sicherheitsluecken (CVEs) in den installierten Paketen, und dive analysiert die Layer-Struktur auf verschwendeten Speicherplatz. Stell dir vor, hadolint findet keine Probleme im Dockerfile, aber trivy entdeckt, dass das Base-Image eine kritische OpenSSL-Vulnerability hat -- ohne trivy wuerde diese Luecke unbemerkt in Production landen. Die sequenzielle Ausfuehrung mit `&&` stellt sicher, dass bei einem Fehler in einem Schritt die nachfolgenden Schritte nicht ausgefuehrt werden. Diese Pipeline sollte in jeder CI/CD-Konfiguration fuer Docker-basierte Anwendungen Standard sein.
+
 ```bash
 # Complete Docker-Security-Pipeline
 hadolint Dockerfile && \
@@ -891,6 +906,9 @@ hadolint Dockerfile && \
 ```
 
 ### Tipp 3: Custom-hadolint-Rules (via Config)
+
+Firmmenspezifische Regeln stellen sicher, dass alle Docker-Images bestimmte Anforderungen erfuellen, die ueber die Standard-Regeln hinausgehen. Mit `label-schema` kannst du erzwingen, dass jedes Dockerfile bestimmte Labels enthaelt, z.B. Kostenstelle, Team-Zuordnung und Umgebung. `strict-labels: true` sorgt dafuer, dass hadolint fehlschlaegt, wenn eines der geforderten Labels fehlt. Stell dir vor, euer Operations-Team braucht fuer jedes Image die Information, welches Team dafuer verantwortlich ist und zu welchem Cost Center es gehoert -- diese Konfiguration erzwingt das automatisch bei jedem Build. Die `trustedRegistries`-Liste beschraenkt zusaetzlich, welche Container-Registries verwendet werden duerfen, was verhindert, dass Entwickler Images aus unvertrauenswuerdigen Quellen verwenden.
+
 ```yaml
 # .hadolint.yaml
 # Firm-specific Rules
@@ -907,6 +925,9 @@ trustedRegistries:
 ```
 
 ### Tipp 4: Ignore-Pattern für generated Dockerfiles
+
+Automatisch generierte Dockerfiles folgen oft nicht den gleichen Best Practices wie manuell geschriebene. Wenn ein Build-System oder ein Code-Generator Dockerfiles erzeugt, kann es sinnvoll sein, bestimmte Regeln wie DL3059 (Multiple consecutive RUNs) zu ignorieren, da der Generator moeglicherweise separate RUN-Befehle fuer bessere Lesbarkeit oder Caching verwendet. Der Inline-Kommentar `# hadolint ignore=DL3059` deaktiviert die Regel fuer den naechsten Befehl, waehrend die YAML-Config sie global deaktiviert. Stell dir vor, ein CI/CD-System generiert dynamisch Dockerfiles basierend auf der Projektkonfiguration -- diese Dockerfiles haben oft eine andere Struktur als manuell geschriebene, und bestimmte Regeln sind nicht anwendbar. Verwende Inline-Ignores praezise und dokumentiere den Grund.
+
 ```yaml
 # .hadolint.yaml
 ignored:
@@ -919,6 +940,9 @@ RUN command2
 ```
 
 ### Tipp 5: hadolint in Docker-Compose Validation
+
+Dieser Befehl kombiniert yq und hadolint, um automatisch alle Dockerfiles zu linten, die in einer Docker-Compose-Datei referenziert werden. yq extrahiert die Dockerfile-Pfade aus der `build.dockerfile`-Konfiguration jedes Services, und hadolint prueft sie einzeln. Das ist besonders nuetzlich in Projekten mit vielen Services, wo die Dockerfiles in verschiedenen Verzeichnissen liegen. Stell dir vor, du hast eine Docker-Compose-Datei mit 6 Services, die jeweils ein eigenes Dockerfile in verschiedenen Unterverzeichnissen haben -- statt jeden Pfad manuell einzugeben, extrahiert yq alle Pfade automatisch. So stellst du sicher, dass vor einem `docker-compose up` alle Dockerfiles den Best Practices entsprechen.
+
 ```bash
 # Lint all Dockerfiles referenced in docker-compose.yml
 cat docker-compose.yml | \

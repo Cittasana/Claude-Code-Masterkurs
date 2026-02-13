@@ -18,6 +18,9 @@ Der **Git MCP Server** gibt Claude Code direkten Zugriff auf Git-Operationen - o
 Dieses Beispiel zeigt den zentralen Unterschied: Ohne MCP muss Claude Shell-Output als Text parsen, mit MCP erhaelt es strukturierte JSON-Daten zurueck.
 
 **Ohne MCP** (klassisch):
+
+Ohne den Git MCP Server muss Claude klassische Shell-Commands generieren und den Text-Output parsen. Das Problem dabei ist, dass `git status` und `git diff` ihren Output als unstrukturierten Text liefern, der sich je nach Git-Version und Konfiguration leicht unterscheiden kann. Stell dir vor, Claude versucht herauszufinden, welche Dateien geaendert wurden -- es muss den `git status`-Output Zeile fuer Zeile durchgehen und Patterns wie "modified:", "new file:" oder "deleted:" erkennen. Bei Merge-Konflikten wird der Output noch komplexer und fehleranfaelliger. Ausserdem fehlt Claude die Moeglichkeit, zwischen staged und unstaged Changes zu unterscheiden, ohne zusaetzliche Befehle auszufuehren.
+
 ```bash
 # Claude generiert Shell-Commands
 git status
@@ -29,6 +32,9 @@ git commit -m "Fix: Update component"
 ```
 
 **Mit Git MCP**:
+
+Mit dem Git MCP Server erhaelt Claude alle Git-Informationen als strukturiertes JSON zurueck, das sofort weiterverarbeitet werden kann. Der `git_status`-Aufruf liefert ein Objekt mit klar getrennten Arrays fuer staged, modified und untracked Dateien, plus Informationen ueber den aktuellen Branch und den Abstand zum Remote. Beim `git_commit`-Aufruf kann Claude die Dateien einzeln angeben, die committed werden sollen, und erhaelt als Antwort die Commit-ID, den Autor und den Timestamp. Stell dir vor, Claude analysiert deine Aenderungen und erstellt automatisch eine sinnvolle Commit-Message -- mit dem MCP Server kann es den Diff lesen, die Art der Aenderung erkennen und dann einen Conventional-Commit erstellen. Das Ergebnis ist ein zuverlaessigerer und schnellerer Workflow als mit Shell-Commands.
+
 ```json
 {
   "method": "git_status",
@@ -109,7 +115,8 @@ Von der Installation bis zur Integration in Claude Code -- dieser Abschnitt fueh
 
 ### Installation
 
-Die folgenden Befehle installieren den Git MCP Server. Die npx-Variante ist ideal zum Ausprobieren, da sie keine permanente Installation erfordert:
+Die folgenden Befehle installieren den Git MCP Server auf deinem System. Die globale Installation mit `npm install -g` macht das Paket dauerhaft verfuegbar, waehrend die npx-Variante ideal zum Ausprobieren ist, da sie keine permanente Installation erfordert. Der `create-server`-Befehl erstellt zusaetzlich eine Grundkonfiguration, die du anschliessend anpassen kannst. Der letzte Befehl erstellt das Konfigurationsverzeichnis `~/.config/mcp`, falls es noch nicht existiert -- dort werden die JSON-Konfigurationen fuer alle MCP Server gespeichert. Stelle sicher, dass Node.js und npm installiert sind, bevor du diese Befehle ausfuehrst (pruefe mit `node --version`).
+
 ```bash
 # NPM Package installieren
 npm install -g @modelcontextprotocol/server-git
@@ -159,6 +166,9 @@ Die Konfiguration bestimmt, auf welches Repository Claude zugreifen darf und wel
 ### Claude Code Integration
 
 **Im Chat**:
+
+So sieht ein typischer Git-Workflow in Claude Code aus. Du stellst Fragen in natuerlicher Sprache, und Claude waehlt automatisch das passende MCP Tool. Im ersten Schritt nutzt Claude `git_status`, um zu sehen, welche Dateien geaendert wurden, und praesentiert dir eine uebersichtliche Zusammenfassung. Beim Diff-Request zeigt Claude nicht nur die geaenderten Zeilen, sondern erklaert auch, was sich inhaltlich geaendert hat. Besonders maechtig ist der Commit-Workflow: Claude analysiert alle Diffs, erkennt automatisch den Aenderungstyp (Feature, Bugfix, Refactoring) und generiert eine Conventional-Commits-konforme Message. Du musst nie wieder ueberlegen, wie du deinen Commit benennen sollst -- Claude macht das fuer dich.
+
 ```bash
 Du: "Was hab ich geändert?"
 Claude: [nutzt git.status MCP Tool]
@@ -180,7 +190,8 @@ Der Git Server stellt folgende Tools bereit:
 
 #### 1. `git_status`
 
-Zeigt den aktuellen Zustand des Repositories: welche Dateien geaendert, gestaged oder ungetrackt sind, und wie der Branch zum Remote steht.
+Dieses Tool zeigt den aktuellen Zustand des Repositories: welche Dateien geaendert, gestaged oder ungetrackt sind, und wie der Branch zum Remote steht. Der `path`-Parameter gibt an, welches Repository abgefragt werden soll -- bei einem einzelnen Projekt ist `.` (aktuelles Verzeichnis) die richtige Wahl. Mit `includeUntracked: true` werden auch Dateien angezeigt, die noch nie committed wurden. Claude nutzt dieses Tool typischerweise als ersten Schritt, um sich einen Ueberblick ueber den aktuellen Arbeitsstand zu verschaffen. Die Response enthaelt alle relevanten Informationen in getrennten Arrays, sodass Claude sofort weiss, welche Dateien noch gestaged werden muessen. Das `ahead`-Feld zeigt, wie viele lokale Commits noch nicht gepusht wurden, und `behind`, wie viele Remote-Commits noch nicht gemerged sind.
+
 ```json
 {
   "name": "git_status",
@@ -206,7 +217,8 @@ Zeigt den aktuellen Zustand des Repositories: welche Dateien geaendert, gestaged
 
 #### 2. `git_diff`
 
-Zeigt die konkreten Aenderungen in einer Datei als Diff an. Mit `staged: true` werden nur die fuer den naechsten Commit vorgemerkten Aenderungen angezeigt.
+Dieses Tool zeigt die konkreten Aenderungen in einer Datei als Diff an und ist der Kern der Code-Analyse mit dem Git MCP Server. Der `path`-Parameter gibt die Datei an, deren Aenderungen angezeigt werden sollen. Mit `staged: false` werden die Aenderungen im Working Directory angezeigt (die noch nicht gestaged sind), waehrend `staged: true` nur die fuer den naechsten Commit vorgemerkten Aenderungen liefert. Stell dir vor, du hast mehrere Dateien geaendert und fragst Claude "Was habe ich in App.tsx geaendert?" -- Claude ruft dieses Tool auf und erhaelt sowohl die Anzahl hinzugefuegter und geloeschter Zeilen als auch den vollstaendigen Diff-Text. Die Response im JSON-Format macht es Claude leicht, die Aenderungen zu analysieren und dir eine verstaendliche Zusammenfassung zu geben.
+
 ```json
 {
   "name": "git_diff",
@@ -230,7 +242,8 @@ Zeigt die konkreten Aenderungen in einer Datei als Diff an. Mit `staged: true` w
 
 #### 3. `git_commit`
 
-Erstellt einen neuen Commit mit den angegebenen Dateien und einer Commit-Message. Claude kann dies nutzen, um automatisch Commits mit sinnvollen Messages zu generieren.
+Dieses Tool erstellt einen neuen Commit mit den angegebenen Dateien und einer Commit-Message. Der `files`-Parameter ist ein Array von Dateipfaden, die in den Commit aufgenommen werden sollen -- Claude staged diese Dateien automatisch vor dem Commit. Der `amend`-Parameter erlaubt es, den letzten Commit nachtraeglich zu aendern, anstatt einen neuen zu erstellen. Stell dir vor, du hast an einem Feature gearbeitet und fragst Claude "Committe meine Aenderungen" -- Claude analysiert den Diff aller geaenderten Dateien, erkennt, dass es sich um ein neues Feature handelt, und generiert eine Message im Format `feat: Add user authentication`. Das `files`-Array stellt sicher, dass nur die gewuenschten Dateien committed werden, nicht versehentlich auch temporaere oder Debug-Dateien.
+
 ```json
 {
   "name": "git_commit",
@@ -245,7 +258,8 @@ Erstellt einen neuen Commit mit den angegebenen Dateien und einer Commit-Message
 
 #### 4. `git_log`
 
-Ruft die Commit-History ab, optional gefiltert nach Zeitraum und Autor. Ideal fuer Changelog-Generierung und Aktivitaetsanalysen.
+Dieses Tool ruft die Commit-History ab, optional gefiltert nach Zeitraum und Autor, und ist ideal fuer Changelog-Generierung und Aktivitaetsanalysen. Mit dem `limit`-Parameter begrenzt du die Anzahl der zurueckgegebenen Commits, `since` filtert nach einem Startdatum und `author` zeigt nur Commits eines bestimmten Autors. Stell dir vor, du willst wissen, was im letzten Monat passiert ist -- mit `since: "2026-01-01"` bekommst du alle Commits seit Jahresbeginn. Claude kann diese Daten nutzen, um automatisch Changelogs zu generieren, Aktivitaets-Reports zu erstellen oder festzustellen, welche Teile des Codes am aktivsten entwickelt werden. Die Response enthaelt fuer jeden Commit die ID, den Autor, den Timestamp, die Message und die Liste der geaenderten Dateien.
+
 ```json
 {
   "name": "git_log",
@@ -260,7 +274,8 @@ Ruft die Commit-History ab, optional gefiltert nach Zeitraum und Autor. Ideal fu
 
 #### 5. `git_branch`
 
-Verwaltet Branches: erstellen, wechseln, loeschen oder auflisten. Der `action`-Parameter bestimmt die gewuenschte Operation.
+Dieses Tool verwaltet Branches und ist die zentrale Schaltstelle fuer alle Branch-Operationen: erstellen, wechseln, loeschen oder auflisten. Der `action`-Parameter bestimmt die gewuenschte Operation, waehrend `name` den Branch-Namen angibt. Mit `action: "create"` wird ein neuer Branch vom aktuellen HEAD erstellt, `switch` wechselt zu einem bestehenden Branch, `delete` loescht einen Branch und `list` zeigt alle lokalen Branches. Stell dir vor, du sagst Claude "Erstelle einen Feature-Branch fuer das neue UI" -- Claude generiert einen sinnvollen Branch-Namen nach Konvention (z.B. `feature/new-ui`) und erstellt den Branch. Das ist besonders nuetzlich in Teams, die Branch-Namenskonventionen einhalten muessen, da Claude die korrekte Benennung automatisch sicherstellt.
+
 ```json
 {
   "name": "git_branch",
@@ -274,7 +289,8 @@ Verwaltet Branches: erstellen, wechseln, loeschen oder auflisten. Der `action`-P
 
 #### 6. `git_push`
 
-Pusht lokale Commits zum Remote-Repository. Setze `force: false`, um versehentliche Force-Pushes zu verhindern.
+Dieses Tool pusht lokale Commits zum Remote-Repository und macht deine Aenderungen fuer das Team sichtbar. Der `remote`-Parameter gibt den Namen des Remote-Repositories an (meistens `origin`), und `branch` den Branch, auf den gepusht werden soll. Besonders wichtig ist `force: false` -- ein Force-Push ueberschreibt die Remote-History und kann die Arbeit anderer Team-Mitglieder zerstoeren. Stell dir vor, ein Kollege hat waehrend du gearbeitet hast neue Commits gepusht -- mit `force: true` wuerden seine Aenderungen unwiderruflich ueberschrieben. In der MCP-Konfiguration solltest du `push: false` als Standard setzen und Push-Rechte nur bewusst fuer spezifische Workflows aktivieren. Claude fragt dich vor einem Push immer um Bestaetigung, bevor es dieses Tool ausfuehrt.
+
 ```json
 {
   "name": "git_push",
@@ -289,7 +305,8 @@ Pusht lokale Commits zum Remote-Repository. Setze `force: false`, um versehentli
 
 #### 7. `git_pull`
 
-Holt und integriert Aenderungen vom Remote-Repository. Mit `rebase: true` wird statt eines Merge-Commits ein Rebase durchgefuehrt.
+Dieses Tool holt Aenderungen vom Remote-Repository und integriert sie in deinen lokalen Branch. Mit `rebase: false` wird ein Standard-Merge durchgefuehrt, der einen Merge-Commit erstellt, waehrend `rebase: true` deine lokalen Commits auf die Remote-Aenderungen aufsetzt, was eine lineare History erzeugt. Stell dir vor, du hast den ganzen Tag an einem Feature gearbeitet und willst vor dem Push die neuesten Aenderungen vom Team einbinden -- mit `git_pull` werden die Remote-Commits heruntergeladen und in deinen Branch integriert. Falls dabei Konflikte auftreten, meldet das Tool die betroffenen Dateien, und Claude kann dir beim Resolven helfen. Beachte, dass `rebase: true` nur verwendet werden sollte, wenn du verstehst, wie Rebase funktioniert, da es die Commit-History umschreibt.
+
 ```json
 {
   "name": "git_pull",
@@ -304,7 +321,8 @@ Holt und integriert Aenderungen vom Remote-Repository. Mit `rebase: true` wird s
 
 #### 8. `git_blame`
 
-Zeigt fuer jede Zeile einer Datei, wer sie zuletzt geaendert hat und in welchem Commit. Nuetzlich zum Debugging und zur Code-Archaeologie.
+Dieses Tool zeigt fuer jede Zeile einer Datei, wer sie zuletzt geaendert hat, in welchem Commit und wann -- das ist unverzichtbar fuer Debugging und Code-Archaeologie. Mit `lineStart` und `lineEnd` kannst du den Bereich auf bestimmte Zeilen einschraenken, anstatt die gesamte Datei zu analysieren. Stell dir vor, du findest einen Bug in Zeile 45 und willst wissen, wer diese Zeile wann geaendert hat und warum -- `git_blame` liefert dir den Commit-Hash, den Autor, das Datum und die Commit-Message fuer genau diese Zeile. Claude kann diese Information nutzen, um den Kontext einer Aenderung zu verstehen und die Ursache des Bugs einzugrenzen. Besonders in Team-Projekten hilft `git_blame`, den richtigen Ansprechpartner fuer eine Code-Stelle zu finden.
+
 ```json
 {
   "name": "git_blame",
@@ -325,7 +343,8 @@ Diese Best Practices helfen dir, den Git MCP Server sicher und produktiv einzuse
 
 ### 1. **Structured Commit Messages**
 
-Gute Commit-Messages folgen dem Conventional Commits Format. So koennen Tools automatisch Changelogs generieren und die History bleibt lesbar.
+Gute Commit-Messages folgen dem Conventional Commits Format, das aus einem Typ, einem optionalen Scope und einem Subject besteht. Der Typ (feat, fix, docs, etc.) gibt sofort Auskunft darueber, was fuer eine Art von Aenderung vorgenommen wurde. Der Scope in Klammern benennt den betroffenen Bereich der Anwendung, und das Subject beschreibt die Aenderung in maximal 50 Zeichen. Dieses Format ist nicht nur fuer Menschen lesbarer, sondern ermoeglicht auch die automatische Generierung von Changelogs und semantischer Versionierung. Claude kann diese Konvention automatisch einhalten, wenn es Commit-Messages generiert -- du musst dir also keine Gedanken ueber die Formatierung machen.
+
 ```javascript
 // ❌ Generic Messages
 await git.commit({ message: "updates" });
@@ -352,7 +371,8 @@ await git.commit({
 
 ### 2. **Safety Checks vor Destructive Operations**
 
-Force-Pushes und direkte Pushes auf main koennen die Arbeit des gesamten Teams zerstoeren. Diese Sicherheitschecks verhindern versehentliche destructive Operationen.
+Force-Pushes und direkte Pushes auf main koennen die Arbeit des gesamten Teams zerstoeren, da sie die Remote-History unwiderruflich ueberschreiben. Diese Sicherheitschecks verhindern versehentliche destructive Operationen, indem sie vor jedem Push pruefen, ob der Ziel-Branch geschuetzt ist und wie viele Commits gepusht werden. Die Funktion gibt eine Warnung aus, wenn mehr als 10 Commits auf einmal gepusht werden sollen -- das koennte ein Zeichen dafuer sein, dass ein Rebase vergessen wurde. Pushes auf `main` oder `master` werden komplett blockiert, da diese Branches nur ueber Pull Requests aktualisiert werden sollten. Stell dir vor, du hast versehentlich `force: true` gesetzt -- diese Schutzfunktion rettet dich davor, die Arbeit deines Teams zu ueberschreiben.
+
 ```javascript
 // Best Practice: Confirm vor force push
 async function safePush(branch) {
@@ -374,7 +394,8 @@ async function safePush(branch) {
 
 ### 3. **Atomic Commits**
 
-Jeder Commit sollte genau eine logische Aenderung enthalten. Das macht Code Reviews einfacher und erlaubt gezieltes Revert einzelner Features.
+Jeder Commit sollte genau eine logische Aenderung enthalten, anstatt alles in einen einzigen Mega-Commit zu packen. Das macht Code Reviews deutlich einfacher, weil der Reviewer jeden Commit einzeln nachvollziehen kann. Ausserdem erlaubt es gezieltes Revert: Wenn ein Feature-Commit einen Bug einfuehrt, kannst du genau diesen Commit zurueckrollen, ohne die Tests und Dokumentation mitzunehmen. Stell dir vor, du hast gleichzeitig ein neues Feature implementiert, Tests geschrieben und die Docs aktualisiert -- mit drei getrennten Commits bleibt die History sauber und nachvollziehbar. Claude kann dir dabei helfen, indem es die geaenderten Dateien automatisch nach logischen Einheiten gruppiert und separate Commits vorschlaegt.
+
 ```javascript
 // ❌ Alle Changes in einem Commit
 await git.addAll();
@@ -402,7 +423,8 @@ await git.commit({
 
 ### 4. **Branch Naming Conventions**
 
-Einheitliche Branch-Namen machen sofort klar, ob es sich um ein Feature, einen Bugfix oder ein Refactoring handelt. Das erleichtert die Zusammenarbeit im Team.
+Einheitliche Branch-Namen machen sofort klar, ob es sich um ein Feature, einen Bugfix oder ein Refactoring handelt, und erleichtern die Zusammenarbeit im Team erheblich. Das Pattern `prefix/description` ist der De-facto-Standard in der Branche: `feature/` fuer neue Features, `fix/` fuer Bugfixes, `hotfix/` fuer dringende Production-Fixes, `refactor/` fuer Code-Umstrukturierungen und `docs/` fuer Dokumentationsaenderungen. Stell dir ein Team mit 10 Entwicklern vor, die gleichzeitig an verschiedenen Branches arbeiten -- mit einheitlichen Namenskonventionen sieht jeder sofort, woran die anderen arbeiten. Claude kann Branch-Namen automatisch generieren, wenn du ihm die Konvention mitteilst. Zusaetzlich koennen CI/CD-Pipelines anhand des Branch-Namens entscheiden, welche Workflows ausgefuehrt werden sollen.
+
 ```javascript
 // Best Practice: Prefix + Description
 const branchPatterns = {
@@ -423,7 +445,8 @@ await git.branch({
 
 ### 5. **Pre-Commit Validation**
 
-Automatische Validierung vor dem Commit fuer haeufige Fehler wie vergessene console.log-Statements, offene TODOs oder fehlgeschlagene Tests:
+Automatische Validierung vor dem Commit fuer haeufige Fehler wie vergessene console.log-Statements, offene TODOs oder fehlgeschlagene Tests. Diese Funktion prueft jede Datei auf typische Probleme, die nicht in den Code gehoeren, und gibt Warnungen aus, bevor der Commit erstellt wird. Das erspart dir peinliche "remove console.log"-Follow-up-Commits und stellt sicher, dass keine Debugging-Artefakte in die Produktion gelangen. Stell dir vor, du arbeitest unter Zeitdruck und vergisst ein `console.log("DEBUG:", data)` -- ohne Pre-Commit-Validierung landet das im Production-Build. Claude kann diese Pruefungen automatisch ausfuehren und dich auf Probleme hinweisen, bevor du committest.
+
 ```javascript
 // Validiere vor Commit
 async function validateBeforeCommit(files) {
@@ -449,7 +472,8 @@ async function validateBeforeCommit(files) {
 
 ### 6. **Interactive Staging**
 
-Statt alle Aenderungen blind zu stagen, zeigt dieser Ansatz fuer jede Datei den Diff an und fragt, ob sie in den Commit aufgenommen werden soll:
+Statt alle Aenderungen blind mit `git add .` zu stagen, zeigt dieser Ansatz fuer jede geaenderte Datei den Diff an und fragt einzeln, ob sie in den Commit aufgenommen werden soll. Das ist besonders nuetzlich, wenn du an mehreren Dingen gleichzeitig gearbeitet hast und die Aenderungen in logisch getrennte Commits aufteilen willst. Stell dir vor, du hast sowohl einen Bugfix als auch ein neues Feature implementiert -- mit Interactive Staging kannst du zuerst die Bugfix-Dateien stagen und committen, und dann die Feature-Dateien separat. Claude kann diesen Workflow automatisieren, indem es die Diffs analysiert und vorschlaegt, welche Dateien zusammengehoeren. So erhaeltst du eine saubere Commit-History, auch wenn du nicht von Anfang an in separaten Branches gearbeitet hast.
+
 ```javascript
 // Best Practice: Zeige Diffs vor Staging
 async function interactiveStage() {
@@ -472,7 +496,8 @@ async function interactiveStage() {
 
 ### 7. **Commit Message Templates**
 
-Templates stellen sicher, dass Commit-Messages einheitlich formatiert sind und alle wichtigen Informationen enthalten:
+Templates stellen sicher, dass Commit-Messages einheitlich formatiert sind und alle wichtigen Informationen enthalten -- unabhaengig davon, wer den Commit erstellt. Jeder Template-Typ hat eine eigene Struktur: Feature-Messages beschreiben die neue Funktionalitaet und verweisen auf Tests und Docs, Fix-Messages erklaeren die Ursache und Loesung des Problems, und Refactoring-Messages beschreiben den vorherigen und neuen Ansatz. Stell dir vor, dein Team hat 5 Entwickler, die alle unterschiedlich committen -- mit Templates sieht jede Commit-Message gleich aus und enthaelt die gleichen Informationen. Claude kann diese Templates automatisch befuellen, indem es den Diff analysiert und die relevanten Felder ausfuellt. Das Ergebnis ist eine konsistente, informative Commit-History, die auch in einem Jahr noch verstaendlich ist.
+
 ```javascript
 // Template für Commits
 function generateCommitMessage(type, scope, changes) {
@@ -826,6 +851,8 @@ Diese Workflows zeigen, wie Claude den Git MCP Server automatisch in typischen E
 
 ### 1. **Automatic Commit Suggestions**
 
+Claude erkennt automatisch, wenn du Dateien geaendert hast, und bietet dir an, diese mit einer sinnvollen Commit-Message zu committen. Dabei analysiert es den Diff jeder geaenderten Datei, erkennt den Aenderungstyp und generiert eine Conventional-Commits-konforme Message. Stell dir vor, du hast drei React-Komponenten aktualisiert -- Claude erkennt, dass es sich um UI-Verbesserungen handelt, und schlaegt `feat(ui): Improve button accessibility` vor. Du kannst die Message annehmen, anpassen oder ablehnen. Das spart Zeit und sorgt fuer eine konsistente Commit-History.
+
 ```bash
 # Nach File-Änderungen
 Du: "Ich hab ein paar Changes gemacht"
@@ -839,6 +866,8 @@ Claude:
 
 ### 2. **Smart Branch Workflows**
 
+Claude automatisiert den kompletten Branch-Workflow: Vom Erstellen eines Feature-Branches mit korrektem Namen ueber das Committing bis hin zur PR-Erstellung. Wenn du Claude sagst, dass du an einem Feature arbeiten willst, erstellt es einen Branch nach deiner Namenskonvention, wechselt dorthin und kann sogar gleich einen Draft-PR auf GitHub erstellen. Das verbindet Git MCP und GitHub MCP zu einem nahtlosen Workflow. Stell dir vor, du startest jeden Morgen mit "Ich will an Feature X arbeiten" und Claude hat in Sekunden alles vorbereitet.
+
 ```bash
 Du: "Ich will an Feature X arbeiten"
 
@@ -849,6 +878,8 @@ Claude:
 ```
 
 ### 3. **Collaboration Helper**
+
+Claude kann die Team-Aktivitaet ueberwachen und dir zusammenfassen, was deine Kollegen heute oder in der letzten Woche committed haben. Der `git_log`-Aufruf mit dem `author`-Filter `"!me"` zeigt alle Commits ausser deinen eigenen. Das ist besonders nuetzlich, um morgens schnell zu erfassen, was sich ueber Nacht geaendert hat, ohne jeden Commit einzeln durchlesen zu muessen. Claude fasst die Aenderungen nach Autor und Bereich zusammen und hebt besonders wichtige Commits hervor. So bleibst du immer auf dem neuesten Stand, ohne den Ueberblick zu verlieren.
 
 ```bash
 Du: "Was hat mein Team heute committed?"

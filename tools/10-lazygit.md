@@ -40,31 +40,41 @@ Git ist mächtig, aber die CLI kann überwältigend sein:
 Die fuenf Haupteinsatzgebiete zeigen, warum lazygit die meisten Git-Workflows deutlich beschleunigt -- vom taeglichen Staging bis zur Konfliktloesung.
 
 ### 1. **Staging & Committing**
-Visuelles Staging statt `git add`:
+
+Das visuelle Staging in lazygit ersetzt den umstaendlichen `git add`-Workflow komplett. Statt Dateinamen tippen oder `git add -p` fuer Hunk-Auswahl zu nutzen, siehst du alle geaenderten Dateien in einer uebersichtlichen Liste und kannst sie einzeln mit der Leertaste stagen. Das ist besonders nuetzlich, wenn du an mehreren Features gleichzeitig gearbeitet hast und die Aenderungen in separate Commits aufteilen willst. Stell dir vor, du hast sowohl einen Bug gefixt als auch ein neues Feature angefangen -- in lazygit siehst du sofort, welche Dateien zu welcher Aenderung gehoeren, und stagst sie gezielt. Nach dem Staging genuegt ein einzelnes C, um die Commit-Message einzugeben und den Commit abzuschliessen.
+
 ```
 Files → Space (Stage) → C (Commit)
 ```
 
 ### 2. **Branch-Management**
-Branches erstellen/switchen/mergen:
+
+Branch-Management ueber die Git-CLI erfordert mehrere Befehle und genaues Tippen der Branch-Namen. lazygit vereinfacht das auf wenige Tastendruecke: Du siehst alle Branches in einer Liste, kannst neue erstellen, zwischen ihnen wechseln oder sie mergen. Stell dir vor, du willst einen neuen Feature-Branch erstellen, um eine Authentifizierung zu implementieren -- statt `git checkout -b feature/auth` zu tippen, drueckst du B fuer Branches, N fuer New und gibst den Namen ein. Das ist nicht nur schneller, sondern du siehst auch immer, auf welchem Branch du gerade bist und welche Branches es gibt. Ein versehentliches Arbeiten auf dem falschen Branch passiert damit praktisch nie mehr.
+
 ```
 B (Branches) → N (New) → Enter
 ```
 
 ### 3. **Interactive Rebase**
-History umschreiben - intuitiv:
+
+Interactive Rebase ist eine der maechtigsten Git-Funktionen, aber ueber die CLI auch eine der kompliziertesten. Mit `git rebase -i HEAD~5` musst du einen Editor oeffnen, kryptische Pick/Squash/Drop-Befehle schreiben und hoffen, dass nichts schief geht. In lazygit navigierst du einfach im Commits Panel zum gewuenschten Commit, drueckst E und waehlst die Aktion visuell aus. Stell dir vor, du hast 8 kleine WIP-Commits und willst sie vor dem PR zu 2 sauberen Commits zusammenfassen -- in lazygit siehst du jeden Commit mit seinem Diff und kannst gezielt Squash oder Fixup anwenden. Das Ergebnis ist eine saubere Git-Historie ohne die Angst, bei einem manuellen Rebase etwas kaputt zu machen.
+
 ```
 Commits → E (Rebase) → Squash/Fixup/Edit
 ```
 
 ### 4. **Merge-Conflict-Resolution**
-Konflikte visuell lösen:
+
+Merge-Konflikte manuell im Editor zu loesen ist fehleranfaellig und zeitaufwaendig -- du musst die Conflict-Marker (`<<<<<<<`, `=======`, `>>>>>>>`) finden, verstehen was "Ours" und "Theirs" bedeutet, und dann den richtigen Code behalten. lazygit zeigt Konflikte in einer uebersichtlichen 3-Wege-Ansicht: links dein Code, rechts der eingehende Code, und in der Mitte das Ergebnis. Stell dir vor, zwei Entwickler haben dieselbe Funktion unterschiedlich geaendert -- in lazygit siehst du beide Versionen nebeneinander und waehlst per Tastendruck die richtige. Mit Pfeil links nimmst du deine Version, Pfeil rechts die des Kollegen, und B behalt beide Aenderungen. Das macht Konflikte von einer gefuerchteten Aufgabe zu einer schnellen visuellen Entscheidung.
+
 ```
 Files → Enter (Konflikt-View) → ←/→ (Choose)
 ```
 
 ### 5. **Stash-Management**
-Änderungen parken:
+
+Git Stash ist eine haeufig uebersehene Funktion, die unglaublich nuetzlich ist: Du kannst deine aktuellen Aenderungen temporaer "parken", um schnell etwas anderes zu erledigen, und sie spaeter wieder anwenden. Ueber die CLI musst du dir Stash-Namen merken und mit kryptischen Befehlen wie `git stash pop stash@{2}` hantieren. In lazygit genuegt ein W, um die aktuellen Aenderungen zu stashen, und ein G, um sie spaeter wieder zu holen. Stell dir vor, du arbeitest an einem Feature und ploetzlich meldet sich jemand mit einem dringenden Bug -- mit W parkst du deine Arbeit, wechselst zum Fix-Branch, und nach dem Bugfix holst du mit G alles zurueck. Du siehst ausserdem alle Stashes in einer uebersichtlichen Liste und kannst den Inhalt jedes Stashs vor dem Anwenden inspizieren.
+
 ```
 W (Stash) → später: G (Pop)
 ```
@@ -109,6 +119,9 @@ go install github.com/jesseduffield/lazygit@latest
 ### Quick Start (2 Minuten)
 
 **Starten**:
+
+Um lazygit zu nutzen, navigierst du einfach in ein Verzeichnis mit Git-Repository und startest es. lazygit erkennt automatisch den Git-Status und zeigt alle geaenderten Dateien, Branches und Commits an. Da du lazygit mehrmals taeglich verwenden wirst, empfiehlt sich ein kurzer Alias wie `lg`. Stell dir vor, du oeffnest dein Terminal, tippst `lg` und hast sofort den kompletten Ueberblick ueber dein Repository -- geaenderte Dateien, aktiver Branch, letzte Commits. Das ist deutlich schneller als mehrere git-Befehle einzeln einzutippen.
+
 ```bash
 # In Git-Repo
 cd ~/projekt
@@ -183,6 +196,9 @@ Interactive Rebase ist eine der maechtigsten Git-Funktionen und in lazygit beson
 ```
 
 **3. Branch-Workflow**:
+
+Der Branch-Workflow in lazygit deckt den gesamten Lebenszyklus eines Feature-Branches ab: Erstellen, Wechseln, Mergen und Loeschen. Alle diese Operationen erreichst du ueber das Branches Panel mit der Taste B. Stell dir vor, du startest ein neues Feature und brauchst einen Branch dafuer -- statt `git checkout -b feature/new-auth` zu tippen, drueckst du B, N, gibst den Namen ein, und der Branch ist erstellt und ausgecheckt. Wenn du fertig bist, wechselst du zu main zurueck und mergst mit M. Beachte, dass D einen Branch loescht und nicht rueckgaengig gemacht werden kann.
+
 ```
 # Neuer Branch
 B → N → "feature/new-auth" → Enter
@@ -211,6 +227,9 @@ lazygit zeigt Merge-Konflikte in einer uebersichtlichen 3-Wege-Ansicht und laess
 ```
 
 **5. Stash-Workflow**:
+
+Der Stash-Workflow in lazygit bietet dir eine komplette visuelle Verwaltung deiner geparkten Aenderungen. Du kannst Stashes erstellen, anzeigen, anwenden und loeschen -- alles ueber das Stash Panel (Ziffer 3). Stell dir vor, du hast experimentelle Aenderungen, die du nicht committen willst, aber auch nicht verlieren moechtest. Mit W gibst du dem Stash einen beschreibenden Namen, und spaeter kannst du im Stash Panel den Diff inspizieren, bevor du dich entscheidest, ob du Apply (ohne Loeschen) oder Pop (mit Loeschen) verwendest. Achte darauf, den Unterschied zwischen Apply und Pop zu kennen: Apply behaelt den Stash in der Liste, Pop entfernt ihn nach dem Anwenden.
+
 ```
 # Stash erstellen
 W → "WIP: experimental feature" → Enter
@@ -229,6 +248,9 @@ Enter → D (Drop)
 ```
 
 **6. Cherry-Pick**:
+
+Cherry-Pick ermoeglicht es dir, einzelne Commits von einem Branch auf einen anderen zu uebertragen, ohne den gesamten Branch zu mergen. Das ist besonders nuetzlich, wenn ein Bugfix auf einem Feature-Branch erstellt wurde, aber auch auf dem main-Branch benoetigt wird. In lazygit ist Cherry-Pick visuell und erfordert kein Kopieren von Commit-Hashes. Du markierst den gewuenschten Commit mit C (Copy), wechselst zum Ziel-Branch und fuegst ihn mit V (Paste) ein. Stell dir vor, ein Kollege hat einen wichtigen Sicherheits-Fix auf seinem Feature-Branch, den du dringend auf main brauchst -- mit Cherry-Pick holst du genau diesen einen Commit, ohne das gesamte Feature mitzunehmen.
+
 ```
 1. Gehe zu Commits Panel
 2. Wähle Commit
@@ -295,6 +317,9 @@ keybinding:
 > 🚀 **Beispiel**: Der typische Claude Code + lazygit Workflow: Claude Code generiert Code in Pane 1, du wechselst zu Pane 2, tippst `lg`, siehst alle Aenderungen visuell, stagst gezielt einzelne Hunks mit Space, und committst mit C -- alles in unter 30 Sekunden.
 
 ### 3. **Integration mit git aliases**
+
+Wenn du lazygit als Teil deines regulaeren Git-Workflows nutzen willst, kannst du es als Git-Alias registrieren. Das bedeutet, du kannst `git lg` statt `lazygit` tippen, was sich natuerlicher anfuehlt und konsistent mit anderen Git-Befehlen ist. Diese Integration ist besonders praktisch fuer Teams, die noch nicht alle mit lazygit vertraut sind -- sie koennen weiterhin Git-Befehle nutzen, und `git lg` bietet den Einstieg in die visuelle Variante. Der Alias wird global gesetzt und funktioniert in jedem Repository. Das Ausrufezeichen vor `lazygit` weist Git an, dass es sich um einen externen Befehl handelt.
+
 ```bash
 # In ~/.gitconfig
 [alias]
@@ -305,6 +330,9 @@ git lg  # Startet lazygit
 ```
 
 ### 4. **Commit-Conventions**
+
+Konsistente Commit-Messages sind entscheidend fuer eine lesbare Git-Historie, besonders in Teams. lazygit kann so konfiguriert werden, dass es automatisch Sign-Off-Zeilen hinzufuegt oder ein Commit-Template laedt. Das Sign-Off-Flag fuegt eine "Signed-off-by"-Zeile mit deinem Namen und E-Mail hinzu, was bei vielen Open-Source-Projekten und Unternehmen Pflicht ist. Stell dir vor, dein Team nutzt Conventional Commits (feat:, fix:, docs:) -- mit der richtigen Konfiguration wirst du beim Committen automatisch daran erinnert. Diese Einstellung sorgt dafuer, dass jeder Commit den Team-Standards entspricht, ohne dass du daran denken musst.
+
 ```
 # Nutze lazygit's Commit-Template
 # In Config:
@@ -316,6 +344,9 @@ git:
 ```
 
 ### 5. **Fuzzy-Finder für Branches**
+
+In grossen Projekten mit dutzenden Branches wird das manuelle Scrollen durch die Branch-Liste schnell unuebersichtlich. lazygit hat einen eingebauten Fuzzy-Finder, den du im Branches Panel mit / aktivierst. Damit filterst du Branches in Echtzeit, aehnlich wie fzf. Stell dir vor, dein Team hat 50+ Feature-Branches und du suchst den Branch fuer das Login-Feature -- statt durch die gesamte Liste zu scrollen, tippst du einfach "login" und siehst sofort alle passenden Branches. Der Filter funktioniert als Substring-Match, sodass du nicht den exakten Anfang des Branch-Namens kennen musst. Das spart bei haeufigem Branch-Wechsel erheblich Zeit.
+
 ```
 # In lazygit:
 B → / → "feat" → Enter
@@ -325,6 +356,9 @@ B → / → "feat" → Enter
 > 💡 **Tipp**: Integriere delta als Pager in lazygit fuer noch bessere Diff-Darstellung. Fuege `pager: delta --dark --paging=never` in deine lazygit config.yml ein.
 
 ### 6. **Kombination mit gh (GitHub CLI)**
+
+Der typische Feature-Workflow endet nicht beim Commit und Push -- du willst auch einen Pull Request erstellen. Durch die Kombination von lazygit mit der GitHub CLI (gh) kannst du den gesamten Workflow vom Staging bis zum PR in wenigen Sekunden abwickeln. Alternativ kannst du gh direkt als Custom Command in lazygit integrieren, sodass du den PR aus lazygit heraus erstellen kannst, ohne in ein anderes Terminal zu wechseln. Stell dir vor, du hast gerade ein Feature fertig, staged und committed alles in lazygit, pushst mit P, und erstellst dann den PR direkt mit dem Custom Command. Das spart den Kontextwechsel zum Terminal und haelt dich im Flow.
+
 ```bash
 # Nach Commit in lazygit:
 # Wechsel zu Terminal
@@ -339,6 +373,9 @@ customCommands:
 ```
 
 ### 7. **Claude Code Workflows**
+
+Der ideale Workflow mit Claude Code und lazygit besteht aus vier Schritten: Claude Code generiert den Code, lazygit zeigt dir visuell alle Aenderungen, du stagst gezielt die gewuenschten Aenderungen und committst sie, und schliesslich erstellst du einen PR. Dieses Zusammenspiel ist deshalb so wichtig, weil Claude Code manchmal mehr Dateien aendert als gewuenscht -- mit lazygit kannst du die Aenderungen einzeln pruefen und nur die relevanten committen. Stell dir vor, Claude hat eine API-Route erstellt, aber auch unerwuenschte Aenderungen an der Konfiguration vorgenommen. In lazygit siehst du den Diff jeder Datei und entscheidest, welche Aenderungen in den Commit kommen. Nutze dazu einen tmux-Split: Links Claude Code, rechts lazygit fuer das Staging.
+
 ```bash
 # Workflow:
 # 1. Code in Claude Code entwickeln
@@ -734,6 +771,9 @@ git:
 ```
 
 ### 5. **File Ignores in UI**
+
+Diese GUI-Einstellungen verbessern den taeglichen Umgang mit lazygit, indem sie Warnungen unterdruecken und den Fuzzy-Filter-Modus aktivieren. Der filterMode 'fuzzy' erlaubt unscharfe Suche in allen Listen, aehnlich wie fzf. Die Skip-Warnungen sind nuetzlich, wenn du erfahren genug bist, um zu wissen, was du tust -- ansonsten bestaetigt lazygit jeden Reword- und Stash-Vorgang mit einem Dialog. Stell dir vor, du machst taeglich dutzende Commits und Stash-Operationen -- diese Bestaetigungs-Dialoge kosten dich ueber den Tag verteilt mehrere Minuten. Deaktiviere sie erst, wenn du dich mit den Operationen sicher fuehlst.
+
 ```yaml
 gui:
   filterMode: 'fuzzy'

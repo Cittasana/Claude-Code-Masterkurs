@@ -41,31 +41,41 @@ Standard `git diff` Output ist funktional, aber schwer lesbar:
 delta verbessert jeden Arbeitsschritt, bei dem du Code-Aenderungen vergleichst -- von taeglichen Diffs bis hin zur Blame-Analyse.
 
 ### 1. **Git Diffs lesbar machen**
-Statt mono-color:
+
+Der Standard-Output von `git diff` zeigt Aenderungen in einfarbigem Text mit Plus- und Minus-Zeichen an, was bei laengeren Diffs schnell unuebersichtlich wird. Mit delta als Git-Pager bekommst du automatisch Syntax-Highlighting, farbige Zeilennummern und Word-Level-Markierungen. Du musst deinen Workflow nicht aendern -- sobald delta in der Git-Config eingerichtet ist, profitiert jeder `git diff`-Befehl automatisch davon. Stell dir vor, du hast 15 Dateien geaendert und willst vor dem Commit pruefen, was sich geaendert hat. Mit delta siehst du sofort farblich hervorgehoben, welche Zeilen hinzugefuegt, geloescht oder geaendert wurden. Das reduziert die Reviewzeit bei jedem Commit erheblich.
+
 ```bash
 git diff  # Nutzt delta automatisch
 ```
 
 ### 2. **Code-Review beschleunigen**
-Word-Level Changes sehen:
+
+Beim Code-Review ist es entscheidend, nicht nur zu sehen, welche Zeilen sich geaendert haben, sondern welche konkreten Woerter oder Ausdruecke innerhalb einer Zeile geaendert wurden. delta hebt diese Word-Level-Aenderungen farblich hervor, sodass du sofort erkennst, ob nur ein Variablenname umbenannt wurde oder ob sich die Logik geaendert hat. Stell dir vor, ein Kollege hat eine Funktion ueberarbeitet und du willst den letzten Commit reviewen -- mit `git show HEAD` und delta siehst du in jeder geaenderten Zeile exakt die geaenderten Woerter markiert. Das macht den Unterschied zwischen 5 Minuten und 15 Minuten Review-Zeit. Word-Level-Diffs sind besonders wertvoll bei Refactorings, wo viele Zeilen nur kleine Namensaenderungen enthalten.
+
 ```bash
 git show HEAD  # Mit delta = instant understand
 ```
 
 ### 3. **Side-by-Side Comparison**
-Große Refactorings:
+
+Bei grossen Refactorings mit vielen Aenderungen ist der Standard-Unified-Diff oft schwer zu lesen, weil du staendig zwischen geloeschten und hinzugefuegten Zeilen hin- und herspringen musst. Der Side-by-Side-Modus zeigt die alte Version links und die neue Version rechts nebeneinander, aehnlich wie in einer IDE. Das ist besonders nuetzlich, wenn du zwei Versionen einer Konfigurationsdatei oder einer Komponente vergleichen willst. Stell dir vor, du hast eine alte und eine neue Version einer webpack-Konfiguration und willst sehen, was sich geaendert hat -- im Side-by-Side-Modus siehst du die Unterschiede sofort auf einen Blick. Beachte, dass dieser Modus ein breites Terminal (mindestens 160 Spalten) erfordert, um lesbar zu sein.
+
 ```bash
 delta --side-by-side file1.js file2.js
 ```
 
 ### 4. **Blame mit Highlighting**
-Wer hat was geändert:
+
+Git Blame zeigt dir, wer jede Zeile einer Datei zuletzt geaendert hat -- essenziell fuer Bug-Hunting und Code-Verstaendnis. Der Standard-Blame-Output ist aber schwer lesbar, da Autorname, Commit-Hash und Datum in einer langen Zeile stehen. Wenn du den Blame-Output durch delta leitest, bekommst du farbige Hervorhebung und ein uebersichtliches Format. Stell dir vor, du findest einen Bug in Zeile 42 und willst wissen, wer die Zeile geschrieben hat und warum -- mit delta sieht der Blame-Output deutlich strukturierter aus und du findest den relevanten Commit schneller. Kombiniere dies mit `git show` auf dem gefundenen Commit, um die vollstaendigen Aenderungen im Kontext zu sehen.
+
 ```bash
 git blame src/app.js | delta
 ```
 
 ### 5. **Log mit Diffs**
-Historie mit Code-Changes:
+
+Der Befehl `git log -p` zeigt die Commit-Historie zusammen mit den vollstaendigen Code-Aenderungen jedes Commits an. Ohne delta ist dieser Output bei grossen Historien praktisch unlesbar, weil hunderte Zeilen unveraenderter Diff-Output uebereinander stehen. Durch delta bekommt jeder Commit Syntax-Highlighting, Word-Level-Diffs und klare Datei-Trenner. Stell dir vor, du willst nachvollziehen, wann und wie eine bestimmte Funktion im Lauf der Zeit veraendert wurde -- mit `git log -p -- src/utils.js | delta` siehst du die gesamte Entwicklungsgeschichte dieser Datei in lesbarer Form. Nutze die Navigate-Funktion (n/N), um schnell zwischen den einzelnen Commits zu springen.
+
 ```bash
 git log -p --color=always | delta
 ```
@@ -193,6 +203,9 @@ Passe die Darstellung der Zeilennummern an, um schneller zwischen alter und neue
 ```
 
 **5. Commit-Decoration**:
+
+Die Commit-Decoration-Einstellungen bestimmen, wie Commit-Header, Dateinamen und Hunk-Header visuell dargestellt werden. Eine gelbe Box um den Commit-Hash macht ihn sofort erkennbar, waehrend ein blauer Rahmen um die Hunk-Header zeigt, in welchem Bereich der Datei du dich befindest. Stell dir vor, du scrollst durch einen grossen Diff mit dutzenden Dateien -- dank der Dekoration erkennst du sofort, wo ein neuer Commit oder eine neue Datei beginnt, ohne den Text genau lesen zu muessen. Diese visuellen Marker sparen bei grossen Code-Reviews erheblich Zeit. Experimentiere mit verschiedenen Stilen wie bold, underline (ul) und box, um die fuer dich optimale Kombination zu finden.
+
 ```bash
 # In ~/.gitconfig
 [delta]
@@ -202,6 +215,9 @@ Passe die Darstellung der Zeilennummern an, um schneller zwischen alter und neue
 ```
 
 **6. Blame Integration**:
+
+Das blame-format definiert, wie die Blame-Informationen (Autor, Commit-Hash, Zeitstempel) neben dem Code angezeigt werden. Mit diesem Format-String kontrollierst du die Spaltenbreite und Reihenfolge der Informationen. Stell dir vor, du analysierst eine fehlerhafte Funktion und willst wissen, wer wann welche Zeile geschrieben hat -- mit dem konfigurierten Format siehst du Autor (bis zu 18 Zeichen), den abgekuerzten Commit-Hash (8 Zeichen) und den Zeitstempel uebersichtlich nebeneinander. Passe die Feldbreiten an die laengsten Autorennamen in deinem Team an, um eine saubere Ausrichtung zu erhalten.
+
 ```bash
 # In ~/.gitconfig
 [delta]
@@ -305,6 +321,9 @@ In Terminals, die Hyperlinks unterstuetzen, kannst du direkt auf Dateinamen klic
 ```
 
 ### 7. **Claude Code Workflows**
+
+Nach einer Claude Code Session ist es entscheidend, alle generierten Aenderungen gruendlich zu pruefen, bevor du sie committst. delta macht diesen Review-Prozess deutlich effizienter, weil du dank Syntax-Highlighting und Word-Level-Diffs sofort siehst, was Claude geaendert hat. Besonders nuetzlich ist die Kombination mit tmux: In einem Pane laeuft der Editor, im anderen Pane zeigt `watch` mit delta den Diff in Echtzeit an. Stell dir vor, Claude hat eine komplexe Refactoring-Aufgabe ausgefuehrt und 20 Dateien geaendert -- mit delta kannst du schnell durch die Aenderungen navigieren und problematische Stellen identifizieren. Nutze n/N zum Springen zwischen Dateien, wenn navigate in der Config aktiviert ist.
+
 ```bash
 # Nach Claude Code Session:
 git diff | delta  # Review changes visuell
@@ -657,6 +676,9 @@ source ~/.gitconfig
 ## 💡 Pro-Tipps
 
 ### 1. **Best-Theme-Kombination (Dark)**
+
+Diese Konfiguration kombiniert das Dracula-Theme mit individuell angepassten Farben fuer hinzugefuegte und entfernte Zeilen. Die Plus-Styles (fuer Hinzugefuegtes) nutzen Gruentoene, die Minus-Styles (fuer Entferntes) Rottoene, was dem natuerlichen Farbverstaendnis entspricht. Die Emph-Varianten heben die exakt geaenderten Woerter innerhalb einer Zeile noch staerker hervor. Stell dir vor, du arbeitest in einem dunklen Terminal -- diese Farbkombination sorgt dafuer, dass Aenderungen sofort ins Auge springen, ohne dass du dich anstrengen musst. Teste verschiedene Hex-Werte fuer die Hintergrundfarben, bis sie optimal zu deinem Terminal-Theme passen.
+
 ```bash
 # In ~/.gitconfig
 [delta]
@@ -671,6 +693,9 @@ source ~/.gitconfig
 ```
 
 ### 2. **Diff-Highlight-Wrapper**
+
+Diese Shell-Funktion erstellt einen Wrapper um delta, der die Ausgabe automatisch durch less mit Farb-Support leitet. Das ist nuetzlich, wenn du delta fuer Dateivergleiche ausserhalb von Git nutzt, da delta dort standardmaessig keinen Pager verwendet. Stell dir vor, du vergleichst zwei Konfigurationsdateien aus verschiedenen Umgebungen (Staging vs. Production) -- mit dieser Funktion bekommst du Syntax-Highlighting und kannst durch lange Diffs blaettern. Die -R Option bei less sorgt dafuer, dass ANSI-Farbcodes korrekt dargestellt werden.
+
 ```bash
 # In ~/.bashrc
 diff-hl() {
@@ -682,6 +707,9 @@ diff-hl file1.js file2.js
 ```
 
 ### 3. **Integration mit bat**
+
+Diese Integration nutzt bat als cat-Replacement innerhalb von Git-Repositories und das normale cat ausserhalb davon. Die Idee ist, dass du im Entwicklungskontext immer Syntax-Highlighting haben willst, waehrend bat in Nicht-Git-Verzeichnissen moeglicherweise stoerend wirkt. Stell dir vor, du bist in deinem Projekt-Repository und willst schnell eine Datei anschauen -- bat zeigt sie mit Zeilennummern und Syntax-Highlighting an. Beachte, dass dieser Alias mit Vorsicht zu geniessen ist, da er das Standard-Verhalten von `cat` aendert, was bei Scripts zu unerwartetem Verhalten fuehren kann. Eine sicherere Alternative ist ein eigener Alias wie `alias preview='bat'`.
+
 ```bash
 # Combo: bat für Files, delta für Diffs
 # In ~/.bashrc
@@ -693,6 +721,9 @@ fi
 ```
 
 ### 4. **Commit-Template mit delta**
+
+Ein Commit-Template erinnert dich bei jedem Commit an das gewuenschte Format deiner Commit-Messages. Kombiniert mit delta siehst du beim Schreiben der Commit-Message gleichzeitig einen syntax-highlighted Diff deiner Aenderungen. Das hilft dir, praezisere Commit-Messages zu schreiben, weil du die Aenderungen direkt vor Augen hast. Stell dir vor, du schreibst "Fix bug" als Commit-Message -- mit dem Template und dem sichtbaren Diff faellt dir auf, dass du eigentlich beschreiben solltest, welchen Bug du wo gefixt hast. Setze dieses Template global, damit es in allen Repositories greift.
+
 ```bash
 # In ~/.gitmessage
 # feat: Short description
@@ -710,6 +741,9 @@ git commit  # Delta zeigt Diff im Editor!
 ```
 
 ### 5. **Fish Shell Integration**
+
+Wenn du die Fish Shell statt bash oder zsh verwendest, musst du Umgebungsvariablen mit der Fish-eigenen Syntax setzen. Diese Konfiguration setzt den DELTA_PAGER auf less mit dem -R Flag fuer korrekte Farbdarstellung. Stell dir vor, du nutzt Fish als deine Haupt-Shell und hast delta installiert -- ohne diese Einstellung koennte delta den Pager nicht korrekt finden oder die Farben wuerden nicht dargestellt. Fuege diese Zeile in deine Fish-Konfigurationsdatei ein, die sich unter ~/.config/fish/config.fish befindet. Beachte, dass Fish `set -gx` statt `export` fuer Umgebungsvariablen verwendet.
+
 ```fish
 # In ~/.config/fish/config.fish
 set -gx DELTA_PAGER "less -R"

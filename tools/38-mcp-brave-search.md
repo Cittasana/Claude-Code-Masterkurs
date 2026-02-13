@@ -91,7 +91,8 @@ Von der API-Key-Erstellung bis zur fertigen Konfiguration -- dieser Abschnitt fu
 
 #### 2. MCP Server installieren
 
-Die folgenden Befehle installieren den Brave Search MCP Server:
+Die folgenden Befehle installieren den Brave Search MCP Server auf deinem System. Die globale Installation mit `npm install -g` macht den Server dauerhaft verfuegbar, waehrend die npx-Variante ideal zum schnellen Ausprobieren ist. Bevor du den Server nutzen kannst, brauchst du einen API Key von Brave (siehe Schritt 1 oben), da alle Suchanfragen ueber die Brave Search API laufen. Der Server selbst ist leichtgewichtig und verbraucht kaum Systemressourcen, da er nur als Vermittler zwischen Claude und der Brave API fungiert. Nach der Installation musst du noch die Konfiguration mit deinem API Key erstellen, bevor die erste Suche funktioniert.
+
 ```bash
 # NPM Package installieren
 npm install -g @modelcontextprotocol/server-brave-search
@@ -131,6 +132,9 @@ Die Konfiguration setzt den API Key und optionale Sucheinstellungen wie Sprache 
 > ⚠️ **Warnung**: Speichere deinen Brave API Key niemals direkt in der MCP-Konfigurationsdatei, wenn diese in einem Git-Repository liegt. Nutze stattdessen Umgebungsvariablen oder eine `.env`-Datei, die in `.gitignore` eingetragen ist.
 
 **Oder in `.env` File**:
+
+Die sicherere Alternative ist, den API Key in einer `.env`-Datei zu speichern, die nicht in Git committed wird. Erstelle eine `.env`-Datei im Projekt-Root und trage deinen Brave API Key dort ein. Stelle sicher, dass `.env` in deiner `.gitignore`-Datei steht, damit der Key nicht versehentlich in ein oeffentliches Repository gelangt. Der MCP Server liest den Key automatisch aus der Umgebungsvariable, wenn er gestartet wird. Diese Methode ist besonders wichtig in Team-Projekten, in denen jedes Mitglied seinen eigenen API Key verwenden sollte.
+
 ```bash
 # .env
 BRAVE_API_KEY=your_brave_api_key_here
@@ -139,6 +143,9 @@ BRAVE_API_KEY=your_brave_api_key_here
 ### Claude Code Integration
 
 **Im Chat**:
+
+So funktioniert der Brave Search MCP Server in der Praxis: Du stellst Claude eine Frage zu einem aktuellen Thema, und Claude fuehrt automatisch eine Websuche durch, um dir die neuesten Informationen zu liefern. Im ersten Beispiel fragt Claude die aktuelle TypeScript-Version ab, die ueber Claudes Wissenszeitpunkt hinausgehen koennte. Im zweiten Beispiel sucht Claude nach Tutorials und rankt die Ergebnisse nach Qualitaet und Relevanz. Besonders nuetzlich ist, dass Claude die Suchergebnisse nicht nur auflistet, sondern zusammenfasst und die besten Quellen empfiehlt. Du musst nie wieder selbst googeln, um aktuelle Informationen zu einer Library oder einem Tool zu finden. Claude kombiniert dabei sein eigenes Wissen mit den Suchergebnissen, um dir die bestmoegliche Antwort zu geben.
+
 ```bash
 Du: "Was ist die aktuelle Version von TypeScript?"
 
@@ -163,7 +170,8 @@ Der Brave Search Server stellt folgende Tools bereit:
 
 #### 1. `brave_search`
 
-Die Standard-Websuche gibt eine Liste von Ergebnissen mit Titel, URL, Beschreibung und Alter zurueck:
+Die Standard-Websuche ist das Haupt-Tool des Brave Search MCP Servers und gibt eine Liste von Ergebnissen mit Titel, URL, Beschreibung und Alter zurueck. Der `query`-Parameter ist die Suchanfrage in natuerlicher Sprache, `count` bestimmt die Anzahl der Ergebnisse (Standard 10, Maximum 20) und `offset` erlaubt Pagination fuer weitere Ergebnisse. Stell dir vor, du willst die beste Dokumentation zum Next.js App Router finden -- Claude formuliert die Suchanfrage, ruft die Ergebnisse ab und fasst die relevantesten Treffer fuer dich zusammen. Die Response enthaelt neben den Ergebnissen auch die Gesamtanzahl der Treffer, sodass Claude einschaetzen kann, wie populaer ein Thema ist. Das `age`-Feld zeigt, wie aktuell das Ergebnis ist, was Claude hilft, veraltete Informationen zu erkennen und neuere Quellen zu bevorzugen.
+
 ```json
 {
   "name": "brave_search",
@@ -194,7 +202,8 @@ Die Standard-Websuche gibt eine Liste von Ergebnissen mit Titel, URL, Beschreibu
 
 #### 2. `brave_search_news`
 
-Spezialisierte News-Suche mit Freshness-Filter, um nur Ergebnisse aus einem bestimmten Zeitraum zu erhalten:
+Die News-Suche ist eine spezialisierte Variante, die nur Nachrichtenartikel durchsucht und einen Freshness-Filter bietet, um nur Ergebnisse aus einem bestimmten Zeitraum zu erhalten. Der `freshness`-Parameter akzeptiert `day` (letzte 24 Stunden), `week` (letzte 7 Tage) oder `month` (letzter Monat), was besonders fuer aktuelle Entwicklungen und Breaking News wichtig ist. Stell dir vor, du willst wissen, welche neuen AI-Entwicklungen es heute gibt -- mit `freshness: "day"` bekommst du nur Artikel von heute. Claude kann diese News automatisch zusammenfassen und dir die wichtigsten Punkte praesentieren, ohne dass du dutzende Artikel selbst lesen musst. Die News-Suche ist ideal fuer Marktbeobachtung, Wettbewerbsanalyse und das Monitoring von Technologie-Trends.
+
 ```json
 {
   "name": "brave_search_news",
@@ -208,7 +217,8 @@ Spezialisierte News-Suche mit Freshness-Filter, um nur Ergebnisse aus einem best
 
 #### 3. `brave_search_images`
 
-Bildersuche fuer Design-Inspiration, UI-Referenzen oder visuelle Recherche:
+Die Bildersuche eignet sich hervorragend fuer Design-Inspiration, UI-Referenzen und visuelle Recherche. Der `count`-Parameter bestimmt, wie viele Bilderergebnisse zurueckgegeben werden sollen. Stell dir vor, du planst das Design eines Dashboards und willst aktuelle Design-Trends sehen -- mit einer Bildersuche nach "modern dashboard UI design" bekommst du sofort visuelle Referenzen. Claude kann die Ergebnisse analysieren, Trends erkennen und dir eine Zusammenfassung der beliebtesten Design-Patterns geben. Beachte, dass Claude die Bilder selbst nicht sehen kann, aber die Titel, Alt-Texte und Beschreibungen der Ergebnisse analysiert. Fuer die eigentliche visuelle Analyse der Bilder kannst du den Puppeteer MCP Server verwenden, um die gefundenen Seiten zu besuchen und Screenshots zu erstellen.
+
 ```json
 {
   "name": "brave_search_images",
@@ -571,6 +581,8 @@ Source: Glassdoor, Salary.com, StepStone
 
 ### 1. **Automatic Research**
 
+Claude erkennt automatisch, wenn es aktuelle Informationen benoetigt, und fuehrt eigenstaendig eine Websuche durch. Wenn du Claude bittest, eine App mit einer bestimmten Technologie zu erstellen, recherchiert es zuerst die aktuelle Dokumentation und Best Practices, bevor es Code generiert. So arbeitet Claude immer mit den neuesten API-Aenderungen und Empfehlungen, anstatt sich auf moeglicherweise veraltetes Wissen zu verlassen. Das ist besonders wichtig bei schnelllebigen Frameworks wie Next.js, bei denen sich die Empfehlungen von Version zu Version aendern. Das Ergebnis ist Code, der den aktuellen Best Practices entspricht.
+
 ```bash
 # Claude researcht automatisch wenn nötig
 Du: "Erstelle eine Next.js 14 App mit Supabase Auth"
@@ -583,6 +595,8 @@ Claude:
 
 ### 2. **Fact-Checking**
 
+Claude kann Aussagen in Echtzeit verifizieren, indem es aktuelle Quellen durchsucht und vergleicht. Wenn du eine technische Behauptung ueberpruefen willst, sucht Claude nach Release Notes, Community-Feedback und offiziellen Ankuendigungen. Das ist besonders wertvoll, weil Claudes eigenes Wissen einen Stichtag hat und neuere Entwicklungen nicht enthalten kann. Stell dir vor, du willst entscheiden, ob du auf eine neue Version upgraden sollst -- Claude recherchiert die bekannten Probleme und gibt dir eine fundierte Empfehlung. Faktenbasierte Entscheidungen statt Bauchgefuehl.
+
 ```bash
 Du: "Ist TypeScript 5.3 stabiler als 5.2?"
 
@@ -593,6 +607,8 @@ Claude:
 ```
 
 ### 3. **Multi-Source Research**
+
+Fuer komplexe Fragestellungen fuehrt Claude mehrere parallele Suchanfragen aus verschiedenen Perspektiven durch. Im folgenden Beispiel sucht es nach Performance-Benchmarks, News ueber die Adoption-Rate und Community-Diskussionen. So erhaeltst du ein umfassendes Bild statt einer einseitigen Antwort. Das ist besonders nuetzlich bei Technologievergleichen, bei denen verschiedene Quellen zu unterschiedlichen Ergebnissen kommen. Claude fasst die Findings zusammen und hebt Uebereinstimmungen und Widersprueche hervor.
 
 ```bash
 Du: "Was sagen Experten über Bun vs. Node.js?"

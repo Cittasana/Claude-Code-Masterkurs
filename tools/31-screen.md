@@ -163,6 +163,9 @@ Ctrl+a ]        Paste kopierter Text
 ```
 
 **Hilfreich:**
+
+Diese Shortcuts sind die schnellen Helfer im screen-Alltag. Mit Ctrl+a ? oeffnest du die eingebaute Hilfe, die alle verfuegbaren Keybindings auflistet. Der Command Mode (Ctrl+a :) erlaubt das Ausfuehren beliebiger screen-Befehle, und Ctrl+a Ctrl+a wechselt blitzschnell zwischen den letzten zwei verwendeten Windows hin und her. Besonders der letztgenannte Shortcut ist im Alltag unverzichtbar, wenn du haeufig zwischen Editor und Terminal wechselst.
+
 ```
 Ctrl+a ?         Hilfe anzeigen
 Ctrl+a :         Command Mode
@@ -415,6 +418,8 @@ screen -r work
 
 ### Beispiel 2: Multi-Window Development
 
+Dieser Workflow zeigt, wie du mehrere virtuelle Terminals innerhalb einer einzigen screen-Session organisierst. Jedes Window bekommt eine eigene Aufgabe: Editor, Compiler, Tests und Git. Das ist besonders nuetzlich, wenn du keinen modernen Terminal-Multiplexer mit Splits zur Verfuegung hast und trotzdem mehrere Aufgaben parallel verwalten willst. Du wechselst zwischen den Windows mit Ctrl+a gefolgt von der Window-Nummer, was nach kurzer Eingewoehnung sehr schnell geht. Stell dir vor, du arbeitest an einem Rust-Projekt: Im Editor schreibst du Code, der Compiler im Watch-Modus zeigt sofort Fehler, die Tests laufen parallel und lazygit gibt dir den Git-Ueberblick. Im Terminal siehst du immer nur ein Window, aber kannst in Sekundenbruchteilen zwischen allen wechseln.
+
 ```bash
 # Development Session starten
 screen -S dev
@@ -441,6 +446,8 @@ Ctrl+a 3    # Git
 
 ### Beispiel 3: Split-Screen Layout
 
+Screen unterstuetzt horizontale Splits, mit denen du zwei Windows gleichzeitig sehen kannst. Das ist hilfreich, wenn du gleichzeitig Code editieren und Tests beobachten willst, ohne zwischen Windows wechseln zu muessen. Beachte, dass du nach dem Split erst mit Tab zum neuen Bereich wechseln und dort ein neues Window erstellen musst -- ein haeufiger Stolperstein fuer Einsteiger. In diesem Beispiel editierst du im oberen Split eine JavaScript-Datei, waehrend im unteren Split die Tests im Watch-Modus laufen. So siehst du sofort, ob deine Aenderungen Tests brechen. Die vertikale Split-Funktion ist erst ab screen Version 4.2.0 verfuegbar.
+
 ```bash
 # Screen mit Splits
 screen -S splitdev
@@ -459,7 +466,9 @@ vim index.js
 # Zwischen Splits: Ctrl+a Tab
 ```
 
-### Beispiel 4: Shared Session für Pair Programming
+### Beispiel 4: Shared Session fuer Pair Programming
+
+Screen ermoeglicht es zwei Personen, die gleiche Terminal-Session gleichzeitig zu sehen und zu steuern. Das funktioniert, indem beide Nutzer per SSH auf die gleiche Maschine zugreifen und sich mit `screen -x` an die gleiche Session anhaengen. Beide sehen jeden Tastendruck in Echtzeit -- perfekt fuer Remote Pair Programming, Debugging-Sessions mit Kollegen oder das Einarbeiten neuer Teammitglieder. Im Vergleich zu Screen-Sharing-Tools wie Zoom gibt es praktisch keine Latenz, da beide direkt mit dem gleichen Prozess verbunden sind. Beachte, dass der Guest SSH-Zugriff auf die Host-Maschine benoetigt und beide Nutzer die gleichen Berechtigungen auf die screen-Session haben muessen.
 
 ```bash
 # User 1 (Host):
@@ -479,6 +488,8 @@ screen -x pair-session
 ```
 
 ### Beispiel 5: Server Deployment Workflow
+
+Ein Deployment erfordert mehrere parallele Aktivitaeten: Backup erstellen, die Anwendung deployen, Logs ueberwachen und Systemressourcen pruefen. Mit screen kannst du fuer jeden Schritt ein eigenes benanntes Window erstellen und zwischen ihnen wechseln. Das ist besonders wichtig, weil ein Deployment auf einem Produktionsserver nicht abbrechen darf -- wenn die SSH-Verbindung waehrend des Deployments abbricht, laeuft die screen-Session weiter. In diesem Beispiel erstellst du vier Windows: eines fuer das Datenbank-Backup, eines fuer das eigentliche Deployment, eines fuer Live-Log-Monitoring und eines fuer htop zur System-Ueberwachung. Mit Ctrl+a und der Anzeige der Window-Liste behältst du den Ueberblick.
 
 ```bash
 # Deployment Session
@@ -509,6 +520,8 @@ Ctrl+a "
 
 ### Beispiel 6: Serial Console Access
 
+Screen kann sich ueber serielle Schnittstellen mit Hardware verbinden -- ein Feature, das weder tmux noch zellij bieten. Das ist unverzichtbar bei Embedded Development, wenn du mit Microcontrollern, Routern oder anderen Geraeten kommunizieren musst. Du gibst die serielle Schnittstelle (z.B. /dev/ttyUSB0) und die Baud-Rate (z.B. 115200) als Parameter an, und screen oeffnet eine interaktive Verbindung. Stell dir vor, du programmierst einen Arduino: Der serielle Output des Geraets erscheint direkt in screen, und du kannst Befehle zuruecksenden. Zum Beenden der seriellen Verbindung nutzt du Ctrl+a k, um das Window zu schliessen. Beachte, dass du moeglicherweise in der `dialout`-Gruppe sein musst, um auf serielle Ports zugreifen zu koennen.
+
 ```bash
 # Verbindung zu Hardware via Serial Port
 screen /dev/ttyUSB0 115200
@@ -522,6 +535,8 @@ screen /dev/ttyACM0 9600
 > 💡 **Tipp**: Aktiviere Logging mit `Ctrl+a H` in wichtigen Sessions -- so kannst du den gesamten Output spaeter nachvollziehen, selbst wenn du nicht live zugesehen hast.
 
 ### Beispiel 7: Long-Running Build
+
+Lange Build-Prozesse sind der klassische Anwendungsfall fuer screen. Wenn du auf einem Build-Server ein Projekt kompilierst, das Stunden dauern kann (z.B. den Linux-Kernel oder ein grosses C++-Projekt), willst du nicht die gesamte Zeit die SSH-Verbindung offen halten. Du startest screen, beginnst den Build, detachst mit Ctrl+a d und schliesst die SSH-Verbindung. Die Kompilierung laeuft im Hintergrund weiter. Spaeter verbindest du dich erneut per SSH und schaust mit `screen -r build` nach dem Status. Falls der Build abgeschlossen ist, siehst du die Ergebnis-Ausgabe; falls er noch laeuft, kannst du den Fortschritt beobachten. Das spart nicht nur Nerven, sondern auch Bandbreite.
 
 ```bash
 # SSH in Build-Server
@@ -546,6 +561,8 @@ screen -r build
 
 ### Beispiel 8: Database Migration mit Logging
 
+Datenbank-Migrationen sind kritische Operationen, die nicht unterbrochen werden duerfen und deren Output dokumentiert werden muss. Mit dem `-L`-Flag aktivierst du automatisches Logging, sodass der gesamte Terminal-Output in eine screenlog-Datei geschrieben wird. Das ist besonders wertvoll, wenn eine Migration fehlschlaegt und du spaeter analysieren musst, an welcher Stelle der Fehler aufgetreten ist. Stell dir vor, du migrierst eine Datenbank mit Millionen von Eintraegen: Die Migration dauert Stunden, und du willst den Fortschritt von einem anderen Rechner aus verfolgen. Mit `tail -f screenlog.0` kannst du das Log in Echtzeit von aussen lesen, ohne die screen-Session selbst zu oeffnen. Nach Abschluss der Migration hast du eine vollstaendige Dokumentation des gesamten Prozesses.
+
 ```bash
 # Screen mit Logging
 screen -L -S migration
@@ -562,6 +579,8 @@ tail -f screenlog.0
 ```
 
 ### Beispiel 9: Multi-Server Monitoring
+
+Dieses Script erstellt ein Monitoring-Dashboard, das die Logs mehrerer Server in separaten screen-Windows zusammenfasst. Jedes Window zeigt den Live-Log-Stream eines anderen Servers: Web-Server-Zugriffslogs, Datenbank-Logs und Redis-Monitor. Du wechselst mit Ctrl+a und der Window-Nummer zwischen den Servern und hast so den Ueberblick ueber deine gesamte Infrastruktur in einer einzigen screen-Session. Das ist besonders wertvoll bei der Fehlersuche, wenn du korrelierte Events auf verschiedenen Servern beobachten musst. Stell dir vor, ein API-Fehler tritt auf: Du schaust im Web-Window den Request, im DB-Window die Queries und im Cache-Window die Redis-Operationen. Das Script kannst du auch als Cronjob starten, damit das Monitoring-Dashboard nach einem Server-Neustart automatisch verfuegbar ist.
 
 ```bash
 #!/bin/bash
@@ -580,6 +599,8 @@ screen -r monitoring
 ```
 
 ### Beispiel 10: Automated Screen Startup
+
+Eine automatisierte screenrc-Datei erstellt beim Start mehrere Windows mit vordefinierten Programmen. Das ist wie ein Layout-System fuer screen: Du definierst einmal, welche Windows mit welchen Programmen geoeffnet werden sollen, und beim Start ist alles sofort bereit. In diesem Beispiel oeffnet Window 0 htop fuer System-Monitoring, Window 1 zeigt Live-Logs, Window 2 startet eine Bash fuer Git-Operationen und Window 3 ist ein leeres Terminal. Der `select 2`-Befehl am Ende setzt den Fokus auf das Git-Window, da das typischerweise das erste Window ist, in dem du arbeitest. Verwende diese Config-Datei mit `screen -c ~/.screenrc.auto -S auto` fuer einen spezialisierten Start.
 
 ```bash
 # ~/.screenrc.auto
@@ -606,6 +627,8 @@ screen -c ~/.screenrc.auto -S auto
 
 ### Beispiel 11: Emergency Recovery
 
+Eine der wichtigsten Faehigkeiten mit screen ist das Wiederherstellen einer Session nach einem unerwarteten Verbindungsabbruch. Wenn deine SSH-Verbindung waehrend einer kritischen Operation abbricht, zeigt `screen -ls` die Session moeglicherweise noch als "Attached" an, obwohl kein Terminal mehr verbunden ist. Mit `screen -d -r` erzwingst du das Detach der alten Verbindung und attachst dich sofort neu. Alternativ kannst du mit `screen -x` ein Multi-Display-Attach durchfuehren, das auch ohne vorheriges Detach funktioniert. Im Terminal siehst du nach dem Recovery genau den Zustand, in dem du aufgehoert hast -- laufende Prozesse, Ausgaben, alles ist noch da. Diese Technik hat schon unzaehlige Deployments und Migrationen gerettet.
+
 ```bash
 # SSH-Verbindung bricht ab während wichtiger Operation
 
@@ -626,6 +649,8 @@ screen -x 12345
 ```
 
 ### Beispiel 12: Screen in Scripts
+
+Screen laesst sich hervorragend in Automatisierungs-Scripts einbinden. Mit dem `stuff`-Befehl sendest du Tasteneingaben an eine laufende screen-Session, ohne selbst attached zu sein. In diesem Deployment-Script wird eine neue Session erstellt, dann werden nacheinander die Deployment-Schritte als Befehle "eingetippt". Das \n am Ende jedes Strings simuliert einen Enter-Tastendruck. Das ist besonders nuetzlich fuer automatisierte Deployments, bei denen du den Fortschritt jederzeit mit `screen -r` einsehen kannst. Stell dir vor, du triggerst das Deployment per Webhook: Das Script laeuft, die screen-Session zeigt den Live-Fortschritt, und du kannst dich bei Bedarf verbinden. Alte Sessions werden vorher aufgeraeumt, um Konflikte zu vermeiden.
 
 ```bash
 #!/bin/bash
@@ -658,6 +683,9 @@ echo "Attach mit: screen -r $SESSION"
 ### Claude kann screen nutzen für:
 
 1. **Persistent Remote Sessions**
+
+Mit screen kann Claude Code in einer persistenten Remote-Session laufen, die SSH-Disconnects ueberlebt. Das ist besonders wertvoll bei langfristigen Aufgaben auf Remote-Servern, wo die Internetverbindung instabil sein kann. Du verbindest dich per SSH, startest eine screen-Session und kannst jederzeit detachen, ohne dass Claude Code seine Arbeit verliert. Der Befehl `screen -dRR` ist dabei besonders praktisch: Er erstellt die Session falls noetig oder verbindet sich automatisch mit einer bestehenden. So brauchst du dir nie Sorgen machen, ob die Session schon existiert.
+
 ```bash
 # Claude startet remote session
 ssh server
@@ -668,6 +696,9 @@ screen -dRR claude-work
 ```
 
 2. **Long-Running Processes**
+
+Langlebige Prozesse wie Machine-Learning-Training oder grosse Datenverarbeitungen laufen zuverlaessig in screen-Sessions. Du startest den Prozess mit `-dmS` im Hintergrund, und er laeuft unabhaengig von deiner Terminal-Session weiter. Die Ausgabe wird in eine Log-Datei umgeleitet, die du jederzeit lesen kannst. Mit `screen -r` kannst du dich an die Session anhaengen und den Live-Output sehen. Das ist robuster als nohup, weil du die Moeglichkeit behältst, interaktiv mit dem Prozess zu kommunizieren.
+
 ```bash
 # Claude startet langläufige Operation
 screen -dmS training bash -c "python train_model.py > output.log 2>&1"
@@ -679,6 +710,9 @@ tail -f screenlog.0
 ```
 
 3. **Multi-Server Management**
+
+Mit screen kannst du mehrere SSH-Verbindungen zu verschiedenen Servern in einer einzigen Session verwalten. Jeder Server bekommt ein eigenes Window, und du wechselst mit Ctrl+a gefolgt von der Window-Nummer zwischen ihnen. Das ist besonders nuetzlich fuer System-Administratoren, die mehrere Server gleichzeitig ueberwachen oder konfigurieren muessen. Stell dir vor, du rollst ein Update auf Web-Server, Datenbank und Cache-Server gleichzeitig aus -- du kannst den Fortschritt auf allen Servern parallel beobachten.
+
 ```bash
 # Claude managed mehrere Server gleichzeitig
 screen -S servers
@@ -693,6 +727,9 @@ ssh cache1
 ```
 
 4. **Background Task Monitoring**
+
+Dieses Python-Script zeigt, wie du screen programmatisch nutzen kannst, um Hintergrund-Tasks zu starten und deren Status zu pruefen. Der subprocess-Aufruf erstellt eine screen-Session mit einem Monitoring-Script, und spaeter pruefst du mit `screen -ls`, ob die Session noch laeuft. Das ist besonders nuetzlich in Automatisierungs-Workflows, wo du Tasks starten und deren Fortschritt ueberwachen musst. Claude Code kann dieses Pattern verwenden, um langlebige Analysen im Hintergrund laufen zu lassen.
+
 ```python
 # Claude-Script für background monitoring
 import subprocess
@@ -707,6 +744,9 @@ if 'monitor' in result.stdout:
 ```
 
 5. **Automated Operations**
+
+Automatisierte Deployments in screen-Sessions kombinieren das Beste aus beiden Welten: Die Befehle werden automatisch ausgefuehrt, aber du kannst dich jederzeit an die Session anhaengen und den Fortschritt live verfolgen. Mit `hardcopy` kopierst du den aktuellen Bildschirminhalt der Session in eine Datei, ohne dich anhaengen zu muessen. Das ist perfekt fuer CI/CD-Pipelines, wo du den Deployment-Status programmatisch abfragen willst. Stell dir vor, das Deployment laeuft automatisch bei jedem Push, und du kannst den Status jederzeit pruefen.
+
 ```bash
 # Claude führt deployment aus
 screen -dmS deploy bash -c "
@@ -724,6 +764,8 @@ cat /tmp/deploy-output.txt
 ```
 
 ### Workflow-Beispiel: Claude Remote Debugging
+
+Remote Debugging erfordert verschiedene Perspektiven gleichzeitig: Anwendungs-Logs, Systemressourcen, Netzwerkverbindungen und einen interaktiven Debugger. In dieser screen-Session erstellst du fuer jede Perspektive ein Window und navigierst mit Ctrl+a und der Nummer zwischen ihnen. So kannst du schnell pruefen, ob der Fehler in den Logs sichtbar ist, ob Systemressourcen knapp werden oder ob Netzwerkprobleme die Ursache sind. Die Session ist persistent, sodass du die Debug-Ergebnisse auch spaeter noch analysieren kannst. Aktiviere Logging mit Ctrl+a H, um alle Erkenntnisse automatisch zu protokollieren.
 
 ```bash
 # 1. Claude startet Debug-Session
@@ -754,6 +796,9 @@ Ctrl+a d
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code auf Remote-Servern persistent nutzen
+
+Auf Remote-Servern ist screen oft die einzige verfuegbare Multiplexer-Option, da es auf fast allen Unix-Systemen vorinstalliert ist. Du verbindest dich per SSH, startest eine screen-Session und laesst Claude Code darin laufen. Selbst wenn die SSH-Verbindung abbricht, arbeitet Claude Code weiter. Beim erneuten Verbinden siehst du den gesamten bisherigen Output und kannst die Ergebnisse analysieren. Das ist besonders wertvoll bei Server-Diagnosen, wo Claude Code Log-Dateien analysieren und Fehlerquellen identifizieren soll.
+
 ```bash
 # SSH in Server, screen-Session fuer Claude Code starten
 ssh user@remote-server
@@ -763,6 +808,9 @@ claude "Analysiere die Logs in /var/log/app/ und finde Fehler"
 ```
 
 ### Workflow 2: Langlaeuige Claude Code Aufgaben im Hintergrund
+
+Langlaeuige Aufgaben wie das Ausfuehren aller Tests und Erstellen eines Reports koennen in einer screen-Session im Daemon-Modus laufen. Der Befehl startet die Session im Hintergrund, Claude Code arbeitet darin, und die Ausgabe wird in eine Datei umgeleitet. Du kannst dich jederzeit mit `screen -r` an die Session anhaengen, um den Live-Fortschritt zu sehen, oder einfach spaeter die Report-Datei lesen. Das ist robuster als ein einfaches Hintergrund-Kommando mit &, weil du die interaktive Sitzung beibehaltst.
+
 ```bash
 # Build + Test-Pipeline in screen starten
 screen -dmS claude-pipeline bash -c "claude 'Fuehre alle Tests aus und erstelle einen Report' > /tmp/claude-report.txt 2>&1"
@@ -772,6 +820,9 @@ cat /tmp/claude-report.txt
 ```
 
 ### Workflow 3: Multi-Window Claude Code Debugging
+
+Fuer ein effektives Debugging-Setup erstellst du drei separate Windows in einer screen-Session: eines fuer Claude Code selbst, eines fuer das Monitoring der Anwendungs-Logs und eines fuer die Systemressourcen-Ueberwachung mit htop. Du wechselst zwischen den Windows mit Ctrl+a gefolgt von der Window-Nummer. Claude Code kann im ersten Window Aenderungen vornehmen, waehrend du im Log-Window siehst ob Fehler auftreten und im htop-Window pruefst ob die CPU-Last normal bleibt. Das gibt dir einen umfassenden Ueberblick ueber die Auswirkungen jeder Aenderung.
+
 ```bash
 # Screen-Session mit mehreren Windows fuer Debugging
 screen -S debug
@@ -847,6 +898,8 @@ chmod 700 /var/run/screen/S-$USER
 ```
 
 ### Problem: "Weird screen size" Warning
+
+Diese Warnung tritt auf, wenn du eine screen-Session von einem Terminal mit anderer Groesse wieder oeffnest als dem, in dem sie gestartet wurde. Zum Beispiel hast du die Session auf einem 1080p-Monitor gestartet und oeffnest sie jetzt auf einem Laptop mit kleinerem Bildschirm. Screen passt die Groesse nicht automatisch an, sondern zeigt die Warnung an. Mit Ctrl+a F (Fit) zwingst du screen, sich an die aktuelle Terminal-Groesse anzupassen. In der screenrc kannst du mit der termcapinfo-Zeile dafuer sorgen, dass die Groessenanpassung automatisch erfolgt.
 
 ```bash
 # Ursache: Terminal-Größe geändert zwischen Sessions
@@ -982,6 +1035,8 @@ screen -T screen-256color
 
 ### Tipp 1: Schneller Session-Wechsel
 
+Diese Shell-Funktion vereinfacht den Umgang mit screen-Sessions erheblich. Ohne Argument listet sie alle laufenden Sessions auf, mit Argument verbindet sie sich mit der angegebenen Session oder erstellt sie. Der `-dRR`-Parameter ist dabei der Schluessel: Er detacht eine eventuell haengende Session, erstellt sie bei Bedarf neu und verbindet sich. So brauchst du nur noch einen Befehl fuer alles -- kein separates `screen -ls` und `screen -r` mehr. Fuege die Funktion in deine Shell-Konfiguration ein, um sie dauerhaft verfuegbar zu machen.
+
 ```bash
 # Function für ~/.bashrc
 function ss() {
@@ -999,6 +1054,8 @@ ss work         # Attach/create "work" session
 
 ### Tipp 2: Vertical Split via Patch
 
+Standard-screen unterstuetzt nur horizontale Splits. Ab Version 4.2.0 ist aber auch der vertikale Split mit `split -v` verfuegbar. In der screenrc kannst du Keybindings definieren, die beide Split-Richtungen leicht zugaenglich machen. Mit `bind v split -v` legst du den vertikalen Split auf die Taste v (nach Ctrl+a), und mit `bind s split` den horizontalen auf s. Das macht das Split-System deutlich flexibler und naeher an das, was tmux und zellij bieten. Pruefe mit `screen --version`, ob deine Version vertikale Splits unterstuetzt.
+
 ```bash
 # Standard screen hat nur horizontal split
 # Vertical split verfügbar mit screen-4.2.0+
@@ -1014,6 +1071,8 @@ bind v split -v
 
 ### Tipp 3: Screen als Clipboard
 
+Screen hat einen internen Clipboard-Buffer, der ueber die Datei `/tmp/screen-exchange` funktioniert. Mit dem Copy Mode (Ctrl+a [) markierst du Text, der in diesen Buffer kopiert wird. Mit diesem Keybinding verbindest du den screen-Buffer mit der System-Zwischenablage, sodass kopierter Text auch ausserhalb von screen verfuegbar ist. Auf macOS nutzt du dafuer pbcopy, auf Linux xclip. Das ist besonders nuetzlich, wenn du Logzeilen oder Fehlermeldungen aus einer screen-Session in andere Anwendungen uebernehmen willst. Definiere den Binding in deiner screenrc, damit er bei jedem Start verfuegbar ist.
+
 ```bash
 # Text in screen kopieren (Ctrl+a [)
 # Dann in anderem System via screen abrufen
@@ -1024,6 +1083,8 @@ bind b eval "writebuf" "exec sh -c 'xclip -i < /tmp/screen-exchange'"  # Linux
 ```
 
 ### Tipp 4: Status-Line mit mehr Info
+
+Eine erweiterte Status-Line zeigt dir wichtige Informationen auf einen Blick: die Window-Liste mit dem aktiven Window hervorgehoben, den Hostnamen, Datum und Uhrzeit. Das ist besonders hilfreich, wenn du viele Windows offen hast und schnell sehen willst, in welchem du dich befindest. Die `caption always`-Direktive sorgt dafuer, dass die Status-Line immer sichtbar ist. Die Formatierung verwendet spezielle screen-Escape-Sequenzen fuer Farben und Inhalte. Experimentiere mit den Parametern, um deine ideale Ansicht zu finden -- die screen-Manpage dokumentiert alle verfuegbaren Format-Strings.
 
 ```bash
 # In .screenrc erweiterte Status-Line
@@ -1036,6 +1097,8 @@ caption always "%{= kw}%-w%{= BW}%n %t%{-}%+w %-= @%H - %LD %d %LM - %c"
 ```
 
 ### Tipp 5: Automatisches Logging
+
+Automatisches Logging zeichnet jeden Output in allen Windows auf. Das ist unverzichtbar bei kritischen Operationen wie Deployments oder Datenbank-Migrationen, deren Output du spaeter analysieren musst. Der Dateiname enthaelt den Window-Titel und das Datum, sodass du die Logs leicht zuordnen kannst. Alte Logs werden mit dem find-Befehl nach 30 Tagen automatisch geloescht, um Speicherplatz zu sparen. Erstelle das Log-Verzeichnis einmalig und fuege die Einstellungen in deine screenrc ein.
 
 ```bash
 # In .screenrc
@@ -1051,6 +1114,8 @@ find ~/logs -name "screen-*.log" -mtime +30 -delete
 
 ### Tipp 6: Screen + SSH Agent Forwarding
 
+SSH Agent Forwarding ist ein haeufiges Problem in screen-Sessions: Wenn du dich per SSH mit Agent-Forwarding verbindest, eine screen-Session startest und spaeter die SSH-Verbindung trennst, verliert die screen-Session den Zugriff auf den SSH-Agent. Der Grund ist, dass der Socket-Pfad sich bei jeder SSH-Verbindung aendert. Die Loesung ist ein symbolischer Link an einem festen Ort, der bei jeder SSH-Verbindung aktualisiert wird. Fuege den Code in deine bashrc ein, und der SSH-Agent funktioniert auch in screen-Sessions nach einem Reconnect. Ohne diesen Fix wuerden git push und ssh-Befehle in der screen-Session nach einem Reconnect fehlschlagen.
+
 ```bash
 # SSH Agent in screen verfügbar machen
 # In .screenrc:
@@ -1065,6 +1130,8 @@ fi
 
 ### Tipp 7: Screen Exit bei letztem Window
 
+Standardmaessig bleibt screen offen, auch wenn das letzte Window geschlossen wird. Mit diesen Einstellungen kannst du das Verhalten anpassen. Die `zombie kr`-Option ist besonders interessant: Wenn ein Programm in einem Window beendet wird, zeigt screen statt des leeren Windows einen Hinweis an und bietet dir die Wahl, das Window zu killen (k) oder das Programm neu zu starten (r). Das verhindert, dass versehentlich geschlossene Windows verloren gehen. Passe die Keybindings an deine Vorlieben an.
+
 ```bash
 # In .screenrc
 # Automatisch screen beenden wenn letztes Window schließt
@@ -1075,7 +1142,9 @@ bind ^k kill
 zombie kr  # k=kill r=respawn
 ```
 
-### Tipp 8: Screen für Background Scripts
+### Tipp 8: Screen fuer Background Scripts
+
+Dieses Wrapper-Script startet beliebige Befehle in einer benannten screen-Session im Hintergrund. Es nimmt den Task-Namen als erstes Argument und den auszufuehrenden Befehl als Rest. Nach Beendigung des Befehls wartet das Script auf einen Tastendruck, damit du das Ergebnis noch lesen kannst, bevor das Window schliesst. Das ist nuetzlich fuer automatisierte Build-Prozesse, Datenverarbeitungen oder jede andere Aufgabe, die du im Hintergrund ausfuehren willst. Du bekommst eine Bestaetigung mit dem Attach-Befehl, um den Fortschritt jederzeit pruefen zu koennen.
 
 ```bash
 #!/bin/bash
@@ -1092,6 +1161,8 @@ echo "Attach mit: screen -r $TASK_NAME"
 
 ### Tipp 9: Screen Hardcopy (Screenshot)
 
+Mit Hardcopy speicherst du den aktuellen Bildschirminhalt einer screen-Session als Text-Datei. Das ist nuetzlich fuer Dokumentation, Fehlerberichte oder wenn du den aktuellen Zustand einer Session festhalten willst, ohne einen Screenshot zu machen. Besonders praktisch ist der programmatische Zugriff von aussen mit `screen -X hardcopy`, mit dem du den Inhalt einer laufenden Session in eine Datei exportieren kannst, ohne dich anhaengen zu muessen. Das eignet sich hervorragend fuer Monitoring-Scripts, die regelmaessig den Zustand einer Session pruefen.
+
 ```bash
 # Screen-Inhalt in Datei speichern
 Ctrl+a h    # Hardcopy in ~/hardcopy.X
@@ -1105,6 +1176,8 @@ screen -S sessionname -X hardcopy /tmp/screen-capture.txt
 ```
 
 ### Tipp 10: Screen Monitoring Mode
+
+Der Monitoring Mode ueberwacht ein Background-Window und benachrichtigt dich, wenn dort neue Ausgabe erscheint. Das ist perfekt fuer Situationen, wo du auf einen langen Prozess wartest: Du schaltest Monitoring fuer das Window mit dem Build ein und arbeitest in einem anderen Window. Sobald der Build Output generiert (z.B. fertig ist oder einen Fehler wirft), zeigt screen eine Benachrichtigung. Mit `defmonitor on` in der screenrc aktivierst du das Feature standardmaessig fuer alle Windows. Die `activity`-Meldung kann angepasst werden, um den Window-Namen und die Nummer anzuzeigen.
 
 ```bash
 # Window-Aktivität überwachen

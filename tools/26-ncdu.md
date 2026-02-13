@@ -65,7 +65,7 @@ Dieser Abschnitt fuehrt dich durch Installation, Bedienung und erweiterte Option
 Die Installation ist auf allen gaengigen Betriebssystemen unkompliziert, da ncdu in den Standard-Paketmanagern verfuegbar ist.
 
 #### macOS (via Homebrew):
-Die einfachste Installation auf macOS ist ueber Homebrew:
+Die einfachste Installation auf macOS ist ueber Homebrew. Der Befehl `brew install ncdu` laedt ncdu herunter und installiert es systemweit, sodass es direkt ueber die Kommandozeile verfuegbar ist. Nach der Installation pruefst du mit `ncdu --version`, ob alles korrekt eingerichtet wurde. Stell dir vor, deine Festplatte meldet "Speicher fast voll" und du willst schnell herausfinden, welche Ordner den meisten Platz belegen -- nach der Installation startest du einfach `ncdu` im aktuellen Verzeichnis und siehst sofort eine nach Groesse sortierte Uebersicht. Die Installation dauert nur wenige Sekunden und erfordert keine weitere Konfiguration.
 ```bash
 # ncdu installieren
 brew install ncdu
@@ -78,7 +78,7 @@ ncdu
 ```
 
 #### Ubuntu/Debian:
-Unter Debian-basierten Systemen ist ncdu direkt ueber apt verfuegbar:
+Unter Debian-basierten Systemen ist ncdu direkt ueber apt verfuegbar und laesst sich mit einem einfachen apt-install-Befehl einrichten. Im Gegensatz zu manchen anderen Tools musst du ncdu nicht aus dem Quellcode kompilieren -- die Paketmanager-Version ist in der Regel aktuell genug fuer alle gaengigen Features. Stell dir vor, du verwaltest einen Ubuntu-Server und musst herausfinden, warum die Festplatte fast voll ist -- mit apt installierst du ncdu in wenigen Sekunden und kannst sofort mit der Analyse beginnen. Vergiss nicht, vorher `sudo apt update` auszufuehren, damit apt die neueste verfuegbare Version findet.
 ```bash
 # ncdu installieren
 sudo apt update
@@ -92,7 +92,7 @@ ncdu
 ```
 
 #### Arch Linux:
-Arch Linux stellt ncdu ueber die offiziellen Repositories bereit:
+Arch Linux stellt ncdu ueber die offiziellen Repositories bereit, sodass die Installation mit pacman besonders unkompliziert ist. Dank des Rolling-Release-Modells von Arch bekommst du immer die aktuellste Version. Stell dir vor, du nutzt Arch Linux als Entwicklungsumgebung und willst vor einem grossen Build pruefen, ob genug Speicherplatz vorhanden ist -- ein schnelles `sudo pacman -S ncdu` und du bist startklar. Nach der Installation pruefst du mit `ncdu --version`, ob die richtige Version installiert wurde.
 ```bash
 # ncdu installieren
 sudo pacman -S ncdu
@@ -139,7 +139,7 @@ ncdu --exclude '/proc' --exclude '/sys' /
 ncdu wird vollstaendig ueber Tastenkuerzel bedient. Die folgenden Shortcuts sind nach Funktionsbereich gruppiert.
 
 #### Haupt-Navigation:
-Mit den Pfeiltasten navigierst du durch die Verzeichnisliste und gehst in Unterordner hinein oder zurueck:
+Mit den Pfeiltasten navigierst du durch die Verzeichnisliste und gehst in Unterordner hinein oder zurueck. Die Navigation funktioniert aehnlich wie ein Dateibrowser: Mit den Pfeiltasten oben/unten wahlst du einen Eintrag aus, Enter bringt dich in den Ordner hinein, und die Zurueck-Taste (Pfeil links oder Backspace) bringt dich eine Ebene hoeher. Stell dir vor, du siehst dass dein Home-Verzeichnis 50 GB belegt -- du navigierst hinein, siehst dass node_modules 25 GB belegen, gehst weiter hinein und findest die groessten Packages. Die Sortierung nach Groesse (s) zeigt die dicksten Brocken immer ganz oben, waehrend die alphabetische Sortierung (n) beim gezielten Suchen hilft. Mit C sortierst du nach Anzahl der enthaltenen Dateien, was versteckte Probleme wie tausende kleine Cache-Dateien aufdecken kann.
 ```
 ↑/↓         Navigieren durch Liste
 Enter       In Verzeichnis hinein
@@ -150,7 +150,7 @@ C           Nach Item-Anzahl sortieren
 ```
 
 #### Aktionen:
-Diese Tasten ermoeglichen direktes Eingreifen -- vom Loeschen bis zum Neu-Scannen:
+Diese Tasten ermoeglichen direktes Eingreifen -- vom Loeschen bis zum Neu-Scannen. Die wichtigste Aktionstaste ist d, mit der du Dateien oder Ordner direkt aus ncdu heraus loeschen kannst -- ncdu fragt vorher zur Sicherheit nach einer Bestaetigung. Stell dir vor, du findest in ncdu einen 5 GB grossen Build-Ordner, den du nicht mehr brauchst: Du navigierst dorthin und drueckst d -- fertig, ohne die Shell zu verlassen. Mit r fuehrst du einen neuen Scan durch, was nuetzlich ist, wenn du zwischendurch Dateien geloescht hast und die Ansicht aktualisieren willst. Die Taste b oeffnet eine Shell im aktuell ausgewaehlten Verzeichnis, sodass du dort direkt Befehle ausfuehren kannst. Mit g wechselst du die Anzeige zwischen absoluten Groessen und prozentualen Balken.
 ```
 d           Datei/Ordner löschen (mit Bestätigung)
 t           Zwischen verschiedenen Sortierungen wechseln
@@ -164,7 +164,7 @@ q           ncdu beenden
 ```
 
 #### Sortier-Optionen:
-Wechsle die Sortierung, um z.B. die groessten Ordner zuerst oder alphabetisch sortiert zu sehen:
+Wechsle die Sortierung, um z.B. die groessten Ordner zuerst oder alphabetisch sortiert zu sehen. Standardmaessig sortiert ncdu nach Groesse mit den groessten Eintraegen oben -- das ist in den meisten Faellen genau das, was du brauchst. Durch Druecken des Grossbuchstabens (z.B. S statt s) kehrst du die Reihenfolge um. Stell dir vor, du suchst gezielt einen bestimmten Ordner in einer langen Liste -- dann sortierst du alphabetisch mit n. Die Sortierung nach Item-Anzahl (C) hilft bei der Identifikation von Ordnern mit ungewoehnlich vielen kleinen Dateien, was bei Cache-Verzeichnissen oder node_modules typisch ist.
 ```
 s   Nach Größe sortieren (größte zuerst)
 S   Nach Größe sortieren (kleinste zuerst)
@@ -423,6 +423,8 @@ ncdu 1.19 ~ Use the arrow keys to navigate, press ? for help
 
 ### Beispiel 2: Große Dateien in /var/log finden
 
+Log-Dateien koennen ueber die Zeit enorm anwachsen und unbemerkt Gigabytes an Speicherplatz belegen. Besonders Web-Server wie Nginx oder Apache schreiben kontinuierlich in ihre Log-Dateien, und ohne Logrotate-Konfiguration werden diese Dateien nie automatisch bereinigt. Mit ncdu und sudo-Rechten analysierst du das gesamte /var/log-Verzeichnis und siehst sofort, welche Log-Dateien den meisten Platz belegen. Stell dir vor, ein Server meldet "Disk full" und du musst schnell Platz schaffen -- ncdu zeigt dir in Sekunden, dass die Nginx-Logs 2.5 GB belegen. Du kannst die alten Logs dann direkt loeschen oder eine Logrotate-Konfiguration einrichten. Achte darauf, aktive Log-Dateien nicht einfach zu loeschen, sondern stattdessen Logrotate zu konfigurieren, damit die Rotation automatisch laeuft.
+
 ```bash
 # /var/log mit sudo analysieren
 sudo ncdu /var/log
@@ -464,6 +466,8 @@ ncdu 1.19 ~ Use the arrow keys to navigate, press ? for help
 
 ### Beispiel 3: node_modules-Ordner aufräumen
 
+node_modules-Ordner sind in der Regel die groessten Speicherfresser auf Entwickler-Rechnern. Jedes Node.js-Projekt hat seinen eigenen node_modules-Ordner, der leicht 500 MB bis 2 GB belegen kann. Wenn du 20 Projekte auf deiner Festplatte hast, koennen das schnell 20-30 GB sein. Der erste Schritt ist, alle node_modules-Ordner aufzulisten und nach Groesse zu sortieren. Dann nutzt du ncdu, um interaktiv durch die Projekte zu navigieren und alte node_modules zu loeschen. Stell dir vor, du hast ein Projekt vor 6 Monaten das letzte Mal angefasst -- der node_modules-Ordner belegt 1.5 GB und kann bedenkenlos geloescht werden, da er jederzeit mit `npm install` neu erstellt werden kann. Das automatische Cleanup-Skript unten findet alle node_modules-Ordner, die aelter als 30 Tage sind, und fragt vor dem Loeschen jedes Mal nach Bestaetigung.
+
 ```bash
 # Alle node_modules finden
 find ~ -name "node_modules" -type d -prune -exec du -sh {} \; | sort -h
@@ -500,6 +504,8 @@ done
 
 ### Beispiel 4: Docker-Daten analysieren
 
+Docker speichert Images, Container-Daten und Volumes unter /var/lib/docker, und dieser Ordner kann ueberraschend schnell auf mehrere Dutzend Gigabyte anwachsen. Jedes Docker-Image besteht aus mehreren Layern, die auch nach dem Loeschen des Containers bestehen bleiben. Nicht genutzte Images, gestoppte Container und verwaiste Volumes sammeln sich ueber die Zeit an und belegen unnoetig Speicherplatz. Mit ncdu siehst du genau, welche Unterkategorien (overlay2 fuer Image-Layer, volumes fuer Daten, containers fuer Container-Daten) wie viel Platz belegen. Stell dir vor, du wunderst dich warum dein Server 45 GB weniger Speicher hat als erwartet -- ncdu zeigt dir, dass /var/lib/docker/overlay2 der Schuldige ist. Fuer die Bereinigung nutzt du am besten die Docker-eigenen Befehle wie `docker system prune`, da manuelles Loeschen in /var/lib/docker zu inkonsistentem Zustand fuehren kann.
+
 ```bash
 # Docker-Verzeichnis analysieren (mit sudo)
 sudo ncdu /var/lib/docker
@@ -534,6 +540,8 @@ docker container prune # Gestoppte Container
 ```
 
 ### Beispiel 5: Git-Repos mit großen .git-Ordnern
+
+Der .git-Ordner eines Repositories speichert die gesamte Versionshistorie, inklusive aller jemals committeten Dateien. Wenn irgendwann versehentlich grosse Binaerdateien, Videos oder Datenbank-Dumps committed wurden, waechst der .git-Ordner enorm an -- selbst wenn diese Dateien spaeter wieder geloescht wurden. Mit ncdu navigierst du durch deine Code-Verzeichnisse und pruefst die Groesse jedes .git-Ordners. Stell dir vor, du hast ein Repository, das eigentlich nur 50 MB Code enthaelt, aber der .git-Ordner ist 3 GB gross -- das deutet auf grosse Dateien in der Git-Historie hin. Die Bereinigung mit `git gc --aggressive` und BFG Repo-Cleaner kann den .git-Ordner drastisch verkleinern. Achte darauf, dass alle Team-Mitglieder nach einer History-Bereinigung einen frischen Clone machen muessen.
 
 ```bash
 # ncdu im Code-Verzeichnis starten
@@ -571,6 +579,8 @@ bfg --strip-blobs-bigger-than 50M .git
 
 ### Beispiel 6: Export für spätere Analyse
 
+ncdu kann Scan-Ergebnisse als JSON-Datei exportieren, die du spaeter erneut laden oder mit anderen Tools weiterverarbeiten kannst. Das ist besonders nuetzlich fuer regelmassige Audits, da du alte Scans mit neuen vergleichen und so Trends im Speicherverbrauch erkennen kannst. Der Export-Befehl `ncdu -o` scannt das angegebene Verzeichnis und schreibt das Ergebnis in eine JSON-Datei statt die interaktive Ansicht zu oeffnen. Stell dir vor, du verwaltest mehrere Server und willst monatlich den Speicherverbrauch dokumentieren -- du exportierst einen Scan pro Server, speicherst die JSON-Dateien und laedsst sie spaeter in ncdu oder analysierst sie mit Claude. Der Import-Befehl `ncdu -f` laedt eine gespeicherte Scan-Datei und zeigt die gewohnte interaktive Ansicht.
+
 ```bash
 # Scan exportieren mit Datum
 ncdu -o ~/disk-scan-$(date +%Y%m%d).json ~
@@ -582,6 +592,8 @@ ncdu -f ~/disk-scan-20260212.json
 ```
 
 ### Beispiel 7: Cache-Ordner identifizieren
+
+Cache-Ordner sind versteckte Speicherfresser, die sich ueber Monate ansammeln und dabei leicht mehrere Gigabyte erreichen. Unter Linux liegt der Haupt-Cache in ~/.cache, auf macOS in ~/Library/Caches. Zusaetzlich haben viele Programmiersprachen und Tools eigene Cache-Verzeichnisse: Python speichert kompilierte Bytecode-Dateien in __pycache__, Node.js-Projekte cachen in node_modules/.cache, und Rust-Projekte belegen mit target/ oft mehrere Gigabyte. Stell dir vor, du entwickelst seit einem Jahr auf dem gleichen Rechner ohne je Caches zu bereinigen -- ncdu zeigt dir, dass allein ~/.cache 12 GB belegt. Das Schoene an Caches ist, dass sie ohne Risiko geloescht werden koennen: Programme erstellen sie bei Bedarf automatisch neu. Die Cleanup-Befehle unten bereinigen die gaengigsten Cache-Verzeichnisse auf einen Schlag.
 
 ```bash
 # ncdu im Home starten
@@ -613,6 +625,8 @@ npm cache clean --force
 
 ### Beispiel 8: Versteckte Dateien/Ordner anzeigen
 
+Standardmaessig zeigt ncdu versteckte Dateien und Ordner (die mit einem Punkt beginnen) bereits im Scan-Ergebnis an, blendet sie aber in manchen Konfigurationen aus der Anzeige aus. Mit der Taste e schaltest du die Sichtbarkeit von versteckten Dateien um. Das ist besonders wichtig, weil versteckte Ordner wie .cache, .local und .docker oft die groessten Speicherverbraucher im Home-Verzeichnis sind. Stell dir vor, du analysierst dein Home-Verzeichnis und wunderst dich, warum die sichtbaren Ordner nur 20 GB ausmachen, obwohl die Festplatte 60 GB belegt anzeigt -- die fehlenden 40 GB stecken in versteckten Ordnern. Durch Druecken von e werden alle versteckten Eintraege sichtbar und du siehst das vollstaendige Bild.
+
 ```bash
 # ncdu starten
 ncdu ~
@@ -641,6 +655,8 @@ ncdu 1.19 ~ Use the arrow keys to navigate, press ? for help
 > 💡 **Tipp**: Nutze `ncdu --exclude 'node_modules' --exclude '.git' ~` fuer schnellere Scans, wenn du nur an den eigentlichen Projektdateien interessiert bist.
 
 ### Beispiel 9: Build-Artifacts finden
+
+Build-Artifacts sind Dateien, die beim Kompilieren oder Bundlen von Code entstehen und oft mehrere Hundert Megabyte pro Projekt belegen. Dazu gehoeren dist/ bei JavaScript-Projekten, build/ bei Java/Gradle, target/ bei Rust und .next/ bei Next.js-Anwendungen. Diese Ordner koennen bedenkenlos geloescht werden, da sie bei jedem Build neu erzeugt werden. Stell dir vor, du hast 15 Projekte mit Build-Artifacts auf deiner Festplatte -- zusammen belegen sie leicht 10-20 GB, die du sofort zurueckgewinnen kannst. Mit ncdu navigierst du durch deine Projektordner und erkennst Build-Artifacts an ihrer typischen Groesse und ihrem Namen. Das Cleanup-Skript unten automatisiert die Suche und fragt vor dem Loeschen jedes einzelnen Build-Ordners nach Bestaetigung.
 
 ```bash
 # Typische Build-Ordner:
@@ -1098,6 +1114,7 @@ deploy:
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Speicherplatz-Analyse mit Claude Code automatisieren
+Dieser Workflow kombiniert ncdu mit Claude Code fuer eine intelligente Speicherplatz-Analyse. Zuerst exportierst du einen ncdu-Scan als JSON-Datei, dann uebergibst du die Daten an Claude Code zur automatischen Auswertung. Claude identifiziert die groessten Speicherfresser und schlaegt konkrete Cleanup-Massnahmen vor. Stell dir vor, du willst nicht manuell durch die ncdu-Ergebnisse navigieren, sondern eine automatische Zusammenfassung mit priorisierten Handlungsempfehlungen -- genau das leistet dieser Workflow. Beachte, dass `head -500` die Datenmenge begrenzt, falls der Scan sehr gross ist, damit Claude nicht ueberlastet wird.
 ```bash
 # ncdu-Scan exportieren und Claude Code analysieren lassen
 ncdu -o /tmp/disk-scan.json ~
@@ -1105,6 +1122,7 @@ claude "Analysiere diesen Disk-Scan und schlage Cleanup-Massnahmen vor: $(cat /t
 ```
 
 ### Workflow 2: Projekt-Cleanup vor grossem Build
+Vor einem grossen Build-Vorgang ist es sinnvoll, zuerst den aktuellen Speicherverbrauch im Projektverzeichnis zu pruefen. Der Befehl `ncdu --exclude '.git' --exclude 'node_modules' .` zeigt dir nur die eigentlichen Projektdateien und laesst die grossen Entwicklungsordner aussen vor. Stell dir vor, du willst ein Docker-Image bauen, das alle Projektdateien kopiert -- dann siehst du sofort, ob unnoetige Dateien den Build aufblaahen wuerden. Anschliessend laesst du Claude Code den Build optimieren und alte Artifacts aufraeumen. So stellst du sicher, dass genuegend Speicherplatz fuer den Build vorhanden ist und keine ueberfluessigen Dateien mitgenommen werden.
 ```bash
 # Vor einem grossen Build: Speicherplatz pruefen
 ncdu --exclude '.git' --exclude 'node_modules' .
@@ -1113,6 +1131,7 @@ claude "Raeume Build-Artifacts auf und starte einen sauberen Build"
 ```
 
 ### Workflow 3: Automatisierte Disk-Space-Warnung in CI/CD
+Dieser Workflow prueft automatisch die Festplattenbelegung und exportiert bei Ueberschreitung eines Schwellenwerts einen detaillierten ncdu-Scan. In CI/CD-Pipelines ist Speicherplatz oft begrenzt, und ein voller Disk kann den gesamten Build zum Absturz bringen. Der Befehl extrahiert den prozentualen Speicherverbrauch mit df und loest bei mehr als 80% Belegung eine Warnung aus. Stell dir vor, ein naechtlicher Build schlaegt fehl, weil die Festplatte voll ist -- mit diesem Check wirst du fruehzeitig gewarnt und kannst Gegenmassnahmen ergreifen. Der ncdu-Scan wird nur bei Ueberschreitung des Schwellenwerts erstellt, um unnoetige Scans zu vermeiden.
 ```bash
 # In Claude Code generiertem CI-Script:
 DISK_PERCENT=$(df -h / | tail -1 | awk '{print $5}' | tr -d '%')
@@ -1137,11 +1156,15 @@ Loesungen fuer die haeufigsten Probleme mit ncdu, jeweils mit Symptomen, Ursache
 
 ### Problem 1: ncdu startet nicht
 
+Dieses Problem tritt auf, wenn ncdu nicht installiert ist oder das Binary nicht im PATH liegt. Am haeufigsten passiert das nach einer frischen Systeminstallation oder wenn du auf einem Server arbeitest, auf dem ncdu noch nie installiert wurde.
+
 **Symptome:**
 ```bash
 $ ncdu
 ncdu: command not found
 ```
+
+Pruefe zuerst mit `which ncdu`, ob ncdu ueberhaupt installiert ist. Falls nicht, installiere es ueber den passenden Paketmanager fuer dein Betriebssystem. Achte darauf, dass das Installationsverzeichnis im PATH enthalten ist -- auf den meisten Systemen wird ncdu in /usr/bin oder /usr/local/bin installiert, die standardmaessig im PATH sind.
 
 **Lösung:**
 ```bash
@@ -1521,6 +1544,7 @@ function ncdu-fzf() {
 ```
 
 ### 5. **Größte N Dateien finden (ohne ncdu)**
+Manchmal willst du nicht den interaktiven ncdu-Modus nutzen, sondern einfach die groessten Dateien als Liste sehen. Der find-Befehl kombiniert mit du und sort liefert eine schnelle Uebersicht der groessten Einzeldateien. Stell dir vor, du suchst eine einzelne riesige Datei, die du versehentlich irgendwo abgelegt hast -- mit diesem Befehl findest du sie in Sekunden. Fuer eine noch bessere Formatierung kannst du das Python-Skript unten verwenden, das die Groessen in menschenlesbarem Format (GB) anzeigt und nach Groesse sortiert. Der Vorteil gegenueber ncdu ist, dass diese Methode auch in Skripten und Automatisierungen einsetzbar ist.
 ```bash
 # Alternative: Mit find und sort
 find ~ -type f -exec du -h {} \; | sort -rh | head -20
@@ -1555,6 +1579,7 @@ if __name__ == '__main__':
 ```
 
 ### 6. **Snapshot-Vergleich mit diff**
+Der Vergleich von zwei ncdu-Scans zu verschiedenen Zeitpunkten zeigt dir, wie sich der Speicherverbrauch veraendert hat. Erstelle einen Scan, warte einige Zeit (Tage oder Wochen), erstelle einen zweiten Scan und vergleiche beide mit jq und diff. So erkennst du, welche Verzeichnisse gewachsen sind und wo Cleanup noetig ist. Stell dir vor, du willst nach einem Monat wissen, welche Projekte am schnellsten gewachsen sind -- der Snapshot-Vergleich zeigt es dir auf einen Blick. Alternativ kannst du die beiden JSON-Dateien an Claude uebergeben, das eine detaillierte Trend-Analyse erstellt.
 ```bash
 # Zwei Scans vergleichen
 # 1. Ersten Scan erstellen
@@ -1572,6 +1597,7 @@ diff <(jq -S . scan1.json) <(jq -S . scan2.json)
 ```
 
 ### 7. **ncdu-Output für Reporting**
+ncdu hat keinen eingebauten Report-Modus, aber du kannst den JSON-Export mit jq filtern, um automatisierte Reports zu erstellen. Der folgende Befehl exportiert den Scan nach stdout und filtert mit jq alle Eintraege, die groesser als 1 GB sind. Stell dir vor, du musst deinem Team einen woechentlichen Report ueber die Festplattenbelegung schicken -- dieser Einzeiler liefert die Daten in einem sauberen JSON-Format, das du in E-Mails oder Dashboards einbinden kannst. Das Ergebnis zeigt den Ordnernamen und die Groesse in GB, sodass du auf einen Blick die groessten Posten siehst.
 ```bash
 # ncdu hat keinen direkten Report-Mode, aber:
 # JSON exportieren und mit jq formatieren
@@ -1586,6 +1612,7 @@ ncdu -o - ~ | jq '.[] | select(.asize > 1000000000) | {name, size_gb: (.asize / 
 ```
 
 ### 8. **Remote-Server-Scans sammeln**
+Wenn du mehrere Server verwaltest, kannst du mit diesem Skript automatisch ncdu-Scans von allen Servern sammeln und lokal speichern. Das Skript verbindet sich per SSH mit jedem Server, fuehrt dort einen ncdu-Scan aus und speichert das Ergebnis als lokale JSON-Datei. Stell dir vor, du betreust 5 Produktionsserver und willst wissen, auf welchem der Speicherplatz knapp wird -- nach dem Ausfuehren des Skripts hast du alle Scans lokal und kannst sie mit `ncdu -f scan-server1.json` einzeln analysieren. Voraussetzung ist, dass ncdu auf allen Remote-Servern installiert ist und SSH-Key-Authentifizierung eingerichtet wurde.
 ```bash
 #!/bin/bash
 # collect_server_scans.sh
@@ -1601,6 +1628,7 @@ echo "All scans collected. Analyze with Claude or ncdu -f scan-*.json"
 ```
 
 ### 9. **Disk-Space-Watcher mit inotify**
+Dieses Skript ueberwacht kontinuierlich die Festplattenbelegung und oeffnet automatisch ncdu, sobald ein definierter Schwellenwert ueberschritten wird. Alle 5 Minuten prueft es den Speicherverbrauch der Root-Partition mit df. Wenn die Belegung den Schwellenwert (hier 80%) ueberschreitet, erscheint ein Alert und ncdu startet, damit du sofort Speicherplatz freimachen kannst. Stell dir vor, du arbeitest an einem Projekt mit vielen grossen Dateien und willst rechtzeitig gewarnt werden, bevor die Festplatte voll laeuft -- dieses Skript laeuft im Hintergrund und warnt dich automatisch. Beachte, dass das Skript nach dem Start von ncdu endet (break) -- du koenntest den break entfernen, um nach dem Aufraemen die Ueberwachung fortzusetzen.
 ```bash
 # Automatisch ncdu starten wenn Disk-Usage > 80%
 #!/bin/bash
@@ -1620,6 +1648,7 @@ done
 ```
 
 ### 10. **ncdu mit tmux für Multi-Panel-Monitoring**
+Mit dieser tmux-Konfiguration oeffnest du ncdu jederzeit per Tastenkombination in einem neuen Pane. Der bind-key N erstellt ein horizontales Pane und startet ncdu direkt im Home-Verzeichnis. Stell dir vor, du arbeitest in tmux an einem Projekt und willst kurz den Speicherverbrauch pruefen -- ein Tastendruck (Prefix + N) genuegt, und ncdu erscheint neben deinem Arbeitsfenster. Das ist besonders praktisch waehrend Builds oder Downloads, wenn du den Speicherverbrauch in Echtzeit beobachten willst. Um die Aenderung zu aktivieren, lade die tmux-Konfiguration mit `tmux source-file ~/.tmux.conf` neu.
 ```bash
 # ~/.tmux.conf
 # Keyboard-Shortcut für ncdu in neuem Pane

@@ -392,6 +392,8 @@ M  # Clear all selections
 
 ### 7. **Desktop-Integration**
 
+nnn kann Dateien auch mit GUI-Anwendungen oeffnen, indem du den NNN_OPENER setzt. Auf macOS verwendest du `open`, das die Standard-Anwendung fuer den Dateityp oeffnet (z.B. Preview fuer PDFs, Finder fuer Ordner). Auf Linux nutzt du `xdg-open`, das die in den Desktop-Einstellungen konfigurierte Anwendung startet. In nnn drueckst du einfach `o` auf einer markierten Datei, und sie wird in der zugehoerigen GUI-Anwendung geoeffnet. Das ist besonders nuetzlich fuer Dateitypen, die im Terminal nicht gut darstellbar sind, wie Bilder, Videos oder Office-Dokumente.
+
 ```bash
 # nnn mit GUI File Manager verbinden
 
@@ -816,11 +818,17 @@ a       # Alle markieren
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Schnelle Projekt-Navigation
+
+nnn ist der schnellste Weg, eine Projektstruktur zu erkunden, bevor du Claude Code einsetzt. Mit dem `-d`-Flag (Detail View) siehst du sofort Dateigroessen, Berechtigungen und Aenderungsdaten. Navigiere durch das src/-Verzeichnis, um die Code-Struktur zu verstehen und identifiziere die Dateien, die Claude Code bearbeiten soll. Die Startzeit von unter einer Millisekunde macht nnn zur perfekten Wahl fuer schnelle Checks zwischendurch. Druecke q, um nnn zu verlassen, und starte Claude Code mit den gewonnenen Erkenntnissen.
+
 ```bash
 nnn -d src/
 ```
 
 ### Workflow 2: Dateien mit Plugins oeffnen
+
+Mit dem preview-tabbed Plugin bekommst du eine Datei-Vorschau, die den Inhalt der aktuell ausgewaehlten Datei in einem separaten Bereich anzeigt. Du startest nnn mit der NNN_PLUG-Variable, die das Preview-Plugin auf die Taste p legt. In nnn drueckst du dann `;p`, um das Preview-Pane zu aktivieren. Das ist besonders nuetzlich, wenn du schnell den Inhalt mehrerer Dateien inspizieren willst, bevor du entscheidest, welche Claude Code bearbeiten soll. Die Preview aktualisiert sich automatisch, wenn du zu einer anderen Datei navigierst.
+
 ```bash
 # In nnn: ; fuer Plugin-Menu
 # Nutze preview-tabbed fuer Datei-Vorschau
@@ -828,6 +836,9 @@ NNN_PLUG='p:preview-tabbed' nnn
 ```
 
 ### Workflow 3: Dateien zwischen Verzeichnissen organisieren
+
+Vor einem Refactoring musst du oft Dateien zwischen Verzeichnissen verschieben oder reorganisieren. Mit nnn markierst du die gewuenschten Dateien mit Space, wechselst zum Ziel-Context und fuegst sie mit Ctrl+V (Move) oder Ctrl+P (Copy) ein. Das `-a`-Flag deaktiviert die automatische Selektion, was bei Batch-Operationen weniger verwirrend ist. Nutze die 4 Contexts, um Quell- und Zielverzeichnisse gleichzeitig offen zu haben. Nach der Reorganisation kann Claude Code auf die neue Struktur angesetzt werden.
+
 ```bash
 # Selection-Mode: Space zum Markieren, p zum Kopieren
 nnn -a
@@ -1053,6 +1064,8 @@ trash-list
 
 ### 1. **Auto-CD Setup perfektionieren**
 
+Die erweiterte cd-on-quit-Funktion ist eines der wichtigsten Setups fuer nnn. Ohne sie aendert nnn dein Arbeitsverzeichnis nicht -- du landest nach dem Beenden wieder dort, wo du gestartet hast. Die Funktion prueft zuerst, ob nnn bereits in einer verschachtelten Instanz laeuft (NNNLVL), um Probleme zu vermeiden. Nach dem Beenden liest sie den zuletzt besuchten Pfad aus einer temporaeren Datei und wechselt dorthin. Die Aliases `nf` und `nd` starten nnn direkt in haeufig besuchten Verzeichnissen und sparen weiteres Tippen.
+
 ```bash
 # ~/.bashrc - Enhanced Version
 n() {
@@ -1077,7 +1090,9 @@ alias nf='n ~/projects'  # Files-Shortcut
 alias nd='n ~/Downloads'  # Downloads-Shortcut
 ```
 
-### 2. **Plugin-Keybindings nach Häufigkeit**
+### 2. **Plugin-Keybindings nach Haeufigkeit**
+
+Die Belegung der Plugin-Tasten sollte nach Nutzungshaeufigkeit erfolgen. Lege die am meisten genutzten Plugins (finder, fzopen, preview) auf einfach erreichbare Einzelbuchstaben. Weniger haeufig genutzte Plugins koennen auf Shift-Kombinationen gelegt werden. In nnn rufst du Plugins mit `;` gefolgt vom zugewiesenen Buchstaben auf. Nach einiger Zeit wird das Muskelgedaechtnis die wichtigsten Plugin-Aufrufe automatisieren. Passe die Belegung an, sobald du merkst, welche Plugins du am haeufigsten verwendest.
 
 ```bash
 # Meistgenutzte Plugins auf einfache Keys
@@ -1091,6 +1106,8 @@ export NNN_PLUG='f:finder;F:bulkrename;'
 ```
 
 ### 3. **Smart Trash-Workflow**
+
+Ein durchdachter Trash-Workflow schuetzt vor versehentlichem Datenverlust und haelt gleichzeitig den Speicherplatz sauber. Die Aliase `tl` (list mit fzf fuer Fuzzy-Suche), `tr` (restore) und `te` (empty) machen das Trash-Management schnell und komfortabel. Der Cronjob leert automatisch alle Dateien, die aelter als 30 Tage sind, sodass der Papierkorb nicht endlos waechst. Mit NNN_TRASH=1 geht jede Loeschung in nnn automatisch in den Trash statt direkt auf die Festplatte. Das gibt dir ein Zeitfenster, um versehentlich geloeschte Dateien wiederherzustellen.
 
 ```bash
 # ~/.bashrc
@@ -1106,7 +1123,9 @@ alias te='trash-empty'
 # 0 2 * * * trash-empty 30
 ```
 
-### 4. **Context-Hotkeys für Projekte**
+### 4. **Context-Hotkeys fuer Projekte**
+
+Mit Shell-Aliases kannst du nnn direkt in haeufig besuchten Verzeichnissen starten, ohne jedes Mal den Pfad eingeben zu muessen. Das Plugin-Script im Beispiel setzt alle 4 Contexts beim Start auf vordefinierte Verzeichnisse, sodass du sofort zwischen Projekten, Downloads, temporaeren Dateien und Dokumenten wechseln kannst. Die einfachere Alternative sind Shell-Aliases wie `np` fuer das Projekt-Verzeichnis und `nd` fuer Downloads. Waehle die Methode, die zu deinem Workflow passt.
 
 ```bash
 # Plugin: project-contexts
@@ -1125,6 +1144,8 @@ alias nd='nnn "$HOME/Downloads"'
 ```
 
 ### 5. **Batch-Operations mit External Editor**
+
+Dieses Setup erlaubt es dir, die Liste der markierten Dateien in deinem Editor zu bearbeiten. Die NNN_SEL-Variable zeigt auf die Datei, die die Pfade aller markierten Dateien enthaelt. Ein Plugin oeffnet diese Datei in vim, wo du die Pfade bearbeiten, umbenennen oder loeschen kannst. Das ist maechtig fuer komplexe Batch-Operationen, die ueber einfaches Kopieren und Verschieben hinausgehen. Stell dir vor, du musst 50 Dateien nach einem bestimmten Pattern umbenennen: Du markierst sie, oeffnest die Liste in vim und nutzt vim-Makros fuer die Umbenennung.
 
 ```bash
 # Selections in vim bearbeiten

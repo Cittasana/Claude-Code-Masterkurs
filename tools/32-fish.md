@@ -291,7 +291,9 @@ g<Tab>
 # Zeigt alle Git-Befehle
 ```
 
-### 2. **Web-basierte Config für Themes**
+### 2. **Web-basierte Config fuer Themes**
+
+Die Web-basierte Konfiguration ist eines der einzigartigen Features von fish. Der Befehl `fish_config` startet einen lokalen Webserver und oeffnet deinen Browser mit einer grafischen Oberflaeche, in der du Themes, Prompts und Farbschemata visuell auswaehlen kannst. Statt muehsam Hex-Codes in Config-Dateien zu tippen, klickst du einfach auf das Theme, das dir gefaellt. Beliebte Themes sind Dracula, Nord, Solarized und Catppuccin. Die Aenderungen werden sofort uebernommen und in den fish-Konfigurationsdateien gespeichert. Alternativ kannst du ein Theme auch direkt per Kommando setzen.
 
 ```fish
 # Öffne fish_config
@@ -365,6 +367,8 @@ set fish_trace 0
 > 🚀 **Beispiel**: Mit `abbr -a gs git status` expandiert fish beim Tippen von `gs` + Leertaste automatisch zu `git status` -- du siehst den vollen Befehl bevor du Enter drueckst.
 
 ### 7. **Nutze abbr statt alias**
+
+Abbreviations (abbr) sind in fish die bessere Alternative zu Aliassen. Der entscheidende Unterschied: Wenn du eine Abbreviation tippst und Leertaste drueckst, expandiert fish den Kurzbefehl zum vollen Befehl -- du siehst also genau, was ausgefuehrt wird, bevor du Enter drueckst. Das verhindert Ueberraschungen und hilft beim Lernen der eigentlichen Befehle. In der Shell-History wird der expandierte Befehl gespeichert, nicht die Abbreviation, was die History aussagekraeftiger macht. Abbreviations sind besonders nuetzlich fuer haeufig verwendete Git-Befehle, die du schnell tippen aber vor der Ausfuehrung noch pruefen willst.
 
 ```fish
 # Abbreviation (expandiert beim Tippen)
@@ -800,7 +804,9 @@ myapp --<Tab>
 
 ### fish für AI-unterstützte Entwicklung
 
-#### Setup für optimale Integration
+#### Setup fuer optimale Integration
+
+Dieses Setup optimiert fish fuer die Zusammenarbeit mit Claude Code. Ein einfacher, kopierbarer Prompt stellt sicher, dass Claude Code die Prompt-Ausgabe korrekt parsen kann -- verzichte auf zu viele Sonderzeichen und Unicode im Prompt. Die History-Groesse wird auf 10000 Eintraege erhoehrt, damit Claude Code einen umfangreichen Kontext deiner bisherigen Befehle analysieren kann. Die Funktionen `explain_last` und `suggest_fix` bilden die Grundlage fuer eine AI-Integration, die den letzten Befehl automatisch zur Analyse bereitstellt. Passe die Funktionen an dein spezifisches AI-Tool an.
 
 ```fish
 # ~/.config/fish/config.fish
@@ -831,6 +837,8 @@ end
 
 #### Workflow-Pattern
 
+Dieser Workflow zeigt das typische Zusammenspiel von fish und Claude Code bei explorativem Development. Du startest fish fuer die besseren Auto-Suggestions, navigierst im Projekt und nutzt die Tab-Completions, um Git-Befehle und Build-Tools schneller einzugeben. Bei Fehlern zeigt der Prompt sofort den Exit-Code an, und du kannst die History als Kontext fuer Claude Code exportieren. Die Kombination aus fish-Suggestions und Claude-Code-Analyse beschleunigt den Entwicklungsprozess erheblich.
+
 ```fish
 # Schritt 1: Exploratives Development
 cd ~/projects/new-feature
@@ -854,6 +862,9 @@ history | head -20 > /tmp/context.txt
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: fish-Funktionen fuer Claude Code Shortcuts
+
+Diese fish-Funktion erstellt einen Shortcut, der Claude Code direkt im richtigen Projekt-Verzeichnis startet. Statt jedes Mal `cd ~/projects/myapp && claude` zu tippen, rufst du einfach `cc myapp` auf. Die Funktion wechselt ins Projektverzeichnis und startet Claude Code, sodass es sofort den richtigen Kontext hat. Speichere die Funktion mit `funcsave cc`, damit sie in allen Sessions verfuegbar ist. Das spart besonders viel Zeit, wenn du haeufig zwischen Projekten wechselst.
+
 ```fish
 # ~/.config/fish/functions/cc.fish
 function cc
@@ -865,6 +876,9 @@ end
 ```
 
 ### Workflow 2: History-Export fuer Claude Code Kontext
+
+Diese Funktion exportiert deine letzten 50 Shell-Befehle als Kontext fuer Claude Code. Das ist nuetzlich, wenn du ein Problem hast und Claude Code zeigen willst, was du bereits versucht hast. Die History wird in eine temporaere Datei geschrieben und dann als Argument an Claude Code uebergeben. So kann Claude Code deine bisherigen Schritte analysieren und gezielte Vorschlaege machen, anstatt bei Null anzufangen. Das spart Zeit und fuehrt zu praeziseren Empfehlungen.
+
 ```fish
 # Letzte 50 Befehle als Kontext fuer Claude Code exportieren
 function cc_context
@@ -875,6 +889,9 @@ end
 ```
 
 ### Workflow 3: Automatische Fehleranalyse mit Claude Code
+
+Dieses Setup nutzt das Event-System von fish, um bei fehlgeschlagenen Befehlen automatisch einen Hinweis anzuzeigen. Die `fish_postexec`-Funktion wird nach jedem Befehl aufgerufen und prueft den Exit-Status. Bei einem Fehler schlaegt sie vor, `cc_fix` aufzurufen. Die `cc_fix`-Funktion liest den letzten Befehl aus der History und uebergibt ihn an Claude Code zur Analyse. So bekommst du sofort Hilfe, wenn ein Befehl fehlschlaegt, ohne den fehlgeschlagenen Befehl manuell kopieren zu muessen. Besonders nuetzlich bei kryptischen Fehlermeldungen von Build-Tools oder Paketmanagern.
+
 ```fish
 # Bei fehlgeschlagenem Befehl automatisch Claude Code fragen
 function fish_postexec --on-event fish_postexec
@@ -1115,7 +1132,9 @@ steps:
 
 ## 💎 Pro-Tipps
 
-### 1. **Universal Variables für Team-Settings**
+### 1. **Universal Variables fuer Team-Settings**
+
+Universal Variables sind persistente Variablen, die einmal gesetzt werden und in allen fish-Sessions sofort verfuegbar sind -- ohne Neustart, ohne Source, ohne Konfigurationsdatei. Sie eignen sich hervorragend fuer team-weite Einstellungen wie interne Server-Adressen oder Default-Regionen. In diesem Beispiel setzt du einmalig den Git-Server und die AWS-Region als Universal Variables, und jede fish-Session kennt diese Werte automatisch. Das ist besonders praktisch beim Onboarding neuer Teammitglieder: Statt eine lange Konfiguration zu erklaeren, setzt du ein paar Universal Variables und alles funktioniert.
 
 ```fish
 # Team-weite Einstellungen
@@ -1130,6 +1149,8 @@ end
 
 ### 2. **Event-basiertes Loading**
 
+Fish unterstuetzt Event-basiertes Loading, bei dem Konfigurationen erst geladen werden, wenn sie tatsaechlich benoetigt werden. In diesem Beispiel wird die Docker-Umgebungsvariable nur gesetzt, wenn ein Befehl ausgefuehrt wird, der mit "docker" beginnt. Das beschleunigt den Shell-Start erheblich, da teure Initialisierungen nicht bei jedem Terminal-Start ausgefuehrt werden, sondern nur on-demand. Der `--on-event fish_preexec` Trigger wird vor jeder Befehlsausfuehrung aufgerufen und prueft den Befehlsinhalt. Nutze dieses Pattern fuer alle Umgebungen, die du nicht in jeder Session brauchst.
+
 ```fish
 # Lade nur wenn gebraucht
 function load_docker --on-event fish_preexec
@@ -1141,6 +1162,8 @@ end
 ```
 
 ### 3. **Private Functions**
+
+Funktionen, die mit zwei Unterstrichen beginnen (__), werden von fish als privat behandelt und erscheinen nicht in der Auto-Completion. Das ist nuetzlich fuer Hilfsfunktionen, die von oeffentlichen Funktionen intern verwendet werden, aber fuer den Benutzer nicht direkt relevant sind. In diesem Beispiel ruft `public_func` die private `__helper`-Funktion auf, aber beim Tippen und Tab-Vervollstaendigen taucht `__helper` nicht in der Vorschlagsliste auf. Das haelt deine Completion-Liste sauber und uebersichtlich.
 
 ```fish
 # Funktionen mit __ prefix sind private
@@ -1154,6 +1177,8 @@ end
 ```
 
 ### 4. **Conditional Config basierend auf OS**
+
+Wenn du fish auf mehreren Betriebssystemen verwendest (z.B. macOS zu Hause und Linux auf dem Server), kannst du die Konfiguration automatisch anpassen. Der `switch`-Befehl prueft das Ergebnis von `uname` und setzt betriebssystem-spezifische Variablen und Aliase. Auf macOS verwendest du `open` als Browser und `ls -G` fuer farbige Ausgabe, waehrend Linux `xdg-open` und `ls --color=auto` nutzt. Diese Konfiguration stellst du einmal ein, und sie funktioniert auf allen deinen Rechnern. Committe die config.fish in dein Dotfiles-Repository, um sie ueberall verfuegbar zu haben.
 
 ```fish
 # config.fish
@@ -1169,6 +1194,8 @@ end
 
 ### 5. **fish als Default Shell mit Fallback**
 
+Wenn du fish nutzen willst, aber es nicht als System-Default-Shell setzen moechtest (z.B. weil Scripts bash erwarten), kannst du diesen Trick verwenden. Du fuegst den Code in deine bashrc oder zshrc ein, und er prueft ob fish installiert ist. Falls ja, startet er fish mit `exec`, was die aktuelle Shell ersetzt. So startest du immer in fish, aber dein System bleibt offiziell bei bash. Das ist sicherer als `chsh`, weil du bei Problemen einfach die Zeile entfernen kannst, ohne dein Login-System zu beeintraechtigen.
+
 ```fish
 # In .bashrc oder .zshrc
 if command -v fish > /dev/null 2>&1; then
@@ -1178,6 +1205,8 @@ fi
 
 ### 6. **Debugging mit breakpoint**
 
+fish hat einen eingebauten `breakpoint`-Befehl, der die Ausfuehrung einer Funktion unterbricht und eine interaktive Shell oeffnet. Das ist extrem nuetzlich zum Debugging: Du setzt den Breakpoint an die Stelle, wo du den Zustand inspizieren willst, und kannst dann alle Variablen pruefen, Befehle ausfuehren und das Problem analysieren. Wenn du die interaktive Shell verlaesst (mit exit oder Ctrl+D), setzt die Funktion ihre Ausfuehrung fort. Das ist aehnlich wie ein Debugger in einer Programmiersprache, aber direkt in deiner Shell. Verwende Breakpoints temporaer und entferne sie, wenn du das Problem geloest hast.
+
 ```fish
 function debug_script
     set -l result (complex_operation)
@@ -1186,7 +1215,9 @@ function debug_script
 end
 ```
 
-### 7. **Persistente Aliases über abbr**
+### 7. **Persistente Aliases ueber abbr**
+
+Abbreviations mit dem `-g` Flag (global) sind in der aktuellen Session verfuegbar und bleiben ueber Shell-Neustarts bestehen, wenn sie in der config.fish definiert sind. Mit `abbr --show` kannst du alle definierten Abbreviations anzeigen und pruefen, welche aktiv sind. Der Vorteil gegenueber klassischen Aliassen ist die Transparenz: Du siehst immer den vollstaendigen Befehl, bevor du ihn ausfuehrst, und die Shell-History enthaelt den expandierten Befehl. Das erleichtert das Debugging erheblich, da du genau weisst, was tatsaechlich ausgefuehrt wurde.
 
 ```fish
 # Einmalig setzen
@@ -1198,6 +1229,8 @@ abbr --show
 ```
 
 ### 8. **fish_update_completions**
+
+Nach der Installation neuer Tools fehlen oft die Tab-Completions in fish. Der Befehl `fish_update_completions` scannt alle Programme in deinem PATH, liest deren `--help`-Output und generiert automatisch Completion-Dateien. Das funktioniert fuer die meisten CLI-Tools, die eine standardmaessige Hilfe-Ausgabe haben. Fuehre diesen Befehl nach der Installation neuer Tools aus, um sofort von Tab-Completions zu profitieren. Die generierten Completion-Dateien werden in einem System-Verzeichnis gespeichert und sind sofort in allen fish-Sessions verfuegbar.
 
 ```fish
 # Nach Installation neuer Tools

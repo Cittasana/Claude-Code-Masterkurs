@@ -737,6 +737,8 @@ style = "blue"
 
 ### 5. Vim-Mode Indicator (zsh)
 
+Wenn du zsh im Vim-Modus nutzt (`bindkey -v`), aenderst du staendig zwischen Insert- und Normal-Mode. Ohne visuelles Feedback ist es schwer zu erkennen, in welchem Modus du dich gerade befindest, was zu unbeabsichtigten Tasteneingaben fuehrt. Starship kann den aktuellen Vim-Modus direkt im Prompt-Zeichen anzeigen -- `>` fuer Insert-Mode und `<` fuer Normal-Mode. Stell dir vor, du bearbeitest einen langen Befehl und drueckst aus Versehen Escape: Ohne Indikator tippst du weiter, aber die Tasten werden als Vim-Befehle interpretiert statt als Text. Mit dieser Konfiguration aendert sich das Prompt-Zeichen sofort in Farbe und Richtung, sodass du immer weisst, wo du stehst. Das erspart dir frustrierende Fehleingaben und macht den Vim-Modus in der Shell deutlich komfortabler.
+
 ```toml
 # ~/.config/starship.toml
 
@@ -753,6 +755,8 @@ vimcmd_replace_one_symbol = "[❮](bold purple)"
 ```
 
 ### 6. Project-Type Badges
+
+Dieses Custom Module erkennt automatisch den Projekttyp anhand charakteristischer Dateien im aktuellen Verzeichnis. Es prueft, ob eine `package.json` (npm/Node.js), `Cargo.toml` (Rust), `go.mod` (Go), `requirements.txt` (Python) oder ein `Dockerfile` (Docker) vorhanden ist, und zeigt ein entsprechendes Badge im Prompt an. Das ist besonders nuetzlich, wenn du im Laufe des Tages zwischen vielen verschiedenen Projekten wechselst und auf einen Blick sehen willst, welche Technologie im aktuellen Verzeichnis zum Einsatz kommt. Stell dir vor, du hast in deinem `~/Projects`-Ordner zwanzig verschiedene Repositories -- beim Wechsel in ein Verzeichnis siehst du sofort das passende Icon und weisst, ob du `npm`, `cargo` oder `pip` verwenden musst. Das Ergebnis ist ein kleines Badge wie "npm" oder "rust" direkt neben deinem Verzeichnispfad, das dir unnoetige `ls`-Befehle erspart.
 
 ```toml
 # ~/.config/starship.toml
@@ -778,6 +782,8 @@ style = "bold blue"
 
 ### 7. Battery-Level (Laptops)
 
+Das Battery-Modul zeigt den aktuellen Akkustand direkt im Prompt an und warnt dich visuell, wenn der Akku niedrig ist. Fuer Laptop-Nutzer, die oft ohne Ladegeraet arbeiten, ist das ein wichtiges Feature -- du siehst auf einen Blick, ob du noch genug Energie fuer einen laengeren Build oder eine Claude Code Session hast. Die Konfiguration definiert verschiedene Schwellenwerte mit unterschiedlichen Farben: Rot bei unter 10%, Gelb bei unter 30% und Gruen darueaber. Stell dir vor, du sitzt im Cafe und startest einen 20-minuetigen Docker-Build -- ohne Batterie-Anzeige im Prompt wuerdest du vielleicht nicht merken, dass der Akku bei 8% ist, bis der Laptop sich abschaltet. Mit diesem Modul ist der Akkustand staendig sichtbar, und das rote Symbol warnt dich rechtzeitig. Beachte, dass das Modul standardmaessig nur unter einem bestimmten Schwellenwert angezeigt wird, um den Prompt nicht unnoetig zu ueberladen.
+
 ```toml
 # ~/.config/starship.toml
 
@@ -800,6 +806,8 @@ style = "bold green"
 ```
 
 ### 8. Custom Git-Workflow
+
+Diese Konfiguration erweitert die Standard-Git-Anzeige im Prompt um detaillierte Informationen zu Commits, Tags und laufenden Git-Operationen wie Rebase oder Merge. Der `git_commit`-Block zeigt die ersten 7 Zeichen des aktuellen Commit-Hashs sowie Tags an, was besonders nuetzlich ist, wenn du mit Release-Tags arbeitest. Der `git_state`-Block informiert dich ueber laufende Operationen wie Cherry-Pick, Rebase oder Merge und zeigt sogar den Fortschritt an (z.B. "3 of 7"). Stell dir vor, du fuehrst einen interaktiven Rebase ueber 15 Commits durch und wirst durch einen Konflikt unterbrochen -- ohne diese Anzeige vergisst du leicht, dass der Rebase noch laeuft, und wunderst dich ueber seltsames Git-Verhalten. Mit dieser Konfiguration siehst du sofort "rebasing 5 of 15" im Prompt. Das `truncation_symbol` am Branch sorgt dafuer, dass sehr lange Branch-Namen nicht den Prompt sprengen, sondern mit "..." abgekuerzt werden.
 
 ```toml
 # ~/.config/starship.toml
@@ -825,6 +833,8 @@ revert = "reverting"
 
 ### 9. Execution-Time mit Threshold
 
+Die Command-Duration zeigt dir, wie lange der letzte Befehl gedauert hat, und kann bei laengeren Laeufen sogar Desktop-Benachrichtigungen ausloesen. Der `min_time`-Wert von 500 Millisekunden sorgt dafuer, dass nur Befehle angezeigt werden, die merklich Zeit gebraucht haben -- schnelle Befehle wie `ls` oder `cd` werden ignoriert. Im auskommentierten Abschnitt siehst du, wie du zusaetzlich eine macOS-Notification ausloesen kannst, wenn ein Befehl laenger als 10 Sekunden dauert. Stell dir vor, du startest `npm run build` und wechselst dann in den Browser zum Recherchieren -- nach 45 Sekunden poppt eine Desktop-Notification auf, dass der Build fertig ist. Das ist deutlich effizienter, als staendig ins Terminal zurueckzuschauen. Die Option `show_milliseconds = false` haelt die Anzeige uebersichtlich, indem nur Sekunden angezeigt werden.
+
 ```toml
 # ~/.config/starship.toml
 
@@ -846,6 +856,8 @@ show_milliseconds = false
 ```
 
 ### 10. Directory-Substitution
+
+Directory-Substitutions ersetzen lange Verzeichnispfade durch kurze, einpraegsame Symbole. Statt `~/Development/project` siehst du im Prompt nur das Laptop-Emoji gefolgt vom Projektnamen, was den Prompt deutlich kuerzer und uebersichtlicher macht. Das ist besonders nuetzlich, wenn du tief verschachtelte Verzeichnisstrukturen hast und der Pfad sonst den halben Terminal-Bildschirm einnimmt. Die `truncation_length` von 5 begrenzt zusaetzlich, wie viele Verzeichnisebenen angezeigt werden. Stell dir vor, du arbeitest in `~/Development/clients/acme-corp/frontend/src/components` -- ohne Substitution wuerde dieser Pfad deine gesamte Prompt-Zeile dominieren. Mit der Konfiguration wird `~/Development` durch ein kurzes Symbol ersetzt, und die Truncation kuerzt den Rest auf die letzten fuenf Verzeichnisse. Das `read_only`-Symbol zeigt dir zusaetzlich an, wenn du in einem schreibgeschuetzten Verzeichnis bist.
 
 ```toml
 # ~/.config/starship.toml
@@ -869,6 +881,9 @@ read_only = " 🔒"
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Git-Branch-Info in Prompt
+
+Wenn Claude Code automatisch Feature-Branches erstellt oder zwischen Branches wechselt, ist es wichtig, jederzeit zu wissen, auf welchem Branch du dich befindest. Ohne diese Information koenntest du versehentlich Aenderungen auf dem falschen Branch machen oder einen Merge in die falsche Richtung starten. Starship zeigt den Branch-Namen automatisch an, sobald du dich in einem Git-Repository befindest. Stell dir vor, Claude Code erstellt den Branch `feature/user-auth` und wechselt dorthin -- du siehst die Aenderung sofort im Prompt und kannst sicher weiterarbeiten. Das Format-Feld bestimmt, wie der Branch-Name dargestellt wird, inklusive optionalem Symbol.
+
 ```bash
 # Starship zeigt automatisch den Branch, ideal wenn Claude Code Branches erstellt
 # In starship.toml:
@@ -877,6 +892,9 @@ format = "[$symbol$branch]($style) "
 ```
 
 ### Workflow 2: Node.js Version im Prompt
+
+Bei Node.js-Projekten ist die verwendete Runtime-Version entscheidend, da unterschiedliche Versionen zu unterschiedlichem Verhalten fuehren koennen. Wenn Claude Code ein neues Projekt anlegt oder Abhaengigkeiten installiert, muss die Node-Version zum Projekt passen. Starship erkennt automatisch, ob du dich in einem Node.js-Projekt befindest und zeigt die aktive Node-Version an. Stell dir vor, du wechselst zwischen einem Legacy-Projekt mit Node 16 und einem neuen Projekt mit Node 20 -- ohne diese Anzeige wuerdest du vielleicht mit der falschen Version arbeiten und schwer nachvollziehbare Fehler bekommen. Das Ergebnis ist eine kleine Versionsanzeige direkt im Prompt, die dir sofort zeigt, welche Node-Version gerade aktiv ist.
+
 ```bash
 # Sofort sehen welche Node-Version aktiv ist
 [nodejs]
@@ -884,6 +902,9 @@ format = "[$symbol($version)]($style) "
 ```
 
 ### Workflow 3: Command-Dauer anzeigen
+
+Claude Code fuehrt oft laenger laufende Befehle wie Builds, Tests oder Deployments aus. Die Command-Duration zeigt dir nach jedem Befehl, wie lange er gedauert hat, sofern er den Schwellenwert von 2 Sekunden ueberschreitet. Das ist besonders nuetzlich, um Performance-Regressionen zu erkennen -- wenn ein Build ploetzlich 30 statt 10 Sekunden dauert, siehst du das sofort. Stell dir vor, Claude Code fuehrt `npm run build` aus und der Befehl dauert 45 Sekunden: Die Dauer wird in gelber Schrift direkt nach dem Prompt angezeigt. So kannst du ueber die Zeit verfolgen, ob deine Builds schneller oder langsamer werden, und bei Auffaelligkeiten direkt reagieren.
+
 ```bash
 # Sehen wie lange Claude Code Commands dauern
 [cmd_duration]
@@ -1152,6 +1173,8 @@ fi
 ```
 
 ### 4. Custom Module für jeden Use-Case
+
+Custom Modules sind die flexibelste Moeglichkeit, starship an deine spezifischen Beduerfnisse anzupassen. Du kannst beliebige Shell-Befehle ausfuehren und deren Ausgabe im Prompt anzeigen lassen -- von Projektkontext bis hin zu Deadlines. Das erste Modul liest eine `.claude-context`-Datei und zeigt deren Inhalt im Prompt an, sodass du bei AI-gestuetzten Projekten sofort siehst, welcher Kontext aktiv ist. Das zweite Modul zeigt eine Projekt-Deadline an, wenn eine `.deadline`-Datei existiert -- ideal, um bei zeitkritischen Projekten den Ueberblick zu behalten. Stell dir vor, du arbeitest an einem Kundenprojekt mit Deadline am Freitag: Im Prompt siehst du staendig "Deadline: 2026-02-14", was dich daran erinnert, dich auf die wichtigsten Features zu konzentrieren. Die `when`-Bedingung sorgt dafuer, dass das Modul nur angezeigt wird, wenn die entsprechende Datei auch existiert.
 
 ```toml
 # ~/.config/starship.toml

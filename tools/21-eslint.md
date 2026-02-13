@@ -942,16 +942,25 @@ eslint src/ -f json | \
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code Output pruefen
+
+Nachdem Claude Code TypeScript-Dateien generiert oder modifiziert hat, prueft dieser Befehl den Code auf Bugs, Best-Practice-Verstoesse und Style-Probleme. Der `--fix`-Flag behebt automatisch einfache Probleme wie fehlende Semikolons oder falsche Import-Reihenfolge. Die `--ext`-Option beschraenkt die Pruefung auf TypeScript-Dateien, was die Laufzeit in gemischten Projekten reduziert. Stell dir vor, Claude hat eine neue API-Route mit 200 Zeilen generiert -- ESLint findet sofort ein fehlendes `await` bei einem Datenbankaufruf, was ohne Linting zu einem subtilen Bug in Production fuehren wuerde. Das gibt dir ein automatisches Qualitaetsgate fuer AI-generierten Code.
+
 ```bash
 npx eslint src/ --ext .ts,.tsx --fix
 ```
 
 ### Workflow 2: Nur geaenderte Files linten
+
+Dieser Befehl lintet nur die Dateien, die tatsaechlich geaendert wurden, was in grossen Projekten deutlich schneller ist als das gesamte `src/`-Verzeichnis zu pruefen. Der `--diff-filter=ACMR`-Flag filtert auf hinzugefuegte, kopierte, modifizierte und umbenannte Dateien. Das ist besonders nach einer Claude Code Session nuetzlich, um gezielt nur den neuen oder geaenderten Code zu pruefen. Stell dir vor, Claude hat 3 von 500 Dateien geaendert -- statt 30 Sekunden fuer das gesamte Projekt dauert der Check weniger als 2 Sekunden. Kombiniere diesen Befehl mit Pre-Commit-Hooks, um ihn automatisch vor jedem Commit auszufuehren.
+
 ```bash
 git diff --name-only --diff-filter=ACMR | grep -E '\.(ts|tsx)$' | xargs npx eslint
 ```
 
 ### Workflow 3: Spezifische Regeln checken
+
+Mit diesem Befehl pruefst du gezielt eine einzelne Regel, ohne die gesamte ESLint-Konfiguration zu laden. Der `--no-eslintrc`-Flag ignoriert die Projektkonfiguration, und `--rule` definiert die spezifische Regel. Das ist nuetzlich, wenn du einen schnellen Check auf ein bestimmtes Problem machen willst, z.B. ob es ungenutzte Variablen im Code gibt. Stell dir vor, du hast Claude Code gebeten, toten Code aufzuraeumen, und willst anschliessend verifizieren, dass keine ungenutzten Variablen mehr vorhanden sind -- dieser Befehl prueft genau das. Das Ergebnis zeigt dir alle verbliebenen `no-unused-vars`-Violations mit Dateiname und Zeilennummer.
+
 ```bash
 npx eslint src/ --rule '{"no-unused-vars": "error"}' --no-eslintrc
 ```
@@ -1162,6 +1171,9 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run lint
 ## 💎 Pro-Tipps
 
 ### Tipp 1: Rule-Severity-Strategie
+
+Bei der Einfuehrung von ESLint in ein bestehendes Projekt ist ein graduelles Rollout entscheidend, um das Team nicht mit hunderten Fehlern zu ueberwaeltigen. Diese Strategie unterteilt die Regeln in drei Phasen: Zuerst werden nur kritische Fehler als "error" markiert, die den Code tatsaechlich brechen koennen. In Phase 2 kommen Warnungen fuer Code-Qualitaet hinzu, die nicht den Build blockieren. In Phase 3 werden die Warnings schrittweise auf Errors hochgestuft. Stell dir vor, du fuehrst ESLint in ein Projekt mit 50.000 Zeilen Legacy-Code ein -- wenn du sofort alles auf "error" setzt, bekommst du 2.000 Fehler und niemand kann committen. Mit der graduellen Strategie startest du mit 50 echten Bugs, fixst diese, und aktivierst dann die naechste Stufe. So bleibt das Team motiviert und der Code wird schrittweise besser.
+
 ```json
 // Graduelles Rollout für Legacy-Projekte
 {
@@ -1182,6 +1194,9 @@ NODE_OPTIONS="--max-old-space-size=4096" npm run lint
 ```
 
 ### Tipp 2: Rule-Performance-Profiling
+
+Wenn ESLint langsam laeuft, hilft das Performance-Profiling dabei, die langsamsten Regeln zu identifizieren. Mit der Umgebungsvariable `TIMING=1` zeigt ESLint nach dem Lauf eine Tabelle mit der Ausfuehrungszeit jeder einzelnen Regel. Besonders typenbasierte Regeln von `@typescript-eslint` koennen sehr langsam sein, da sie das gesamte TypeScript-Typensystem laden muessen. Stell dir vor, dein Linting dauert 45 Sekunden und du stellst mit TIMING fest, dass `@typescript-eslint/no-unsafe-call` allein 20 Sekunden braucht -- du kannst diese Regel deaktivieren oder durch eine schnellere Alternative ersetzen und die Laufzeit halbieren. Die Tabelle zeigt auch den relativen Anteil jeder Regel an der Gesamtlaufzeit, was die Priorisierung erleichtert.
+
 ```bash
 # Welche Rules sind langsam?
 TIMING=1 eslint src/
@@ -1194,6 +1209,9 @@ TIMING=1 eslint src/
 ```
 
 ### Tipp 3: Inline-Config für Edge-Cases
+
+Manchmal gibt es berechtigte Gruende, eine ESLint-Regel fuer eine bestimmte Zeile, einen Block oder eine ganze Datei zu deaktivieren. Die Inline-Kommentare ermoeglichen granulare Kontrolle, ohne die globale Konfiguration zu aendern. `eslint-disable-line` deaktiviert eine Regel nur fuer die aktuelle Zeile, waehrend `eslint-disable/enable`-Bloecke einen ganzen Abschnitt abdecken. Stell dir vor, du musst aus technischen Gruenden `eval()` in einer einzigen Stelle verwenden -- statt die Regel global zu deaktivieren, deaktivierst du sie nur fuer diese eine Zeile und dokumentierst den Grund. Verwende Inline-Disables sparsam und immer mit der spezifischen Regel-ID, nie mit einem blanken `eslint-disable` ohne Regelangabe, da das alle Checks deaktivieren wuerde.
+
 ```javascript
 // Einzelne Zeile deaktivieren
 const data = eval(userInput);  // eslint-disable-line no-eval
@@ -1212,6 +1230,9 @@ console.log('State:', state);
 ```
 
 ### Tipp 4: Environment-spezifische Configs
+
+In manchen Faellen willst du die Linting-Strenge je nach Umgebung anpassen. In der Entwicklung sind `console.log` und `debugger`-Statements nuetzlich, in Production aber ein Fehler. Diese Konfiguration liest die `NODE_ENV`-Variable und passt die Regeln entsprechend an. Im Development-Modus werden Console-Statements nur als Warnung markiert, und der Debugger ist erlaubt, waehrend in Production beides als Error markiert wird. Stell dir vor, du debuggst ein Problem und willst temporaer `console.log` verwenden -- in Development blockiert ESLint das nicht, aber vor dem Deployment faengt der strikte Modus vergessene Debug-Statements ab. Setze die `NODE_ENV`-Variable in deinem CI/CD-System auf "production", um den strengen Modus zu aktivieren.
+
 ```javascript
 // .eslintrc.js
 const isDev = process.env.NODE_ENV === 'development';
@@ -1227,6 +1248,9 @@ module.exports = {
 ```
 
 ### Tipp 5: ESLint als Pre-push Hook (strenger als pre-commit)
+
+Waehrend Pre-Commit-Hooks mit `--fix` automatisch Probleme beheben, laeuft der Pre-Push-Hook ohne Fix und blockiert den Push, wenn Fehler vorhanden sind. Das ist strenger als Pre-Commit, da kein automatisches Fixen stattfindet -- der Entwickler muss die Probleme selbst verstehen und beheben. Die Idee ist: Pre-Commit fixe einfache Probleme automatisch, aber vor dem Push muss der Code sauber sein. Stell dir vor, ein Entwickler hat mit `--no-verify` am Pre-Commit-Hook vorbeicommittet -- der Pre-Push-Hook faengt die Fehler trotzdem ab, bevor sie ins Remote-Repository gelangen. Das `--no-fix`-Verhalten stellt sicher, dass keine unerwarteten automatischen Aenderungen kurz vor dem Push passieren.
+
 ```bash
 # .husky/pre-push
 #!/usr/bin/env sh

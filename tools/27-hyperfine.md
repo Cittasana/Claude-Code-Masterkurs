@@ -96,6 +96,7 @@ hyperfine --version
 ```
 
 #### Arch Linux:
+Arch Linux stellt hyperfine direkt in den offiziellen Repositories bereit, was die Installation besonders einfach macht. Dank des Rolling-Release-Modells bekommst du immer die neueste Version. Stell dir vor, du entwickelst auf Arch Linux und willst schnell verschiedene Algorithmus-Implementierungen benchmarken -- ein einzelner pacman-Befehl genuegt fuer die Installation. Nach der Installation pruefst du mit `hyperfine --version`, ob alles korrekt eingerichtet wurde.
 ```bash
 # hyperfine installieren
 sudo pacman -S hyperfine
@@ -380,6 +381,8 @@ Benchmark 1: python3 data-processor.py
 
 ### Beispiel 2: Grep vs. Ripgrep Vergleich
 
+Einer der klassischen Benchmarks ist der Vergleich zwischen dem traditionellen grep und modernen Alternativen wie ripgrep (rg). Dieser Benchmark misst, wie schnell jedes Tool ein Muster rekursiv in einem Verzeichnis findet. Das Flag --warmup 3 fuehrt 3 Vorlaeufe durch, um den Dateisystem-Cache zu fuellen, damit die Messung nicht durch kalte Caches verzerrt wird. Stell dir vor, du ueberlegst, ob es sich lohnt, in deinem Team von grep auf ripgrep umzusteigen -- dieser Benchmark gibt dir harte Zahlen statt Bauchgefuehl. Die benannten Commands (--command-name) machen die Ausgabe lesbarer und den Vergleich eindeutiger. hyperfine berechnet am Ende automatisch den relativen Speedup.
+
 ```bash
 # Traditionelles grep vs. moderne Alternative ripgrep
 hyperfine --warmup 3 \
@@ -405,6 +408,8 @@ Summary
 **Ergebnis**: ripgrep ist ~12x schneller als grep!
 
 ### Beispiel 3: Compiler-Optimierungs-Flags
+
+Dieser Benchmark vergleicht verschiedene GCC-Optimierungslevel (-O0 bis -O3 und -Os) und zeigt, wie stark Compiler-Optimierungen die Laufzeit eines Programms beeinflussen. Der parameter-list-Parameter automatisiert die Benchmark-Serie -- hyperfine fuehrt den Befehl fuer jeden Optimierungslevel separat aus. Stell dir vor, du entwickelst ein rechenintensives C-Programm und willst wissen, ob sich der Unterschied zwischen -O2 und -O3 lohnt -- dieser Benchmark gibt dir die Antwort mit statistischer Praezision. Die Ergebnisse werden als CSV exportiert, damit du sie spaeter visualisieren oder mit anderen Tools weiterverarbeiten kannst. Beachte, dass der Befehl sowohl die Kompilierung als auch die Ausfuehrung misst.
 
 ```bash
 # Verschiedene GCC-Optimierungs-Levels vergleichen
@@ -441,6 +446,8 @@ Summary
 **Ergebnis**: -O3 ist am schnellsten (wie erwartet)
 
 ### Beispiel 4: Thread-Scaling-Analyse
+
+Eine Thread-Scaling-Analyse zeigt dir, wie gut ein Programm mit zunehmender Thread-Anzahl skaliert. Ideal waere eine lineare Skalierung: doppelt so viele Threads bedeuten halbe Laufzeit. In der Praxis erreichen Programme diese ideale Skalierung selten, da Synchronisierungskosten und gemeinsame Ressourcen (z.B. Memory-Bus, Locks) bremsen. Stell dir vor, du hast ein parallelisiertes Bildverarbeitungsprogramm und fragst dich, ob es sich lohnt, von 4 auf 8 Threads zu erhoehen -- dieser Benchmark zeigt dir genau den Punkt, ab dem mehr Threads keinen spuerbaren Vorteil mehr bringen. Die JSON-Ausgabe laesst sich anschliessend mit dem Python-Skript unten als Skalierungsgraph visualisieren.
 
 ```bash
 # Wie gut skaliert ein Programm mit mehr Threads?
@@ -502,6 +509,8 @@ plt.savefig('scaling.png')
 
 ### Beispiel 5: Python vs. PyPy vs. Rust
 
+Dieser Benchmark vergleicht die gleiche Algorithmus-Implementierung in drei verschiedenen Ausfuehrungsumgebungen: CPython (Standardinterpreter), PyPy (JIT-kompilierter Python-Interpreter) und Rust (nativer Maschinencode). Das ist ein typischer Anwendungsfall, wenn du entscheiden musst, ob eine Performance-kritische Komponente in einer schnelleren Sprache neu implementiert werden sollte. Stell dir vor, du hast eine Fibonacci-Berechnung in Python, die zu langsam ist -- der Benchmark zeigt dir objektiv, welchen Speedup du durch PyPy (ohne Code-Aenderung) oder durch Rust (mit Neuentwicklung) erwarten kannst. Die 5 Warmup-Runs sind hier besonders wichtig, da PyPy eine JIT-Aufwaermphase benoetigt. Das Ergebnis hilft dir, eine informierte Entscheidung ueber den Refactoring-Aufwand zu treffen.
+
 ```bash
 # Verschiedene Implementierungen vergleichen
 hyperfine --warmup 5 \
@@ -532,6 +541,8 @@ Summary
 > ⚠️ **Warnung**: Bei sehr schnellen Befehlen (<5ms) kann der Shell-Overhead die Messung verfaelschen. Nutze `--shell=none` fuer praezisere Ergebnisse bei kurzen Ausfuehrungszeiten.
 
 ### Beispiel 6: Build-System-Vergleich
+
+Build-System-Vergleiche sind einer der praktischsten Einsatzfaelle von hyperfine, da die Wahl des Package Managers die taegliche Entwicklererfahrung stark beeinflusst. Dieser Benchmark vergleicht npm, pnpm, yarn und bun bei der Installation von Abhaengigkeiten. Der prepare-Befehl `rm -rf node_modules` stellt sicher, dass vor jedem Run der node_modules-Ordner geloescht wird, sodass jeder Run eine frische Installation misst. Stell dir vor, dein Team diskutiert, ob ein Wechsel von npm zu pnpm oder bun lohnt -- dieser Benchmark liefert objektive Zahlen fuer eure konkrete package.json. Beachte, dass die Ergebnisse stark vom Projekt, der Netzwerkgeschwindigkeit und dem vorhandenen Cache abhaengen. Die 2 Warmup-Runs fuellen den lokalen Cache der Package Manager.
 
 ```bash
 # npm vs. pnpm vs. yarn vs. bun
@@ -567,6 +578,8 @@ Summary
 
 ### Beispiel 7: Algorithmen-Vergleich
 
+Algorithmen-Benchmarks sind der klassische Anwendungsfall fuer hyperfine in der Informatikausbildung und der Softwareentwicklung. Dieser Benchmark vergleicht drei Sortieralgorithmen mit 1 Million Elementen und exportiert die Ergebnisse direkt als Markdown-Tabelle. Stell dir vor, du schreibst eine Bachelorarbeit und brauchst einen objektiven Vergleich verschiedener Sortieralgorithmen -- hyperfine liefert dir eine sauber formatierte Tabelle mit statistischen Kennzahlen, die du direkt in deine Arbeit einfuegen kannst. Der Markdown-Export erzeugt eine Tabelle mit Mean, Min, Max und relativer Performance. Beachte, dass die Ergebnisse stark von der Datenverteilung abhaengen -- zufaellige Daten beguentigen Quicksort, waehrend fast sortierte Daten Mergesort bevorzugen.
+
 ```bash
 # Quicksort vs. Mergesort vs. Heapsort
 hyperfine --export-markdown sorting-algorithms.md \
@@ -587,6 +600,8 @@ hyperfine --export-markdown sorting-algorithms.md \
 **Ergebnis**: Quicksort ist am schnellsten für diesen Use-Case
 
 ### Beispiel 8: Input-Size-Scaling
+
+Input-Size-Scaling-Benchmarks messen, wie sich die Laufzeit eines Programms mit zunehmender Eingabegroesse veraendert. Das hilft dir, die algorithmische Komplexitaet (Big-O-Notation) empirisch zu verifizieren. In diesem Beispiel wird die Eingabegroesse logarithmisch von 100 bis 1.000.000 skaliert. Stell dir vor, du hast einen Datenverarbeitungsalgorithmus geschrieben und willst pruefen, ob er tatsaechlich in O(n) laeuft wie erwartet -- wenn die Laufzeit proportional zur Eingabegroesse waechst, bestaetigt das die lineare Komplexitaet. Falls die Laufzeit dagegen quadratisch waechst, hast du ein Performance-Problem, das bei grossen Datensaetzen zum Showstopper wird. Der JSON-Export ermoeglicht die Visualisierung als Skalierungsgraph.
 
 ```bash
 # Wie skaliert Performance mit Input-Größe?
@@ -617,6 +632,8 @@ Benchmark 5: process-data --size 1000000
 
 ### Beispiel 9: Database-Query-Optimization
 
+Datenbank-Queries lassen sich hervorragend mit hyperfine benchmarken, besonders wenn du den Effekt von Indizes oder Query-Optimierungen messen willst. In diesem Beispiel vergleichst du die gleiche SELECT-Abfrage mit und ohne Index auf der email-Spalte. Der prepare-Befehl erstellt den Index vor jedem Run, und die Warmup-Phase fuellt den Datenbank-Cache. Stell dir vor, du betreust eine Anwendung mit langsamen Login-Zeiten und vermutest einen fehlenden Index -- dieser Benchmark zeigt dir objektiv, wie viel ein Index bringt. Beachte, dass du psql auf der Kommandozeile aufrufst, was den Verbindungsaufbau mitmisst. Fuer praezisere In-Database-Benchmarks nutze EXPLAIN ANALYZE direkt in SQL.
+
 ```bash
 # Verschiedene SQL-Queries vergleichen
 hyperfine --warmup 3 \
@@ -626,6 +643,8 @@ hyperfine --warmup 3 \
 ```
 
 ### Beispiel 10: Rust Cargo Build-Modes
+
+Rust bietet verschiedene Build-Profile, die sich erheblich auf die Laufzeit-Performance auswirken. Der Debug-Build ist schnell zu kompilieren, aber die resultierende Binary ist langsam wegen fehlender Optimierungen. Der Release-Build aktiviert Optimierungen (-O3 equivalent), und LTO (Link-Time Optimization) ermoeglicht zusaetzliche Optimierungen ueber Modul-Grenzen hinweg. Stell dir vor, du entwickelst einen Rust-Webserver und fragst dich, ob LTO die laengere Kompilierzeit wert ist -- dieser Benchmark zeigt dir den exakten Performance-Unterschied. Beachte, dass der Benchmark sowohl die Build- als auch die Ausfuehrungszeit misst, was fuer CI/CD-Entscheidungen relevant ist.
 
 ```bash
 # Debug vs. Release vs. Profile-Optimized
@@ -656,6 +675,8 @@ Summary
 
 ### Beispiel 11: Export für CI/CD
 
+In CI/CD-Pipelines ist es wichtig, Performance-Regressionen automatisch zu erkennen. Dieser Workflow exportiert Benchmark-Ergebnisse in drei Formaten gleichzeitig: JSON fuer maschinelle Verarbeitung, CSV fuer Tabellenkalkulationen und Markdown fuer Pull-Request-Kommentare. Anschliessend prueft ein Shell-Skript mit jq, ob die durchschnittliche Laufzeit einen Schwellenwert ueberschreitet. Stell dir vor, ein Entwickler commitet Code, der die Testlaufzeit von 3 auf 6 Sekunden verdoppelt -- dieser Check wuerde automatisch fehlschlagen und den Entwickler warnen. Passe den Schwellenwert (hier 5.0 Sekunden) an die normalen Laufzeiten deines Projekts an.
+
 ```bash
 # In CI-Pipeline mit Export
 hyperfine --export-json benchmark-results.json \
@@ -672,6 +693,8 @@ fi
 ```
 
 ### Beispiel 12: Shell-Command mit Pipes
+
+Wenn du Shell-Befehle mit Pipes, Variablen oder anderen Shell-Features benchmarken willst, musst du explizit `--shell=bash` angeben. Ohne diese Option versucht hyperfine, den Befehl direkt auszufuehren, was bei Pipes zu einem Fehler fuehrt. Dieser Benchmark vergleicht zwei Ansaetze, um Zeilen in JavaScript-Dateien zu zaehlen: find mit xargs (parallelisierbar) versus find mit -exec (sequenziell). Stell dir vor, du optimierst ein Build-Skript und willst wissen, welcher Ansatz schneller ist -- dieser Benchmark gibt dir eine klare Antwort. Bei grossen Codebases kann der Unterschied zwischen den beiden Ansaetzen erheblich sein, besonders wenn xargs die Arbeit parallelisiert.
 
 ```bash
 # Komplexe Shell-Befehle benchmarken
@@ -979,6 +1002,7 @@ if __name__ == '__main__':
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code Optimierung messen
+Dieser Workflow zeigt den idealen Ablauf fuer Benchmark-Driven Development mit Claude Code. Zuerst erstellst du eine Baseline-Messung des unoptimierten Codes, dann laesst du Claude Code die Optimierung durchfuehren, und anschliessend misst du die optimierte Version. Der abschliessende direkte Vergleich zeigt den exakten Speedup. Stell dir vor, du hast ein Python-Skript, das 5 Sekunden braucht, und willst es von Claude Code optimieren lassen -- mit diesem Workflow siehst du schwarz auf weiss, ob die Optimierung tatsaechlich etwas gebracht hat. Die JSON-Exports ermoeglichen es, die Ergebnisse spaeter zu vergleichen oder in Dokumentationen einzufuegen.
 ```bash
 # Vorher: Baseline erstellen
 hyperfine --warmup 3 --export-json baseline.json 'python script.py'
@@ -991,6 +1015,7 @@ hyperfine --warmup 3 'python script_old.py' 'python script.py'
 ```
 
 ### Workflow 2: Build-Zeiten mit Claude Code optimieren
+Lange Build-Zeiten sind einer der groessten Produktivitaetskiller im Entwicklungsalltag. Dieser Workflow misst zuerst die aktuelle Build-Zeit, extrahiert den Durchschnittswert mit jq und uebergibt ihn als Kontext an Claude Code. So weiss Claude genau, wie langsam der aktuelle Build ist, und kann gezielt Optimierungen vorschlagen -- z.B. Caching, parallele Builds oder das Entfernen unnoetig importierter Module. Stell dir vor, dein npm-Build dauert 45 Sekunden und Claude schlaegt vor, auf esbuild umzusteigen -- nach der Aenderung misst du erneut und siehst, dass der Build nur noch 8 Sekunden dauert.
 ```bash
 # Build-Zeit messen und Claude Code fragen
 hyperfine --warmup 1 --export-json build-bench.json 'npm run build'
@@ -998,6 +1023,7 @@ claude "Die Build-Zeit betraegt $(jq '.results[0].mean' build-bench.json)s. Opti
 ```
 
 ### Workflow 3: Performance-Regression in CI/CD erkennen
+In professionellen Softwareprojekten ist es wichtig, Performance-Regressionen fruehzeitig zu erkennen, bevor sie in die Produktion gelangen. Dieser Workflow benchmarkt die kompilierte Anwendung nach jedem Push und vergleicht die Ergebnisse mit der Baseline. Claude Code kann den gesamten GitHub Actions Workflow automatisch generieren, inklusive Schwellenwert-Pruefung und Benachrichtigung bei Regressionen. Stell dir vor, ein neuer Commit fuegt einen ineffizienten Algorithmus ein, der die Laufzeit um 20% erhoeht -- der automatische Check wuerde das sofort erkennen und den Entwickler warnen. Passe den Schwellenwert (hier 10%) an die Anforderungen deines Projekts an.
 ```bash
 # In GitHub Actions: Benchmark nach jedem Push
 hyperfine --export-json bench-current.json './target/release/app'

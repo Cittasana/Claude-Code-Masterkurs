@@ -888,11 +888,17 @@ map ec export_context
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Projektstruktur vor Claude Code erkunden
+
+Bevor du Claude Code auf ein Projekt ansetzt, lohnt es sich, die Projektstruktur mit ranger zu erkunden. Du siehst sofort die Verzeichnishierarchie, kannst in Dateien hineinschauen und bekommst durch das Drei-Spalten-Layout ein Gefuehl fuer die Code-Organisation. Das hilft dir, Claude Code praezsere Anweisungen zu geben, weil du weisst, welche Dateien wo liegen. Navigiere durch src/, tests/ und config-Verzeichnisse, um den Aufbau des Projekts zu verstehen.
+
 ```bash
 ranger src/
 ```
 
 ### Workflow 2: Files mit Preview durchsuchen
+
+Die Preview-Funktion von ranger zeigt dir den Inhalt von Dateien mit Syntax-Highlighting, ohne sie in einem Editor oeffnen zu muessen. Das ist ideal fuer ein schnelles Code-Review vor einer Claude Code Session. Du navigierst mit j/k durch die Dateien, und die Preview-Spalte zeigt sofort den Inhalt der aktuell ausgewaehlten Datei an. Mit / kannst du nach bestimmten Dateien suchen und sie direkt in der Preview inspizieren. Das beschleunigt die Entscheidung, welche Dateien Claude Code bearbeiten soll.
+
 ```bash
 # In ranger: / zum Suchen, dann Enter zum Oeffnen
 # Preview zeigt Dateiinhalt mit Syntax Highlighting
@@ -900,6 +906,9 @@ ranger --cmd="set preview_images true"
 ```
 
 ### Workflow 3: Bulk-Operationen vor Refactoring
+
+Vor einem Refactoring mit Claude Code ist es oft sinnvoll, Dateien umzubenennen oder zu reorganisieren. Mit ranger markierst du die relevanten Dateien mit Space, fuehrst Batch-Rename durch oder verschiebst sie in neue Verzeichnisse. Das ist schneller als einzelne mv-Befehle und gibt dir visuelles Feedback ueber die Aenderungen. Danach kannst du Claude Code auf die reorganisierte Struktur ansetzen. Starte ranger direkt im Zielverzeichnis, um sofort loslegen zu koennen.
+
 ```bash
 # In ranger: Space zum Markieren, :rename fuer Batch-Rename
 ranger --cmd="cd src/components"
@@ -1127,7 +1136,9 @@ set use_preview_script false  # Temporär
 
 ## 💎 Pro-Tipps
 
-### 1. **Bookmark häufige Verzeichnisse**
+### 1. **Bookmark haeufige Verzeichnisse**
+
+Bookmarks ersparen dir das wiederholte Navigieren zu haeufig besuchten Verzeichnissen. Du definierst in der rc.conf Keybindings, die mit g beginnen und direkt zu einem Verzeichnis springen. Zum Beispiel bringt dich `gp` sofort zu ~/projects, `gd` zu ~/Downloads und `gl` zu /var/log. Fuer dynamische Bookmarks kannst du auch ranger-eigene Marks verwenden: Mit `m` gefolgt von einem Buchstaben setzt du ein Lesezeichen an der aktuellen Position, und mit `'` gefolgt vom Buchstaben springst du zurueck. Diese Marks funktionieren genau wie in vim und bleiben waehrend der Session erhalten.
 
 ```bash
 # rc.conf
@@ -1142,7 +1153,9 @@ m<key>  # Bookmark setzen
 '<key>  # Zu Bookmark springen
 ```
 
-### 2. **Macro-Recording für repetitive Tasks**
+### 2. **Macro-Recording fuer repetitive Tasks**
+
+Genau wie in vim kannst du in ranger Makros aufnehmen, die eine Folge von Aktionen wiederholen. Du startest die Aufnahme mit `q` gefolgt von einem Buchstaben (z.B. qa), fuehrst deine Aktionen aus und stoppst die Aufnahme mit erneutem q. Danach spielst du das Makro mit `@a` ab, sooft du willst. Das ist extrem nuetzlich fuer repetitive Datei-Operationen, z.B. wenn du in jedem Unterverzeichnis die gleiche Aktion durchfuehren musst. Mit `@@` wiederholst du das zuletzt verwendete Makro.
 
 ```bash
 # In ranger (ähnlich wie vim)
@@ -1155,6 +1168,8 @@ q          # Recording stoppen
 ```
 
 ### 3. **Trash statt Delete**
+
+Standardmaessig loescht ranger Dateien endgueltig mit rm. Das ist gefaehrlich, besonders wenn du viele Dateien auf einmal loeschst. Mit trash-cli und einem angepassten Keybinding werden geloeschte Dateien stattdessen in den Papierkorb verschoben und koennen bei Bedarf wiederhergestellt werden. Installiere trash-cli ueber deinen Paketmanager und definiere den Keybinding DD in deiner rc.conf. Dann zeigt `trash-list` alle geloeschten Dateien an und `trash-restore` stellt sie interaktiv wieder her. Das gibt dir ein Sicherheitsnetz, ohne den Workflow zu verlangsamen.
 
 ```bash
 # rc.conf - sicheres Löschen
@@ -1169,7 +1184,9 @@ sudo apt install trash-cli  # Linux
 :shell trash-restore
 ```
 
-### 4. **Shell-Escape für Complex Commands**
+### 4. **Shell-Escape fuer Complex Commands**
+
+Aus ranger heraus kannst du beliebige Shell-Befehle ausfuehren, ohne ranger zu verlassen. `shell-fg` fuehrt den Befehl im Vordergrund aus (ranger pausiert waehrenddessen), waehrend `shell-bg` den Befehl im Hintergrund startet und du sofort in ranger weiterarbeiten kannst. Das ist besonders nuetzlich fuer Befehle wie htop, die ein eigenes TUI haben, oder fuer Hintergrund-Operationen wie das Loeschen alter Log-Dateien. Verwende `%s` als Platzhalter fuer die aktuell markierte Datei und `%d` fuer das aktuelle Verzeichnis.
 
 ```bash
 # Aus ranger heraus Shell-Commands
@@ -1182,6 +1199,8 @@ sudo apt install trash-cli  # Linux
 ```
 
 ### 5. **Selection-Basierte Operations**
+
+Die Kombination aus Regex-Suche und Selektion ermoeglicht maechtige Datei-Operationen. Mit `/\.md$` suchst du alle Markdown-Dateien, und mit v markierst du alle Treffer auf einmal. Danach kannst du mit yy alle kopieren, mit `:shell wc -l %s` die Zeilenanzahl aller markierten Dateien zaehlen oder mit `:shell vim %s` alle gleichzeitig in vim oeffnen. Das ist besonders nuetzlich bei Code-Reviews, wo du alle Dateien eines bestimmten Typs inspizieren willst. Die Regex-Suche unterstuetzt volle regulaere Ausdruecke, sodass auch komplexe Muster moeglich sind.
 
 ```bash
 # Alle Markdown-Files markieren
@@ -1196,7 +1215,9 @@ yy  # Alle markierten kopieren
 :shell vim %s  # Öffnet alle in vim
 ```
 
-### 6. **Quick View (Q) für Code-Review**
+### 6. **Quick View (Q) fuer Code-Review**
+
+Quick View erweitert die normale Preview-Funktion um die Moeglichkeit, innerhalb der Preview-Spalte zu scrollen. Normalerweise siehst du nur den Anfang einer Datei in der Preview. Mit Q aktivierst du den Quick View Modus, in dem du mit j/k und gg/G durch die gesamte Datei scrollen kannst, ohne sie in einem Editor zu oeffnen. Das ist ideal fuer schnelle Code-Reviews, wo du den Inhalt lesen aber nicht bearbeiten willst. Druecke Q erneut, um zum normalen Datei-Listen-Modus zurueckzukehren.
 
 ```bash
 # Quick View aktivieren
@@ -1211,6 +1232,8 @@ Q
 ```
 
 ### 7. **cd-on-quit Feature**
+
+Normalerweise aendert ranger das Arbeitsverzeichnis deiner Shell nicht -- wenn du ranger verlaesst, bist du wieder dort, wo du gestartet hast. Das cd-on-quit Feature aendert dieses Verhalten: ranger speichert das aktuelle Verzeichnis beim Beenden in eine temporaere Datei, und ein Shell-Wrapper liest diese Datei und fuehrt ein cd zum gespeicherten Verzeichnis aus. So navigierst du in ranger zu einem Zielverzeichnis und bist nach dem Beenden automatisch dort. Definiere die Funktion in deiner Shell-Konfiguration und nutze den Alias `rcd` statt dem normalen `ranger`-Befehl.
 
 ```bash
 # In .bashrc / .zshrc / config.fish
@@ -1235,6 +1258,8 @@ rcd
 ```
 
 ### 8. **Git-Status im File-List**
+
+Mit aktivierter VCS-Integration zeigt ranger den Git-Status jeder Datei direkt in der Dateiliste an. Geaenderte Dateien erscheinen rot, gestagete gruen, ungetrackte grau und committete in der Standardfarbe. Das gibt dir sofort einen visuellen Ueberblick ueber den Git-Zustand deines Repositories, ohne `git status` ausfuehren zu muessen. Besonders praktisch: Du kannst eine Datei mit Space markieren und dann mit `:shell git add %s` direkt stagen. Aktiviere diese Funktion in deiner rc.conf mit den gezeigten Einstellungen.
 
 ```bash
 # rc.conf

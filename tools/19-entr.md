@@ -261,6 +261,9 @@ fd -e scss | entr -s '
 ### Integration in Claude Code Workflows
 
 #### 1. Auto-Test mit AI-Analysis
+
+Dieser Workflow kombiniert entr mit Claude Code, um bei jeder Code-Aenderung automatisch Tests auszufuehren und fehlgeschlagene Tests von Claude analysieren zu lassen. Die Test-Ausgabe wird in eine Datei geschrieben, und nur wenn Tests fehlschlagen, wird Claude zur Analyse aufgerufen. Das spart dir die manuelle Fehlersuche, da Claude direkt Vorschlaege zur Behebung macht. Stell dir vor, du refaktorierst eine komplexe Funktion und bei jeder Aenderung schlaegt ein Test fehl -- statt die Fehlermeldung selbst zu interpretieren, bekommst du sofort eine Analyse und einen Fix-Vorschlag. Das Ergebnis ist ein vollautomatischer Feedback-Loop, der dich bei der Entwicklung unterstuetzt.
+
 ```bash
 # Watch Tests, analyze failures with Claude
 fd -e test.js | entr sh -c '
@@ -272,6 +275,9 @@ fd -e test.js | entr sh -c '
 ```
 
 #### 2. Live Code-Review
+
+Mit diesem Workflow erhaeltst du bei jeder Dateiaeenderung automatisch ein kurzes Code-Review von Claude. Jedes Mal, wenn du eine TypeScript-Datei speicherst, wird der Git-Diff der geaenderten Datei an Claude gesendet, das die Aenderungen bewertet. Das ist besonders nuetzlich, wenn du alleine an einem Projekt arbeitest und kein Teammitglied fuer ein schnelles Review verfuegbar ist. Stell dir vor, du implementierst eine neue API-Route und willst sicherstellen, dass du keine offensichtlichen Fehler eingebaut hast -- bei jedem Speichern bekommst du ein kurzes Feedback direkt im Terminal. Beachte, dass bei haeufigem Speichern viele API-Aufrufe generiert werden koennen.
+
 ```bash
 # Auto-Review on Save
 fd -e ts src/ | entr sh -c '
@@ -280,6 +286,9 @@ fd -e ts src/ | entr sh -c '
 ```
 
 #### 3. Documentation Auto-Generation
+
+Dieser Workflow generiert bei jeder Code-Aenderung automatisch die API-Dokumentation neu und laesst Claude eine Zusammenfassung der Aenderungen erstellen. Zuerst wird jsdoc ausgefuehrt, um die HTML-Dokumentation zu aktualisieren, und dann fasst Claude die API-Aenderungen im docs-Verzeichnis in einem CHANGELOG zusammen. Das ist besonders nuetzlich bei Library-Entwicklung, wo Dokumentation staendig aktuell gehalten werden muss. Stell dir vor, du fuegst einer JavaScript-Library eine neue Funktion hinzu und aenderst die Signatur einer bestehenden -- die Dokumentation und das Changelog werden automatisch aktualisiert, ohne dass du daran denken musst. So bleibt deine Dokumentation immer synchron mit dem Code.
+
 ```bash
 # Generate Docs on Code Change
 fd -e js src/ | entr sh -c '
@@ -289,6 +298,9 @@ fd -e js src/ | entr sh -c '
 ```
 
 #### 4. Smart Build Pipeline
+
+Diese Build-Pipeline kombiniert entr mit Claude, um nicht nur automatisch zu bauen, sondern auch Compiler-Warnings zu analysieren und Optimierungsvorschlaege zu erhalten. Bei jeder Aenderung an Rust-Dateien wird `cargo build` ausgefuehrt, und wenn Warnings auftreten, werden diese von Claude analysiert. Das ist besonders nuetzlich bei Rust-Projekten, wo Compiler-Warnings oft auf potenzielle Performance-Probleme oder unsichere Patterns hinweisen. Stell dir vor, du bekommst nach einem Build 12 Warnings zu ungenutzten Variablen und unsicheren Casts -- Claude schlaegt dir konkrete Optimierungen vor, die du sofort umsetzen kannst. Die Build-Ausgabe wird in `build.log` gespeichert, sodass du sie auch spaeter noch analysieren kannst.
+
 ```bash
 # Build + AI Optimization Suggestions
 fd -e rs | entr sh -c '
@@ -408,6 +420,8 @@ fd -e py | entr sh -c '
 
 ### 1. TDD-Workflow (JavaScript)
 
+Test-Driven Development lebt davon, dass Tests bei jeder Code-Aenderung sofort ausgefuehrt werden. Mit entr kannst du einen automatischen Watch-Modus fuer deine JavaScript-Tests einrichten, der bei jeder Aenderung an JS- oder Test-Dateien die Tests ausfuehrt. Der `-c` Flag loescht den Bildschirm vor jedem Durchlauf, sodass du immer eine saubere Ausgabe siehst. Im zweiten Beispiel wird zusaetzlich die Code-Coverage angezeigt, damit du sofort siehst, wie gut dein Code getestet ist. Stell dir vor, du implementierst eine neue Funktion mit dem Red-Green-Refactor-Zyklus: Du schreibst einen Test (rot), implementierst die Funktion (gruen), refaktorierst -- und bei jedem Schritt siehst du das Ergebnis sofort. Das dritte Beispiel zeigt, wie du nur eine bestimmte Test-Datei ueberwachst, was bei grossen Projekten deutlich schneller ist.
+
 ```bash
 # Watch & Test mit Clear-Screen
 fd -e js -e test.js | entr -c npm test
@@ -425,6 +439,8 @@ echo "test/api.test.js" | entr -c npm test -- /_
 ```
 
 ### 2. Live Markdown-Preview
+
+Beim Schreiben von Dokumentation oder READMEs ist eine Live-Vorschau extrem hilfreich, um das Ergebnis sofort zu sehen. Mit entr und pandoc wird bei jeder Aenderung an Markdown-Dateien automatisch eine HTML- oder PDF-Version generiert. Der erste Befehl konvertiert die geaenderte Datei nach HTML und oeffnet sie im Browser. Der zweite Befehl nutzt `glow` fuer eine farbige Markdown-Vorschau direkt im Terminal. Stell dir vor, du schreibst die Dokumentation fuer ein Open-Source-Projekt und willst sicherstellen, dass Tabellen, Code-Bloecke und Links korrekt dargestellt werden -- bei jedem Speichern aktualisiert sich die Vorschau automatisch. Der dritte Befehl erzeugt sogar eine PDF-Version, was besonders fuer technische Reports nuetzlich ist.
 
 ```bash
 # Convert to HTML on Change
@@ -446,6 +462,8 @@ fd -e md docs/ | entr sh -c '
 
 ### 3. TypeScript Auto-Compile
 
+TypeScript muss vor der Ausfuehrung kompiliert werden, was den Entwicklungszyklus verlangsamt. Mit entr automatisierst du den Kompilierungsschritt, sodass bei jeder Aenderung an TypeScript-Dateien automatisch `tsc` ausgefuehrt wird. Der einfache Compile-Befehl prueft nur auf Typ-Fehler, waehrend der zweite Befehl zusaetzlich die kompilierte Version ausfuehrt. Stell dir vor, du entwickelst einen Node.js-Server in TypeScript und willst bei jeder Aenderung sofort sehen, ob der Code kompiliert und korrekt laeuft -- ohne entr muesstest du bei jeder Aenderung manuell `tsc && node dist/index.js` ausfuehren. Der dritte Befehl nutzt `bat` fuer syntax-gehighlightete Fehlerausgabe, was die Lesbarkeit von TypeScript-Fehlermeldungen deutlich verbessert.
+
 ```bash
 # Simple Compile
 fd -e ts src/ | entr -c tsc
@@ -463,6 +481,8 @@ fd -e ts | entr sh -c '
 ```
 
 ### 4. Sass/CSS Workflow
+
+Sass-Dateien muessen in CSS kompiliert werden, bevor sie im Browser verwendet werden koennen. Mit entr automatisierst du diesen Schritt, sodass bei jeder Aenderung an SCSS-Dateien das CSS automatisch neu generiert wird. Der erste Befehl kompiliert eine einzelne Sass-Datei, der zweite fuegt Autoprefixer hinzu, der automatisch Browser-Prefixe ergaenzt. Der dritte Befehl loeest zusaetzlich ein Browser-Reload aus, sodass du die Aenderungen sofort im Browser siehst. Stell dir vor, du arbeitest an einem responsiven Design und passt Abstande und Farben an -- bei jeder Aenderung kompiliert Sass automatisch, Prefixes werden gesetzt und der Browser aktualisiert sich. Das ergibt einen fluessigen Design-Workflow ohne manuelles Neuladen.
 
 ```bash
 # Compile Sass
@@ -483,6 +503,8 @@ fd -e scss -e html | entr sh -c '
 
 ### 5. Docker Development
 
+Bei der Entwicklung mit Docker musst du Container nach Aenderungen am Code oder an der Konfiguration neu bauen oder neu starten. entr automatisiert diesen Prozess, sodass bei einer Aenderung am Dockerfile automatisch ein neuer Build gestartet wird. Der erste Befehl baut das Image bei Dockerfile-Aenderungen neu, der zweite startet den Web-Container bei Code-Aenderungen neu, und der dritte faehrt die gesamte Docker-Compose-Umgebung herunter und wieder hoch. Stell dir vor, du entwickelst einen Microservice und passt die Nginx-Konfiguration im Dockerfile an -- statt manuell `docker build` und `docker run` auszufuehren, erledigt entr das automatisch bei jedem Speichern. Beachte, dass volle Rebuilds bei grossen Images lange dauern koennen -- nutze Multi-Stage-Builds und Layer-Caching, um die Build-Zeiten kurz zu halten.
+
 ```bash
 # Rebuild Image on Dockerfile Change
 echo "Dockerfile" | entr docker build -t myapp .
@@ -502,6 +524,8 @@ echo "docker-compose.yml" | entr sh -c '
 
 ### 6. Python Development
 
+Python-Entwicklung profitiert besonders von automatischen Test- und Server-Neustarts, da Python-Dateien vor der Ausfuehrung nicht kompiliert werden muessen. Der erste Befehl fuehrt pytest bei jeder Aenderung aus, der zweite zeigt zusaetzlich die Test-Coverage an. Der `-r` Flag ist besonders wichtig fuer Server-Prozesse wie Flask oder Django, da er den alten Prozess automatisch beendet, bevor ein neuer gestartet wird. Stell dir vor, du entwickelst eine Flask-API und aenderst eine Route -- der Server startet automatisch neu und du kannst sofort die Aenderung im Browser oder mit curl testen. Ohne den `-r` Flag wuerde der alte Server-Prozess den Port weiterhin blockieren und der neue koennte nicht starten. Kombiniere den Test-Watcher mit einem separaten Server-Watcher in verschiedenen tmux-Panes fuer einen optimalen Entwicklungs-Workflow.
+
 ```bash
 # Watch & Test (pytest)
 fd -e py | entr -c pytest
@@ -519,6 +543,8 @@ fd -e py | entr -r python manage.py runserver
 ```
 
 ### 7. Rust Development
+
+Rust-Projekte profitieren enorm von automatischen Watch-Workflows, da die Kompilierung je nach Projektgroesse einige Sekunden dauern kann. Der erste Befehl fuehrt bei jeder Aenderung die Tests aus, der zweite kompiliert und fuehrt das Programm mit Neustart aus, und der dritte nutzt `cargo check` fuer eine schnelle Syntaxpruefung ohne vollstaendige Kompilierung. Die "Full Pipeline" im letzten Beispiel durchlaeuft Formatierung, Linting und Tests in einem Schritt. Stell dir vor, du arbeitest an einem Rust-CLI-Tool und willst bei jeder Aenderung sicherstellen, dass der Code kompiliert, keine Clippy-Warnings hat und alle Tests bestehen -- diese Pipeline gibt dir sofort Feedback zu allen drei Aspekten. `cargo check` ist dabei deutlich schneller als `cargo build`, da es nur die Syntax prueft, ohne Maschinencode zu erzeugen.
 
 ```bash
 # Watch & Test
@@ -540,6 +566,8 @@ fd -e rs | entr sh -c '
 
 ### 8. Documentation-Generation
 
+Automatische Dokumentationsgenerierung stellt sicher, dass deine Docs immer synchron mit dem Code sind. Jeder Befehl ueberwacht die relevanten Quelldateien und regeneriert die Dokumentation bei jeder Aenderung. JSDoc generiert HTML-Dokumentation fuer JavaScript, `cargo doc` fuer Rust, Sphinx fuer Python und `redoc-cli` fuer OpenAPI-Spezifikationen. Stell dir vor, du dokumentierst eine REST-API und aenderst die OpenAPI-Spezifikation -- die HTML-Dokumentation wird automatisch neu generiert und du kannst sofort pruefen, ob alles korrekt dargestellt wird. Der `--open`-Flag bei `cargo doc` oeffnet die Dokumentation sogar automatisch im Browser. Das ist deutlich effizienter als manuelle Dokumentations-Builds, besonders in der fruehen Entwicklungsphase, wenn sich die API haeufig aendert.
+
 ```bash
 # JSDoc on Change
 fd -e js src/ | entr jsdoc src/ -d docs/
@@ -557,6 +585,8 @@ echo "openapi.yaml" | entr sh -c '
 ```
 
 ### 9. Linting Pipeline
+
+Automatisches Linting bei jeder Dateiaeenderung stellt sicher, dass Code-Qualitaetsstandards staendig eingehalten werden. Der erste Befehl nutzt ESLint mit `--fix`, um einfache Probleme automatisch zu beheben. Der zweite Befehl kombiniert mehrere Linter (ESLint, Prettier, JSHint), um eine umfassende Pruefung durchzufuehren. Der dritte Befehl zeigt dieselbe Kombination fuer Python mit ruff, black und mypy. Stell dir vor, du tippst schnell Code und vergisst gelegentlich Semicolons oder verwendest `var` statt `const` -- ESLint mit `--fix` korrigiert diese Probleme automatisch bei jedem Speichern. Bei Python deckt ruff Linting-Violations ab, black formatiert den Code, und mypy prueft die Type-Hints. So erhaeltst du bei jeder Aenderung sofort Feedback zur Code-Qualitaet.
 
 ```bash
 # ESLint Auto-Fix
@@ -579,6 +609,8 @@ fd -e py | entr sh -c '
 
 ### 10. Multi-Tool Development-Server
 
+Bei Full-Stack-Projekten muessen oft mehrere Prozesse gleichzeitig laufen: Frontend-Server, Backend-Server und Datenbank-Migrationen. Dieses Beispiel startet drei separate entr-Instanzen als Hintergrundprozesse, die jeweils einen Teil des Stacks ueberwachen. Das Frontend wird bei TypeScript-Aenderungen neu gebaut, der Python-Backend-Server bei Code-Aenderungen neu gestartet, und Datenbank-Migrationen werden bei SQL-Aenderungen automatisch ausgefuehrt. Stell dir vor, du arbeitest an einem Feature, das sowohl Frontend- als auch Backend-Aenderungen erfordert -- beide Server reagieren automatisch auf deine Aenderungen, und du kannst dich voll auf den Code konzentrieren. Der `trap`-Befehl am Ende stellt sicher, dass beim Druecken von Ctrl+C alle drei Hintergrundprozesse sauber beendet werden.
+
 ```bash
 # Full-Stack Watch
 {
@@ -597,16 +629,25 @@ trap "kill 0" EXIT
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Auto-Test bei Code-Aenderungen
+
+Waehrend Claude Code Aenderungen an deinen TypeScript- und React-Dateien vornimmt, laufen in einem separaten Terminal-Pane automatisch die Tests. So siehst du sofort, ob eine von Claude vorgenommene Aenderung bestehende Tests bricht. Der `-c` Flag loescht den Bildschirm vor jedem Durchlauf, damit du eine saubere Uebersicht hast. Stell dir vor, Claude refaktoriert eine Utility-Funktion und vergisst dabei einen Edge-Case -- der automatische Test-Run zeigt dir den Fehler innerhalb von Sekunden, bevor du die Aenderung uebernimmst. Das gibt dir ein Sicherheitsnetz bei der Arbeit mit AI-generiertem Code.
+
 ```bash
 fd -e ts -e tsx src/ | entr -c npm test
 ```
 
 ### Workflow 2: Auto-Build waehrend Claude Code Session
+
+Wenn Claude Code TypeScript-Dateien generiert oder aendert, prueft dieser Watcher automatisch, ob der Code kompiliert. Build-Fehler wie fehlende Imports, Typ-Inkompatibilitaeten oder Syntaxfehler werden sofort sichtbar. Das ist besonders nuetzlich, weil du so Fehler noch waehrend der Claude-Session erkennen und Claude sofort um eine Korrektur bitten kannst. Stell dir vor, Claude generiert eine neue Komponente mit einem falschen Type -- der Build-Fehler erscheint sofort im anderen Pane, und du kannst Claude darauf hinweisen. Ohne diesen Watcher wuerdest du den Fehler erst bemerken, wenn du manuell einen Build startest.
+
 ```bash
 fd -e ts src/ | entr -c npm run build
 ```
 
 ### Workflow 3: Lint bei Datei-Aenderung
+
+Dieser Befehl ueberwacht eine spezifische Datei und fuehrt ESLint bei jeder Aenderung aus. Das ist besonders praktisch, wenn Claude Code an einer bestimmten Komponente arbeitet und du sicherstellen willst, dass der generierte Code den Linting-Standards entspricht. Der `/_` Platzhalter wird durch den Namen der geaenderten Datei ersetzt. Stell dir vor, Claude arbeitet an der `App.tsx`-Datei und fuegt neuen Code hinzu -- ESLint prueft sofort, ob der Code den Projekt-Standards entspricht, und zeigt Warnings oder Errors an. So kannst du Code-Qualitaetsprobleme frueh erkennen und beheben lassen.
+
 ```bash
 echo src/components/App.tsx | entr -c npx eslint /_
 ```
@@ -815,6 +856,8 @@ git ls-files '*.js' | entr npm test
 
 ### 1. Universal Watch-Script
 
+Dieses Script erstellt einen universellen File-Watcher, den du fuer jede Dateiendung und jeden Befehl verwenden kannst. Statt bei jedem Projekt den kompletten entr-Befehl neu zu tippen, gibst du einfach die Dateiendung und den gewuenschten Befehl an. Das Script nutzt `fd` zum Finden der Dateien und den `-c` Flag zum Loeschen des Bildschirms vor jedem Durchlauf. Stell dir vor, du wechselst mehrmals am Tag zwischen JavaScript-, Python- und Rust-Projekten -- statt den entr-Befehl jedes Mal anzupassen, tippst du einfach `watch js "npm test"` oder `watch py "pytest"`. Speichere das Script in `~/bin/watch` und mache es mit `chmod +x` ausfuehrbar, dann ist es in jedem Verzeichnis verfuegbar.
+
 ```bash
 # ~/bin/watch
 #!/bin/bash
@@ -833,6 +876,8 @@ fd -e "$EXT" | entr -c sh -c "$CMD"
 
 ### 2. Project-Aware Watcher
 
+Diese Funktion erkennt automatisch den Projekttyp anhand charakteristischer Dateien und startet den passenden Watcher. Bei einem Node.js-Projekt (package.json vorhanden) werden JS/TS-Dateien ueberwacht und npm test ausgefuehrt, bei Rust (Cargo.toml) wird cargo test gestartet, und bei Python (requirements.txt) laeuft pytest. Das spart dir das Nachdenken ueber den richtigen Befehl, wenn du zwischen Projekten wechselst. Stell dir vor, du hast zehn verschiedene Projekte in unterschiedlichen Sprachen -- du tippst einfach `autowatch` und die Funktion erkennt selbststaendig, welcher Watcher gebraucht wird. Fuege die Funktion in deine `.bashrc` oder `.zshrc` ein, damit sie ueberall verfuegbar ist.
+
 ```bash
 # Auto-detect project type
 autowatch() {
@@ -847,6 +892,8 @@ autowatch() {
 ```
 
 ### 3. Smart Notifications
+
+Dieses Script erweitert den Watch-Workflow um Desktop-Benachrichtigungen mit Zeitmessung. Nach jedem Test-Durchlauf wird nicht nur angezeigt, ob die Tests bestanden haben, sondern auch wie lange sie gedauert haben. Die macOS-Notification (`osascript`) erscheint auch dann, wenn das Terminal im Hintergrund ist, sodass du benachrichtigt wirst, waehrend du im Browser oder in einem anderen Programm arbeitest. Stell dir vor, du startest die Tests und wechselst dann in den Browser, um etwas zu recherchieren -- nach 12 Sekunden poppt eine Benachrichtigung auf: "Passed in 12s". Auf Linux kannst du statt `osascript` den Befehl `notify-send` verwenden. Speichere das Script in `~/bin/watch-notify` und mache es ausfuehrbar.
 
 ```bash
 # ~/bin/watch-notify
@@ -865,6 +912,8 @@ fd -e js | entr sh -c '
 ```
 
 ### 4. Multi-Window tmux Setup
+
+Dieses Script richtet eine vollstaendige Entwicklungsumgebung in tmux ein, mit separaten Panes fuer Editor, Tests und Linter. Pane 0 oeffnet vim als Editor, Pane 1 ueberwacht JavaScript-Dateien und fuehrt Tests aus, und Pane 2 ueberwacht dieselben Dateien und fuehrt den Linter aus. So hast du alle drei Ansichten gleichzeitig im Blick und siehst sofort, wenn eine Aenderung Tests bricht oder Linting-Fehler erzeugt. Stell dir vor, du oeffnest ein neues Terminal-Fenster und gibst `dev-watch` ein -- sofort hast du eine dreifach geteilte Ansicht mit Editor links und Tests/Linter rechts. Der letzte Befehl setzt den Fokus zurueck auf den Editor-Pane, damit du sofort mit dem Schreiben beginnen kannst. Speichere das Script in `~/bin/dev-watch` und passe die Befehle an dein Projekt an.
 
 ```bash
 # ~/bin/dev-watch
@@ -888,6 +937,8 @@ tmux select-pane -t 0
 ```
 
 ### 5. Git-Integration
+
+Die Kombination von entr mit Git-Befehlen ermoeglicht es, Tests nur fuer tatsaechlich geaenderte Dateien auszufuehren. Der erste Befehl ueberwacht nur gestaged Dateien, der zweite alle Dateien mit uncommitted Changes, und der dritte vergleicht die Dateien des aktuellen Branches mit main. Das ist deutlich effizienter als alle Dateien zu ueberwachen, besonders in grossen Repositories mit tausenden Dateien. Stell dir vor, du hast 5 Dateien geaendert und willst vor dem Commit sicherstellen, dass die Tests fuer genau diese Dateien bestehen -- der erste Befehl ueberwacht nur diese 5 Dateien statt das gesamte Projekt. Der dritte Befehl ist besonders nuetzlich vor dem Erstellen eines Pull Requests, um sicherzustellen, dass alle geaenderten Dateien im aktuellen Branch korrekt funktionieren.
 
 ```bash
 # Watch nur staged files

@@ -22,7 +22,7 @@
 - Features werden inkonsistent implementiert
 - Claude vergisst frühere Entscheidungen
 
-**Herkömmlicher Workflow**:
+**Herkoemmlicher Workflow**: Das folgende Beispiel zeigt das typische Frustrationsmuster, das entsteht, wenn du mit Claude Code ohne strukturiertes Context-Management arbeitest. Nach mehreren Nachrichten verliert Claude den Faden und fragt nach Dingen, die bereits besprochen wurden. Das kostet Zeit, erzeugt inkonsistenten Code und fuehrt zu endlosen Iterationen. Besonders bei Features, die mehrere Dateien betreffen, wird das Problem gravierend, da Claude nicht mehr weiss, wie die verschiedenen Teile zusammenhaengen sollen.
 ```
 Du: "Implementiere Feature X"
 Claude: "Okay, erstellt Code..."
@@ -33,7 +33,7 @@ Du: *frustriert* "Du hast das doch gerade erst gemacht!"
 
 ### GSD's Lösung
 
-**Spec-Driven Development** mit **Context Engineering**:
+**Spec-Driven Development** mit **Context Engineering**: GSD loest das Context-Rot-Problem durch einen voellig anderen Ansatz. Statt alles in einer langen Konversation abzuarbeiten, erstellt GSD zuerst eine vollstaendige Spezifikation und teilt die Arbeit dann in atomare Tasks auf, die jeweils einen eigenen Subagent mit frischem Kontext bekommen. So hat jeder Subagent genau die Informationen, die er fuer seine Aufgabe braucht, ohne von irrelevantem Kontext abgelenkt zu werden. Das Ergebnis ist konsistenter Code, der genau der Spezifikation folgt. Stell dir vor, du baust ein komplexes Feature mit 10 Dateien -- GSD orchestriert die Arbeit so, dass kein Subagent den Ueberblick verliert.
 ```
 Du: "Ich will Feature X"
 GSD: Interviewt dich mit strukturierten Fragen
@@ -192,16 +192,19 @@ gsd switch payment-service
 ### Installation
 
 #### Variante 1: NPX (Empfohlen für Testing)
+Die schnellste Art, GSD auszuprobieren, ist ueber npx. Dieser Befehl laedt GSD temporaer herunter und fuehrt es aus, ohne es permanent zu installieren. Die Flags `--claude` und `--global` konfigurieren GSD fuer die Verwendung mit Claude Code und machen es systemweit verfuegbar. Das ist ideal, wenn du GSD erst testen willst, bevor du es fest installierst. Nach der Ausfuehrung steht der `gsd`-Befehl in deinem Terminal zur Verfuegung.
 ```bash
 npx get-shit-done-cc --claude --global
 ```
 
 #### Variante 2: Global Install
+Fuer die permanente Installation nutze npm install mit dem -g Flag. Das installiert GSD global auf deinem System, sodass der `gsd`-Befehl dauerhaft in jedem Terminal verfuegbar ist. Diese Variante ist empfehlenswert, wenn du GSD regelmaessig nutzen willst. Stell dir vor, du arbeitest taeglich an mehreren Projekten mit GSD -- eine globale Installation spart dir den Download bei jedem Aufruf. Achte darauf, dass dein npm-Global-Verzeichnis im PATH liegt.
 ```bash
 npm install -g get-shit-done-cc
 ```
 
 #### Variante 3: Als MCP Server
+Die MCP-Server-Variante ist fuer fortgeschrittene Nutzer gedacht, die GSD direkt in Claude Desktop oder andere MCP-faehige Tools integrieren wollen. Du klonst das Repository, installierst die Abhaengigkeiten und konfigurierst dann die MCP-Verbindung in deiner Claude-Desktop-Konfiguration. Stell dir vor, du willst GSD-Befehle direkt aus Claude Desktop heraus aufrufen, ohne ein separates Terminal zu oeffnen -- die MCP-Integration macht das moeglich. Diese Variante gibt dir auch die Moeglichkeit, den Quellcode zu lesen und anzupassen.
 ```bash
 git clone https://github.com/glittercowboy/get-shit-done
 cd get-shit-done
@@ -213,6 +216,7 @@ npm install
 ### Quick Start
 
 #### 1. **Projekt initialisieren**
+Der erste Schritt in jedem Projekt ist die Initialisierung mit `gsd init`. Dieser Befehl erstellt das .gsd-Verzeichnis mit allen noetigen Unterordnern fuer Specs, Tasks und Kontext-Management. Die Config-Datei config.json enthaelt Projekteinstellungen wie Framework, Sprache und Subagent-Konfiguration. Stell dir vor, du startest ein neues React-Projekt -- GSD erkennt automatisch das verwendete Framework und passt seine Prompts und Task-Templates entsprechend an. Die Initialisierung muss nur einmal pro Projekt durchgefuehrt werden und dauert wenige Sekunden.
 ```bash
 cd dein-projekt
 gsd init
@@ -226,6 +230,7 @@ gsd init
 ```
 
 #### 2. **Erstes Feature mit GSD**
+Nachdem das Projekt initialisiert ist, startest du dein erstes Feature mit dem `gsd feature`-Befehl. GSD beginnt sofort mit einem strukturierten Interview, in dem es alle relevanten Details abfragt: Welche Authentifizierungsmethoden willst du? Welche Datenbank nutzt du? Wie sollen Sessions gespeichert werden? Stell dir vor, du baust eine User-Authentication fuer eine Next.js-App -- GSD erkennt dein Framework und stellt passende Fragen zu JWT, Session-Cookies und OAuth-Providern. Nach dem Interview erstellt GSD eine vollstaendige Spezifikation und einen phasenweisen Implementierungsplan. Du kannst die Spec reviewen und anpassen, bevor die eigentliche Implementation startet.
 ```bash
 gsd feature "User Authentication"
 ```
@@ -314,6 +319,8 @@ Agent 5: Working on Task 2.3 (Logout)             ⏳
 
 ### Wichtige Commands
 
+GSD bietet eine uebersichtliche Auswahl von Befehlen, die alle gaengigen Entwicklungs-Workflows abdecken. Die Hauptbefehle (feature, fix, refactor, document) starten jeweils einen spezialisierten Workflow mit Interview und Subagent-Orchestrierung. Die Verwaltungsbefehle (status, tasks, specs, context) geben dir Einblick in den aktuellen Zustand deines Projekts. Stell dir vor, du kommst morgens ins Buero und willst wissen, wo du gestern aufgehoert hast -- `gsd status` zeigt dir den Stand aller laufenden Tasks. Der reset-Befehl ist dein Notausgang, wenn etwas schiefgelaufen ist, und `gsd switch` ermoeglicht nahtloses Wechseln zwischen verschiedenen Projekten, ohne den Kontext zu verlieren.
+
 ```bash
 # Feature entwickeln
 gsd feature "Feature Name"
@@ -358,6 +365,8 @@ gsd reset
 
 ### 1. **Starte immer mit Spec-Interview**
 
+Das Ueberspringen des Interviews mag verlockend sein, wenn du es eilig hast, aber es fuehrt fast immer zu Problemen. GSD muss Annahmen treffen, die moeglicherweise falsch sind -- z.B. koennte es JWT statt Session-Cookies waehlen, obwohl du das Gegenteil willst. Stell dir vor, du uebersprringst das Interview fuer ein Payment-Feature und GSD baut auf Stripe, waehrend du eigentlich PayPal brauchst -- dann musst du alles neu machen. Die 2-3 Minuten, die das Interview dauert, sparen dir Stunden an Nacharbeit.
+
 ❌ **Falsch**:
 ```bash
 gsd feature "Auth" --skip-interview
@@ -377,6 +386,8 @@ gsd feature "Auth"
 ---
 
 ### 2. **Nutze descriptive Feature-Namen**
+
+Vage Feature-Namen fuehren zu vagen Specs und vagem Code. GSD nutzt den Feature-Namen als Ausgangspunkt fuer das Interview und die Spec-Generierung -- je praeziser der Name, desto gezielter die Fragen und desto besser das Ergebnis. Stell dir vor, du sagst "stuff" -- GSD weiss nicht, ob du ein Frontend-Feature, eine API oder ein Datenbank-Schema meinst. Mit "Discord OAuth Integration" hingegen weiss GSD sofort, welche Fragen relevant sind (OAuth-Provider, Scopes, Callback-URLs).
 
 ❌ **Falsch**:
 ```bash
@@ -398,6 +409,8 @@ gsd feature "Fix Race Condition in Checkout Flow"
 
 ### 3. **Review Specs before execution**
 
+Die Spec ist der Blueprint fuer die gesamte Implementation -- ein Fehler in der Spec pflanzt sich durch alle Tasks und Subagents fort. Nimm dir 2-3 Minuten Zeit, um die generierte Spec zu lesen, bevor du GSD die Ausfuehrung startest. Pruefe insbesondere, ob das Datenmodell korrekt ist, ob die richtigen APIs angesprochen werden und ob die Phasenreihenfolge sinnvoll ist. Stell dir vor, die Spec plant eine Payment-Integration mit der falschen API-Version -- wenn du das erst bemerkst, nachdem 10 Dateien generiert wurden, ist der Aufwand fuer die Korrektur enorm. Mit `gsd edit spec` kannst du die Spec vor der Ausfuehrung anpassen, und mit `--respec` startest du das Interview komplett neu.
+
 ```bash
 gsd feature "Payment Integration"
 # Nach Interview:
@@ -418,6 +431,8 @@ gsd feature "Payment Integration" --respec
 ---
 
 ### 4. **Lass GSD Phasen abarbeiten, nicht micro-managen**
+
+GSD optimiert die Task-Reihenfolge und Parallelisierung selbst -- wenn du staendig eingreifst, stoerst du diesen Prozess und riskierst Context-Verlust. Warte, bis eine Phase abgeschlossen ist, bevor du Anpassungen vornimmst. Stell dir vor, du unterbrichst GSD mitten in Phase 2, um eine Aenderung an Phase 1 anzufordern -- die Subagents von Phase 2 arbeiten moeglicherweise mit veralteten Annahmen weiter. Besser ist es, die Phase abschliessen zu lassen und dann gezielt mit `gsd fix` Korrekturen vorzunehmen.
 
 ❌ **Falsch**:
 ```bash
@@ -441,6 +456,8 @@ gsd feature "Auth"
 
 ### 5. **Nutze GSD mit TMUX für parallele Projekte**
 
+Wenn du an mehreren Projekten gleichzeitig arbeitest, ist die Kombination von GSD mit tmux ideal. Jedes tmux-Fenster kann ein eigenes GSD-Projekt verwalten, und du wechselst mit einem Tastendruck zwischen ihnen. GSD speichert den Kontext fuer jedes Projekt separat im .gsd-Verzeichnis, sodass du nahtlos zwischen Projekten wechseln kannst. Stell dir vor, du baust gleichzeitig ein neues Feature fuer Projekt A und fixst einen Bug in Projekt B -- in zwei tmux-Fenstern laesst du GSD beide Aufgaben parallel abarbeiten und ueberwachst den Fortschritt. Das maximiert deine Produktivitaet, da du die Wartezeiten eines Projekts fuer die Arbeit am anderen nutzen kannst.
+
 ```bash
 # TMUX Setup
 tmux new -s gsd-session
@@ -461,6 +478,8 @@ gsd feature "Feature Y"
 ---
 
 ### 6. **Kombiniere GSD mit Git Workflow**
+
+Die Integration von GSD in deinen Git-Workflow stellt sicher, dass jedes GSD-Feature auf einem eigenen Branch entwickelt wird und sauber in den Hauptbranch integriert werden kann. Erstelle vor dem Start eines GSD-Features einen neuen Branch, lass GSD arbeiten, und erstelle danach einen Pull Request mit allen aenderungen. Stell dir vor, du implementierst eine Discord-Integration mit GSD -- alle Dateien landen auf dem Feature-Branch, und der PR zeigt genau, was GSD erstellt hat. Die Commit-Message referenziert die GSD-Spec, sodass Reviewer den Kontext nachvollziehen koennen. Dieser Workflow schuetzt auch den main-Branch vor ungewollten Aenderungen, falls GSD etwas falsch implementiert.
 
 ```bash
 # Branch pro Feature
@@ -488,6 +507,8 @@ gh pr create
 ---
 
 ### 7. **Nutze GSD Context für Code-Reviews**
+
+Der GSD-Context enthaelt alle Informationen, die ein Reviewer braucht, um die Aenderungen zu verstehen: die urspruengliche Spezifikation, die erledigten Tasks und die getroffenen Entscheidungen. Durch das Einfuegen des Kontexts in den PR-Body spart sich der Reviewer das muehsame Zusammensuchen von Hintergrundinformationen. Stell dir vor, du erstellst einen PR mit 15 geaenderten Dateien -- ohne Kontext muesste der Reviewer raten, warum bestimmte Entscheidungen getroffen wurden. Mit dem GSD-Context sieht er auf einen Blick, welche Spec die Basis war und welche Abwaegungen gemacht wurden. Das beschleunigt den Review-Prozess erheblich.
 
 ```bash
 # Vor Review:
@@ -679,6 +700,8 @@ Proposed Fix:
 
 ### `.gsd/config.json`
 
+Die zentrale Konfigurationsdatei steuert das Verhalten von GSD in deinem Projekt. Die wichtigsten Einstellungen betreffen die maximale Anzahl paralleler Subagents, das Timeout fuer einzelne Tasks und die Kontext-Komprimierung. Der Abschnitt "subagents" definiert, wie viele Subagents gleichzeitig laufen duerfen -- auf einem Rechner mit wenig RAM solltest du diesen Wert auf 2-3 beschraenken. Die "context"-Einstellungen bestimmen, wie viele Tokens jeder Subagent erhaelt und ob der Kontext intelligent komprimiert wird. Stell dir vor, du arbeitest an einem grossen Monorepo mit vielen Dateien -- die smart Compression sorgt dafuer, dass nur die relevantesten Teile des Kontexts an jeden Subagent weitergegeben werden. Die Git-Integration kann automatische Commits nach jeder Phase erstellen, wobei auto_commit standardmaessig deaktiviert ist.
+
 ```json
 {
   "version": "1.0",
@@ -708,6 +731,8 @@ Proposed Fix:
 
 ### Custom Templates
 
+Custom Templates ermoeglichen es dir, wiederkehrende Feature-Typen zu standardisieren. Statt bei jedem API-Endpoint die gleichen Fragen beantworten zu muessen, definierst du ein Template mit vordefinierten Sektionen fuer Endpoint-Details, Request/Response-Schema und Error-Handling. Stell dir vor, dein Team baut wocehntlich 3-5 neue API-Endpoints -- mit einem standardisierten Template ist die Spec-Erstellung konsistent und schnell. GSD fuellt die Platzhalter im Template durch das Interview aus und erstellt dann die eigentliche Spec. Du kannst beliebig viele Templates fuer verschiedene Feature-Typen erstellen (z.B. api-endpoint, frontend-page, database-migration).
+
 ```bash
 # Eigenes Spec-Template erstellen
 gsd template create "api-endpoint"
@@ -715,6 +740,8 @@ gsd template create "api-endpoint"
 # Template editieren
 # .gsd/templates/api-endpoint.md
 ```
+
+Das folgende Template zeigt die Struktur fuer API-Endpoint-Spezifikationen. Jeder Platzhalter (in doppelten geschweiften Klammern) wird von GSD waehrend des Interviews ausgefuellt. Das Template stellt sicher, dass keine wichtigen Aspekte vergessen werden -- von der Authentifizierung ueber Request/Response-Schemas bis hin zu Error-Handling und Tests. Stell dir vor, ein Junior-Entwickler nutzt GSD zum ersten Mal -- das Template fuehrt ihn durch alle relevanten Entscheidungen und stellt sicher, dass der resultierende Code vollstaendig und produktionsreif ist.
 
 **Template Beispiel**:
 ```markdown

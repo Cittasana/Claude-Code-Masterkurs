@@ -75,8 +75,8 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
       },
     },
-    // Data-Chunks enthalten Kursinhalt (~1MB data + ~1.1MB data-tools) - das ist erwartet
-    chunkSizeWarningLimit: 1200,
+    // Data-Chunks enthalten Kursinhalt (~1MB data + ~1.8MB data-tools) - das ist erwartet
+    chunkSizeWarningLimit: 1900,
   },
 
   // ── Performance: Optimierungen ──────────────────────────────

@@ -422,6 +422,8 @@ zinit light zdharma/fast-syntax-highlighting
 
 ### 4. Project-Specific Config
 
+Projekt-spezifische Konfigurationsdateien erlauben es, fuer jedes Projekt eigene Umgebungsvariablen, Aliase und Funktionen zu definieren, die automatisch geladen werden, wenn du in das Verzeichnis wechselst. Die Zeile in der globalen .zshrc prueft beim Start, ob eine `.zshrc.local` im aktuellen Verzeichnis existiert, und laedt sie in dem Fall automatisch. Stell dir vor, dein API-Projekt braucht eine bestimmte DATABASE_URL und einen API_KEY fuer die lokale Entwicklung -- statt diese in der globalen Config zu setzen, legst du sie in die projektspezifische Datei. Beachte, dass du `.zshrc.local` in die .gitignore aufnehmen solltest, damit Secrets nicht versehentlich committed werden. Fuer eine sicherere Alternative schau dir direnv an, das Environment-Variablen per Verzeichnis verwaltet.
+
 ```bash
 # Global ~/.zshrc
 # Auto-load .zshrc.local in project dirs
@@ -461,6 +463,8 @@ chmod 600 ~/.zsh_secrets
 
 ### 1. Powerlevel10k Setup (Beliebtes Theme)
 
+Powerlevel10k ist das beliebteste zsh-Theme und bietet einen hochgradig konfigurierbaren Prompt mit Git-Status, Laufzeit des letzten Befehls, aktuellem Verzeichnis und vielem mehr. Das Besondere ist das "Instant Prompt"-Feature, das den Prompt sofort anzeigt, auch wenn Plugins noch laden -- so fuehlt sich die Shell immer schnell an. Stell dir vor, du oeffnest ein Terminal und siehst sofort den Git-Branch, den Node.js-Version und ob Tests fehlschlagen, ohne einen einzigen Befehl zu tippen. Der Konfigurationsassistent `p10k configure` fuehrt dich interaktiv durch alle Optionen und passt das Theme an deinen Geschmack an. Installation und Konfiguration dauern zusammen weniger als 5 Minuten.
+
 ```bash
 # Installation
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
@@ -482,6 +486,8 @@ EOF
 
 ### 2. Auto-Suggestions konfigurieren
 
+Das zsh-autosuggestions Plugin zeigt dir in grauer Schrift Vorschlaege basierend auf deiner Command-History, waehrend du tippst. Es ist eines der drei Must-Have-Plugins und transformiert dein Terminal-Erlebnis grundlegend. Stell dir vor, du hast gestern einen langen Docker-Compose-Befehl getippt -- heute gibst du die ersten 4 Buchstaben ein und der gesamte Befehl erscheint als Vorschlag, den du mit der rechten Pfeiltaste oder Ctrl+Space uebernimmst. Die Konfigurationsoptionen steuern die Farbe der Vorschlaege, die Strategie (History oder Completion) und die maximale Buffer-Groesse. Besonders die Strategy `(history completion)` ist empfehlenswert, da sie sowohl vergangene Befehle als auch Tab-Completion-Vorschlaege kombiniert.
+
 ```bash
 # Installation
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -499,6 +505,8 @@ bindkey '^ ' autosuggest-accept  # Ctrl+Space
 ```
 
 ### 3. fzf-Integration für Fuzzy-Completion
+
+Die fzf-Integration verwandelt deine zsh-Shell in ein Fuzzy-Finding-Powerhaus. Ctrl+T sucht Dateien, Ctrl+R durchsucht die History, und Alt+C wechselt Verzeichnisse -- alles mit interaktiver Live-Filterung. Die Konfiguration setzt fd als schnelleres Backend statt find und aktiviert bat fuer Datei-Previews. Stell dir vor, du drueckst Ctrl+T und bekommst sofort eine Dateiliste mit Live-Vorschau, gefiltert durch .gitignore -- das ist massiv produktiver als Tab-Completion. Die `fh`-Funktion geht noch weiter und setzt den ausgewaehlten History-Eintrag direkt in den Prompt, sodass du ihn vor dem Ausfuehren noch bearbeiten kannst.
 
 ```bash
 # Installation (mit fzf)
@@ -523,6 +531,8 @@ fh() {
 ```
 
 ### 4. Docker-Workflow mit zsh
+
+Wenn du regelmaessig mit Docker arbeitest, machen Aliase und fzf-Funktionen den Workflow deutlich angenehmer. Die formatierten Ausgaben von `dps` und `dimg` zeigen nur die relevanten Informationen (Name, Status, Ports) in einer sauberen Tabelle statt des Standard-Docker-Outputs mit vielen Spalten. Stell dir vor, du willst schnell in einen laufenden Container wechseln -- statt Container-ID kopieren und tippen, nutzt du die `dexec`-Funktion, die alle Container per fzf anzeigt und dich mit Enter direkt verbindet. Die Docker- und Docker-Compose-Plugins von Oh-My-Zsh fuegen zusaetzlich Tab-Completion fuer alle Docker-Befehle hinzu, was Tippfehler bei langen Image-Namen oder Container-IDs vermeidet.
 
 ```bash
 # ~/.zshrc
@@ -549,6 +559,8 @@ plugins=(docker docker-compose)
 ```
 
 ### 5. Git-Workflow-Enhancement
+
+Diese Git-Funktionen machen haeufige Git-Operationen visueller und schneller. Die `gst`-Funktion zeigt den Git-Status mit bat fuer farbige Hervorhebung, `glog` erzeugt ein kompaktes, farbiges Graph-Log der letzten 20 Commits. Stell dir vor, du willst schnell sehen, was sich in deinem Projekt getan hat -- `glog` zeigt dir Commit-Hashes, relative Zeitangaben, Messages und Autoren in einer uebersichtlichen Darstellung. Die `gco`-Funktion kombiniert Git-Branches mit fzf fuer interaktives Branch-Switching, und `gcai` generiert automatisch eine Commit-Message mit Claude Code basierend auf den gestagten Aenderungen. Besonders `gcai` ist ein Produktivitaetsgewinn, da du nie wieder ueber Commit-Messages nachdenken musst.
 
 ```bash
 # ~/.zshrc
@@ -582,6 +594,8 @@ gcai() {
 
 ### 6. Entwicklungs-Environment Management
 
+Die Verwaltung verschiedener Runtime-Versionen (Node.js, Python, Ruby) ist in der modernen Entwicklung unvermeidlich. Diese Konfiguration integriert die gaengigsten Version-Manager (nvm, pyenv, rbenv) in deine zsh-Shell. Besonders nuetzlich ist der Auto-Switch-Hook fuer .nvmrc: Wenn du in ein Projektverzeichnis wechselst, das eine .nvmrc-Datei enthaelt, wird automatisch die richtige Node.js-Version aktiviert. Stell dir vor, Projekt A nutzt Node 18 und Projekt B nutzt Node 20 -- ohne den Auto-Switch musst du jedes Mal manuell `nvm use` ausfuehren. Mit dem Hook passiert das automatisch beim Verzeichniswechsel. Beachte, dass nvm, pyenv und rbenv separat installiert werden muessen.
+
 ```bash
 # ~/.zshrc
 
@@ -609,6 +623,8 @@ load-nvmrc
 ```
 
 ### 7. Claude Code Integration
+
+Diese zsh-Funktionen integrieren Claude Code tief in deinen Shell-Workflow. Die `c`-Funktion ist ein Shortcut fuer `claude`, `review` schickt einen Git-Diff direkt an Claude Code zur Analyse, `gmsg` generiert eine Commit-Message und kopiert sie in die Zwischenablage, und `explain` erklaert den zuletzt ausgefuehrten Befehl. Stell dir vor, du hast gerade Aenderungen gestagt und brauchst eine gute Commit-Message -- `gmsg` analysiert den Diff und generiert eine Conventional-Commits-konforme Message, die du nur noch einfuegen musst. Die `explain`-Funktion ist besonders wertvoll beim Lernen: Du fuehrst einen komplexen Befehl aus und laesst dir danach erklaeren, was er genau tut. Passe die Prompts an deine Sprache und Konventionen an.
 
 ```bash
 # ~/.zshrc
@@ -644,6 +660,8 @@ explain() {
 
 ### 8. Productivity-Shortcuts
 
+Diese Sammlung von Aliassen deckt die haeufigsten Terminal-Aufgaben ab: schnelle Navigation zu wichtigen Verzeichnissen, Config-Bearbeitung, lokale Server und System-Monitoring. Stell dir vor, du willst schnell etwas auf dem Desktop nachschauen -- statt `cd ~/Desktop` tippst du einfach `dt`. Die `serve`-Funktion startet einen Python HTTP-Server im aktuellen Verzeichnis, was ideal fuer schnelle Tests von HTML-Seiten ist. Die Netzwerk-Aliase `myip` und `ports` sind unverzichtbar beim Debugging von Netzwerk-Problemen. Fuer die Config-Bearbeitung sind `zshrc` und `reload` besonders praktisch, da du deine Shell-Config oeffnen und nach dem Speichern sofort neu laden kannst.
+
 ```bash
 # ~/.zshrc
 
@@ -672,6 +690,8 @@ alias ports='lsof -i -P -n | grep LISTEN'
 
 ### 9. Error-Correction & Suggestions
 
+Die Spelling-Correction in zsh erkennt Tippfehler und fragt, ob du den korrekten Befehl meintest. Wenn du `gti` statt `git` tippst, fragt zsh "zsh: correct 'gti' to 'git'? [nyae]". Zusaetzlich zu den automatischen Korrekturen kannst du Aliase fuer deine haeufigsten Tippfehler definieren, die sofort ohne Rueckfrage den richtigen Befehl ausfuehren. Stell dir vor, du tippst regelmaessig "gti" oder "got" statt "git" -- mit den Typo-Aliassen wird der richtige Befehl sofort ausgefuehrt. Die CORRECT_IGNORE-Variablen schliessen bestimmte Patterns von der Korrektur aus, da manche Befehle faelschlicherweise als Tippfehler erkannt werden. Nutze `setopt CORRECT` nur fuer Befehle und `CORRECT_ALL` zusaetzlich fuer Argumente, wenn du haeufig Pfade falsch tippst.
+
 ```bash
 # ~/.zshrc
 
@@ -695,6 +715,8 @@ alias sl='ls'
 
 ### 10. Custom Prompt mit Git-Info
 
+Wenn du kein Plugin-Framework wie Oh-My-Zsh nutzen willst, kannst du trotzdem einen informativen Prompt mit Git-Branch-Anzeige erstellen. Das `vcs_info`-Modul von zsh liest automatisch Git-Informationen aus und macht sie im Prompt verfuegbar. Der `precmd`-Hook aktualisiert die Git-Infos vor jedem Prompt. Stell dir vor, du arbeitest in einem Git-Repository und siehst direkt im Prompt den aktuellen Branch-Namen in Rot -- so weisst du immer, auf welchem Branch du bist, ohne `git branch` eingeben zu muessen. Fuer die Nerd-Font-Variante mit Icons brauchst du eine kompatible Schriftart (z.B. Fira Code Nerd Font), die die speziellen Git-Symbole darstellen kann. Achte darauf, dass PROMPT_SUBST aktiviert ist, damit die Variablen im Prompt evaluiert werden.
+
 ```bash
 # ~/.zshrc (ohne Oh-My-Zsh)
 
@@ -715,6 +737,9 @@ PROMPT='%F{blue}%~%f %F{red} ${vcs_info_msg_0_}%f%F{yellow}❯%f '
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code Aliases fuer schnellen Zugriff
+
+Kurze Aliase fuer haeufige Claude Code Operationen sparen dir taeglich dutzende Tastenanschlaege. Der Alias `cc` ist das Minimum -- du tippst `cc` statt `claude`. Die spezifischen Aliase `ccr` und `cct` automatisieren wiederkehrende Aufgaben wie Code-Review und Test-Generierung komplett. Stell dir vor, du hast gerade einen Commit gemacht und willst ihn schnell reviewen lassen -- statt den ganzen Befehl zu tippen, genuegt `ccr`. Diese Aliase sind besonders wertvoll, wenn du Claude Code mehrmals pro Stunde nutzt, da sich die Zeitersparnis ueber den Tag summiert. Passe die Prompts an deine spezifischen Beduerfnisse an.
+
 ```bash
 # In ~/.zshrc:
 alias cc="claude"
@@ -723,6 +748,9 @@ alias cct="claude 'Schreibe Tests fuer die zuletzt geaenderten Dateien'"
 ```
 
 ### Workflow 2: Zsh-Funktionen fuer Claude Code Workflows
+
+Zsh-Funktionen gehen ueber einfache Aliase hinaus, weil sie Argumente entgegennehmen und mit Shell-Befehlen kombiniert werden koennen. Die Funktion `ccfix` liest automatisch die letzte Fehlermeldung aus einer Log-Datei und uebergibt sie an Claude Code zur Analyse. Die `ccpr`-Funktion erstellt einen Pull Request mit einem vom Nutzer angegebenen Titel. Stell dir vor, dein Build ist fehlgeschlagen und du willst den Fehler schnell beheben -- mit `ccfix` wird die Fehlermeldung automatisch an Claude Code weitergegeben, der dir eine Loesung vorschlaegt. Diese Funktionen sind der naechste Schritt nach Aliassen fuer einen wirklich integrierten AI-Workflow.
+
 ```bash
 # In ~/.zshrc:
 ccfix() {
@@ -734,6 +762,9 @@ ccpr() {
 ```
 
 ### Workflow 3: Auto-Completion fuer Claude Code
+
+Zsh's Auto-Suggestions Plugin merkt sich alle vorherigen Befehle und schlaegt sie in grauer Schrift vor, waehrend du tippst. Das bedeutet, sobald du einmal `claude "Erstelle Tests fuer..."` eingegeben hast, wird der Befehl beim naechsten Mal automatisch vorgeschlagen. Du musst nur die rechte Pfeiltaste druecken, um den Vorschlag zu uebernehmen. Stell dir vor, du nutzt taeglich aehnliche Claude Code Prompts -- nach ein paar Tagen musst du nur noch die ersten 3-4 Buchstaben tippen und der Rest wird automatisch vervollstaendigt. Pruefe mit `claude --help`, welche Befehle und Flags verfuegbar sind, und die Auto-Suggestions werden sie fuer dich speichern.
+
 ```bash
 # Zsh bietet Completions fuer Claude Code Befehle
 # Pruefe ob Claude Code Completions installiert sind:
@@ -1001,6 +1032,8 @@ fh() {
 ```
 
 ### 4. Project-Switcher
+
+Diese Funktion kombiniert fd und fzf zu einem schnellen Projekt-Wechsler, der alle Projektverzeichnisse unter `~/Development` interaktiv durchsuchbar macht. Zusaetzlich laedt der `project_enter` Hook automatisch eine `.envrc`-Datei, wenn du in ein Projektverzeichnis wechselst. Stell dir vor, du arbeitest an 8 verschiedenen Projekten und willst schnell zwischen ihnen wechseln -- mit `pj` siehst du alle Projekte in einer fzf-Liste und springst mit Enter direkt ins gewuenschte Verzeichnis. Der chpwd-Hook sorgt dafuer, dass projektspezifische Umgebungsvariablen automatisch geladen werden, ohne dass du manuell sourcen musst. Passe den Pfad `~/Development` an dein tatsaechliches Projektverzeichnis an.
 
 ```bash
 # ~/.zshrc

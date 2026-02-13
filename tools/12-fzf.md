@@ -44,26 +44,41 @@ Klassisches Suchen/Auswählen ist ineffizient:
 fzf ist ein Universal-Werkzeug fuer interaktive Auswahl. Egal ob Dateien, Befehle oder Git-Branches -- alles, was eine Liste ist, kann fzf filtern.
 
 ### 1. **File-Finder (wie Cmd+P in VS Code)**
+
+Einer der haeufigsten Anwendungsfaelle im Entwicklungsalltag ist das schnelle Oeffnen einer Datei, ohne den genauen Pfad zu kennen. In groesseren Projekten mit hunderten von Dateien und tief verschachtelten Verzeichnissen kann das manuelle Navigieren mehrere Minuten dauern. Mit fzf tippst du einfach ein paar Buchstaben des Dateinamens, und fzf filtert in Echtzeit alle passenden Dateien. Das funktioniert wie Cmd+P in VS Code, aber direkt im Terminal -- ohne IDE. Stell dir vor, du arbeitest an einem React-Projekt mit 200+ Komponenten und willst die Datei `UserProfileSettings.tsx` oeffnen. Statt `cd src/components/settings/` und dann `vim UserProfileSettings.tsx` zu tippen, gibst du einfach den folgenden Befehl ein und tippst "userpro" -- fzf findet die Datei sofort. Das Ergebnis: Die Datei oeffnet sich direkt in vim, und du hast dir 15 Sekunden Navigationszeit gespart.
+
 ```bash
 vim $(fzf)  # Find + Open in 3 Keys
 ```
 
 ### 2. **Command-History-Search (Super-Ctrl+R)**
+
+Die Standard-History-Suche mit Ctrl+R in bash ist frustrierend: Du siehst nur einen Treffer gleichzeitig und musst Ctrl+R wiederholt druecken, um aeltere Eintraege zu finden. fzf ersetzt diese Suche durch eine interaktive, fuzzy-matching-faehige Volltextsuche ueber deine gesamte Command-History. Du siehst alle passenden Befehle gleichzeitig und kannst mit den Pfeiltasten durch sie navigieren. Stell dir vor, du hast vor drei Tagen einen komplexen Docker-Compose-Befehl mit vielen Flags genutzt und willst ihn wiederfinden -- mit fzf tippst du "docker compose up" und siehst sofort alle passenden historischen Befehle. Das ist ein absoluter Game-Changer fuer jeden, der regelmaessig mit dem Terminal arbeitet.
+
 ```bash
 Ctrl+R  # fzf übernimmt History-Search
 ```
 
 ### 3. **Directory-Jumper**
+
+Das Navigieren durch verschachtelte Verzeichnisstrukturen ist eine der zeitaufwaendigsten Aufgaben im Terminal. Statt `cd` gefolgt von Tab-Completion durch mehrere Ebenen zu nutzen, listet dieser Befehl alle Verzeichnisse unter deinem Home-Verzeichnis auf und laesst dich interaktiv eines auswaehlen. Stell dir vor, du willst in das Verzeichnis `~/Projects/client-a/src/components/auth/` wechseln -- statt sechs mal Tab zu druecken und die Pfade auswendig zu kennen, tippst du einfach "auth" und fzf zeigt dir alle passenden Verzeichnisse. Die Alt+C Tastenkombination (nach fzf-Installation) bietet diesen Workflow sogar noch einfacher, da sie direkt im aktuellen Prompt das Verzeichnis wechselt. Ersetze `find` durch `fd` fuer deutlich bessere Performance.
+
 ```bash
 cd $(find ~ -type d | fzf)
 ```
 
 ### 4. **Process-Killer**
+
+Einen haengenden Prozess zu beenden erfordert normalerweise mehrere Schritte: `ps aux | grep name` zum Finden, die PID merken, und dann `kill PID`. Mit fzf wird das zu einem einzigen interaktiven Befehl. Du siehst alle laufenden Prozesse in einer filterbaren Liste, waehlst den stoerenden Prozess aus, und er wird sofort beendet. Stell dir vor, dein Node.js-Dev-Server haengt und blockiert Port 3000 -- statt muehsam die PID zu suchen, tippst du "node" im fzf-Filter und siehst sofort den Prozess mit allen Details. Mit Enter wird er beendet. Kombiniere diesen Befehl mit der Multi-Select-Funktion (Tab), um mehrere Prozesse gleichzeitig zu beenden.
+
 ```bash
 ps aux | fzf | awk '{print $2}' | xargs kill
 ```
 
 ### 5. **Git-Branch-Switcher**
+
+In Projekten mit vielen Feature-Branches musst du dir staendig Branch-Namen merken und fehlerfrei tippen. Dieser Befehl listet alle Branches auf und laesst dich interaktiv den gewuenschten auswaehlen. fzf filtert die Branches in Echtzeit, waehrend du tippst. Stell dir vor, dein Team hat 30+ Feature-Branches und du willst zu `feature/user-authentication-refactor` wechseln -- statt den langen Namen zu tippen, tippst du "user auth" und fzf matched den richtigen Branch sofort. Nach dem Auswaehlen mit Enter wird automatisch `git checkout` ausgefuehrt. In der Advanced Usage Sektion findest du eine erweiterte Version dieser Funktion, die auch Remote-Branches einschliesst und Duplikate entfernt.
+
 ```bash
 git branch | fzf | xargs git checkout
 ```
@@ -107,6 +122,9 @@ sudo pacman -S fzf
 ### Quick Start (2 Minuten)
 
 **Basis-Usage**:
+
+Die grundlegendste Nutzung von fzf besteht darin, eine Liste per Pipe an fzf zu uebergeben und interaktiv einen Eintrag auszuwaehlen. fzf kann mit jeder Art von Liste arbeiten -- Dateinamen, Prozesse, Git-Branches oder beliebige Textzeilen. Wenn du fzf ohne Eingabe startest, durchsucht es automatisch alle Dateien im aktuellen Verzeichnis. Mit `ls | fzf` filterst du die Ausgabe von ls interaktiv, und mit Command-Substitution `$(fzf)` kannst du das Ergebnis direkt in einen Befehl einsetzen. Stell dir vor, du willst eine JavaScript-Datei oeffnen, weisst aber nicht genau welche -- `vim $(find . -name '*.js' | fzf)` zeigt dir alle JS-Dateien und laesst dich die richtige auswaehlen.
+
 ```bash
 # Simple List filtern
 ls | fzf
@@ -192,6 +210,9 @@ fbr() {
 ```
 
 **3. Multi-Select Workflow**:
+
+Der Multi-Select-Modus ist eine der maechtigsten Funktionen von fzf, die bei den meisten Nutzern unbekannt bleibt. Mit `--multi` kannst du mehrere Eintraege gleichzeitig auswaehlen, indem du Tab zum Markieren drueckst. Das ist ideal fuer Batch-Operationen wie das Loeschen mehrerer Dateien, das Stagen mehrerer Git-Dateien oder das Oeffnen mehrerer Dateien im Editor. Stell dir vor, du willst 5 von 20 Test-Dateien zu Git adden -- statt `git add` fuer jede einzeln zu tippen, markierst du sie mit Tab und bestaetigst mit Enter. Das Ergebnis: Alle markierten Dateien werden in einem Rutsch verarbeitet, was besonders bei vielen Dateien enorm Zeit spart.
+
 ```bash
 # Files multi-selectable
 fzf --multi  # Tab = select, Shift+Tab = deselect
@@ -257,6 +278,9 @@ fkill 15   # Kill -15 (SIGTERM)
 ```
 
 **7. Docker-Integration**:
+
+Wenn du mit Docker arbeitest, musst du haeufig in laufende Container wechseln oder Images starten. Die Container-IDs und -Namen auswendig zu kennen oder per `docker ps` nachzuschlagen ist umstaendlich. Diese fzf-Funktionen zeigen dir eine interaktive Liste aller laufenden Container oder verfuegbaren Images, aus der du einfach den gewuenschten auswaehlst. Stell dir vor, du hast 8 Container fuer verschiedene Microservices laufen und willst in den Datenbank-Container wechseln -- statt die Container-ID zu kopieren, tippst du "postgres" und drueckst Enter. Das Ergebnis: Du bist direkt im Container und sparst dir mehrere Befehle.
+
 ```bash
 # Container auswählen + exec
 fdocker() {
@@ -323,6 +347,9 @@ bind-key f run-shell "tmux popup -E 'fzf --preview \"bat {}\"'"
 > ⚠️ **Warnung**: Ohne `fd` als FZF_DEFAULT_COMMAND kann fzf bei grossen Verzeichnissen langsam sein, da es standardmaessig `find` verwendet. Installiere `fd` und setze es als Default fuer deutlich bessere Performance.
 
 ### 4. **Git-Workflow-Integration**
+
+Diese Git-Funktionen kombinieren fzf mit haeufigen Git-Operationen fuer einen deutlich schnelleren Workflow. Die Funktion `fcm` ermoeglicht interaktives Staging mit Commit in einem Schritt, `fco` verwirft Aenderungen an ausgewaehlten Dateien, und `fshow` zeigt Commits mit Live-Diff-Preview. Stell dir vor, du hast 15 geaenderte Dateien und willst nur 3 davon committen -- mit `fcm` waehlst du die drei Dateien per Tab aus und gibst die Commit-Message als Argument. Das ist deutlich schneller als dreimal `git add` gefolgt von `git commit`. Beachte, dass `fco` Aenderungen unwiderruflich verwirft -- nutze es also mit Vorsicht.
+
 ```bash
 # In ~/.bashrc
 
@@ -345,6 +372,9 @@ fshow() {
 ```
 
 ### 5. **npm/yarn Script-Runner**
+
+In modernen JavaScript-Projekten gibt es oft dutzende npm-Scripts (dev, build, test, lint, format, deploy, etc.), deren Namen man sich merken oder in der package.json nachschlagen muss. Diese Funktion liest alle verfuegbaren Scripts aus der package.json und zeigt sie in einer fzf-Liste an. Stell dir vor, du arbeitest an einem neuen Projekt und kennst die verfuegbaren Scripts noch nicht -- statt `cat package.json | jq '.scripts'` zu tippen, fuehrst du einfach `fnpm` aus und waehlst das gewuenschte Script interaktiv. Das spart Zeit und vermeidet Tippfehler bei Script-Namen. Diese Funktion funktioniert auch mit yarn und pnpm, da alle dieselbe package.json nutzen.
+
 ```bash
 # Function
 fnpm() {
@@ -355,6 +385,9 @@ fnpm() {
 ```
 
 ### 6. **SSH-Host-Selector**
+
+Wenn du regelmaessig auf verschiedene Server zugreifst, sammeln sich in deiner SSH-Config schnell dutzende Host-Eintraege an. Statt den Hostnamen auswendig zu kennen oder die Config-Datei zu oeffnen, zeigt diese Funktion alle konfigurierten SSH-Hosts in einer fzf-Liste an. Stell dir vor, du verwaltest 15 Server (Staging, Production, Datenbank, CI/CD, etc.) und willst dich schnell mit dem Staging-Server verbinden -- tippst du "stag", zeigt fzf sofort den passenden Host. Nach Enter bist du verbunden. Das ist nicht nur schneller, sondern verhindert auch versehentliche Verbindungen zum falschen Server.
+
 ```bash
 # Function
 fssh() {
@@ -365,6 +398,9 @@ fssh() {
 ```
 
 ### 7. **Claude Code Integration**
+
+Diese Aliase und Funktionen optimieren den Workflow zwischen fzf und Claude Code. Der erste Alias `e` oeffnet eine Datei nach interaktiver Fuzzy-Suche mit Live-Vorschau -- ideal, wenn du Claude Code eine bestimmte Datei zeigen willst. Der zweite Alias `rge` kombiniert ripgrep und fzf, um Text in Dateien zu suchen und die Datei direkt an der richtigen Zeile zu oeffnen. Stell dir vor, du suchst die Stelle, an der `getUserData` definiert wird, um Claude Code mit dem Refactoring zu beauftragen -- mit `rge` findest du die exakte Datei und Zeile in Sekunden. Diese Kombination aus ripgrep fuer die Suche, fzf fuer die interaktive Auswahl und bat fuer die Vorschau ist der schnellste Weg, Code zu finden und zu oeffnen.
+
 ```bash
 # Open File in Editor (fuzzy)
 alias e='vim $(fzf --preview "bat {}")'
@@ -666,6 +702,9 @@ export FZF_DEFAULT_OPTS='--color=dark,fg:white,bg:black'
 ## 💡 Pro-Tipps
 
 ### 1. **Best Function Collection**
+
+Diese Sammlung von Shell-Funktionen deckt die vier haeufigsten fzf-Anwendungsfaelle ab: Datei oeffnen, Branch wechseln, Prozess beenden und Verzeichnis wechseln. Jede Funktion kombiniert fzf mit einer Preview-Ansicht, sodass du vor der Auswahl siehst, was du bekommst. Stell dir vor, du fuegst diese vier Funktionen einmalig in deine Shell-Config ein und hast damit 80% deiner taeglichen Terminal-Arbeit beschleunigt. Die `e`-Funktion zeigt den Dateiinhalt per bat an, `fcd` zeigt den Verzeichnisinhalt per tree, und `fkill` zeigt die Prozessdetails. Nutze kurze, einpraegsame Funktionsnamen, damit sie schnell abrufbar sind.
+
 ```bash
 # In ~/.bashrc - Ultimate fzf Functions
 
@@ -692,6 +731,9 @@ fcd() {
 ```
 
 ### 2. **Integration everywhere**
+
+Durch das Aliasing von Standard-Befehlen wie kill, cd und vim auf ihre fzf-Varianten wird fzf zu deinem Standard-Interface fuer alle Terminal-Interaktionen. Jedes Mal, wenn du einen dieser Befehle aufrufst, bekommst du automatisch eine interaktive Auswahl mit Fuzzy-Matching. Beachte, dass diese Aliase das Original-Verhalten der Befehle aendern, was in Scripts zu Problemen fuehren kann. Stell dir vor, du tippst gewohnheitsmaessig `cd` und bekommst jetzt immer eine interaktive Verzeichnisauswahl. Wenn du die originalen Befehle weiterhin nutzen willst, kannst du sie mit einem vorangestellten Backslash aufrufen: `\cd /tmp`.
+
 ```bash
 # All* commands mit fzf
 alias kill='fkill'
@@ -700,6 +742,9 @@ alias vim='fvim'
 ```
 
 ### 3. **Zsh fzf-tab (Game-Changer)**
+
+Das fzf-tab Plugin ersetzt die gesamte Tab-Completion in zsh durch fzf. Das bedeutet, dass jedes Mal, wenn du Tab drueckst, eine interaktive fzf-Auswahl erscheint -- ob bei `cd`, `kill`, `git checkout` oder jedem anderen Befehl. Das ist der vielleicht groesste Produktivitaetsgewinn, den fzf bieten kann, weil du nichts an deinem Workflow aendern musst. Stell dir vor, du tippst `cd <Tab>` und bekommst eine fuzzy-durchsuchbare Liste aller Verzeichnisse, oder `kill <Tab>` zeigt alle laufenden Prozesse. Die Installation erfordert Oh-My-Zsh und das Klonen des Repositories in das Custom-Plugin-Verzeichnis. Beachte, dass fzf-tab die Standard-Completion vollstaendig ersetzt.
+
 ```bash
 # Install
 git clone https://github.com/Aloxaf/fzf-tab ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/fzf-tab

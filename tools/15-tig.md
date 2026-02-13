@@ -369,6 +369,8 @@ alias lg='lazygit'
 
 ### 4. Custom Views erstellen
 
+Custom Views in tig ermoeglicht es dir, haeufig genutzte Filteransichten per Tastendruck aufzurufen. Statt jedes Mal lange Kommandozeilen-Flags zu tippen, definierst du die Filter einmalig in der .tigrc und rufst sie mit einem Tastendruck auf. Stell dir vor, du willst taeglich schnell sehen, was du heute committet hast, was dein Teamkollege gemacht hat, oder nur die letzten 50 Commits -- jede dieser Ansichten ist einen Tastendruck entfernt. Die `!sh -c` Syntax fuhrt einen Shell-Befehl aus und oeffnet das Ergebnis in einer neuen tig-Instanz.
+
 ```bash
 # ~/.tigrc
 
@@ -383,6 +385,8 @@ bind generic T !sh -c "tig --since=today"
 ```
 
 ### 5. Performance für große Repos
+
+Bei Repositories mit Hunderttausenden von Commits kann tig spuerbar langsamer werden, da es die gesamte Historie laden muss. Diese Optimierungen begrenzen die Commit-Anzahl, deaktivieren das aufwaendige Graph-Rendering und nutzen bei Bedarf Shallow Clones. Stell dir vor, du arbeitest am Linux-Kernel-Repository mit ueber einer Million Commits -- ohne Limit wuerde tig beim Start mehrere Sekunden oder sogar Minuten brauchen. Mit `--max-count=500` siehst du nur die letzten 500 Commits, was fuer die taegliche Arbeit voellig ausreichend ist. Die Graph-Deaktivierung spart weitere Rechenzeit, da das Zeichnen der Branch-Linien bei vielen parallelen Branches aufwaendig ist.
 
 ```bash
 # Limit Commit-Count
@@ -600,17 +604,26 @@ tig HEAD~10..HEAD
 ## 🤖 Claude Code Integration
 
 ### Workflow 1: Claude Code Commits reviewen
+
+Wenn Claude Code Commits mit Co-Author-Zeilen erstellt, kannst du mit tig alle AI-generierten Commits gezielt filtern und reviewen. Der `--grep` Filter durchsucht Commit-Messages nach dem angegebenen Pattern und zeigt nur passende Commits an. Stell dir vor, du willst am Ende der Woche pruefen, welche Aenderungen Claude Code vorgenommen hat -- dieser Befehl zeigt dir alle Claude-Commits in der uebersichtlichen tig-Ansicht. Du kannst dann mit Enter in jeden Commit hineinschauen und den vollstaendigen Diff inspizieren. Das ist besonders wichtig fuer Code-Quality-Reviews von AI-generiertem Code.
+
 ```bash
 # Alle Commits mit Claude Co-Author anzeigen
 tig --grep="Co-Authored-By: Claude"
 ```
 
 ### Workflow 2: Branch-Vergleich vor Merge
+
+Bevor du einen Feature-Branch in main mergst, solltest du alle Commits zwischen den Branches pruefen. Dieser Befehl zeigt nur die Commits an, die im Feature-Branch existieren, aber nicht in main -- also genau die Aenderungen, die durch den Merge hinzukommen wuerden. Stell dir vor, ein Kollege bittet dich, seinen Feature-Branch zu reviewen, bevor er gemergt wird -- in tig siehst du alle Commits chronologisch, kannst in jeden Commit reinschauen und die Aenderungen im Detail pruefen. Das ist deutlich uebersichtlicher als `git log` und schneller als ein PR-Review im Browser.
+
 ```bash
 tig main..feature-branch
 ```
 
 ### Workflow 3: File-History nach Claude Code Aenderungen
+
+Die File-History zeigt dir alle Commits, die eine bestimmte Datei betreffen, in chronologischer Reihenfolge. Das ist besonders wertvoll nach einer Claude Code Session, in der eine Datei mehrfach geaendert wurde. Stell dir vor, Claude hat eine Komponente in drei Schritten refactored und du willst nachvollziehen, was in jedem Schritt passiert ist -- tig zeigt dir jeden Commit mit seinem Diff. Du kannst mit Enter in jeden Commit hineinschauen und die genauen Aenderungen sehen. So verstehst du die Entwicklungsgeschichte einer Datei, ohne alle Commits einzeln aufrufen zu muessen.
+
 ```bash
 tig -- src/components/Header.tsx
 ```
@@ -833,6 +846,8 @@ set main-view = date author commit-title:graph=yes,refs=yes
 
 ### 1. Nutze tig als git-log Replacement
 
+Wenn du tig als Ersatz fuer `git log` verwendest, hast du sofort eine interaktive, navigierbare Ansicht statt statischem Text-Output. Diese Aliase machen tig zu deinem Standard-Tool fuer Git-Historie, Refs und Status. Stell dir vor, du tippst gewohnheitsmaessig `gl` statt `git log` -- du bekommst sofort die tig-Ansicht mit Navigation, Diff-View und Blame-Zugriff. Der Git-Alias `git t` integriert tig direkt in die Git-Befehlsstruktur, was sich fuer Team-Mitglieder natuerlich anfuehlt, die tig noch nicht kennen.
+
 ```bash
 # In ~/.bashrc
 alias gl='tig'
@@ -847,6 +862,8 @@ git config --global alias.t '!tig'
 
 ### 2. Custom View für Daily-Standup
 
+Diese Konfiguration bindet Shift+S in tig an eine gefilterte Ansicht, die nur deine eigenen Commits seit gestern zeigt. Das ist perfekt als schneller Standup-Report: Ein Tastendruck zeigt dir alle Aufgaben, an denen du seit gestern gearbeitet hast. Stell dir vor, du bist im Daily-Standup und musst berichten, was du gestern gemacht hast -- statt muehsam zu ueberlegen, drueckst du Shift+S in tig und siehst alle deine Commits mit Details. Die Bindung nutzt `git config user.name` automatisch, sodass du den Alias nicht anpassen musst, wenn du ihn auf verschiedenen Maschinen nutzt.
+
 ```bash
 # ~/.tigrc
 bind generic S !sh -c "tig --author=$(git config user.name) --since=yesterday"
@@ -856,6 +873,8 @@ bind generic S !sh -c "tig --author=$(git config user.name) --since=yesterday"
 ```
 
 ### 3. Kombiniere mit tmux für Power-Workflow
+
+Die Kombination von tig und tmux Split-Screen ist einer der produktivsten Git-Workflows. Links laeuft tig fuer die visuelle Navigation durch die Git-Historie, rechts der Editor fuer sofortige Aenderungen. Stell dir vor, du findest in tig eine fehlerhafte Codezeile per Blame -- statt tig zu verlassen, den Dateinamen zu merken und den Editor zu oeffnen, kopierst du den Dateinamen ueber den tmux Copy Mode und oeffnest ihn direkt im rechten Pane. Dieser Workflow eliminiert den staendigen Kontextwechsel zwischen Git-Historie und Editor und spart pro Code-Review-Session mehrere Minuten.
 
 ```bash
 # Setup tmux-Split
@@ -872,6 +891,8 @@ tmux split-window -h
 
 ### 4. Quick-Diff Funktion
 
+Diese Konfiguration bindet die Taste D in der Main-View an einen Diff mit delta-Syntax-Highlighting. Normalerweise zeigt tig Diffs in seinem eingebauten Viewer, der kein Syntax-Highlighting hat. Mit dieser Bindung wird der Diff stattdessen durch delta geleitet und im Terminal angezeigt. Stell dir vor, du navigierst durch die Commit-Historie und willst bei einem bestimmten Commit die Aenderungen mit vollem Syntax-Highlighting sehen -- drueckst du D, oeffnet sich der delta-View mit farbigen Diffs. Der Ausdruck `%(commit)~ %(commit)` vergleicht den Commit mit seinem Vorgaenger, was exakt dem Diff des Commits entspricht.
+
 ```bash
 # ~/.tigrc
 bind main D !sh -c "git diff %(commit)~ %(commit) | delta"
@@ -881,6 +902,8 @@ bind main D !sh -c "git diff %(commit)~ %(commit) | delta"
 ```
 
 ### 5. Blame + Claude Integration
+
+Diese Funktion kombiniert tig's Blame-Ansicht mit Claude Code Analyse. Sie exportiert den Blame-Output einer Datei und laesst Claude die Patterns analysieren -- zum Beispiel welche Autoren welche Bereiche geschrieben haben, wo die meisten Aenderungen stattfinden, und welche Zeilen am aeltesten (und damit moeglicherweise veraltet) sind. Stell dir vor, du uebernimmst ein neues Projekt und willst verstehen, wer welchen Bereich des Codes besitzt und wo die meisten Aenderungen stattfinden -- diese Funktion gibt dir eine AI-generierte Analyse. Beachte, dass die Funktion den tig-Output in eine temporaere Datei schreibt, die nach der Analyse geloescht werden sollte.
 
 ```bash
 # Function in ~/.bashrc
@@ -894,6 +917,8 @@ tigblame_ai() {
 ```
 
 ### 6. Export Historie für Dokumentation
+
+Diese Funktion generiert einen strukturierten Changelog zwischen zwei Tags oder Commits. Sie nutzt `git log` mit einem benutzerdefinierten Format und uebergibt das Ergebnis an Claude Code fuer die Formatierung. Stell dir vor, du bereitest ein neues Release vor und brauchst eine lesbare Liste aller Aenderungen seit dem letzten Release -- statt manuell durch Commits zu scrollen, erstellt diese Funktion einen formatierten Changelog in Sekunden. Die `--reverse` Option zeigt die Commits in chronologischer Reihenfolge, was fuer Changelogs natuerlicher ist. Standardmaessig vergleicht die Funktion von `v1.0.0` bis `HEAD`, aber du kannst beliebige Tags oder Commit-Hashes uebergeben.
 
 ```bash
 # Function: Generate Changelog
@@ -909,6 +934,8 @@ changelog() {
 ```
 
 ### 7. Interaktive Cherry-Pick
+
+Diese Konfiguration fuegt zwei nuetzliche Keybindings zur Main-View hinzu: C fuer Cherry-Pick mit `-x` Flag (das eine "cherry picked from" Notiz hinzufuegt) und X fuer das Kopieren des Commit-Diffs in die Zwischenablage. Stell dir vor, du browsst durch die Historie eines anderen Branches und findest einen Bugfix, den du auf deinem Branch brauchst -- statt den Commit-Hash zu notieren und tig zu verlassen, drueckst du einfach C direkt auf dem Commit. Das `-x` Flag ist wichtig fuer die Nachvollziehbarkeit, da es dokumentiert, woher der Cherry-Pick stammt. Die X-Bindung nutzt pbcopy (macOS) und kann fuer Linux durch xclip ersetzt werden.
 
 ```bash
 # ~/.tigrc

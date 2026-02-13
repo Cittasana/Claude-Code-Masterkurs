@@ -40,32 +40,42 @@ Markdown-Files sind überall (READMEs, Docs, Notes), aber im Terminal:
 glow ist ueberall dort nuetzlich, wo du Markdown-Dateien lesen musst - hier die fuenf wichtigsten Anwendungsfaelle.
 
 ### 1. **README-Files lesen**
-Projekt-Dokumentation ohne GitHub zu öffnen:
+
+Die README.md ist das Aushaegeschild jedes Projekts und enthaelt meistens Installationsanleitungen, Nutzungsbeispiele und API-Dokumentation. Mit `cat README.md` siehst du nur rohen Markdown-Text mit Hash-Zeichen, Sternchen und eckigen Klammern - schwer zu lesen und zu verstehen. glow rendert die Markdown-Syntax zu einer wunderschoen formatierten Ausgabe mit echten Ueberschriften, fetten Texten, formatierten Code-Blocks und Tabellen. Stell dir vor, du klonst ein neues Projekt und willst schnell verstehen wie du es installierst - mit glow liest du die README direkt im Terminal, ohne den Browser oeffnen zu muessen. Das Ergebnis ist eine sauber formatierte Darstellung, die fast so aussieht wie auf GitHub.
+
 ```bash
 glow README.md
 ```
 
 ### 2. **Documentation Browsing**
-Navigate durch Docs-Ordner:
+
+Viele Projekte haben einen `docs/`-Ordner mit mehreren Markdown-Dateien fuer verschiedene Themen wie Installation, API-Referenz, Contributing-Guidelines und mehr. Statt jede Datei einzeln mit `glow dateiname.md` zu oeffnen, kannst du einfach den Ordner uebergeben und bekommst eine interaktive Auswahl aller Markdown-Dateien. Du navigierst mit den Pfeiltasten durch die Liste und oeffnest die gewuenschte Datei mit Enter. Stell dir vor, du willst in einem fremden Projekt die API-Dokumentation finden - `glow docs/` zeigt dir alle verfuegbaren Docs auf einen Blick. Das ist deutlich schneller als im Browser durch verschiedene Dateien zu klicken.
+
 ```bash
 glow docs/
 # → Interaktive Auswahl aller .md Files
 ```
 
 ### 3. **URLs rendern**
-Markdown von Web direkt anzeigen:
+
+Manchmal willst du die Dokumentation eines fremden Projekts lesen, ohne das gesamte Repository klonen zu muessen. glow kann Markdown-Dateien direkt von URLs laden und rendern, einschliesslich Raw-GitHub-Links und Gist-URLs. Das spart dir den Download und das Navigieren im Browser. Stell dir vor, ein Kollege schickt dir einen Link zu einer API-Dokumentation auf GitHub - statt den Browser zu oeffnen, renderst du den Link direkt im Terminal. Das Ergebnis ist die gleiche formatierte Darstellung wie bei lokalen Dateien, nur dass die Quelle eine URL ist. Beachte, dass du die Raw-URL verwenden musst, nicht die normale GitHub-Seiten-URL.
+
 ```bash
 glow https://raw.githubusercontent.com/user/repo/main/README.md
 ```
 
 ### 4. **Notes und Todos**
-Eigene Notizen schön formatiert:
+
+Viele Entwickler nutzen Markdown-Dateien fuer persoenliche Notizen, Meeting-Protokolle und Todo-Listen. Diese Dateien im Terminal zu lesen ist mit `cat` muehsam, weil die Formatierung verloren geht. glow rendert deine Notizen mit sauber formatierten Checklisten, Ueberschriften und Code-Blocks, sodass sie angenehm zu lesen sind. Stell dir vor, du bereitest dich auf dein Daily Standup vor und willst schnell deine Notizen vom Vortag durchgehen - `glow` zeigt sie dir formatiert an, ohne eine Extra-App oeffnen zu muessen. Das ist besonders praktisch, wenn du ohnehin im Terminal arbeitest und den Kontext nicht wechseln willst.
+
 ```bash
 glow ~/notes/daily-standup.md
 ```
 
 ### 5. **Changelogs lesen**
-Release-Notes verstehen:
+
+Changelogs dokumentieren alle Aenderungen zwischen Versionen - neue Features, Bug Fixes und Breaking Changes. Diese Dateien sind oft sehr lang und enthalten viele Abschnitte mit Versionsnummern, Listen und Code-Snippets. Mit glow werden die Versionsabschnitte sauber getrennt dargestellt, Listen korrekt eingerueckt und Code-Blocks hervorgehoben. Stell dir vor, du aktualisierst eine Library von v2 auf v3 und willst wissen welche Breaking Changes es gibt - `glow CHANGELOG.md` zeigt dir die Aenderungen in einem lesbaren Format. Mit dem integrierten Pager kannst du bequem zur relevanten Version scrollen.
+
 ```bash
 glow CHANGELOG.md
 ```
@@ -81,6 +91,8 @@ Von der Installation ueber Theme-Anpassung bis zum interaktiven Directory-Browsi
 glow ist auf allen Plattformen verfuegbar, wobei die Installationsmethode je nach System variiert.
 
 **macOS (Homebrew)**:
+Auf macOS ist Homebrew der schnellste Installationsweg fuer glow. Das Charm-Team (die Entwickler von glow) pflegt das Homebrew-Paket aktiv, sodass du immer die neueste Version bekommst. Nach der Installation kannst du glow sofort im Terminal nutzen. Pruefe mit `glow --version` ob die Installation erfolgreich war. glow hat keine zusaetzlichen Abhaengigkeiten und funktioniert in allen gaengigen Terminal-Emulatoren.
+
 ```bash
 brew install glow
 ```
@@ -99,11 +111,15 @@ sudo apt update && sudo apt install glow
 ```
 
 **Arch Linux**:
+Auf Arch Linux ist glow im Community-Repository verfuegbar und wird ueber pacman installiert. Dank Arch's Rolling-Release-Modell bekommst du immer die aktuellste Version. Die Installation ist unkompliziert und dauert nur wenige Sekunden. glow funktioniert in allen gaengigen Terminal-Emulatoren unter Linux. Pruefe mit `glow --version` ob alles korrekt installiert wurde.
+
 ```bash
 sudo pacman -S glow
 ```
 
 **Windows (Scoop)**:
+Unter Windows installierst du glow am einfachsten ueber den Paketmanager Scoop. Alternativ kannst du das Binary auch direkt von der GitHub-Releases-Seite herunterladen. Beachte, dass die Darstellungsqualitaet vom verwendeten Terminal abhaengt - das Windows Terminal bietet die beste Farbunterstuetzung. In der Standard-Eingabeaufforderung kann die Formatierung eingeschraenkt sein. Nach der Installation steht glow in PowerShell und Windows Terminal zur Verfuegung.
+
 ```bash
 scoop install glow
 ```
@@ -168,6 +184,8 @@ glow config set style dark
 ```
 
 **2. Width Control**:
+Die Breite der gerenderten Ausgabe laesst sich mit dem `-w` Flag steuern. Standardmaessig nutzt glow die volle Terminalbreite, aber bei sehr breiten Monitoren kann das zu langen, schwer lesbaren Zeilen fuehren. 80 Zeichen ist ein klassischer Wert fuer gut lesbare Textbreite. Stell dir vor, du hast einen Ultrawide-Monitor und glow streckt den Text ueber 200 Zeichen - mit `-w 80` bekommst du eine angenehme, zentrierte Darstellung. Mit `-w 0` deaktivierst du das Limit komplett, was bei sehr breiten Tabellen nuetzlich sein kann.
+
 ```bash
 # Default: Terminalbreite
 glow README.md
@@ -180,6 +198,8 @@ glow -w 0 README.md
 ```
 
 **3. Paginierung Control**:
+Standardmaessig aktiviert glow einen Pager (aehnlich wie `less`), durch den du mit den Pfeiltasten scrollen kannst. Bei kurzen Dateien oder wenn du die Ausgabe in eine Pipe weiterleiten willst, ist der Pager allerdings stoerend. Mit `-p` deaktivierst du den Pager und bekommst den gesamten Output auf einmal angezeigt. Stell dir vor, du willst den Inhalt einer kurzen README schnell ueberfliegen ohne mit Tastendruecken navigieren zu muessen - `-p` gibt dir den direkten Output. Du kannst auch einen alternativen Pager wie bat setzen, um zusaetzliches Syntax Highlighting zu bekommen.
+
 ```bash
 # Mit Pager (default)
 glow README.md
@@ -192,6 +212,8 @@ PAGER=bat glow README.md
 ```
 
 **4. Directory Browsing**:
+Wenn du einen Ordner mit mehreren Markdown-Dateien an glow uebergibst, oeffnet sich ein interaktiver Browser in dem du mit den Pfeiltasten durch die Dateien navigieren kannst. Das ist deutlich komfortabler als jede Datei einzeln zu oeffnen. Mit `-l` listest du alle Markdown-Dateien ohne sie zu oeffnen, was nuetzlich ist um erst mal zu sehen was verfuegbar ist. Stell dir vor, du hast einen `docs/`-Ordner mit 15 verschiedenen Dokumentationsdateien und willst die richtige finden - der interaktive Browser zeigt dir eine uebersichtliche Liste. Mit der Glob-Syntax `**/*.md` findest du auch Markdown-Dateien in Unterordnern.
+
 ```bash
 # Interaktive File-Auswahl
 glow docs/
@@ -204,6 +226,8 @@ glow docs/**/*.md
 ```
 
 **5. URLs rendern**:
+glow kann Markdown nicht nur von lokalen Dateien lesen, sondern auch direkt von URLs. Das ist besonders nuetzlich fuer GitHub-READMEs, Gists und beliebige Markdown-Dateien im Web. Verwende die Raw-URL von GitHub (nicht die normale Repository-URL), damit glow den reinen Markdown-Text bekommt. Stell dir vor, du evaluierst eine neue Library und willst schnell deren Dokumentation lesen - statt zu klonen, renderst du die README direkt von GitHub. Mit `curl -s | glow -` kannst du auch URLs verwenden, die kein direktes Markdown liefern.
+
 ```bash
 # GitHub README direkt
 glow https://raw.githubusercontent.com/charmbracelet/glow/master/README.md
@@ -216,6 +240,8 @@ curl -s https://example.com/doc.md | glow -
 ```
 
 **6. Output zu Datei**:
+Manchmal willst du den gerenderten Markdown-Output in eine Datei speichern oder weiterverarbeiten. Mit einer einfachen Output-Umleitung speicherst du die formatierte Ausgabe (inklusive ANSI-Farben) in eine Textdatei. Mit `-p` bekommst du Plain Text ohne Pager-Steuerzeichen. Stell dir vor, du willst einem Kollegen per E-Mail den Inhalt einer README schicken - exportiere sie als Plain Text und fuege sie in die Mail ein. Beachte, dass glow keinen nativen HTML-Export bietet - dafuer nutze stattdessen pandoc (`pandoc README.md -o README.html`).
+
 ```bash
 # Als ANSI (mit Colors)
 glow README.md > rendered.txt
@@ -272,6 +298,9 @@ rg -l 'authentication' --glob '*.md' | xargs glow
 ```
 
 ### 4. **Integration in Git Hooks**
+
+Git Hooks sind Skripte die automatisch bei bestimmten Git-Aktionen ausgefuehrt werden. Mit einem post-commit Hook kannst du dir nach jedem Commit automatisch die neuesten Changelog-Eintraege anzeigen lassen. Das ist besonders nuetzlich in Teams, damit jeder sofort sieht was sich geaendert hat. Stell dir vor, du commitest eine Aenderung und bekommst automatisch die letzten 20 Zeilen des Changelogs angezeigt - so vergisst du nie, den Changelog zu aktualisieren. Erstelle den Hook im `.git/hooks/`-Verzeichnis und mache ihn ausfuehrbar mit `chmod +x`.
+
 ```bash
 # In .git/hooks/post-commit
 #!/bin/bash
@@ -282,6 +311,9 @@ fi
 ```
 
 ### 5. **Documentation Server (Local)**
+
+Wenn du Dokumentation fuer dein Team bereitstellen willst, kannst du glow nutzen um Markdown-Dateien in einfaches HTML zu konvertieren und dann ueber einen lokalen HTTP-Server zu servieren. Die folgende Shell-Funktion konvertiert alle Markdown-Dateien im docs-Ordner und startet einen Python-Webserver. Das ist ein schneller Workaround fuer Teams die keinen dedizierten Dokumentations-Server haben. Stell dir vor, dein Team arbeitet offline und braucht Zugang zur Projektdokumentation - mit dieser Funktion stellst du sie in Sekunden bereit. Fuer professionellere Loesungen nutze Tools wie mkdocs oder mdbook.
+
 ```bash
 # Serve als HTTP
 # (glow hat keinen Server, nutze Python + glow)
@@ -294,6 +326,9 @@ function serve-docs() {
 ```
 
 ### 6. **CI/CD Integration**
+
+In CI/CD-Pipelines wie GitHub Actions kannst du glow nutzen, um Markdown-Dateien im CI-Log formatiert auszugeben. Das ist nuetzlich um Release-Notes, Changelogs oder Build-Informationen direkt in den Pipeline-Logs lesbar darzustellen. Mit dem `-p` Flag deaktivierst du den Pager, der in nicht-interaktiven Umgebungen nicht funktioniert. Stell dir vor, deine Deployment-Pipeline zeigt am Ende automatisch die Release-Notes an - das erleichtert die Verifizierung ob die richtigen Aenderungen deployed wurden. Die ANSI-Farben werden in den meisten CI-Systemen korrekt dargestellt.
+
 ```bash
 # In GitHub Actions: README rendern
 - name: Render README
@@ -646,6 +681,9 @@ md docs/
 ```
 
 ### 2. **Integration in vim/neovim**
+
+Wenn du Markdown-Dateien in vim bearbeitest, willst du zwischendurch die gerenderte Vorschau sehen. Mit einem einfachen Keybinding kannst du glow direkt aus vim heraus aufrufen, um die aktuelle Datei gerendert anzuzeigen. Das `%`-Zeichen in vim steht fuer den aktuellen Dateinamen, und `!` fuehrt einen Shell-Befehl aus. Stell dir vor, du schreibst eine README und willst pruefen ob die Tabellen und Code-Blocks korrekt formatiert sind - ein Tastendruck genuegt. Nach dem Schliessen von glow landest du automatisch wieder in vim.
+
 ```vim
 " In ~/.vimrc
 " Preview Markdown mit glow

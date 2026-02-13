@@ -2,7 +2,7 @@ import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, Wrench, ArrowRight } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, Wrench, ArrowRight, Sparkles } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
@@ -557,6 +557,41 @@ const DashboardView = () => {
           </Link>
         );
       })()}
+
+      {/* Prompt Studio Promo Widget */}
+      <Link to="/prompt-studio" className="block apple-card group hover:border-apple-accent/30 transition-all duration-200">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-violet-500/10 flex items-center justify-center">
+              <Sparkles size={20} className="text-violet-400" />
+            </div>
+            <div>
+              <h3 className="text-base font-bold text-apple-text group-hover:text-apple-accent transition-colors flex items-center gap-2">
+                Prompt Studio
+                <span className="px-1.5 py-0.5 text-[9px] font-bold rounded bg-apple-accent/15 text-apple-accent border border-apple-accent/25">
+                  NEU
+                </span>
+              </h3>
+              <p className="text-xs text-apple-muted">Generiere & optimiere Prompts fuer Claude Code Projekte</p>
+            </div>
+          </div>
+          <ArrowRight size={18} className="text-apple-muted group-hover:text-apple-accent group-hover:translate-x-1 transition-all" />
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="bg-blue-500/5 rounded-apple px-3 py-2 border border-blue-500/15 text-center">
+            <p className="text-xs font-semibold text-blue-400">Generator</p>
+            <p className="text-[10px] text-apple-muted mt-0.5">7 Kategorien</p>
+          </div>
+          <div className="bg-emerald-500/5 rounded-apple px-3 py-2 border border-emerald-500/15 text-center">
+            <p className="text-xs font-semibold text-emerald-400">Optimizer</p>
+            <p className="text-[10px] text-apple-muted mt-0.5">Score & Tipps</p>
+          </div>
+          <div className="bg-violet-500/5 rounded-apple px-3 py-2 border border-violet-500/15 text-center">
+            <p className="text-xs font-semibold text-violet-400">Planner</p>
+            <p className="text-[10px] text-apple-muted mt-0.5">Projekt-Planung</p>
+          </div>
+        </div>
+      </Link>
 
       {/* Discord Community Widget */}
       <DiscordWidget serverId={import.meta.env.VITE_DISCORD_SERVER_ID} compact />

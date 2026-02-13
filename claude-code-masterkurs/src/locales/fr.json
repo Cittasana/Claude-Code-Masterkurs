@@ -27,7 +27,8 @@
     "projects": "Projets",
     "showcase": "Vitrine",
     "freelancer": "Parcours Freelance",
-    "tools": "Outils & Extensions"
+    "tools": "Outils & Extensions",
+    "promptStudio": "Prompt Studio"
   },
   "landing": {
     "heroTitle": "Claude Code Masterkurs",

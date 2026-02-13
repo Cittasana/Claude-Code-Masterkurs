@@ -28,6 +28,7 @@ import {
   Image,
   Briefcase,
   Wrench,
+  Sparkles,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useUserProgress } from '../../store/userProgress';
@@ -114,8 +115,9 @@ const Navigation = () => {
     { to: '/showcase', match: '/showcase', icon: Image, labelKey: 'nav.showcase' },
   ];
 
-  const resourcesItems: { to: string; match: string; icon: typeof Search; labelKey: string; externalUrl?: string }[] = [
+  const resourcesItems: { to: string; match: string; icon: typeof Search; labelKey: string; externalUrl?: string; badge?: string }[] = [
     { to: '/docs', match: '/__external__', icon: ExternalLink, labelKey: 'nav.officialDocs', externalUrl: 'https://code.claude.com/docs/de/overview' },
+    { to: '/prompt-studio', match: '/prompt-studio', icon: Sparkles, labelKey: 'nav.promptStudio', badge: 'NEU' },
     { to: '/features', match: '/features', icon: Search, labelKey: 'nav.reference' },
     { to: '/patterns', match: '/patterns', icon: Layers, labelKey: 'nav.patterns' },
     { to: '/templates', match: '/templates', icon: FolderGit2, labelKey: 'nav.templates' },
@@ -128,7 +130,7 @@ const Navigation = () => {
   const renderDropdown = (
     id: DropdownId,
     labelKey: string,
-    items: { to: string; match: string; icon: React.ComponentType<{ size?: number; className?: string }>; labelKey: string; externalUrl?: string }[],
+    items: { to: string; match: string; icon: React.ComponentType<{ size?: number; className?: string }>; labelKey: string; externalUrl?: string; badge?: string }[],
     groupIcon: React.ComponentType<{ size?: number; className?: string }>
   ) => {
     const GroupIcon = groupIcon;
@@ -204,6 +206,11 @@ const Navigation = () => {
                 >
                   <Icon size={16} className="shrink-0 text-apple-accent/80" />
                   {t(item.labelKey)}
+                  {item.badge && (
+                    <span className="ml-auto px-1.5 py-0.5 text-[9px] font-bold rounded bg-apple-accent/15 text-apple-accent border border-apple-accent/25">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               );
             })}
@@ -277,6 +284,11 @@ const Navigation = () => {
               <Link key={item.to} to={item.to} onClick={() => setMobileMenuOpen(false)} className={`flex items-center gap-3 px-4 py-3 rounded-apple ${isActive(item.match) ? 'text-apple-accent bg-apple-accent/10' : 'text-apple-textSecondary hover:bg-apple-hover hover:text-apple-text'}`}>
                 <Icon size={18} className="shrink-0" />
                 {t(item.labelKey)}
+                {item.badge && (
+                  <span className="ml-auto px-1.5 py-0.5 text-[9px] font-bold rounded bg-apple-accent/15 text-apple-accent border border-apple-accent/25">
+                    {item.badge}
+                  </span>
+                )}
               </Link>
             );
           })}

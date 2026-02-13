@@ -54,6 +54,7 @@ const ToolsLessonView = lazy(() => import('./pages/ToolsLessonView'));
 const WasIstClaudeCodeView = lazy(() => import('./pages/WasIstClaudeCodeView'));
 const VergleichView = lazy(() => import('./pages/VergleichView'));
 const GlossarView = lazy(() => import('./pages/GlossarView'));
+const PromptStudioView = lazy(() => import('./pages/PromptStudioView'));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -125,6 +126,7 @@ function App() {
               <Route path="/was-ist-claude-code" element={<WasIstClaudeCodeView />} />
               <Route path="/vergleich" element={<VergleichView />} />
               <Route path="/glossar" element={<GlossarView />} />
+              <Route path="/prompt-studio" element={<PromptStudioView />} />
               <Route path="/newsletter" element={<NewsletterView />} />
               <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
               <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />

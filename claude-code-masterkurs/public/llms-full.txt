@@ -361,6 +361,12 @@ Claude Code ist vollständig sprachunabhängig und unterstützt alle gängigen P
 
 ---
 
+## Weiterführende Seiten
+
+- [Was ist Claude Code? – Definition & Anleitung](https://claude-code-masterkurs.de/was-ist-claude-code): Umfassende Erklärung mit Installation, Funktionen und Vergleich
+- [Claude Code vs Copilot vs Cursor vs Windsurf – Vergleich 2026](https://claude-code-masterkurs.de/vergleich): Detaillierter Tool-Vergleich mit Tabelle und Empfehlungen
+- [Claude Code Glossar](https://claude-code-masterkurs.de/glossar): Alle Begriffe von Agentic Coding über MCP bis Token erklärt
+
 ## Kontakt & Rechtliches
 
 - Website: https://claude-code-masterkurs.de/

@@ -191,7 +191,7 @@
           "name": "Was ist Claude Code?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claude Code ist ein autonomer KI-gesteuerter Coding-Agent von Anthropic, der im Terminal läuft. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv: Es versteht ganze Projekte, liest und schreibt Dateien, führt Shell-Befehle und Git-Operationen aus und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern."
+            "text": "Claude Code ist ein autonomer KI-gesteuerter Coding-Agent von Anthropic, der direkt im Terminal läuft und durch natürliche Sprache gesteuert wird. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv und eigenständig: Es versteht ganze Projekte, liest und schreibt Dateien, erstellt Tests, führt Shell-Befehle und Git-Operationen aus und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern. Entwickler beschreiben eine Aufgabe in natürlicher Sprache, und Claude Code plant die Umsetzung, analysiert die Codebasis, schreibt den Code, führt Tests aus und erstellt Git-Commits – alles automatisch. Die Installation erfolgt über npm mit dem Befehl 'npm install -g @anthropic-ai/claude-code' und erfordert Node.js 18 oder höher. Claude Code unterstützt alle gängigen Programmiersprachen und läuft auf macOS, Linux und Windows (WSL2)."
           }
         },
         {
@@ -199,7 +199,7 @@
           "name": "Wie unterscheidet sich Claude Code von GitHub Copilot?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claude Code ist ein autonomer Agent, der ganze Aufgaben eigenständig erledigt – von der Dateianalyse über das Code-Schreiben bis zum Git-Commit. Copilot ist ein Autocomplete-Tool für Inline-Code-Vorschläge. Claude Code hat Zugriff auf das gesamte Projekt, kann Shell-Befehle ausführen, Tests starten und über MCP-Server mit externen Tools kommunizieren. Copilot arbeitet primär innerhalb des Editors."
+            "text": "Claude Code ist ein autonomer Agent, der ganze Aufgaben eigenständig erledigt – von der Dateianalyse über das Code-Schreiben bis zum Git-Commit. GitHub Copilot hingegen ist ein Autocomplete-Tool, das Inline-Code-Vorschläge innerhalb des Editors macht. Der entscheidende Unterschied liegt im Arbeitsumfang: Claude Code hat Zugriff auf das gesamte Projekt, kann Shell-Befehle ausführen, Tests starten, Git-Repositories verwalten und über MCP-Server mit externen Tools wie Datenbanken, GitHub, Jira und Slack kommunizieren. Copilot arbeitet primär innerhalb einer einzelnen Datei im Editor. Claude Code kann mehrstufige Aufgaben planen und ausführen, beispielsweise eine komplette Feature-Implementierung mit Tests, Dokumentation und Pull Request. Copilot schlägt einzelne Code-Zeilen oder Funktionen vor. Für einfache Code-Vervollständigung ist Copilot schneller, für komplexe Entwicklungsaufgaben bietet Claude Code deutlich mehr Autonomie und Projektverständnis."
           }
         },
         {
@@ -207,7 +207,7 @@
           "name": "Welche Abo-Modelle gibt es?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Der Claude Code Masterkurs bietet drei Abo-Modelle: Monatlich (24 EUR/Monat, flexibel kündbar), Jährlich (229 EUR/Jahr, spare 20%), und Lifetime (499 EUR einmalig, lebenslanger Zugriff). Alle Modelle beinhalten Zugang zu allen 70 Lektionen, 43 Tools & Extensions, Quizzes, dem Live-Playground und Community-Features."
+            "text": "Der Claude Code Masterkurs bietet drei Abo-Modelle für jeden Bedarf: Das Monats-Abo kostet 24 EUR pro Monat und ist jederzeit flexibel kündbar – ideal zum Ausprobieren. Das Jahres-Abo kostet 229 EUR pro Jahr, was einer Ersparnis von 20 Prozent gegenüber der monatlichen Zahlung entspricht. Das Lifetime-Abo bietet für einmalig 499 EUR lebenslangen Zugriff auf alle Inhalte, einschließlich zukünftiger Updates und neuer Lektionen. Alle drei Modelle beinhalten den vollständigen Zugang zu allen 70 Lektionen von Grundlagen bis Experte, 43 Tools & Extensions Lektionen zu CLI-Werkzeugen und MCP-Servern, interaktive Quizzes zur Wissensüberprüfung, den Live-Playground zum Experimentieren, praktische Challenges und Community-Features wie Forum und Leaderboard. Der Kurs bietet außerdem eine kostenlose Vorschau der ersten Lektionen, sodass Interessierte den Kurs vor dem Kauf testen können."
           }
         },
         {
@@ -215,7 +215,7 @@
           "name": "Wie installiert man Claude Code?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claude Code wird über npm installiert: 1) Node.js 18+ installieren, 2) 'npm install -g @anthropic-ai/claude-code' im Terminal ausführen, 3) 'claude' starten und den Anthropic API-Key eingeben oder OAuth-Authentifizierung nutzen. Es läuft auf macOS, Linux und Windows (WSL2 empfohlen)."
+            "text": "Die Installation von Claude Code erfolgt in drei einfachen Schritten und dauert weniger als fünf Minuten. Zunächst muss Node.js in Version 18 oder höher installiert sein – dies ist die einzige Voraussetzung. Anschließend wird Claude Code global über npm installiert mit dem Befehl 'npm install -g @anthropic-ai/claude-code'. Nach der Installation navigiert man in ein beliebiges Projektverzeichnis und startet Claude Code mit dem Befehl 'claude'. Beim ersten Start wird man zur Authentifizierung aufgefordert: Entweder gibt man einen Anthropic API-Key ein oder nutzt die bequemere OAuth-Authentifizierung über die Anthropic Console im Browser. Claude Code läuft auf macOS, Linux und Windows, wobei für Windows die Nutzung von WSL2 (Windows Subsystem for Linux) empfohlen wird. Optional kann man eine CLAUDE.md Datei im Projektstamm erstellen, die Claude Code automatisch als Kontext für das jeweilige Projekt nutzt."
           }
         },
         {
@@ -223,7 +223,7 @@
           "name": "Was ist das Model Context Protocol (MCP)?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools und Services zu kommunizieren. Über MCP Server kann Claude Code auf Datenbanken (PostgreSQL, SQLite), APIs (GitHub, Jira, Slack), Dateisysteme und weitere Services zugreifen. Es erweitert die Fähigkeiten von Claude Code über das lokale Dateisystem hinaus."
+            "text": "MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, sicher mit externen Tools und Services zu kommunizieren. Es funktioniert nach einem Client-Server-Modell: Claude Code ist der MCP-Client, und jeder externe Service wird über einen MCP-Server angebunden. Über MCP-Server kann Claude Code auf Datenbanken wie PostgreSQL und SQLite zugreifen, SQL-Abfragen ausführen und Schemas inspizieren. Es kann GitHub-Issues und Pull Requests verwalten, Jira-Tickets erstellen, Slack-Nachrichten senden und Brave Search für Web-Recherchen nutzen. Die Konfiguration erfolgt über eine JSON-Datei im Projekt oder global in den Claude Code Settings. Jeder MCP-Server definiert seine verfügbaren Tools, und Claude Code entscheidet eigenständig, wann welches Tool aufgerufen wird. Das Protokoll ist open-source und erweiterbar – Entwickler können eigene MCP-Server für beliebige APIs und Services schreiben und so die Fähigkeiten von Claude Code gezielt erweitern."
           }
         },
         {
@@ -231,7 +231,7 @@
           "name": "Was kostet Claude Code?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claude Code erfordert einen Anthropic API-Key. Die Kosten richten sich nach dem Tokenverbrauch: Claude Sonnet 4 kostet ca. $3/$15 pro Million Input/Output Tokens, Claude Opus 4 ca. $15/$75. Ein typischer Entwicklungstag kostet je nach Nutzungsintensität $1–20. Alternativ gibt es den Max Plan mit monatlicher Pauschale."
+            "text": "Claude Code selbst ist kostenlos als npm-Paket verfügbar. Die Nutzung erfordert jedoch einen Anthropic API-Key, und die Kosten richten sich nach dem tatsächlichen Tokenverbrauch. Claude Sonnet 4 kostet circa 3 US-Dollar pro Million Input-Tokens und 15 US-Dollar pro Million Output-Tokens – das ist das empfohlene Modell für die meisten Aufgaben. Claude Opus 4, das leistungsstärkere Modell für komplexe Aufgaben, kostet circa 15 US-Dollar pro Million Input-Tokens und 75 US-Dollar pro Million Output-Tokens. Ein typischer Entwicklungstag kostet je nach Nutzungsintensität zwischen 1 und 20 US-Dollar. Für Entwickler, die keine verbrauchsabhängige Abrechnung möchten, bietet Anthropic den Max Plan als monatliche Pauschale an. Damit erhält man ein festes Kontingent an Claude Code Nutzung pro Monat. Die Kosten lassen sich außerdem durch gezielte Nutzung der CLAUDE.md Datei und effizientes Prompt Engineering deutlich reduzieren."
           }
         },
         {
@@ -239,7 +239,7 @@
           "name": "Welche Programmiersprachen unterstützt Claude Code?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Claude Code ist sprachunabhängig und unterstützt alle gängigen Programmiersprachen: Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin und viele weitere. Da es im Terminal arbeitet, ist es nicht an eine bestimmte IDE oder Sprache gebunden."
+            "text": "Claude Code ist vollständig sprachunabhängig und unterstützt alle gängigen Programmiersprachen, darunter Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift und Kotlin. Da Claude Code im Terminal arbeitet und nicht an eine bestimmte IDE gebunden ist, kann es mit jedem Projekt und jeder Sprache verwendet werden. Claude Code versteht nicht nur die Syntax, sondern auch die idiomatischen Patterns jeder Sprache – es schreibt pythonischen Python-Code, idiomatisches Rust mit korrektem Ownership, und typsicheres TypeScript. Besonders stark ist Claude Code bei Projekten mit mehreren Sprachen, etwa einem TypeScript-Frontend mit Python-Backend oder einem Go-Microservice mit SQL-Datenbank. Das Modell erkennt automatisch den verwendeten Tech Stack anhand der Projektdateien (package.json, Cargo.toml, pyproject.toml) und passt seine Code-Generierung entsprechend an. Auch Framework-spezifische Patterns wie React, Django, Rails oder Spring Boot werden korrekt angewendet."
           }
         },
         {
@@ -247,7 +247,7 @@
           "name": "Was ist eine CLAUDE.md Datei?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code Kontext über das Projekt gibt. Sie enthält Projektbeschreibung, Architektur, Coding-Konventionen, Tech Stack und spezielle Anweisungen. Claude Code liest diese Datei automatisch beim Start und nutzt den Inhalt, um kontextbezogener und projektspezifischer zu arbeiten."
+            "text": "Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code strukturierten Kontext über das jeweilige Projekt gibt. Sie funktioniert wie ein Briefing für den KI-Agenten und wird automatisch bei jedem Start von Claude Code eingelesen. Typische Inhalte sind eine Projektbeschreibung, die Architektur des Systems, verwendete Technologien und Frameworks, Coding-Konventionen wie Naming Standards und Formatierung, Build- und Test-Befehle sowie spezielle Anweisungen für den Umgang mit dem Code. Je detaillierter die CLAUDE.md, desto besser arbeitet Claude Code mit dem Projekt. Es gibt drei Ebenen von CLAUDE.md Dateien: die projektspezifische im Repo-Root, eine persönliche unter ~/.claude/CLAUDE.md für übergreifende Präferenzen, und optional Unterverzeichnis-spezifische CLAUDE.md Dateien für Module mit eigenen Konventionen. Best Practice ist, die CLAUDE.md mit dem Team zu teilen und im Git-Repository zu versionieren, damit alle Entwickler die gleiche KI-Erfahrung haben."
           }
         }
       ]

@@ -98,6 +98,12 @@ MCP steht für Model Context Protocol – ein offenes Protokoll von Anthropic, d
 - [Impressum](https://claude-code-masterkurs.de/impressum)
 - [Datenschutz](https://claude-code-masterkurs.de/datenschutz)
 
+## Weiterführende Seiten
+
+- [Was ist Claude Code?](https://claude-code-masterkurs.de/was-ist-claude-code): Umfassende Definition, Funktionen, Installation und Vergleich mit Copilot/Cursor
+- [Vergleich: Claude Code vs Copilot vs Cursor vs Windsurf](https://claude-code-masterkurs.de/vergleich): Detaillierter Vergleich aller KI-Coding-Tools 2026
+- [Glossar](https://claude-code-masterkurs.de/glossar): Alle Begriffe von Agentic Coding bis Token erklärt
+
 ## Optional
 
 - [llms-full.txt](https://claude-code-masterkurs.de/llms-full.txt): Ausführliche Version mit detaillierten Kursinhalten und allen 43 Tool-Lektionen

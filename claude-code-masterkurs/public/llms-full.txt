@@ -1,24 +1,26 @@
 # Claude Code Masterkurs – Vollständige Kursübersicht
 
-> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 27 kostenlose Lektionen, interaktiver Playground, Quizzes, Community-Features und Zertifikat.
+> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 70 Lektionen (27 Haupt-Lektionen + 43 Tools & Extensions), interaktiver Playground, Quizzes, Community-Features und Zertifikat. Kostenlos starten, Premium-Abo für erweiterten Zugang.
 
 ## Über diesen Kurs
 
-Der **Claude Code Masterkurs** (https://claude-code-masterkurs.de/) ist ein interaktiver Online-Kurs, der Entwicklern beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv einsetzen.
+Der **Claude Code Masterkurs** (https://claude-code-masterkurs.de/) ist der einzige umfassende deutschsprachige Online-Kurs, der Entwicklern systematisch beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv und produktiv einsetzen.
 
 **Eckdaten:**
 - Sprache: Deutsch (auch auf Englisch, Französisch, Spanisch verfügbar)
-- Preis: Vollständig kostenlos
-- Umfang: 27 Lektionen in 4 Levels, ca. 20 Stunden Lernzeit
-- Zielgruppe: Softwareentwickler, von Anfängern bis Experten
-- Technologie: React, TypeScript, Tailwind CSS, Vite
+- Preis: Kostenloser Einstieg; Premium-Abo Monatlich 24 EUR, Jährlich 229 EUR (spare 20%), Lifetime 499 EUR (einmalig)
+- Umfang: 70 Lektionen in 4 Levels (27 Haupt-Lektionen + 43 Tools & Extensions), ca. 40 Stunden Lernzeit
+- Zielgruppe: Softwareentwickler, Freelancer und Tech-Teams, von Anfängern bis Experten
+- Technologie: React 19, TypeScript, Tailwind CSS, Vite 7
 - Features: Live-Playground, Quizzes, Spaced Repetition, Challenges, Forum, Leaderboard, Zertifikat
+
+Der Kurs deckt alle Aspekte ab – von der Installation und den ersten Befehlen über CLAUDE.md Context Management und MCP-Server-Integration bis hin zu Multi-Agent Orchestration, CI/CD-Pipelines und dem Claude Agent SDK. Neben den Haupt-Lektionen enthält der Kurs 43 praxisnahe Lektionen zu CLI-Tools und MCP-Server-Integrationen, die den Entwickler-Alltag mit Claude Code produktiver machen. Jede Tool-Lektion umfasst Installation, Konfiguration, Best Practices, 12+ Praxisbeispiele, Troubleshooting und die Integration mit Claude Code.
 
 ---
 
 ## Was ist Claude Code?
 
-Claude Code ist ein **autonomer KI-Coding-Agent** von Anthropic. Es handelt sich um ein Command-Line Tool (CLI), das im Terminal läuft und durch natürliche Sprache gesteuert wird.
+Claude Code ist ein **autonomer KI-Coding-Agent** von Anthropic, der im Terminal läuft und durch natürliche Sprache gesteuert wird. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv und eigenständig: Es versteht ganze Projekte, liest und schreibt Dateien, erstellt Tests, führt Git-Operationen durch und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern. Entwickler beschreiben eine Aufgabe in natürlicher Sprache, und Claude Code plant die Umsetzung, analysiert die Codebasis, schreibt den Code, führt Tests aus und erstellt Git-Commits – alles automatisch. Die Installation erfolgt über npm mit dem Befehl `npm install -g @anthropic-ai/claude-code` und erfordert Node.js 18 oder höher. Claude Code unterstützt alle gängigen Programmiersprachen (Python, JavaScript, TypeScript, Rust, Go, Java, C++) und läuft auf macOS, Linux und Windows (WSL2). Im Gegensatz zu IDE-gebundenen Tools wie Cursor oder Windsurf arbeitet Claude Code direkt im Terminal und ist damit unabhängig von einer bestimmten Entwicklungsumgebung.
 
 **Schlüsselunterschiede zu anderen Tools:**
 
@@ -31,6 +33,7 @@ Claude Code ist ein **autonomer KI-Coding-Agent** von Anthropic. Es handelt sich
 | MCP-Server | Ja | Nein | Nein | Nein |
 | Multi-Agent | Ja | Nein | Nein | Nein |
 | Umgebung | Terminal/CLI | IDE-Plugin | Eigene IDE | Eigene IDE |
+| Preis-Modell | API-Token-basiert | $10-19/Monat | $20/Monat | $15/Monat |
 
 **Kernfunktionalitäten von Claude Code:**
 1. **CLAUDE.md Context Management**: Projektkontext in einer Markdown-Datei definieren
@@ -232,56 +235,115 @@ Fortgeschrittene Themen für den professionellen Einsatz.
 
 ---
 
+## Tools & Extensions (43 Lektionen)
+
+Der Kurs enthält 43 umfassende Praxis-Lektionen zu CLI-Tools und MCP-Server-Integrationen. Jede Lektion umfasst 600–1000 Zeilen mit Installation, Konfiguration, Best Practices, 12+ Praxisbeispielen, Troubleshooting und Claude-Code-Integration.
+
+### Anfänger-Tools (01–08)
+
+- [01 bat](https://claude-code-masterkurs.de/tools/200): bat ist ein moderner Ersatz für den cat-Befehl mit automatischem Syntax-Highlighting, Git-Integration und Zeilennummerierung. Es macht die Dateiansicht im Terminal deutlich übersichtlicher und ist besonders nützlich bei Code-Reviews.
+- [02 eza](https://claude-code-masterkurs.de/tools/201): eza (ehemals exa) ist eine moderne Alternative zum ls-Befehl mit Farbcodierung, Git-Status-Anzeige, Baumansicht und erweiterten Metadaten. Es macht die Dateiexploration im Terminal effizienter.
+- [03 tree](https://claude-code-masterkurs.de/tools/202): tree zeigt Verzeichnisstrukturen als ASCII-Baumdarstellung an – unverzichtbar für die Projektübersicht und Dokumentation. Mit Filtern und Tiefenbegrenzung lässt sich die Ausgabe gezielt steuern.
+- [04 glow](https://claude-code-masterkurs.de/tools/203): glow rendert Markdown-Dateien direkt im Terminal mit Formatierung, Syntax-Highlighting und Styling. Ideal für README-Dateien, Dokumentation und CLAUDE.md-Vorschauen.
+- [05 tldr](https://claude-code-masterkurs.de/tools/204): tldr bietet vereinfachte, praxisorientierte Man-Pages mit konkreten Beispielen statt langer Dokumentation. Es beschleunigt den Umgang mit Befehlen, deren Syntax man nicht täglich nutzt.
+- [06 httpie](https://claude-code-masterkurs.de/tools/205): HTTPie ist ein benutzerfreundlicher HTTP-Client für das Terminal mit intuitiver Syntax, automatischem JSON-Formatting und Syntax-Highlighting. Deutlich einfacher als curl für API-Tests.
+- [07 jq](https://claude-code-masterkurs.de/tools/206): jq ist der Standard-Prozessor für JSON-Daten im Terminal. Es ermöglicht Filtern, Transformieren, Extrahieren und Formatieren von JSON – essentiell für die Arbeit mit APIs und Konfigurationsdateien.
+- [08 GitHub CLI (gh)](https://claude-code-masterkurs.de/tools/207): Die offizielle GitHub CLI bringt Issues, Pull Requests, Releases, Actions und Repository-Management direkt ins Terminal. Sie ergänzt Claude Codes Git-Fähigkeiten um die gesamte GitHub-API.
+
+### Fortgeschrittene Tools (09–24)
+
+- [09 tmux](https://claude-code-masterkurs.de/tools/208): tmux ist ein Terminal-Multiplexer, der mehrere Terminal-Sessions in einem Fenster verwaltet. Sessions überleben SSH-Unterbrechungen und ermöglichen paralleles Arbeiten.
+- [10 lazygit](https://claude-code-masterkurs.de/tools/209): lazygit bietet eine vollständige Git-TUI mit visueller Darstellung von Branches, Staging, Commits und Merge-Konflikten. Es beschleunigt komplexe Git-Workflows erheblich.
+- [11 delta](https://claude-code-masterkurs.de/tools/210): delta verbessert Git-Diffs mit Syntax-Highlighting, Zeilennummern und Side-by-Side-Ansicht. Es ersetzt den Standard-Git-Diff-Viewer für deutlich lesbarere Code-Änderungen.
+- [12 fzf](https://claude-code-masterkurs.de/tools/211): fzf ist ein universeller Fuzzy Finder für das Terminal. Es durchsucht Dateien, Verzeichnisse, Prozesse, Git-Branches und beliebige Listen interaktiv mit Echtzeit-Filterung.
+- [13 ripgrep (rg)](https://claude-code-masterkurs.de/tools/212): ripgrep ist das schnellste Textsuche-Tool für die Kommandozeile. Es durchsucht große Codebases in Millisekunden und respektiert automatisch .gitignore-Regeln.
+- [14 fd](https://claude-code-masterkurs.de/tools/213): fd ist eine moderne, schnelle Alternative zum find-Befehl mit intuitiver Syntax, Regex-Support und automatischer .gitignore-Beachtung.
+- [15 tig](https://claude-code-masterkurs.de/tools/214): tig ist ein textbasierter Git-History-Browser, der Commit-Logs, Diffs und Branches in einer interaktiven ncurses-Oberfläche darstellt.
+- [16 Zsh](https://claude-code-masterkurs.de/tools/215): Zsh ist eine erweiterte Shell mit Auto-Completion, Syntax-Highlighting, Plugin-System (Oh My Zsh) und leistungsstarker Globbing-Syntax.
+- [17 Starship](https://claude-code-masterkurs.de/tools/216): Starship ist ein minimaler, extrem schneller Shell-Prompt, der kontextbezogene Informationen anzeigt (Git-Branch, Node-Version, Python-venv, etc.).
+- [18 yq](https://claude-code-masterkurs.de/tools/217): yq ist der jq-Äquivalent für YAML, TOML und XML. Es ermöglicht das Parsen, Filtern und Transformieren von Konfigurationsdateien im Terminal.
+- [19 entr](https://claude-code-masterkurs.de/tools/218): entr überwacht Dateien auf Änderungen und führt automatisch Befehle aus. Ideal für automatische Test-Runs, Builds und Live-Reload-Workflows.
+- [20 Prettier](https://claude-code-masterkurs.de/tools/219): Prettier ist ein opinionated Code-Formatter für JavaScript, TypeScript, CSS, HTML, JSON, Markdown und weitere Sprachen. Es erzwingt konsistente Formatierung im Team.
+- [21 ESLint](https://claude-code-masterkurs.de/tools/220): ESLint ist der Standard-Linter für JavaScript und TypeScript. Es findet Fehler, erzwingt Code-Konventionen und kann viele Probleme automatisch beheben.
+- [22 Ruff](https://claude-code-masterkurs.de/tools/221): Ruff ist ein extrem schneller Python-Linter und -Formatter, geschrieben in Rust. Er ersetzt flake8, isort, pyupgrade und andere Tools in einem einzigen Werkzeug.
+- [23 hadolint](https://claude-code-masterkurs.de/tools/222): hadolint ist ein Dockerfile-Linter, der Best Practices und Sicherheitsregeln prüft. Er hilft, effiziente und sichere Docker-Images zu erstellen.
+- [24 htop](https://claude-code-masterkurs.de/tools/223): htop ist ein interaktiver Prozess-Monitor mit Farbdarstellung, Baumansicht und Echtzeit-Ressourcenübersicht für CPU, RAM und Swap.
+
+### Experten-Tools (25–35)
+
+- [25 btop](https://claude-code-masterkurs.de/tools/224): btop ist ein moderner System-Monitor mit grafischer Oberfläche im Terminal. Es zeigt CPU, RAM, Disk, Netzwerk und Prozesse in Echtzeit-Graphen an.
+- [26 ncdu](https://claude-code-masterkurs.de/tools/225): ncdu ist ein interaktiver Disk-Usage-Analyzer mit ncurses-Oberfläche, der große Verzeichnisse nach Größe sortiert und das Löschen direkt ermöglicht.
+- [27 hyperfine](https://claude-code-masterkurs.de/tools/226): hyperfine ist ein CLI-Benchmarking-Tool, das Befehle mit statistischer Genauigkeit misst – inklusive Warmup-Runs, Standardabweichung und Vergleichsanalysen.
+- [28 pet](https://claude-code-masterkurs.de/tools/227): pet ist ein Snippet-Manager für die Kommandozeile, der häufig genutzte Befehle und Skripte mit Beschreibung und Tags speichert und per Fuzzy-Suche abruft.
+- [29 hadolint (Docker)](https://claude-code-masterkurs.de/tools/228): Vertiefung von Dockerfile-Linting mit CI/CD-Integration, Custom Rules und automatischer Korrektur durch Claude Code.
+- [30 Zellij](https://claude-code-masterkurs.de/tools/229): Zellij ist ein moderner Terminal-Multiplexer (Alternative zu tmux) mit Plugin-System, intuitiver Bedienung und eingebauter Session-Verwaltung.
+- [31 screen](https://claude-code-masterkurs.de/tools/230): GNU screen ist der klassische Terminal-Multiplexer für persistente Sessions, besonders nützlich auf Servern ohne GUI und bei SSH-Verbindungen.
+- [32 Fish Shell](https://claude-code-masterkurs.de/tools/231): Fish ist eine benutzerfreundliche Shell mit Auto-Suggestions, Web-basierter Konfiguration und Syntax-Highlighting out of the box – ohne Plugin-Setup.
+- [33 Ranger](https://claude-code-masterkurs.de/tools/232): Ranger ist ein vim-inspirierter Datei-Manager im Terminal mit Dreispalten-Ansicht, Dateivorschau und umfangreichen Tastenkombinationen.
+- [34 nnn](https://claude-code-masterkurs.de/tools/233): nnn ist der schnellste Terminal-Datei-Manager mit minimalem Ressourcenverbrauch, Plugin-System und nahtloser Shell-Integration.
+- [35 bandwhich](https://claude-code-masterkurs.de/tools/234): bandwhich zeigt Netzwerk-Bandbreitennutzung pro Prozess, Verbindung und Remote-Host in Echtzeit an – nützlich für Debugging von Netzwerkproblemen.
+
+### MCP Server (36–43)
+
+Diese Lektionen behandeln die Integration externer Services über das Model Context Protocol. Jede Lektion erklärt Konfiguration, Sicherheit, Praxisbeispiele und typische Workflows.
+
+- [36 Filesystem MCP](https://claude-code-masterkurs.de/tools/235): Der Filesystem MCP Server ermöglicht Claude Code strukturierte Dateisystem-Operationen mit JSON-Responses. Er bietet sicherere Dateioperationen als direkte Shell-Befehle mit eingebauter Pfad-Validierung.
+- [37 Git MCP](https://claude-code-masterkurs.de/tools/236): Der Git MCP Server stellt Git-Operationen als strukturierte JSON-API bereit. Er ermöglicht programmatische Git-Workflows mit detaillierten Responses für Commits, Branches, Diffs und Log-Analysen.
+- [38 Brave Search MCP](https://claude-code-masterkurs.de/tools/237): Der Brave Search MCP Server gibt Claude Code Zugriff auf Web-Suche und aktuelle Informationen. Nützlich für Recherche zu Dokumentation, Fehlermeldungen und aktuellen Best Practices.
+- [39 PostgreSQL MCP](https://claude-code-masterkurs.de/tools/238): Der PostgreSQL MCP Server ermöglicht direkte Datenbank-Interaktion – Schema-Analyse, SQL-Queries, Daten-Exploration und Schema-Migration direkt aus Claude Code heraus.
+- [40 SQLite MCP](https://claude-code-masterkurs.de/tools/239): Der SQLite MCP Server bietet Zugriff auf lokale SQLite-Datenbanken für Prototyping, Testing und die Arbeit mit eingebetteten Datenbanken.
+- [41 GitHub MCP](https://claude-code-masterkurs.de/tools/240): Der GitHub MCP Server integriert die gesamte GitHub-API: Issues erstellen, PRs reviewen, Actions überwachen, Releases managen – alles aus Claude Code heraus.
+- [42 Puppeteer MCP](https://claude-code-masterkurs.de/tools/241): Der Puppeteer MCP Server ermöglicht Browser-Automatisierung und Web-Scraping. Claude Code kann Webseiten öffnen, Screenshots erstellen, Formulare ausfüllen und DOM-Elemente analysieren.
+- [43 Slack MCP](https://claude-code-masterkurs.de/tools/242): Der Slack MCP Server verbindet Claude Code mit Slack-Workspaces für Nachrichten senden, Kanäle lesen, Threads verfolgen und Team-Kommunikation automatisieren.
+
+- [Alle Tools & Extensions ansehen](https://claude-code-masterkurs.de/tools)
+
+---
+
 ## Schlüsselkonzepte erklärt
 
 ### CLAUDE.md
-Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code Kontext über das Projekt gibt. Sie enthält Projektbeschreibung, Architektur, Coding-Konventionen, Tech Stack und spezielle Anweisungen. Claude Code liest diese Datei automatisch beim Start und nutzt sie, um kontextbezogener zu arbeiten.
+Die CLAUDE.md ist eine Markdown-Datei im Projektstamm, die Claude Code umfassenden Kontext über das Projekt gibt. Sie enthält Projektbeschreibung, Architektur-Übersicht, Coding-Konventionen, Tech Stack, spezielle Anweisungen und projektspezifische Regeln. Claude Code liest diese Datei automatisch beim Start jeder Session und nutzt den Inhalt, um kontextbezogener und projektspezifischer zu arbeiten. Die CLAUDE.md ist vergleichbar mit einer ausführlichen Onboarding-Dokumentation für einen neuen Entwickler im Team – sie erklärt dem KI-Agent, wie das Projekt aufgebaut ist, welche Konventionen gelten und worauf besonders geachtet werden muss. Best Practices umfassen die Definition des Entwicklungsstadiums (MVP, Production), die Dokumentation von Naming-Konventionen, die Auflistung wichtiger Dateipfade und die Beschreibung der Test-Strategie.
 
 ### Model Context Protocol (MCP)
-MCP ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools zu kommunizieren. Über MCP Server kann Claude Code auf Datenbanken (PostgreSQL, SQLite), APIs (GitHub, Jira, Slack), Dateisysteme und weitere Services zugreifen. Die Konfiguration erfolgt über JSON in der `.claude/settings.json` oder `.mcp.json`.
+MCP ist ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools und Services über eine standardisierte JSON-RPC-Schnittstelle zu kommunizieren. Über MCP Server kann Claude Code auf Datenbanken (PostgreSQL, SQLite, MySQL), APIs (GitHub, Jira, Slack, Linear), Dateisysteme, Suchmaschinen (Brave Search) und Browser-Automatisierung (Puppeteer) zugreifen. Die Konfiguration erfolgt über JSON-Dateien in `.claude/settings.json` oder `.mcp.json` im Projektverzeichnis. MCP macht Claude Code zu einem vollwertigen Entwicklungs-Orchestrator, der nicht nur Code schreibt, sondern mit der gesamten Entwicklungsinfrastruktur interagiert – von der Datenbank bis zum Issue-Tracker.
 
 ### Agentic Coding
-Agentic Coding beschreibt die Arbeitsweise, bei der ein KI-Agent (wie Claude Code) autonom Entwicklungsaufgaben ausführt. Statt einzelne Code-Zeilen vorzuschlagen, plant und implementiert der Agent ganze Features – von der Dateianalyse über das Code-Schreiben bis zum Git-Commit.
+Agentic Coding beschreibt die Arbeitsweise, bei der ein KI-Agent wie Claude Code autonom Entwicklungsaufgaben ausführt. Statt einzelne Code-Zeilen vorzuschlagen, plant und implementiert der Agent ganze Features – von der Analyse der bestehenden Codebasis über das Schreiben von Code in mehreren Dateien bis hin zum Erstellen von Tests und Git-Commits. Der Entwickler formuliert eine Aufgabe in natürlicher Sprache, und der Agent übernimmt die komplette Umsetzung. Dies unterscheidet sich grundlegend von Autocomplete-Tools, die nur reaktiv Vorschläge machen, während Agentic Coding proaktiv und eigenständig arbeitet.
 
 ### Context Engineering
-Context Engineering (Begriff geprägt von Anthropic) ist die Disziplin, den richtigen Kontext für KI-Systeme zu kuratieren. Im Gegensatz zu "Prompt Engineering" geht es nicht nur um die Frage, sondern um den gesamten Informationskontext: CLAUDE.md, Projektstruktur, relevante Dateien und Konventionen.
+Context Engineering (Begriff geprägt von Anthropic) ist die Disziplin, den richtigen Kontext für KI-Systeme zu kuratieren und zu optimieren. Im Gegensatz zu „Prompt Engineering", bei dem es primär um die Formulierung von Fragen geht, umfasst Context Engineering den gesamten Informationskontext: die CLAUDE.md-Datei, die Projektstruktur, relevante Dateien, Coding-Konventionen, Test-Strategien und externe Dokumentation. Gutes Context Engineering bedeutet, Claude Code genau die Informationen zu geben, die es für eine Aufgabe braucht – nicht mehr und nicht weniger. Zu viel Kontext verschwendet Tokens und kann die Qualität verschlechtern, zu wenig Kontext führt zu generischen Antworten.
 
 ### Subagents
-Subagents sind spezialisierte Claude Code Instanzen, die vom Haupt-Agent für spezifische Aufgaben erstellt werden. Zum Beispiel kann ein "Review-Subagent" Code prüfen, während ein "Test-Subagent" Tests schreibt – parallel und mit jeweils optimalem Modell/Konfiguration.
+Subagents sind spezialisierte Claude Code Instanzen, die vom Haupt-Agent für spezifische Aufgaben erstellt werden. Zum Beispiel kann ein „Review-Subagent" Code prüfen, während ein „Test-Subagent" Tests schreibt und ein „Refactoring-Subagent" Code-Qualität verbessert – alle parallel und mit jeweils optimalem Modell und Konfiguration. Subagents ermöglichen Cost-Efficient Agent Hierarchien: komplexe Planungsaufgaben laufen auf Claude Opus 4, einfache Routine-Tasks auf Claude Haiku. Der Haupt-Agent koordiniert die Sub-Agents, sammelt Ergebnisse und stellt die Konsistenz sicher.
 
 ---
 
 ## Häufig gestellte Fragen (FAQ)
 
 ### Was ist Claude Code?
-Claude Code ist ein KI-gesteuertes Command-Line Tool von Anthropic. Es ermöglicht Entwicklern, durch natürliche Sprache mit ihrer Codebasis zu interagieren, Code zu schreiben, zu refactoren, Tests zu erstellen und Git-Operationen durchzuführen. Es läuft im Terminal und versteht das gesamte Projekt.
+Claude Code ist ein autonomes KI-gesteuertes Command-Line Tool von Anthropic, das im Terminal läuft und Entwicklern ermöglicht, durch natürliche Sprache mit ihrer gesamten Codebasis zu interagieren. Im Gegensatz zu einfachen Code-Assistenten versteht Claude Code das komplette Projekt – es liest und analysiert alle Dateien, versteht Abhängigkeiten zwischen Modulen, schreibt Code über mehrere Dateien hinweg, erstellt und führt Tests aus, führt Git-Operationen durch (Commits, Branches, Pull Requests) und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern. Die Installation erfolgt über npm mit `npm install -g @anthropic-ai/claude-code` und erfordert Node.js 18 oder höher. Claude Code läuft auf macOS, Linux und Windows (via WSL2) und unterstützt alle gängigen Programmiersprachen. Es wird von Anthropic aktiv entwickelt und regelmäßig mit neuen Funktionen wie Multi-Agent Orchestration, Custom Skills und Hooks erweitert.
 
 ### Wie unterscheidet sich Claude Code von GitHub Copilot?
-Claude Code ist ein autonomer Agent – es erledigt ganze Aufgaben eigenständig. Copilot ist ein Autocomplete-Tool, das beim Tippen Code-Vorschläge macht. Claude Code hat Zugriff auf das gesamte Projekt, kann Shell-Befehle ausführen, Git-Operationen durchführen und über MCP-Server mit externen Services kommunizieren. Copilot ist auf den Editor beschränkt.
+Claude Code und GitHub Copilot verfolgen grundlegend verschiedene Ansätze bei der KI-gestützten Softwareentwicklung. Claude Code ist ein autonomer Agent, der im Terminal läuft und ganze Projekte versteht – es analysiert die komplette Codebasis, plant Aufgaben eigenständig, schreibt Code über mehrere Dateien hinweg, führt Shell-Befehle und Git-Operationen aus und kommuniziert über MCP-Server mit externen Services wie Datenbanken, APIs und Issue-Trackern. GitHub Copilot hingegen ist ein Autocomplete-Tool, das als IDE-Plugin funktioniert und kontextbezogene Code-Vorschläge beim Tippen macht, primär innerhalb einer einzelnen Datei. Der wichtigste Unterschied liegt in der Autonomie: Claude Code kann eine Aufgabe wie „Implementiere eine REST-API mit Authentifizierung" komplett eigenständig umsetzen, während Copilot Zeile für Zeile assistiert. Claude Code eignet sich besonders für komplexe, mehrstufige Aufgaben, Copilot für schnelle Inline-Ergänzungen beim Programmieren.
 
 ### Wie installiert man Claude Code?
-1. Node.js 18+ installieren
-2. `npm install -g @anthropic-ai/claude-code` ausführen
-3. `claude` im Terminal starten
-4. Anthropic API-Key eingeben oder OAuth nutzen
+Die Installation von Claude Code erfolgt in wenigen Schritten und dauert nur wenige Minuten. Zunächst muss Node.js in Version 18 oder höher installiert sein – auf macOS am einfachsten über Homebrew mit `brew install node`, auf Linux über den Paketmanager der Distribution, und auf Windows über den offiziellen Installer von nodejs.org oder WSL2. Anschließend wird Claude Code global über npm installiert: `npm install -g @anthropic-ai/claude-code`. Nach der Installation startet man Claude Code einfach mit dem Befehl `claude` im Terminal. Beim ersten Start wird die Authentifizierung eingerichtet – entweder über einen Anthropic API-Key (für Pay-per-Use) oder über OAuth mit dem Anthropic Max Plan (monatliche Pauschale). Claude Code kann dann in jedem Projektverzeichnis gestartet werden und liest automatisch die CLAUDE.md-Datei, falls vorhanden, um den Projektkontext zu verstehen.
 
 ### Was kostet Claude Code?
-Claude Code erfordert einen Anthropic API-Key. Die Kosten richten sich nach dem Tokenverbrauch: Sonnet 4 kostet ca. $3/$15 pro Million Input/Output Tokens, Opus 4 ca. $15/$75. Ein typischer Entwicklungstag kostet je nach Nutzung $1–20.
+Claude Code selbst ist kostenlos installierbar, erfordert aber einen Anthropic API-Key für die Nutzung. Die Kosten richten sich nach dem gewählten Modell und dem Tokenverbrauch: Claude Sonnet 4 kostet etwa $3 pro Million Input-Tokens und $15 pro Million Output-Tokens und bietet das beste Preis-Leistungs-Verhältnis für die meisten Aufgaben. Claude Opus 4 liegt bei $15/$75 pro Million Tokens und eignet sich für besonders komplexe Aufgaben wie Architektur-Entscheidungen oder umfangreiche Refactorings. Claude Haiku bietet eine günstige Alternative für einfache, repetitive Tasks. Ein typischer Entwicklungstag kostet je nach Nutzungsintensität zwischen $1 und $20. Alternativ bietet Anthropic den Max Plan als monatliche Pauschale an, der unbegrenzte Claude Code Nutzung einschließt. Der Claude Code Masterkurs zum Erlernen von Claude Code bietet einen kostenlosen Einstieg. Für den vollen Zugang stehen drei Premium-Abos zur Verfügung: Monatlich (24 EUR), Jährlich (229 EUR, spare 20%) und Lifetime (499 EUR einmalig).
 
 ### Was sind die Systemanforderungen?
-- Node.js 18 oder höher
-- macOS, Linux oder Windows (WSL2 empfohlen)
-- Internetverbindung für API-Zugriff
-- Terminal/Shell (bash, zsh, fish etc.)
+Für die Nutzung von Claude Code werden folgende Systemvoraussetzungen benötigt: Node.js in Version 18 oder höher (empfohlen ist die aktuelle LTS-Version), ein modernes Betriebssystem (macOS, Linux oder Windows mit WSL2 – reines Windows ohne WSL wird nicht offiziell unterstützt), eine stabile Internetverbindung für die API-Kommunikation mit Anthropic, und eine Terminal-Anwendung (bash, zsh, fish oder eine andere POSIX-kompatible Shell). Für optimale Performance empfiehlt sich eine SSD und mindestens 8 GB RAM, wobei Claude Code selbst nur minimale lokale Ressourcen verbraucht, da die KI-Verarbeitung in der Cloud stattfindet. Für die Arbeit mit MCP-Servern können zusätzliche Abhängigkeiten erforderlich sein, zum Beispiel Docker für Container-basierte MCP-Server oder spezifische Datenbank-Clients für Datenbank-MCP-Server.
 
-### Ist der Masterkurs kostenlos?
-Ja, der Claude Code Masterkurs ist vollständig kostenlos. Alle 27 Lektionen, Quizzes, der Live-Playground und die Community-Features sind ohne Registrierung nutzbar.
+### Welche Abo-Modelle gibt es für den Masterkurs?
+Der Claude Code Masterkurs bietet einen kostenlosen Einstieg mit Zugang zu den Grundlagen-Lektionen, damit sich Interessierte selbst ein Bild vom Kursformat und der Qualität machen können. Für den vollständigen Zugang zu allen 70 Lektionen, den 43 Tools & Extensions, Premium-Features und Community-Funktionen stehen drei Abo-Modelle zur Verfügung: Das monatliche Abo kostet 24 EUR pro Monat und ist flexibel kündbar – ideal zum Ausprobieren. Das jährliche Abo kostet 229 EUR pro Jahr (entspricht 19,08 EUR/Monat) und bietet eine Ersparnis von 20% gegenüber der monatlichen Zahlung. Das Lifetime-Abo kostet einmalig 499 EUR und gewährt dauerhaften Zugang zu allen aktuellen und zukünftigen Kursinhalten – ohne weitere Zahlungen. Alle Abo-Modelle beinhalten den vollen Zugang zu Lektionen, Quizzes, dem Live-Playground, Challenges, Community-Features, Spaced Repetition und dem Abschlusszertifikat.
 
 ### In welchen Sprachen ist der Kurs verfügbar?
-Der Kurs ist primär auf Deutsch. Über die integrierte Internationalisierung ist er auch auf Englisch, Französisch und Spanisch verfügbar.
+Der Kurs ist primär auf Deutsch verfasst und optimiert, da er speziell für den deutschsprachigen Markt entwickelt wurde. Über die integrierte Internationalisierung (i18next) ist die Benutzeroberfläche zusätzlich auf Englisch, Französisch und Spanisch verfügbar. Die Kurs-Inhalte selbst sind auf Deutsch, wobei Code-Beispiele und Terminal-Befehle naturgemäß in Englisch sind, da dies die Standardsprache in der Softwareentwicklung ist. Der Claude Code Masterkurs ist damit der einzige umfassende Claude Code Kurs auf Deutsch und richtet sich gezielt an deutschsprachige Entwickler, die KI-gestütztes Programmieren mit Claude Code erlernen möchten.
 
 ### Welche Programmiersprachen unterstützt Claude Code?
-Claude Code ist sprachunabhängig und unterstützt alle gängigen Programmiersprachen: Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin und viele mehr.
+Claude Code ist vollständig sprachunabhängig und unterstützt alle gängigen Programmiersprachen, da es auf den Claude-Sprachmodellen von Anthropic basiert, die mit Code in dutzenden Sprachen trainiert wurden. Dazu gehören Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin, Scala, Haskell, Elixir, und viele weitere. Da Claude Code im Terminal arbeitet und nicht an eine bestimmte IDE gebunden ist, kann es mit jedem Projekt arbeiten, unabhängig vom Tech-Stack. Es versteht nicht nur einzelne Dateien, sondern die Zusammenhänge in der gesamten Projektstruktur – inklusive Konfigurationsdateien, Build-Systeme und Paketmanager. Besonders stark ist Claude Code bei der Arbeit mit gemischten Codebases, zum Beispiel einem TypeScript-Frontend mit Python-Backend, da es den gesamten Projektkontext gleichzeitig erfasst.
 
 ---
 
@@ -294,8 +356,8 @@ Claude Code ist sprachunabhängig und unterstützt alle gängigen Programmierspr
 - **Charts:** Chart.js + react-chartjs-2
 - **UI-Komponenten:** Radix UI, Lucide Icons
 - **Syntax Highlighting:** Prism.js
-- **Deployment:** Vercel / Netlify
-- **Backend:** Express.js, Prisma, PostgreSQL (optional)
+- **Deployment:** Vercel
+- **SEO:** react-helmet-async, Schema.org JSON-LD, llms.txt
 
 ---
 

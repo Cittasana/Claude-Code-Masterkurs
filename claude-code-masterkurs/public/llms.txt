@@ -1,20 +1,20 @@
 # Claude Code Masterkurs
 
-> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 27 kostenlose Lektionen von Grundlagen bis Experten-Level mit interaktivem Playground, Quizzes und Community-Features.
+> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 70 Lektionen, 43 Tools & Extensions, interaktiver Playground, Quizzes und Community-Features. Kostenlos starten, Premium-Abo für erweiterten Zugang.
 
 ## Über diesen Kurs
 
-Der Claude Code Masterkurs ist ein interaktiver Online-Kurs, der Entwicklern beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv einsetzen. Der Kurs ist vollständig kostenlos, auf Deutsch verfügbar und deckt alle Aspekte von der Installation bis hin zu fortgeschrittenen Themen wie Multi-Agent Orchestration und Production Best Practices ab.
+Der Claude Code Masterkurs ist der einzige umfassende deutschsprachige Online-Kurs, der Entwicklern beibringt, wie sie Claude Code – das KI-gesteuerte Command-Line Tool von Anthropic – effektiv einsetzen. Der Kurs deckt alle Aspekte von der Installation bis hin zu fortgeschrittenen Themen wie Multi-Agent Orchestration, Context Engineering und Production Best Practices ab. Neben den 27 Haupt-Lektionen enthält der Kurs 43 praxisnahe Lektionen zu CLI-Tools und MCP-Server-Integrationen, die den Entwickler-Alltag mit Claude Code produktiver machen. Die Plattform bietet einen interaktiven Playground, praktische Challenges, Quizzes zur Wissensüberprüfung, Spaced Repetition zum nachhaltigen Lernen und Community-Features wie Forum und Leaderboard. Anfänger starten mit den Grundlagen der Installation und Konfiguration, Fortgeschrittene vertiefen sich in MCP-Server, Custom Agents und Git-Automatisierung, und Experten meistern Multi-Agent Orchestration, CI/CD-Integration und den Claude Agent SDK.
 
-- Sprache: Deutsch
-- Preis: Kostenlos
-- Umfang: 27 Lektionen, ca. 20 Stunden
-- Zielgruppe: Entwickler (Anfänger bis Fortgeschrittene)
+- Sprache: Deutsch (auch auf Englisch, Französisch, Spanisch verfügbar)
+- Preis: Kostenloser Einstieg; Premium-Abo Monatlich 24 EUR, Jährlich 229 EUR (spare 20%), Lifetime 499 EUR (einmalig)
+- Umfang: 70 Lektionen (27 Haupt-Lektionen + 43 Tools & Extensions), ca. 40 Stunden Lernzeit
+- Zielgruppe: Softwareentwickler (Anfänger bis Experten), Freelancer, Tech-Teams
 - Website: https://claude-code-masterkurs.de/
 
 ## Was ist Claude Code?
 
-Claude Code ist ein autonomer KI-Coding-Agent von Anthropic, der im Terminal läuft. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv: Es versteht ganze Projekte, liest Dateien, schreibt Code, erstellt Tests, führt Git-Operationen durch und kommuniziert über MCP-Server mit externen Services. Es wird durch natürliche Sprache gesteuert und kann komplexe Entwicklungsaufgaben eigenständig lösen.
+Claude Code ist ein autonomer KI-Coding-Agent von Anthropic, der im Terminal läuft und durch natürliche Sprache gesteuert wird. Im Gegensatz zu Autocomplete-Tools wie GitHub Copilot arbeitet Claude Code proaktiv und eigenständig: Es versteht ganze Projekte, liest und schreibt Dateien, erstellt Tests, führt Git-Operationen durch und kommuniziert über das Model Context Protocol (MCP) mit externen Services wie Datenbanken, APIs und Issue-Trackern. Entwickler beschreiben eine Aufgabe in natürlicher Sprache, und Claude Code plant die Umsetzung, analysiert die Codebasis, schreibt den Code, führt Tests aus und erstellt Git-Commits – alles automatisch. Die Installation erfolgt über npm mit dem Befehl `npm install -g @anthropic-ai/claude-code` und erfordert Node.js 18 oder höher. Claude Code unterstützt alle gängigen Programmiersprachen (Python, JavaScript, TypeScript, Rust, Go, Java, C++) und läuft auf macOS, Linux und Windows (WSL2). Im Gegensatz zu IDE-gebundenen Tools wie Cursor oder Windsurf arbeitet Claude Code direkt im Terminal und ist damit unabhängig von einer bestimmten Entwicklungsumgebung.
 
 ## Kursstruktur
 
@@ -54,6 +54,20 @@ Claude Code ist ein autonomer KI-Coding-Agent von Anthropic, der im Terminal lä
 - [Lektion 25: Plugins & Marketplace](https://claude-code-masterkurs.de/lesson/25): Plugin-Ökosystem, Community-Erweiterungen, eigene Plugins erstellen
 - [Lektion 26: Real-World Workflow Patterns](https://claude-code-masterkurs.de/lesson/26): Praxisnahe Patterns, Team-Workflows, Enterprise-Einsatz
 
+### Tools & Extensions (43 Lektionen)
+
+Der Kurs enthält 43 zusätzliche Praxis-Lektionen zu CLI-Tools und MCP-Servern, die den Entwickler-Alltag mit Claude Code produktiver machen:
+
+**Anfänger-Tools (01–08):** bat (Syntax-Highlighting für cat), eza (moderne ls-Alternative), tree (Verzeichnisstruktur), glow (Markdown im Terminal), tldr (vereinfachte Man-Pages), httpie (benutzerfreundlicher HTTP-Client), jq (JSON-Processing), GitHub CLI (gh)
+
+**Fortgeschrittene Tools (09–24):** tmux (Terminal-Multiplexer), lazygit (Git-TUI), delta (Git-Diff mit Syntax-Highlighting), fzf (Fuzzy Finder), ripgrep (schnelle Textsuche), fd (moderne find-Alternative), tig (Git-History-Browser), Zsh (erweiterte Shell), Starship (Shell-Prompt), yq (YAML-Processing), entr (File-Watcher), Prettier (Code-Formatter), ESLint (JavaScript-Linter), Ruff (Python-Linter)
+
+**Experten-Tools (25–35):** btop (System-Monitor), ncdu (Disk-Usage-Analyse), hyperfine (CLI-Benchmarking), pet (Snippet-Manager), hadolint (Dockerfile-Linter), htop (Prozess-Monitor), Zellij (moderner Terminal-Multiplexer), screen (Session-Management), Fish Shell, Ranger (Datei-Manager), nnn (schneller Datei-Manager), bandwhich (Netzwerk-Monitor)
+
+**MCP Server (36–43):** Filesystem MCP, Git MCP, Brave Search MCP, PostgreSQL MCP, SQLite MCP, GitHub MCP, Puppeteer MCP, Slack MCP
+
+- [Alle Tools & Extensions ansehen](https://claude-code-masterkurs.de/tools)
+
 ## Zusätzliche Features
 
 - [Live Playground](https://claude-code-masterkurs.de/playground): Interaktiver simulierter Terminal zum Üben von Claude Code Befehlen
@@ -68,16 +82,16 @@ Claude Code ist ein autonomer KI-Coding-Agent von Anthropic, der im Terminal lä
 ## Häufig gestellte Fragen
 
 ### Was ist der Unterschied zwischen Claude Code und GitHub Copilot?
-Claude Code ist ein autonomer Agent, der ganze Projekte versteht und eigenständig Aufgaben erledigt. Copilot ist ein Autocomplete-Tool, das Code-Vorschläge beim Tippen macht. Claude Code liest Dateien, führt Shell-Befehle aus, erstellt Git-Commits und kommuniziert über MCP-Server – Copilot arbeitet primär innerhalb des Editors.
+Claude Code und GitHub Copilot verfolgen grundlegend verschiedene Ansätze bei der KI-gestützten Softwareentwicklung. Claude Code ist ein autonomer Agent, der im Terminal läuft und ganze Projekte versteht – es analysiert die komplette Codebasis, plant Aufgaben eigenständig, schreibt Code über mehrere Dateien hinweg, führt Shell-Befehle und Git-Operationen aus und kommuniziert über MCP-Server mit externen Services wie Datenbanken, APIs und Issue-Trackern. GitHub Copilot hingegen ist ein Autocomplete-Tool, das als IDE-Plugin funktioniert und kontextbezogene Code-Vorschläge beim Tippen macht, primär innerhalb einer einzelnen Datei. Der wichtigste Unterschied liegt in der Autonomie: Claude Code kann eine Aufgabe wie „Implementiere eine REST-API mit Authentifizierung" komplett eigenständig umsetzen, während Copilot Zeile für Zeile assistiert. Claude Code eignet sich besonders für komplexe, mehrstufige Aufgaben, Copilot für schnelle Inline-Ergänzungen beim Programmieren.
 
 ### Ist Claude Code kostenlos?
-Claude Code selbst erfordert einen Anthropic API-Key (kostenpflichtig nach Verbrauch). Der Masterkurs zum Erlernen von Claude Code ist jedoch vollständig kostenlos.
+Claude Code selbst erfordert einen Anthropic API-Key, der nach Tokenverbrauch abgerechnet wird. Die Kosten richten sich nach dem gewählten Modell: Claude Sonnet 4 kostet etwa $3 pro Million Input-Tokens und $15 pro Million Output-Tokens, Claude Opus 4 liegt bei $15/$75, und Claude Haiku bietet eine günstige Alternative für einfache Aufgaben. Ein typischer Entwicklungstag mit Claude Code kostet je nach Nutzungsintensität zwischen $1 und $20. Alternativ bietet Anthropic den Max Plan als monatliche Pauschale an, der unbegrenzte Claude Code Nutzung einschließt. Der Claude Code Masterkurs zum Erlernen von Claude Code bietet einen kostenlosen Einstieg mit Zugang zu den Grundlagen-Lektionen. Für den vollen Zugang zu allen 70 Lektionen, 43 Tools-Lektionen und Premium-Features stehen drei Abo-Modelle zur Verfügung: Monatlich (24 EUR), Jährlich (229 EUR, 20% Ersparnis) und Lifetime (499 EUR einmalig).
 
 ### Welche Programmiersprachen unterstützt Claude Code?
-Claude Code unterstützt alle gängigen Programmiersprachen, da es sprachunabhängig arbeitet. Es versteht Python, JavaScript/TypeScript, Rust, Go, Java, C++, und viele weitere Sprachen.
+Claude Code ist vollständig sprachunabhängig und unterstützt alle gängigen Programmiersprachen, da es auf den Claude-Sprachmodellen von Anthropic basiert, die mit Code in dutzenden Sprachen trainiert wurden. Dazu gehören Python, JavaScript, TypeScript, Rust, Go, Java, C++, C#, Ruby, PHP, Swift, Kotlin, Scala, Haskell, Elixir, und viele weitere. Da Claude Code im Terminal arbeitet und nicht an eine bestimmte IDE gebunden ist, kann es mit jedem Projekt arbeiten, unabhängig vom Tech-Stack. Es versteht nicht nur einzelne Dateien, sondern die Zusammenhänge in der gesamten Projektstruktur – inklusive Konfigurationsdateien, Build-Systeme und Paketmanager. Besonders stark ist Claude Code bei der Arbeit mit gemischten Codebases, zum Beispiel einem TypeScript-Frontend mit Python-Backend, da es den gesamten Projektkontext gleichzeitig erfasst.
 
 ### Was sind MCP Server?
-MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das es Claude Code ermöglicht, mit externen Tools und Services zu kommunizieren – etwa Datenbanken, APIs, Issue-Tracker oder Dokumentationsquellen. MCP Server erweitern die Fähigkeiten von Claude Code über das lokale Dateisystem hinaus.
+MCP steht für Model Context Protocol – ein offenes Protokoll von Anthropic, das Claude Code ermöglicht, mit externen Tools und Services zu kommunizieren und so seine Fähigkeiten weit über das lokale Dateisystem hinaus zu erweitern. Über MCP Server kann Claude Code direkt auf Datenbanken (PostgreSQL, SQLite, MySQL), APIs (GitHub, Jira, Slack, Linear), Dateisysteme, Suchmaschinen (Brave Search), Browser-Automatisierung (Puppeteer) und viele weitere Services zugreifen. Die Konfiguration erfolgt über JSON-Dateien (`.claude/settings.json` oder `.mcp.json` im Projektverzeichnis), und die Verbindung läuft über standardisierte JSON-RPC-Kommunikation. Im Claude Code Masterkurs werden 8 MCP Server im Detail behandelt: Filesystem MCP, Git MCP, Brave Search MCP, PostgreSQL MCP, SQLite MCP, GitHub MCP, Puppeteer MCP und Slack MCP. MCP macht Claude Code zu einem vollwertigen Entwicklungs-Orchestrator, der nicht nur Code schreibt, sondern auch mit der gesamten Entwicklungsinfrastruktur interagiert.
 
 ## Kontakt & Rechtliches
 
@@ -86,4 +100,4 @@ MCP (Model Context Protocol) ist ein offenes Protokoll von Anthropic, das es Cla
 
 ## Optional
 
-- [llms-full.txt](https://claude-code-masterkurs.de/llms-full.txt): Ausführliche Version mit detaillierten Kursinhalten
+- [llms-full.txt](https://claude-code-masterkurs.de/llms-full.txt): Ausführliche Version mit detaillierten Kursinhalten und allen 43 Tool-Lektionen

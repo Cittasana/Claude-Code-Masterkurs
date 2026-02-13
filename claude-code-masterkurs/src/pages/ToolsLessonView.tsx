@@ -16,8 +16,7 @@ import {
 } from 'lucide-react';
 import { allTools, FREE_TOOLS_LIMIT } from '../data/tools';
 import { useUserProgress } from '../store/userProgress';
-import { useAuthStore } from '../store/authStore';
-import { subscriptionApi } from '../lib/api';
+import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 import LessonContent from '../components/Lessons/LessonContent';
 import { useLearningTimer } from '../hooks/useLearningTimer';
 
@@ -28,20 +27,12 @@ const ToolsLessonView = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { lessonsCompleted, completeLesson, setCurrentLesson } = useUserProgress();
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hasPremium, setHasPremium] = useState(false);
+  const hasPremium = useSubscriptionAccess();
 
   const [readingProgress, setReadingProgress] = useState(0);
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    subscriptionApi.hasAccess()
-      .then((result) => setHasPremium(result.hasAccess))
-      .catch(() => setHasPremium(false));
-  }, [isAuthenticated]);
 
   const toolId = parseInt(id || '200');
   const tool = allTools.find((t) => t.id === toolId);

@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -19,7 +19,7 @@ import {
 import { allTools, toolCategories, FREE_TOOLS_LIMIT } from '../data/tools';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
-import { subscriptionApi } from '../lib/api';
+import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 
 const ICON_MAP = { Sparkles, Wrench, Terminal, Server } as const;
 
@@ -27,15 +27,8 @@ const ToolsOverviewView = () => {
   const { t } = useTranslation();
   const { lessonsCompleted } = useUserProgress();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hasPremium, setHasPremium] = useState(false);
+  const hasPremium = useSubscriptionAccess();
   const [expandedCat, setExpandedCat] = useState<string | null>('anfaenger');
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    subscriptionApi.hasAccess()
-      .then((result) => setHasPremium(result.hasAccess))
-      .catch(() => setHasPremium(false));
-  }, [isAuthenticated]);
 
   const completedToolIds = useMemo(
     () => allTools.filter((t) => lessonsCompleted.includes(t.id)).map((t) => t.id),

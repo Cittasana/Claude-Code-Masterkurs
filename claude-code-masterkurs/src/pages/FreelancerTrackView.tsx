@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -18,7 +18,7 @@ import {
 import { freelancerModules } from '../data/freelancerTrack';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
-import { subscriptionApi } from '../lib/api';
+import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 
 /** First 2 modules are free (IDs 100, 101) */
 const FREE_MODULE_LIMIT = 2;
@@ -31,15 +31,7 @@ const FreelancerTrackView = () => {
   const { t } = useTranslation();
   const { lessonsCompleted } = useUserProgress();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [hasPremium, setHasPremium] = useState(false);
-
-  // Check subscription access
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    subscriptionApi.hasAccess()
-      .then((result) => setHasPremium(result.hasAccess))
-      .catch(() => setHasPremium(false));
-  }, [isAuthenticated]);
+  const hasPremium = useSubscriptionAccess();
 
   const completedModuleIds = useMemo(
     () => freelancerModules.filter((m) => lessonsCompleted.includes(m.id)).map((m) => m.id),

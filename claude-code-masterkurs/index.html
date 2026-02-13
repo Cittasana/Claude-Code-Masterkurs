@@ -20,7 +20,7 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Claude Code Masterkurs – Lerne KI-gestütztes Programmieren" />
-    <meta property="og:description" content="Interaktiver Masterkurs für Claude Code: 27 Lektionen, Quizzes, Projekte und Live-Playground auf Deutsch." />
+    <meta property="og:description" content="Interaktiver Masterkurs für Claude Code: 70 Lektionen, 43 Tools & Extensions, Quizzes, Projekte und Live-Playground auf Deutsch." />
     <meta property="og:url" content="https://claude-code-masterkurs.de/" />
     <meta property="og:image" content="https://claude-code-masterkurs.de/og-image.png" />
     <meta property="og:image:width" content="1200" />
@@ -32,7 +32,7 @@
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Claude Code Masterkurs – Lerne KI-gestütztes Programmieren" />
-    <meta name="twitter:description" content="Interaktiver Masterkurs für Claude Code: 27 Lektionen, Quizzes, Projekte und Live-Playground." />
+    <meta name="twitter:description" content="Interaktiver Masterkurs für Claude Code: 70 Lektionen, 43 Tools & Extensions, Quizzes, Projekte und Live-Playground." />
     <meta name="twitter:image" content="https://claude-code-masterkurs.de/og-image.png" />
     <meta name="twitter:image:alt" content="Claude Code Masterkurs – Interaktiver Kurs für KI-gestütztes Programmieren" />
 
@@ -77,16 +77,29 @@
       "description": "Interaktiver Masterkurs für Claude Code – KI-gestütztes Programmieren mit Anthropics Coding-Agent lernen. 70 Lektionen von Grundlagen bis Experte, inklusive 43 Tools & Extensions.",
       "url": "https://claude-code-masterkurs.de/",
       "image": "https://claude-code-masterkurs.de/og-image.png",
+      "datePublished": "2026-01-15",
+      "dateModified": "2026-02-13",
       "provider": {
         "@type": "Organization",
         "name": "Claude Code Masterkurs",
         "url": "https://claude-code-masterkurs.de/",
         "logo": "https://claude-code-masterkurs.de/og-image.png",
-        "sameAs": []
+        "sameAs": [
+          "https://claude-code-masterkurs.de/"
+        ]
+      },
+      "instructor": {
+        "@type": "Person",
+        "name": "Cosmo Gräf",
+        "jobTitle": "Gründer & Kursleiter",
+        "worksFor": {
+          "@type": "Organization",
+          "name": "Claude Code Masterkurs"
+        }
       },
       "educationalLevel": "Anfänger bis Fortgeschrittene",
       "inLanguage": "de",
-      "isAccessibleForFree": true,
+      "isAccessibleForFree": false,
       "teaches": [
         "Claude Code",
         "KI-gestütztes Programmieren",
@@ -105,7 +118,7 @@
       "hasCourseInstance": {
         "@type": "CourseInstance",
         "courseMode": "online",
-        "courseWorkload": "PT20H"
+        "courseWorkload": "PT40H"
       }
     }
     </script>
@@ -148,12 +161,18 @@
         {
           "@type": "ListItem",
           "position": 3,
+          "name": "Tools & Extensions",
+          "item": "https://claude-code-masterkurs.de/tools"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
           "name": "Playground",
           "item": "https://claude-code-masterkurs.de/playground"
         },
         {
           "@type": "ListItem",
-          "position": 4,
+          "position": 5,
           "name": "Challenges",
           "item": "https://claude-code-masterkurs.de/challenges"
         }
@@ -188,7 +207,7 @@
           "name": "Welche Abo-Modelle gibt es?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Der Claude Code Masterkurs bietet drei Abo-Modelle: Monatlich (24 EUR/Monat, flexibel kündbar), Jährlich (229 EUR/Jahr, spare 20%), und Lifetime (499 EUR einmalig, lebenslanger Zugriff). Alle Modelle beinhalten Zugang zu allen 27 Lektionen, Quizzes, dem Live-Playground und Community-Features."
+            "text": "Der Claude Code Masterkurs bietet drei Abo-Modelle: Monatlich (24 EUR/Monat, flexibel kündbar), Jährlich (229 EUR/Jahr, spare 20%), und Lifetime (499 EUR einmalig, lebenslanger Zugriff). Alle Modelle beinhalten Zugang zu allen 70 Lektionen, 43 Tools & Extensions, Quizzes, dem Live-Playground und Community-Features."
           }
         },
         {
@@ -243,7 +262,14 @@
       "name": "Claude Code Masterkurs",
       "url": "https://claude-code-masterkurs.de/",
       "description": "Deutschsprachige Lernplattform für Claude Code – Anthropics KI-gestützten Coding-Agent",
-      "sameAs": [],
+      "sameAs": [
+        "https://claude-code-masterkurs.de/"
+      ],
+      "founder": {
+        "@type": "Person",
+        "name": "Cosmo Gräf",
+        "jobTitle": "Gründer & Kursleiter"
+      },
       "knowsAbout": [
         "Claude Code",
         "Anthropic",
@@ -326,6 +352,62 @@
         "Custom Skills & Workflows",
         "Shell-Befehlsausführung",
         "Plan & Thinking Mode"
+      ]
+    }
+    </script>
+
+    <!-- Structured Data: HowTo (Claude Code Installation – Rich Snippet & GEO) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "Claude Code installieren und einrichten",
+      "description": "Schritt-für-Schritt-Anleitung zur Installation von Claude Code – Anthropics KI-gesteuertem Coding-Agent für das Terminal. In wenigen Minuten einsatzbereit auf macOS, Linux oder Windows (WSL2).",
+      "totalTime": "PT10M",
+      "estimatedCost": {
+        "@type": "MonetaryAmount",
+        "currency": "USD",
+        "value": "0"
+      },
+      "tool": [
+        {
+          "@type": "HowToTool",
+          "name": "Terminal (macOS Terminal, iTerm2, Windows Terminal oder Linux Shell)"
+        },
+        {
+          "@type": "HowToTool",
+          "name": "Node.js 18 oder höher"
+        }
+      ],
+      "step": [
+        {
+          "@type": "HowToStep",
+          "position": 1,
+          "name": "Node.js installieren",
+          "text": "Lade Node.js 18+ von nodejs.org herunter und installiere es. Prüfe die Installation mit 'node --version' im Terminal.",
+          "url": "https://claude-code-masterkurs.de/lesson/1"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 2,
+          "name": "Claude Code über npm installieren",
+          "text": "Führe im Terminal den Befehl 'npm install -g @anthropic-ai/claude-code' aus. Dies installiert Claude Code global auf deinem System.",
+          "url": "https://claude-code-masterkurs.de/lesson/1"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 3,
+          "name": "Claude Code starten und authentifizieren",
+          "text": "Navigiere in dein Projektverzeichnis und starte Claude Code mit dem Befehl 'claude'. Beim ersten Start wirst du zur Authentifizierung aufgefordert – entweder per Anthropic API-Key oder OAuth über die Anthropic Console.",
+          "url": "https://claude-code-masterkurs.de/lesson/1"
+        },
+        {
+          "@type": "HowToStep",
+          "position": 4,
+          "name": "CLAUDE.md erstellen für Projektkontext",
+          "text": "Erstelle eine CLAUDE.md Datei im Projektstamm mit Projektbeschreibung, Tech Stack und Coding-Konventionen. Claude Code liest diese Datei automatisch und arbeitet dadurch kontextbezogener.",
+          "url": "https://claude-code-masterkurs.de/lesson/3"
+        }
       ]
     }
     </script>

@@ -691,3 +691,79 @@ async function handleInvoicePaymentFailed(invoice: Stripe.Invoice) {
     logger.warn({ subscriptionId, invoiceId: invoice.id }, 'Invoice payment failed');
   }
 }
+
+// ── POST /api/subscription/admin/fix-status ─────────────────
+// Admin-Endpoint zum manuellen Setzen des Subscription-Status.
+// Abgesichert mit ADMIN_SECRET Header.
+
+const ADMIN_SECRET = process.env.ADMIN_SECRET || 'ccm-admin-2026-fix';
+
+subscriptionRouter.post('/admin/fix-status', async (req, res) => {
+  const secret = req.headers['x-admin-secret'];
+  if (secret !== ADMIN_SECRET) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
+
+  const { email, status, isLifetime } = req.body as {
+    email?: string;
+    status?: string;
+    isLifetime?: boolean;
+  };
+
+  if (!email || !status) {
+    res.status(400).json({ error: 'email und status sind erforderlich' });
+    return;
+  }
+
+  const validStatuses = ['active', 'lifetime', 'incomplete', 'canceled', 'past_due', 'trialing', 'paused'];
+  if (!validStatuses.includes(status)) {
+    res.status(400).json({ error: `Ungültiger Status. Erlaubt: ${validStatuses.join(', ')}` });
+    return;
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      res.status(404).json({ error: 'User nicht gefunden' });
+      return;
+    }
+
+    const subscription = await prisma.subscription.findUnique({ where: { userId: user.id } });
+    if (!subscription) {
+      res.status(404).json({ error: 'Keine Subscription für diesen User' });
+      return;
+    }
+
+    const updated = await prisma.subscription.update({
+      where: { userId: user.id },
+      data: {
+        status,
+        isLifetime: isLifetime ?? (status === 'lifetime'),
+        ...(status === 'lifetime' && !subscription.lifetimePurchasedAt
+          ? { lifetimePurchasedAt: new Date() }
+          : {}),
+        ...(status === 'active' && !subscription.currentPeriodStart
+          ? {
+              currentPeriodStart: new Date(),
+              currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+            }
+          : {}),
+      },
+    });
+
+    logger.info({ userId: user.id, email, oldStatus: subscription.status, newStatus: status }, 'Admin: Subscription status updated');
+    res.json({
+      message: `Status für ${email} von "${subscription.status}" auf "${status}" geändert`,
+      subscription: {
+        status: updated.status,
+        isLifetime: updated.isLifetime,
+        currentPeriodStart: updated.currentPeriodStart,
+        currentPeriodEnd: updated.currentPeriodEnd,
+      },
+    });
+  } catch (error) {
+    logger.error(error, 'Admin fix-status error');
+    res.status(500).json({ error: 'Fehler beim Aktualisieren' });
+  }
+});

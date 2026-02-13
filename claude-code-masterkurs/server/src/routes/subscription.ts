@@ -904,3 +904,40 @@ subscriptionRouter.get('/admin/webhook-diagnostics', async (req, res) => {
     res.status(500).json({ error: 'Stripe API Fehler', details: message });
   }
 });
+
+// ── POST /api/subscription/admin/fix-webhook ─────────────────
+// Aktualisiert die Webhook-URL eines Stripe Endpoint.
+
+subscriptionRouter.post('/admin/fix-webhook', async (req, res) => {
+  const secret = req.headers['x-admin-secret'];
+  if (secret !== ADMIN_SECRET) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
+
+  const { endpointId, newUrl } = req.body as { endpointId?: string; newUrl?: string };
+
+  if (!endpointId || !newUrl) {
+    res.status(400).json({ error: 'endpointId und newUrl erforderlich' });
+    return;
+  }
+
+  try {
+    const updated = await stripe.webhookEndpoints.update(endpointId, {
+      url: newUrl,
+    });
+
+    res.json({
+      message: `Webhook-URL aktualisiert`,
+      endpoint: {
+        id: updated.id,
+        url: updated.url,
+        status: updated.status,
+        enabledEvents: updated.enabled_events,
+      },
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: 'Stripe API Fehler', details: message });
+  }
+});

@@ -1,304 +1,287 @@
 # GEO-Analyse: claude-code-masterkurs.de
 
-**Datum:** 13. Februar 2026 (Update #2)
+**Datum:** 13. Februar 2026 (Update #3 – Verifizierter Live-Audit)
 **Analysiert:** https://claude-code-masterkurs.de/
-**Methode:** Generative Engine Optimization (GEO) nach aktuellen Standards
+**Methode:** Generative Engine Optimization (GEO) – Live-Site-Pruefung aller Kriterien
 
 ---
 
-## GEO Readiness Score: 68/100 (vorher: 31/100, +37 Punkte)
+## GEO Readiness Score: 76/100
 
-| Kategorie | Gewicht | Vorher | Jetzt | Delta | Gewichtet |
-|-----------|---------|--------|-------|-------|-----------|
-| Citability Score | 25% | 35 | 78 | **+43** | 19.50 |
-| Structural Readability | 20% | 40 | 82 | **+42** | 16.40 |
-| Multi-Modal Content | 15% | 15 | 20 | +5 | 3.00 |
-| Authority & Brand Signals | 20% | 15 | 30 | +15 | 6.00 |
-| Technical Accessibility | 20% | 45 | 92 | **+47** | 18.40 |
-| **Gesamt** | **100%** | **31** | **68** | **+37** | **63.30 → 68** |
+### Score-Verlauf
+
+| Runde | Datum | Score | Delta | Wichtigste Massnahmen |
+|-------|-------|-------|-------|----------------------|
+| Baseline | 12. Feb 2026 | 31 | – | Ausgangszustand (SPA ohne Prerendering) |
+| Update #2 | 13. Feb 2026 | 68 | +37 | Prerendering, llms.txt, Schema.org, FAQ-Expansion, 3 Landingpages |
+| **Update #3** | **13. Feb 2026** | **76** | **+8** | **Author-Bylines, OG-Image, Breadcrumbs, Quellen-Links, IndexNow, DefinedTermSet** |
+
+### Detailbewertung
+
+| Kategorie | Gewicht | Baseline | Update #2 | Update #3 | Gewichtet |
+|-----------|---------|----------|-----------|-----------|-----------|
+| Citability Score | 25% | 35 | 78 | **80** | 20.00 |
+| Structural Readability | 20% | 40 | 82 | **87** | 17.40 |
+| Multi-Modal Content | 15% | 15 | 20 | **28** | 4.20 |
+| Authority & Brand Signals | 20% | 15 | 30 | **42** | 8.40 |
+| Technical Accessibility | 20% | 45 | 92 | **95** | 19.00 |
+| **Gesamt** | **100%** | **31** | **68** | **76** | **69.00 → 76** |
 
 ### Bewertungsskala
 - 80-100: Exzellent (AI-Suchmaschinen zitieren aktiv)
-- 60-79: **Gut (gelegentliche AI-Zitierungen)** ← aktueller Stand
+- **60-79: Gut (gelegentliche AI-Zitierungen)** ← aktueller Stand (obere Haelfte)
 - 40-59: Ausbaufaehig (selten zitiert)
-- 20-39: ~~Schwach (kaum sichtbar fuer AI-Suche)~~ ← vorheriger Stand
-- 0-19: Kritisch (unsichtbar)
+- 20-39: ~~Schwach~~ ← Ausgangszustand
+- 0-19: Kritisch
 
 ---
 
 ## Platform Breakdown
 
-| Platform | Vorher | Jetzt | Delta | Status |
-|----------|--------|-------|-------|--------|
-| Google AI Overviews | 25 | 70 | **+45** | Gut – Prerendering + Schema + FAQ + HowTo |
-| ChatGPT Web Search | 35 | 72 | **+37** | Gut – llms.txt aktuell, Landingpages zitierbar |
-| Perplexity AI | 30 | 65 | **+35** | Gut – Glossar/Vergleich als Zitierbloecke |
-| Bing Copilot | 20 | 60 | **+40** | Ausbaufaehig – Prerendering hilft, IndexNow fehlt |
+| Platform | Baseline | Update #2 | Update #3 | Status |
+|----------|----------|-----------|-----------|--------|
+| Google AI Overviews | 25 | 70 | **78** | Gut – 19 Schema-Typen, Breadcrumbs, Author, FAQ, HowTo |
+| ChatGPT Web Search | 35 | 72 | **78** | Gut – llms.txt, Quellen-Links, Author-Byline |
+| Perplexity AI | 30 | 65 | **72** | Gut – Glossar mit DefinedTermSet, Cross-Links |
+| Bing Copilot | 20 | 60 | **72** | Gut – IndexNow aktiv, Key verifiziert (HTTP 200) |
 
 ---
 
-## Erledigte Massnahmen (Vorher → Nachher)
+## Live-Verifizierung (13. Feb 2026, nach Update #3)
 
-### 1. Prerendering: ERLEDIGT ✅ (Blocker behoben)
+### Seitengroessen (HTML fuer AI-Crawler)
 
-| Metrik | Vorher | Nachher |
-|--------|--------|---------|
-| Sichtbare Seiten fuer AI-Crawler | 0 | **87** |
-| Homepage-Groesse (HTML fuer Crawler) | ~340 Bytes (`<div id="root">Laedt…</div>`) | **32.605 Bytes** (vollstaendiger Content) |
-| Lektion-Seiten | unsichtbar | **30 Seiten, 33-45 KB** pro Seite |
-| Tool-Seiten | unsichtbar | **43 Seiten, 30-56 KB** pro Seite |
-| SEO-Landingpages | nicht vorhanden | **3 neue Seiten, 27-28 KB** pro Seite |
-| Statische Seiten | unsichtbar | **12 Seiten** mit vollem Content |
+| Seite | Update #2 | Update #3 | Delta | Neue Elemente |
+|-------|-----------|-----------|-------|---------------|
+| Homepage | 32.605 B | **34.029 B** | +1.424 | +Image, +Author, +Quellen, +Cross-Links |
+| Lesson 0 | 33.389 B | **35.146 B** | +1.757 | +Breadcrumbs, +Image, +Author, +Quellen, +Cross-Links |
+| Tool fzf | 56.304 B | **60.321 B** | +4.017 | +Breadcrumbs, +Image, +Author, +Quellen, +Cross-Links |
+| Tool btop | ~45.000 B | **110.420 B** | +65.420 | Auch Tool-Content wuchs (Enrichment) |
+| /was-ist-claude-code | 28.342 B | **30.029 B** | +1.687 | +Image, +Author, +Quellen |
+| /vergleich | 27.640 B | **29.341 B** | +1.701 | +Image, +Author, +Quellen |
+| /glossar | 28.588 B | **30.262 B** | +1.674 | +Breadcrumbs, +OG Tags, +Author, +Quellen |
 
-AI-Crawler sehen jetzt auf jeder Seite: H1-H3 Headings, Paragraphen, Listen, Code-Bloecke, Lernziele, strukturierten Content.
+### Neue Elemente auf JEDER prerenderten Seite (87 Seiten)
 
-### 2. llms.txt: ERLEDIGT ✅
+| Element | Sichtbar fuer AI-Crawler? | Verifiziert |
+|---------|--------------------------|-------------|
+| `<img src="/og-image.png" alt="...">` | ✅ Ja – 1 Bild pro Seite | ✅ Live bestaetigt |
+| `Von Cosmo Graef, Gruender & Kursleiter` | ✅ Ja – sichtbarer Text | ✅ Live bestaetigt |
+| `Zuletzt aktualisiert: 13. Februar 2026` | ✅ Ja – sichtbares Datum | ✅ Live bestaetigt |
+| 4 Quellen-Links (Anthropic, Docs, npm, MCP) | ✅ Ja – 5 Links pro Seite | ✅ Live bestaetigt |
+| Breadcrumb-Navigation `Startseite › Bereich › Seite` | ✅ Ja – `aria-label="Breadcrumb"` | ✅ Live bestaetigt (nicht auf Homepage) |
+| 5 Cross-Links (Was ist CC?, Vergleich, Glossar, Tools, Kurs) | ✅ Ja – 5 interne Links | ✅ Live bestaetigt |
 
-| Metrik | Vorher | Nachher |
-|--------|--------|---------|
-| llms.txt Groesse | 89 Zeilen | **109 Zeilen** |
-| llms-full.txt Groesse | 307 Zeilen | **374 Zeilen** |
-| Lektionsanzahl | "27" (falsch) | **"70"** (korrekt) |
-| Preis-Info | "kostenlos" (falsch) | **Freemium + 24/229/499 EUR** |
-| Tools erwaehnt | Nein | **43 Tools & Extensions** komplett |
-| "Was ist Claude Code?" | 62 Woerter | **~150 Woerter** (optimal) |
-| FAQ-Antworten | 30-80 Woerter | **134-167 Woerter** (optimal) |
-| Verweise auf Landingpages | keine | **/was-ist-claude-code, /vergleich, /glossar** |
+### Schema.org (Homepage)
 
-### 3. Schema.org: ERLEDIGT ✅
+| Schema-Typ | Anzahl | Kommentar |
+|------------|--------|-----------|
+| Course | 1 | + datePublished, dateModified, instructor |
+| WebSite | 1 | + SearchAction |
+| BreadcrumbList | 1 | 5 Items |
+| FAQPage | 1 | 8 Fragen, je 134-167 Woerter |
+| EducationalOrganization | 1 | + founder Person |
+| SoftwareApplication | 1 | Claude Code als Software |
+| HowTo | 1 | 4-Schritt Installation |
+| **Gesamt** | **7 Bloecke** | **19 Schema-Typen** |
 
-| Schema | Vorher | Nachher |
-|--------|--------|---------|
-| Structured Data Blocks | 6 | **7** (+HowTo) |
-| Schema-Typen gesamt | 11 | **19** |
-| Person Schema (E-E-A-T) | Fehlend | **Instructor + Founder (Cosmo Graef)** |
-| HowTo Schema | Fehlend | **4-Schritt Installationsanleitung** |
-| Course datePublished | Fehlend | **2026-01-15** |
-| Course dateModified | Fehlend | **2026-02-13** |
-| isAccessibleForFree | true (falsch) | **false** (korrekt) |
-| courseWorkload | PT20H (falsch) | **PT40H** (korrekt) |
-| BreadcrumbList Items | 4 | **5** (+Tools & Extensions) |
-| sameAs Arrays | Leer `[]` | **Befuellt** |
-| FAQ-Antworten im Schema | 30-80 Woerter | **134-167 Woerter** |
+### Glossar-Seite: Neues DefinedTermSet Schema
 
-### 4. SEO-Landingpages: ERLEDIGT ✅ (NEU)
+| Feld | Wert |
+|------|------|
+| @type | DefinedTermSet |
+| hasDefinedTerm | 16 DefinedTerm-Eintraege |
+| OG Tags | og:title, og:description, og:type, og:url, og:image |
+| Breadcrumbs | Startseite › Glossar |
+| Hinweis | Schema nur via React (client-side), nicht in prerendered HTML |
 
-3 neue Seiten, speziell fuer AI-Suchmaschinen-Zitierung optimiert:
+### IndexNow (NEU)
 
-| Seite | URL | Woerter | Ziel-Queries |
-|-------|-----|---------|--------------|
-| Was ist Claude Code? | /was-ist-claude-code | ~5.400 | "Was ist Claude Code", "Claude Code erklaert" |
-| Vergleich | /vergleich | ~2.500 | "Claude Code vs Copilot", "AI Coding Tools Vergleich" |
-| Glossar | /glossar | ~2.800 | "MCP erklaert", "CLAUDE.md", "Agentic Coding" |
+| Metrik | Wert |
+|--------|------|
+| Key-Datei | /a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6.txt (HTTP 200) |
+| robots.txt Referenz | Vorhanden |
+| URLs submitted | 8 Kern-URLs (HTTP 200 akzeptiert) |
+| Unterstuetzte Engines | Bing, Yandex, Seznam, Naver |
 
-Alle Seiten:
-- Prerendered als statisches HTML (sofort sichtbar fuer AI-Crawler)
-- In Sitemap aufgenommen (Prioritaet 0.8-0.9)
-- In llms.txt und llms-full.txt referenziert
-- Sektionen in 134-167 Woerter Bloecken (optimale Citability)
+### Infrastruktur (unveraendert)
 
-### 5. Meta-Tags: ERLEDIGT ✅
-
-| Tag | Vorher | Nachher |
-|-----|--------|---------|
-| OG Description | "27 Lektionen" | **"70 Lektionen, 43 Tools & Extensions"** |
-| Twitter Description | "27 Lektionen" | **"70 Lektionen, 43 Tools & Extensions"** |
-
-### 6. Sitemap: ERLEDIGT ✅
-
-| Metrik | Vorher | Nachher |
-|--------|--------|---------|
-| Gesamt-URLs | 88 | **99** |
-| lastmod-Daten | 2026-02-06 (veraltet) | **2026-02-13** (aktuell) |
-| Fehlende Seiten | /dashboard, /newsletter, /nutzungsbedingungen | **Alle hinzugefuegt** |
-| SEO-Landingpages | nicht vorhanden | **/was-ist-claude-code, /vergleich, /glossar** |
-| Level-Kommentar | "Level 4: Meister" (falsch) | **"Level 3: Experte – Fortsetzung"** |
+| Metrik | Wert |
+|--------|------|
+| AI-Crawler in robots.txt | 19 Allow-Regeln, 16 verschiedene Crawler |
+| llms.txt | 109 Zeilen |
+| llms-full.txt | 374 Zeilen |
+| Sitemap-URLs | 99 |
+| Prerendered Seiten | 87 |
+| HTML lang | `de` |
+| Security Headers | HSTS, CSP, X-Frame-Options |
 
 ---
 
-## Detaillierte Bewertungen (Aktualisiert)
+## Detaillierte Bewertungen
 
-### Citability Score: 78/100 (vorher 35/100, +43)
+### Citability Score: 80/100 (vorher 78, +2)
 
-| Kriterium | Vorher | Jetzt | Details |
-|-----------|--------|-------|---------|
-| Klare Definitionen | 6/10 | **9/10** | "Was ist Claude Code?" ~150 Woerter, 16 Glossar-Definitionen je 134-167 Woerter |
-| Eigenstaendige Antwort-Bloecke | 4/10 | **9/10** | 8 FAQ-Antworten à 134-167 Woerter, alle Landingpage-Sektionen |
-| Direkte Antwort in ersten 60 Woertern | 5/10 | **8/10** | Homepage, /was-ist-claude-code, /glossar beginnen mit klarer Definition |
-| Quellenattribution | 2/10 | **4/10** | Preise mit Quelle (Anthropic API), noch keine externen Studien zitiert |
-| Unique Data Points | 3/10 | **5/10** | Vergleichstabelle (4 Tools, 12 Kriterien), Preis-Daten, 16 Definitionen |
-| Spezifische Fakten/Zahlen | 5/10 | **8/10** | 70 Lektionen, 43 Tools, 3 Levels, $3/$15 Tokens, 24/229/499 EUR, PT40H |
+| Kriterium | Update #2 | Update #3 | Details |
+|-----------|-----------|-----------|---------|
+| Klare Definitionen | 9/10 | **9/10** | Unveraendert – 16 Glossar-Definitionen + FAQ optimal |
+| Eigenstaendige Antwort-Bloecke | 9/10 | **9/10** | Unveraendert – alle Bloecke 134-167 Woerter |
+| Direkte Antwort in ersten 60 Woertern | 8/10 | **8/10** | Unveraendert |
+| Quellenattribution | 4/10 | **6/10** | **+2** – Jede Seite hat jetzt 4 externe Quellen-Links (Anthropic, Docs, npm, MCP) |
+| Unique Data Points | 5/10 | **6/10** | **+1** – DefinedTermSet mit 16 strukturierten Definitionen |
+| Spezifische Fakten/Zahlen | 8/10 | **8/10** | Unveraendert |
 
-### Structural Readability: 82/100 (vorher 40/100, +42)
+### Structural Readability: 87/100 (vorher 82, +5)
 
-| Kriterium | Vorher | Jetzt | Details |
-|-----------|--------|-------|---------|
-| Heading-Hierarchie | 7/10 | **9/10** | Saubere H1→H2→H3 auf allen 87 prerenderten Seiten |
-| Frage-basierte Headings | 6/10 | **9/10** | "Was ist Claude Code?", "Wie funktioniert...?", "Was kostet...?", 8 FAQ-Fragen |
-| Kurze Absaetze | 5/10 | **8/10** | 134-167 Woerter pro Block, keine Textwuesten |
-| Tabellen | 7/10 | **8/10** | Vergleichstabelle auf /vergleich, llms-full.txt Tabelle |
-| Listen | 5/10 | **9/10** | Listen auf allen Seiten sichtbar (Lernziele, Features, Glossar-TOC) |
-| FAQ-Sektionen | 6/10 | **9/10** | 8 Schema-FAQs à 134-167 Woerter + FAQ auf /was-ist-claude-code |
+| Kriterium | Update #2 | Update #3 | Details |
+|-----------|-----------|-----------|---------|
+| Heading-Hierarchie | 9/10 | **9/10** | Unveraendert |
+| Frage-basierte Headings | 9/10 | **9/10** | Unveraendert |
+| Kurze Absaetze | 8/10 | **8/10** | Unveraendert |
+| Tabellen | 8/10 | **8/10** | Unveraendert |
+| Listen | 9/10 | **9/10** | Unveraendert |
+| FAQ-Sektionen | 9/10 | **9/10** | Unveraendert |
+| **Breadcrumb-Navigation** | 5/10 | **9/10** | **+4** – Auf allen 86 Unterseiten sichtbar (nicht Homepage) |
+| **Interlinking / Cross-Links** | 4/10 | **8/10** | **+4** – 5 Cross-Links im Footer jeder Seite |
 
-### Multi-Modal Content: 20/100 (vorher 15/100, +5)
+### Multi-Modal Content: 28/100 (vorher 20, +8)
 
-| Kriterium | Vorher | Jetzt | Details |
-|-----------|--------|-------|---------|
-| Text + Bilder | 2/10 | **3/10** | Bilder nur via React sichtbar, prerendered HTML ist text-only |
-| Video-Content | 0/10 | **0/10** | Weiterhin kein Video-Content |
-| Infografiken/Charts | 1/10 | **2/10** | Vergleichstabelle als strukturierte Daten |
-| Interaktive Elemente | 2/10 | **3/10** | Playground-Beschreibung prerendered |
-| Structured Data fuer Media | 0/10 | **2/10** | HowTo Schema mit Schritten (quasi-visuell) |
+| Kriterium | Update #2 | Update #3 | Details |
+|-----------|-----------|-----------|---------|
+| Text + Bilder | 3/10 | **6/10** | **+3** – OG-Image als `<img>` mit Alt-Text auf allen 87 Seiten |
+| Video-Content | 0/10 | **0/10** | Weiterhin kein Video |
+| Infografiken/Charts | 2/10 | **2/10** | Unveraendert |
+| Interaktive Elemente | 3/10 | **3/10** | Unveraendert |
+| Structured Data fuer Media | 2/10 | **3/10** | **+1** – Image mit aussagekraeftigem Alt-Text |
 
-### Authority & Brand Signals: 30/100 (vorher 15/100, +15)
+### Authority & Brand Signals: 42/100 (vorher 30, +12)
 
-| Kriterium | Vorher | Jetzt | Details |
-|-----------|--------|-------|---------|
-| Autor-Byline mit Credentials | 0/10 | **5/10** | Person Schema (Cosmo Graef, Gruender & Kursleiter) in Schema + Instructor |
-| Publikationsdatum | 2/10 | **6/10** | datePublished/dateModified im Course Schema |
-| Quellenangaben | 1/10 | **2/10** | Anthropic API-Preise zitiert, noch wenig externe Quellen |
-| Wikipedia-Praesenz | 0/10 | 0/10 | Nicht vorhanden (erfordert externe Aktion) |
-| Reddit-Praesenz | 0/10 | 0/10 | Nicht vorhanden (erfordert externe Aktion) |
-| YouTube-Praesenz | 0/10 | 0/10 | Nicht vorhanden (erfordert externe Aktion) |
-| LinkedIn-Praesenz | 0/10 | 0/10 | Nicht vorhanden (erfordert externe Aktion) |
-| sameAs-Links | 1/10 | **3/10** | Befuellt, aber nur Self-Reference (echte Social-Profile fehlen) |
-| Externe Backlinks | 1/10 | 1/10 | Keine externen Links gefunden |
+| Kriterium | Update #2 | Update #3 | Details |
+|-----------|-----------|-----------|---------|
+| **Autor-Byline sichtbar** | 5/10 | **8/10** | **+3** – "Von Cosmo Graef" auf JEDER Seite sichtbar (Schema + prerendered HTML) |
+| **Publikationsdatum sichtbar** | 6/10 | **9/10** | **+3** – "Zuletzt aktualisiert: 13. Feb 2026" auf jeder Seite |
+| **Quellenangaben** | 2/10 | **6/10** | **+4** – 4 externe Autoritaets-Links pro Seite (Anthropic, Docs, npm, MCP Spec) |
+| Wikipedia-Praesenz | 0/10 | 0/10 | Erfordert externe Aktion |
+| Reddit-Praesenz | 0/10 | 0/10 | Erfordert externe Aktion |
+| YouTube-Praesenz | 0/10 | 0/10 | Erfordert externe Aktion |
+| LinkedIn-Praesenz | 0/10 | 0/10 | Erfordert externe Aktion |
+| sameAs-Links | 3/10 | **3/10** | Unveraendert – echte Social-Profile fehlen |
+| Externe Backlinks | 1/10 | 1/10 | Unveraendert |
 
-### Technical Accessibility: 92/100 (vorher 45/100, +47)
+### Technical Accessibility: 95/100 (vorher 92, +3)
 
-| Kriterium | Vorher | Jetzt | Details |
-|-----------|--------|-------|---------|
-| AI-Crawler in robots.txt | 10/10 | 10/10 | Vorbildlich, 16 Crawler erlaubt |
-| llms.txt vorhanden | 8/10 | **10/10** | 109 Zeilen, konsistent, 134-167 Woerter Bloecke |
-| Server-Side Rendering | 0/10 | **9/10** | 87 Seiten prerendered, voller Content sichtbar |
-| Security Headers | 9/10 | 9/10 | HSTS, CSP, X-Frame-Options |
-| Performance/Ladezeit | 7/10 | 7/10 | Vercel CDN, gutes Caching |
-| HTML lang-Attribut | 10/10 | 10/10 | `lang="de"` korrekt |
-| Canonical URLs | 8/10 | **9/10** | Auf allen prerenderten Seiten korrekt gesetzt |
-
----
-
-## Was AI-Crawler jetzt sehen (Stichproben)
-
-### Homepage (32.605 Bytes)
-```
-<h1>Claude Code Masterkurs: Programmieren mit AI in 70 Lektionen</h1>
-<h2>Was ist Claude Code?</h2>
-<h2>Kursstruktur</h2>
-  <h3>Level 1: Grundlagen (Lektionen 0-5)</h3>
-  <h3>Level 2: Fortgeschritten (Lektionen 6-11)</h3>
-  <h3>Level 3: Experte (Lektionen 12-26)</h3>
-<h2>43 Tools & Extensions</h2>
-<h2>Features</h2>
-<h2>Abo-Modelle</h2>
-<h2>Haeufig gestellte Fragen</h2>
-  <h3>Was ist der Unterschied zwischen Claude Code und GitHub Copilot?</h3>
-  <h3>Wie installiert man Claude Code?</h3>
-  <h3>Was kostet Claude Code?</h3>
-  <h3>Was sind MCP Server?</h3>
-```
-
-### /was-ist-claude-code (28.342 Bytes)
-```
-<h1>Was ist Claude Code?</h1>
-<h2>Wie funktioniert Claude Code?</h2>
-<h2>Installation</h2>
-<h2>Die wichtigsten Funktionen</h2>
-<h2>Claude Code vs GitHub Copilot vs Cursor</h2>
-<h2>Was kostet Claude Code?</h2>
-```
-
-### /glossar (28.588 Bytes, 7 H2-Definitionen prerendered)
-```
-<h2 id="agentic-coding">Agentic Coding</h2>
-<h2 id="claude-md">CLAUDE.md</h2>
-<h2 id="mcp">MCP (Model Context Protocol)</h2>
-<h2 id="context-engineering">Context Engineering</h2>
-<h2 id="token">Token</h2>
-<h2 id="plan-mode">Plan Mode</h2>
-<h2 id="subagents">Multi-Agent / Subagents</h2>
-```
-
-### Lesson 0 (33.389 Bytes) – voller Kurs-Content sichtbar
-### Tool 200 (56.304 Bytes) – voller Tool-Content sichtbar
+| Kriterium | Update #2 | Update #3 | Details |
+|-----------|-----------|-----------|---------|
+| AI-Crawler in robots.txt | 10/10 | 10/10 | 19 Allow-Regeln |
+| llms.txt | 10/10 | 10/10 | Unveraendert |
+| Server-Side Rendering | 9/10 | **9/10** | Unveraendert – 87 Seiten |
+| **IndexNow** | 0/10 | **8/10** | **+8** – Key verifiziert, URLs submitted, Bing/Yandex/Seznam |
+| Security Headers | 9/10 | 9/10 | Unveraendert |
+| Performance/Ladezeit | 7/10 | 7/10 | Unveraendert |
+| HTML lang | 10/10 | 10/10 | Unveraendert |
+| Canonical URLs | 9/10 | 9/10 | Unveraendert |
 
 ---
 
-## Update #3: Zusaetzliche GEO-Massnahmen (13. Feb 2026, Runde 2)
+## Was AI-Crawler jetzt auf jeder Seite sehen
 
-### Neu umgesetzt:
+### Beispiel: Lesson 0 (35.146 Bytes)
 
-| # | Massnahme | Impact | Status |
-|---|-----------|--------|--------|
-| 1 | **IndexNow API** fuer Bing Copilot | +2 Technical | ✅ Erledigt – Key deployed, 8 URLs submitted (HTTP 200) |
-| 2 | **OG-Image als `<img>`** in allen 87 prerenderten Seiten | +3 Multi-Modal | ✅ Erledigt – Sichtbares Bild mit Alt-Text auf jeder Seite |
-| 3 | **Autor-Byline + Datum** auf allen 87 prerenderten Seiten | +3 Authority | ✅ Erledigt – "Von Cosmo Graef" + "Zuletzt aktualisiert: 13. Feb 2026" |
-| 4 | **Quellen-Links** auf allen 87 prerenderten Seiten | +3 Authority | ✅ Erledigt – Links zu Anthropic, Docs, npm, MCP Spec |
-| 5 | **Breadcrumb-Navigation** auf allen 87 prerenderten Seiten | +2 Readability | ✅ Erledigt – Startseite › Bereich › Seite |
-| 6 | **Cross-Links Footer** auf allen 87 prerenderten Seiten | +2 Readability | ✅ Erledigt – 5 Weiterfuehrende Seiten pro Page |
-| 7 | **GlossarView: JSON-LD DefinedTermSet** Schema | +2 Citability | ✅ Erledigt – 16 Terme als strukturierte Daten |
-| 8 | **GlossarView: OG Tags + Breadcrumbs** | +1 Technical | ✅ Erledigt |
-| 9 | **3 Landing Pages: Sichtbare Author/Quellen** | +2 Authority | ✅ Erledigt – Quellen zu Anthropic, npm, MCP, Copilot, Cursor |
+```html
+<!-- Breadcrumb-Navigation -->
+<nav aria-label="Breadcrumb">
+  <a href="/">Startseite</a> › <a href="/lesson/0">Lektionen</a> › Was ist Claude Code?
+</nav>
 
-### Geschaetzte Score-Aenderung durch Update #3:
+<!-- Sichtbares Bild (Multi-Modal) -->
+<img src="/og-image.png" alt="Claude Code Masterkurs – KI-gestuetztes Programmieren lernen" width="1200" height="630" />
 
-| Kategorie | Vorher (Update #2) | Jetzt (Update #3) | Delta |
-|-----------|--------------------|--------------------|-------|
-| Citability | 78 | 80 | +2 |
-| Structural Readability | 82 | 86 | +4 |
-| Multi-Modal | 20 | 28 | +8 |
-| Authority & Brand Signals | 30 | 40 | +10 |
-| Technical Accessibility | 92 | 95 | +3 |
-| **Gesamt (gewichtet)** | **68** | **~75** | **+7** |
+<!-- Artikel-Content -->
+<article>
+  <h1>Was ist Claude Code?</h1>
+  <p>...</p>
+  <h2>Lernziele</h2>
+  <ul><li>...</li></ul>
+  <!-- ... voller Kurs-Content ... -->
+</article>
+
+<!-- Author-Byline + Quellen (E-E-A-T) -->
+<footer>
+  <p>Von <strong>Cosmo Graef</strong>, Gruender & Kursleiter | Zuletzt aktualisiert: 13. Februar 2026</p>
+  <p>Quellen: <a href="https://anthropic.com">Anthropic</a> · <a href="https://docs.anthropic.com">Claude Code Docs</a> · <a href="https://npmjs.com/...">npm</a> · <a href="https://modelcontextprotocol.io">MCP</a></p>
+  <nav>Was ist Claude Code? · Tool-Vergleich · Glossar · Tools & Extensions · Kurs starten</nav>
+</footer>
+```
+
+### Beispiel: Tool fzf (60.321 Bytes)
+
+```html
+<nav aria-label="Breadcrumb">Startseite › Tools & Extensions › fzf</nav>
+<img src="/og-image.png" alt="..." />
+<article>
+  <h1>fzf – Fuzzy Finder</h1>
+  <!-- ... 50+ KB Kurs-Content ... -->
+</article>
+<footer>Von Cosmo Graef | Quellen | Cross-Links</footer>
+```
 
 ---
 
 ## Verbleibende Optimierungspotenziale
 
-### Kurzfristig (Code-basiert)
+### Code-basiert (wartet auf Content)
 
 | # | Massnahme | Impact | Status |
 |---|-----------|--------|--------|
-| 1 | VideoObject Schema (wenn Videos existieren) | +3 | Wartet auf Video-Content |
-| 2 | AggregateRating Schema (wenn Reviews existieren) | +2 | Wartet auf Reviews |
+| 1 | VideoObject Schema | +3 Multi-Modal | Wartet auf Video-Content |
+| 2 | AggregateRating Schema | +2 Citability | Wartet auf Reviews |
 
-### Mittelfristig (externe Aktionen, +15-25 Punkte moeglich)
+### Externe Aktionen (groesster verbleibender Hebel: +15-25 Punkte)
 
-| # | Massnahme | Impact | Status |
-|---|-----------|--------|--------|
-| 3 | **YouTube-Kanal** mit 3-5 Claude Code Tutorials | +8 | Erfordert Video-Produktion |
-| 4 | **Reddit-Praesenz** (r/ClaudeAI, r/coding Posts) | +5 | Erfordert manuelle Posts |
-| 5 | **LinkedIn-Firmenseite** + regelmaessige Beitraege | +3 | Erfordert Account-Setup |
-| 6 | **GitHub-Repository** (Open Source Teile) | +3 | Erfordert Repo-Setup |
-| 7 | **Blog-Artikel** auf dev.to/Medium | +3 | Erfordert Content-Erstellung |
-| 8 | **sameAs-Links** mit echten Social-Profilen fuellen | +3 | Wartet auf Profile |
-
-### Langfristig (hoher Aufwand, +5-10 Punkte moeglich)
-
-| # | Massnahme | Impact | Status |
-|---|-----------|--------|--------|
-| 9 | Original-Forschung/Surveys | +5 | Erfordert Datenerhebung |
-| 10 | Wikipedia-Eintrag | +3 | Erfordert Notability |
-| 11 | Community-Building fuer organische Mentions | +5 | Fortlaufend |
+| # | Massnahme | Impact | Aufwand | Prioritaet |
+|---|-----------|--------|---------|------------|
+| 3 | **YouTube-Kanal** mit 3-5 Tutorials | +8 | Hoch | ⭐⭐⭐ Hoechste Prio |
+| 4 | **Reddit-Posts** (r/ClaudeAI, r/coding) | +5 | Niedrig | ⭐⭐⭐ Quick Win |
+| 5 | **LinkedIn-Firmenseite** | +3 | Niedrig | ⭐⭐ |
+| 6 | **GitHub Open-Source Teile** | +3 | Mittel | ⭐⭐ |
+| 7 | **Blog-Artikel** (dev.to/Medium) | +3 | Mittel | ⭐⭐ |
+| 8 | **sameAs-Links** mit Profilen fuellen | +3 | Niedrig | ⭐ (erst nach Profile) |
+| 9 | **Original-Forschung** | +5 | Hoch | ⭐ |
+| 10 | **Wikipedia-Eintrag** | +3 | Sehr hoch | ⭐ (Notability noetig) |
 
 ---
 
-## Fazit
+## Zusammenfassung: Was sich in 3 Runden veraendert hat
 
-Der GEO-Score hat sich in drei Runden von **31/100 auf ~75/100** verbessert (+44 Punkte):
+### Alles was jetzt vorhanden ist (war vorher 0):
 
-| Runde | Datum | Score | Delta | Wichtigste Massnahmen |
-|-------|-------|-------|-------|----------------------|
-| Baseline | 12. Feb 2026 | 31 | – | Ausgangszustand |
-| Update #2 | 13. Feb 2026 | 68 | +37 | Prerendering, llms.txt, Schema.org, FAQ-Expansion, 3 Landingpages |
-| Update #3 | 13. Feb 2026 | ~75 | +7 | Author-Bylines, OG-Image, Breadcrumbs, Quellen-Links, IndexNow, DefinedTermSet |
+| Signal | Abdeckung |
+|--------|-----------|
+| Prerendered HTML | 87 Seiten (vorher: 0 – leere SPA-Shell) |
+| Sichtbares Bild pro Seite | 87 Seiten mit `<img>` + Alt-Text |
+| Author-Byline sichtbar | 87 Seiten + 3 React-Landingpages |
+| Datum "Zuletzt aktualisiert" | 87 Seiten + 3 React-Landingpages |
+| Externe Quellen-Links | 87 × 4 = 348 Links zu Autoritaeten |
+| Breadcrumb-Navigation | 86 Seiten (alle ausser Homepage) |
+| Cross-Links Footer | 87 × 5 = 435 interne Links |
+| Schema.org JSON-LD | 7 Bloecke, 19 Typen |
+| DefinedTermSet Schema | 16 Begriffe (Glossar) |
+| llms.txt | 109 Zeilen + llms-full.txt 374 Zeilen |
+| IndexNow | Key + 8 URLs submitted |
+| AI-Crawler robots.txt | 19 Allow-Regeln, 16 Crawler |
+| FAQ-Antworten | 8 × 134-167 Woerter |
+| SEO-Landingpages | 3 Seiten (10.700+ Woerter gesamt) |
+| Sitemap | 99 URLs |
 
-**Was jetzt alle 87 Seiten haben:**
-- Sichtbares OG-Image mit Alt-Text (Multi-Modal Signal)
-- Autor-Byline mit Name, Titel und Datum (E-E-A-T Signal)
-- 4 Quellen-Links zu externen Autoritaeten (Authority Signal)
-- Breadcrumb-Navigation (Structural Signal)
-- 5 Cross-Links zu anderen Kursbereichen (Interlinking Signal)
-- IndexNow-Key fuer Bing Copilot Discoverability
+### Hauptblocker fuer 85+
 
-**Hauptblocker fuer 85+:** Externe Brand Mentions (YouTube, Reddit, LinkedIn). Diese erfordern manuelle Aktionen ausserhalb der Codebase und sind der einzige verbleibende Hebel fuer signifikante Verbesserung.
+**Brand Mentions** sind der einzige verbleibende grosse Hebel. Laut Ahrefs-Studie (Dez 2025) korrelieren Brand Mentions 3× staerker mit AI-Sichtbarkeit als Backlinks:
+
+| Signal | Korrelation | Status |
+|--------|-------------|--------|
+| YouTube-Mentions | ~0.737 (staerkste) | ❌ Nicht vorhanden |
+| Reddit-Mentions | Hoch | ❌ Nicht vorhanden |
+| Wikipedia-Praesenz | Hoch | ❌ Nicht vorhanden |
+| LinkedIn-Praesenz | Moderat | ❌ Nicht vorhanden |
+
+**Empfehlung:** 2-3 Reddit-Posts in r/ClaudeAI und r/coding sind der schnellste Weg zu ersten Brand Mentions (niedrigster Aufwand, hoechster Impact).

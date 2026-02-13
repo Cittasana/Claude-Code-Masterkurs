@@ -857,3 +857,50 @@ subscriptionRouter.post('/admin/fix-status', async (req, res) => {
     res.status(500).json({ error: 'Fehler beim Aktualisieren' });
   }
 });
+
+// ── GET /api/subscription/admin/webhook-diagnostics ──────────
+// Gibt Stripe Webhook-Konfiguration zurück zur Diagnose.
+
+subscriptionRouter.get('/admin/webhook-diagnostics', async (req, res) => {
+  const secret = req.headers['x-admin-secret'];
+  if (secret !== ADMIN_SECRET) {
+    res.status(403).json({ error: 'Forbidden' });
+    return;
+  }
+
+  try {
+    const webhookEndpoints = await stripe.webhookEndpoints.list({ limit: 10 });
+
+    const endpoints = webhookEndpoints.data.map((ep) => ({
+      id: ep.id,
+      url: ep.url,
+      status: ep.status,
+      enabledEvents: ep.enabled_events,
+      apiVersion: ep.api_version,
+    }));
+
+    const hasWebhookSecret = !!STRIPE_WEBHOOK_SECRET && STRIPE_WEBHOOK_SECRET.length > 10;
+    const expectedUrl = 'https://backend-production-9d7c.up.railway.app/api/subscription/webhook';
+    const matchingEndpoint = endpoints.find((ep) => ep.url === expectedUrl);
+
+    res.json({
+      stripeWebhookSecretConfigured: hasWebhookSecret,
+      stripeWebhookSecretPrefix: hasWebhookSecret ? STRIPE_WEBHOOK_SECRET.slice(0, 8) + '...' : 'NOT SET',
+      expectedWebhookUrl: expectedUrl,
+      configuredEndpoints: endpoints,
+      matchingEndpoint: matchingEndpoint || 'KEINE ÜBEREINSTIMMUNG GEFUNDEN',
+      diagnosis: !hasWebhookSecret
+        ? 'STRIPE_WEBHOOK_SECRET ist nicht gesetzt'
+        : endpoints.length === 0
+          ? 'Keine Webhook-Endpoints in Stripe konfiguriert'
+          : !matchingEndpoint
+            ? `Kein Endpoint mit URL ${expectedUrl} gefunden`
+            : matchingEndpoint.status === 'enabled'
+              ? 'Webhook sieht korrekt konfiguriert aus'
+              : `Webhook-Status: ${matchingEndpoint.status}`,
+    });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: 'Stripe API Fehler', details: message });
+  }
+});

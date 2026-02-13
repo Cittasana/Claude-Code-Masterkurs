@@ -13,26 +13,28 @@ const SubscriptionSuccessView = () => {
   const [isLifetime, setIsLifetime] = useState(false);
 
   useEffect(() => {
-    // Status vom Backend holen
-    const checkStatus = async () => {
+    // Checkout verifizieren und Abo aktivieren (Fallback falls Webhook nicht ankam)
+    const verifyAndActivate = async () => {
       try {
+        // Schritt 1: Falls session_id vorhanden, Checkout direkt bei Stripe verifizieren
+        if (sessionId) {
+          const result = await subscriptionApi.verifyCheckout(sessionId);
+          if (result.status === 'lifetime') setIsLifetime(true);
+        }
+
+        // Schritt 2: Aktuellen Status abrufen zur Bestätigung
         const status = await subscriptionApi.getStatus();
         setIsLifetime(status.isLifetime || false);
-        
-        // Kurze Verzögerung für bessere UX
-        setTimeout(() => {
-          setIsVerifying(false);
-        }, 1500);
+
+        setTimeout(() => setIsVerifying(false), 1500);
       } catch {
         // Fallback: Nach 2 Sekunden anzeigen
-        setTimeout(() => {
-          setIsVerifying(false);
-        }, 2000);
+        setTimeout(() => setIsVerifying(false), 2000);
       }
     };
 
-    checkStatus();
-  }, []);
+    verifyAndActivate();
+  }, [sessionId]);
 
   if (isVerifying) {
     return (

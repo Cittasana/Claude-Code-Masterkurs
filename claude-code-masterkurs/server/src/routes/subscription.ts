@@ -228,6 +228,96 @@ subscriptionRouter.post('/validate-promo-code', async (req, res) => {
   }
 });
 
+// ── POST /api/subscription/verify-checkout ───────────────────
+// Fallback: Verifiziert die Stripe Checkout Session direkt und aktiviert
+// das Abo, falls der Webhook nicht durchkam. Wird von der Success-Seite aufgerufen.
+
+subscriptionRouter.post('/verify-checkout', requireAuth, async (req, res) => {
+  try {
+    const userId = req.user!.userId;
+    const { sessionId } = req.body as { sessionId?: string };
+
+    if (!sessionId) {
+      res.status(400).json({ error: 'sessionId erforderlich' });
+      return;
+    }
+
+    // Aktuelle Subscription prüfen
+    const subscription = await prisma.subscription.findUnique({
+      where: { userId },
+    });
+
+    // Wenn bereits aktiv/lifetime → nichts zu tun
+    if (subscription && (subscription.status === 'active' || subscription.status === 'lifetime' || subscription.status === 'trialing')) {
+      res.json({ status: subscription.status, alreadyActive: true });
+      return;
+    }
+
+    // Stripe Session abrufen und verifizieren
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+
+    if (session.metadata?.userId !== userId) {
+      res.status(403).json({ error: 'Session gehört nicht zu diesem User' });
+      return;
+    }
+
+    if (session.payment_status !== 'paid') {
+      res.json({ status: 'payment_pending', activated: false });
+      return;
+    }
+
+    // Zahlung bestätigt → Abo aktivieren (gleiche Logik wie handleCheckoutCompleted)
+    const isLifetime = session.mode === 'payment';
+    const subscriptionId = session.subscription as string;
+
+    if (isLifetime) {
+      await prisma.subscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          stripeCustomerId: session.customer as string,
+          status: 'lifetime',
+          isLifetime: true,
+          lifetimePurchasedAt: new Date(),
+        },
+        update: {
+          status: 'lifetime',
+          isLifetime: true,
+          lifetimePurchasedAt: new Date(),
+        },
+      });
+    } else {
+      await prisma.subscription.upsert({
+        where: { userId },
+        create: {
+          userId,
+          stripeCustomerId: session.customer as string,
+          stripeSubscriptionId: subscriptionId,
+          status: 'active',
+          currentPeriodStart: new Date(),
+          currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        },
+        update: {
+          stripeSubscriptionId: subscriptionId,
+          status: 'active',
+          ...(subscription && !subscription.currentPeriodStart
+            ? {
+                currentPeriodStart: new Date(),
+                currentPeriodEnd: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+              }
+            : {}),
+        },
+      });
+    }
+
+    logger.info({ userId, sessionId, isLifetime }, 'Subscription activated via verify-checkout fallback');
+    res.json({ status: isLifetime ? 'lifetime' : 'active', activated: true });
+  } catch (error) {
+    logger.error(error, 'Verify checkout error');
+    res.status(500).json({ error: 'Fehler beim Verifizieren' });
+  }
+});
+
 // ── GET /api/subscription/has-access ─────────────────────────
 // Prüft ob User Zugriff hat (aktives Abo ODER Lifetime)
 

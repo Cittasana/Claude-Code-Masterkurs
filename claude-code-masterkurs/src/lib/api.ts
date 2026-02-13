@@ -336,6 +336,12 @@ export const subscriptionApi = {
 
   hasAccess: () => api.get<AccessStatus>('/api/subscription/has-access'),
 
+  verifyCheckout: (sessionId: string) =>
+    api.post<{ status: string; activated?: boolean; alreadyActive?: boolean }>(
+      '/api/subscription/verify-checkout',
+      { sessionId },
+    ),
+
   cancel: () => api.post<{ message: string }>('/api/subscription/cancel'),
 };
 

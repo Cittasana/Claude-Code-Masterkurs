@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Layers, Monitor, ExternalLink } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -20,6 +21,11 @@ const LandingView = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-apple-bg">
+      <Helmet>
+        <title>Claude Code Masterkurs – Lerne KI-gestütztes Programmieren</title>
+        <meta name="description" content="Der umfassende Online-Kurs für KI-gestützte Softwareentwicklung mit Claude Code. 27 Lektionen, interaktive Challenges und Live-Playground." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/" />
+      </Helmet>
       {/* NEW: Hero with Video Embed */}
       <VideoHero />
 

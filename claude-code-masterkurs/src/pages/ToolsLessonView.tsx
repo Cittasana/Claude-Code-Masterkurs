@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -152,6 +153,11 @@ const ToolsLessonView = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{tool.title} | Claude Code Masterkurs</title>
+        <meta name="description" content={tool.description} />
+        <link rel="canonical" href={`https://claude-code-masterkurs.de/tools/${toolId}`} />
+      </Helmet>
       {/* Reading Progress Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-apple-bg/50">
         <div

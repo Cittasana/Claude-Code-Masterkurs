@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   BookOpen,
@@ -200,6 +201,11 @@ function DocsCtaSection() {
 const DocsView = () => {
   return (
     <div className="min-h-screen animate-fade-in-up">
+      <Helmet>
+        <title>Dokumentation | Claude Code Masterkurs</title>
+        <meta name="description" content="Umfassende Dokumentation zum Claude Code Masterkurs. Lehrplan, Features, Lernpfad und offizielle Claude Code Referenzen." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/docs" />
+      </Helmet>
       {/* ── Hero Section ────────────────────────────────── */}
       <section className="text-center pt-8 pb-16 relative overflow-hidden">
         {/* Subtle background glow */}

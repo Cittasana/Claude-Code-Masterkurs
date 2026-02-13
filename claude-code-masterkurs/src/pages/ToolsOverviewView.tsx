@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   Wrench,
@@ -61,6 +62,11 @@ const ToolsOverviewView = () => {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Tools & Extensions | Claude Code Masterkurs</title>
+        <meta name="description" content="43 CLI-Tools und MCP Server im Überblick. Lerne grep, jq, ripgrep, fzf, MCP-Server und mehr für produktive Entwicklung mit Claude Code." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/tools" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-apple-muted font-mono mb-6">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

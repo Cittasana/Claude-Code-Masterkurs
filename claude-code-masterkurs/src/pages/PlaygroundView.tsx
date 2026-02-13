@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   Terminal,
@@ -72,6 +73,11 @@ const PlaygroundView = () => {
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Live Playground | Claude Code Masterkurs</title>
+        <meta name="description" content="Interaktive CLI-Simulation zum Üben von Claude Code Befehlen. Wähle ein Projekt, löse Aufgaben und erhalte sofortiges Feedback." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/playground" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

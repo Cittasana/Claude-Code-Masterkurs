@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   Search,
@@ -58,6 +59,11 @@ const CommunityPatternsView = () => {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Community Patterns | Claude Code Masterkurs</title>
+        <meta name="description" content="Bewährte Prompts, CLAUDE.md-Snippets, Workflows und Skills aus der Community. Durchsuchbar, kopierbar, sofort nutzbar." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/patterns" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

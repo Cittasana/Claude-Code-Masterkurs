@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeft,
@@ -193,6 +194,11 @@ const LessonView = () => {
 
   return (
     <>
+      <Helmet>
+        <title>{lesson.title} | Claude Code Masterkurs</title>
+        <meta name="description" content={lesson.description} />
+        <link rel="canonical" href={`https://claude-code-masterkurs.de/lesson/${lessonId}`} />
+      </Helmet>
       {/* Reading Progress Bar - Fixed at top */}
       <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-apple-bg/50">
         <div

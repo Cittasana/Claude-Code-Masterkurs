@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { HelmetProvider } from 'react-helmet-async'
 import { ErrorBoundary } from './ErrorBoundary'
 import './i18n'
 import './index.css'
@@ -14,9 +15,11 @@ async function init() {
     } else {
       createRoot(rootEl).render(
         <StrictMode>
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
+          <HelmetProvider>
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </HelmetProvider>
         </StrictMode>,
       )
     }

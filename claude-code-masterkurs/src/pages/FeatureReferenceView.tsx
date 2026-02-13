@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Search, BookOpen, Terminal, Copy, Check, ChevronDown, ChevronRight, ExternalLink, Zap } from 'lucide-react';
 import { features, featureCategories } from '../data/features';
@@ -46,6 +47,11 @@ const FeatureReferenceView = () => {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Feature-Referenz | Claude Code Masterkurs</title>
+        <meta name="description" content="Vollständige Referenz aller Claude Code Features, Commands und Funktionen. Durchsuchbar mit Beispielen und Praxis-Tipps." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/features" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

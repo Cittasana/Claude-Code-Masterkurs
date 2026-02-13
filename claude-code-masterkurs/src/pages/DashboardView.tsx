@@ -1,5 +1,6 @@
 import { useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, Wrench, ArrowRight } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
@@ -99,6 +100,11 @@ const DashboardView = () => {
 
   return (
     <div className="space-y-8 animate-fade-in-up">
+      <Helmet>
+        <title>Dashboard | Claude Code Masterkurs</title>
+        <meta name="description" content="Dein persönliches Dashboard im Claude Code Masterkurs. Verfolge deinen Lernfortschritt, Quizzes, Challenges und Zertifizierung." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/dashboard" />
+      </Helmet>
       {/* Header with pixel-style logo */}
       <div className="text-center py-6 sm:py-8">
         <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-4">

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   FolderOpen,
   Clock,
@@ -71,6 +72,11 @@ function ProjectOverview() {
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Projekte | Claude Code Masterkurs</title>
+        <meta name="description" content="Capstone-Projekte zum praktischen Anwenden von Claude Code. Baue reale Anwendungen und vertiefe dein Wissen." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/projects" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

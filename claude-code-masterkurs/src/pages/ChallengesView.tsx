@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   Zap,
   Clock,
@@ -93,6 +94,11 @@ const ChallengesView = () => {
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Challenges | Claude Code Masterkurs</title>
+        <meta name="description" content="Coding-Challenges für Claude Code und Live-Coding. Teste dein Wissen mit praktischen Aufgaben und sammle Punkte." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/challenges" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

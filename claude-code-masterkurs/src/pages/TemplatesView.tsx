@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   FolderGit2,
   Clock,
@@ -40,6 +41,11 @@ const TemplatesView = () => {
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Templates | Claude Code Masterkurs</title>
+        <meta name="description" content="Projekt-Templates für Claude Code. Starte mit vorkonfigurierten Setups für React, Node.js, Python und mehr." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/templates" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

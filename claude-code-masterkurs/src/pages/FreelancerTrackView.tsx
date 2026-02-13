@@ -1,5 +1,6 @@
 import { useMemo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
   Briefcase,
@@ -58,6 +59,11 @@ const FreelancerTrackView = () => {
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
+      <Helmet>
+        <title>Freelancer-Track | Claude Code Masterkurs</title>
+        <meta name="description" content="Werde erfolgreicher AI-Freelancer mit Claude Code. 8 Business-Module zu Positionierung, Pricing, Kundenakquise und Projekt-Workflows." />
+        <link rel="canonical" href="https://claude-code-masterkurs.de/freelancer" />
+      </Helmet>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-apple-muted font-mono mb-6">
         <Link to="/dashboard" className="hover:text-apple-accent transition-colors">

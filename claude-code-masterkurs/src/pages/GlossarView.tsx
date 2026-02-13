@@ -139,7 +139,49 @@ const GlossarView = () => {
           content="Umfassendes Glossar zu Claude Code, Agentic Coding, MCP, CLAUDE.md, Context Engineering und allen wichtigen Begriffen der KI-gestuetzten Softwareentwicklung. Jeder Begriff ausfuehrlich erklaert."
         />
         <link rel="canonical" href="https://claude-code-masterkurs.de/glossar" />
+        <meta property="og:title" content="Claude Code Glossar – Alle Begriffe von A bis Z erklaert" />
+        <meta property="og:description" content="Umfassendes Glossar zu Claude Code: 16 Begriffe von Agentic Coding ueber CLAUDE.md und MCP bis Token. Jeder Begriff mit ausfuehrlicher Definition." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://claude-code-masterkurs.de/glossar" />
+        <meta property="og:image" content="https://claude-code-masterkurs.de/og-image.png" />
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "DefinedTermSet",
+          "name": "Claude Code Glossar",
+          "description": "Umfassendes Glossar zu Claude Code, Agentic Coding, MCP, CLAUDE.md, Context Engineering und weiteren Begriffen der KI-gestuetzten Softwareentwicklung.",
+          "url": "https://claude-code-masterkurs.de/glossar",
+          "inLanguage": "de",
+          "hasDefinedTerm": [
+            {"@type": "DefinedTerm", "name": "Agentic Coding", "description": "Programmieransatz bei dem ein KI-Agent Entwicklungsaufgaben eigenstaendig ausfuehrt"},
+            {"@type": "DefinedTerm", "name": "Anthropic", "description": "US-amerikanisches KI-Unternehmen und Entwickler von Claude Code"},
+            {"@type": "DefinedTerm", "name": "API-Key", "description": "Authentifizierungsschluessel fuer die Anthropic API"},
+            {"@type": "DefinedTerm", "name": "CLAUDE.md", "description": "Markdown-Datei die Claude Code Projektkontext gibt"},
+            {"@type": "DefinedTerm", "name": "Claude Code", "description": "Autonomer KI-Coding-Agent von Anthropic fuer das Terminal"},
+            {"@type": "DefinedTerm", "name": "Context Engineering", "description": "Disziplin der optimalen Kontext-Bereitstellung fuer KI-Systeme"},
+            {"@type": "DefinedTerm", "name": "Context Window", "description": "Maximale Textmenge die ein KI-Modell gleichzeitig verarbeiten kann"},
+            {"@type": "DefinedTerm", "name": "Hooks", "description": "Automatische Aktionen die bei bestimmten Events in Claude Code ausgefuehrt werden"},
+            {"@type": "DefinedTerm", "name": "MCP", "description": "Model Context Protocol – offenes Protokoll fuer die Kommunikation mit externen Services"},
+            {"@type": "DefinedTerm", "name": "MCP Server", "description": "Server-Implementierung die externe Tools ueber MCP bereitstellt"},
+            {"@type": "DefinedTerm", "name": "Multi-Agent / Subagents", "description": "System bei dem mehrere spezialisierte KI-Agents parallel arbeiten"},
+            {"@type": "DefinedTerm", "name": "Plan Mode", "description": "Modus in dem Claude Code Aufgaben vor der Ausfuehrung plant"},
+            {"@type": "DefinedTerm", "name": "Prompt Engineering", "description": "Technik zur Formulierung effektiver Anweisungen an KI-Modelle"},
+            {"@type": "DefinedTerm", "name": "Slash Commands", "description": "Befehle die mit Schraegstrich beginnen und Aktionen in Claude Code ausloesen"},
+            {"@type": "DefinedTerm", "name": "Thinking Mode", "description": "Modus der den Denkprozess von Claude Code sichtbar macht"},
+            {"@type": "DefinedTerm", "name": "Token", "description": "Grundeinheit der Textverarbeitung in Large Language Models"}
+          ]
+        })}</script>
       </Helmet>
+
+      {/* Breadcrumb */}
+      <div className="max-w-5xl mx-auto px-4 pt-8">
+        <nav className="flex items-center space-x-2 text-sm text-apple-muted mb-6 font-mono">
+          <Link to="/" className="hover:text-apple-accent transition-colors">
+            Startseite
+          </Link>
+          <span className="text-apple-border">&rsaquo;</span>
+          <span className="text-apple-text">Glossar</span>
+        </nav>
+      </div>
 
       {/* ── Hero ────────────────────────────────────────── */}
       <section className="text-center pt-8 pb-12 relative overflow-hidden">
@@ -299,6 +341,14 @@ const GlossarView = () => {
           </div>
         </div>
       </section>
+
+      {/* ── Autor & Quellen ────────────────────────────── */}
+      <div className="mt-12 pt-6 border-t border-white/10 text-sm text-gray-400">
+        <p>Von <strong className="text-gray-200">Cosmo Graef</strong>, Gruender &amp; Kursleiter des Claude Code Masterkurs | Zuletzt aktualisiert: 13. Februar 2026</p>
+        <p className="mt-2">
+          Quellen: <a href="https://anthropic.com" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Anthropic</a> · <a href="https://docs.anthropic.com/en/docs/claude-code" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Claude Code Docs</a> · <a href="https://modelcontextprotocol.io" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">MCP Spezifikation</a>
+        </p>
+      </div>
     </div>
   );
 };

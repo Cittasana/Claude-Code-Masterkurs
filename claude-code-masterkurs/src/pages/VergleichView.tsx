@@ -564,6 +564,16 @@ const VergleichView = () => {
         </div>
       </section>
 
+      {/* ── Author / Sources Footer (GEO Optimization) ───────────────── */}
+      <div className="max-w-5xl mx-auto px-4 pb-12">
+        <div className="mt-12 pt-6 border-t border-white/10 text-sm text-gray-400">
+          <p>Von <strong className="text-gray-200">Cosmo Graef</strong>, Gruender & Kursleiter des Claude Code Masterkurs | Zuletzt aktualisiert: 13. Februar 2026</p>
+          <p className="mt-2">
+            Quellen: <a href="https://anthropic.com" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Anthropic</a> · <a href="https://docs.anthropic.com/en/docs/claude-code" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Claude Code Docs</a> · <a href="https://github.com/features/copilot" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">GitHub Copilot</a> · <a href="https://cursor.com" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Cursor</a> · <a href="https://windsurf.com" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Windsurf</a>
+          </p>
+        </div>
+      </div>
+
       {/* ── Structured Data for SEO ────────────────────────────────────── */}
       <script
         type="application/ld+json"

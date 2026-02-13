@@ -568,6 +568,18 @@ const WasIstClaudeCodeView = () => {
       </section>
 
       {/* ═══════════════════════════════════════════════════════════
+          Author / Sources Footer (GEO Optimization)
+          ═══════════════════════════════════════════════════════════ */}
+      <div className="max-w-4xl mx-auto px-4 pb-12">
+        <div className="mt-12 pt-6 border-t border-white/10 text-sm text-gray-400">
+          <p>Von <strong className="text-gray-200">Cosmo Graef</strong>, Gruender & Kursleiter des Claude Code Masterkurs | Zuletzt aktualisiert: 13. Februar 2026</p>
+          <p className="mt-2">
+            Quellen: <a href="https://anthropic.com" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Anthropic</a> · <a href="https://docs.anthropic.com/en/docs/claude-code" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Claude Code Dokumentation</a> · <a href="https://www.npmjs.com/package/@anthropic-ai/claude-code" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">npm Registry</a> · <a href="https://modelcontextprotocol.io" className="text-blue-400 hover:underline" target="_blank" rel="noopener noreferrer">Model Context Protocol</a>
+          </p>
+        </div>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════════
           Structured Data (JSON-LD) for SEO
           ═══════════════════════════════════════════════════════════ */}
       <Helmet>

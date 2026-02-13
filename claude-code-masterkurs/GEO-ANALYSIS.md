@@ -224,47 +224,81 @@ Alle Seiten:
 
 ---
 
-## Verbleibende Optimierungspotenziale
+## Update #3: Zusaetzliche GEO-Massnahmen (13. Feb 2026, Runde 2)
 
-### Kurzfristig (Code-basiert, +5-10 Punkte moeglich)
+### Neu umgesetzt:
 
 | # | Massnahme | Impact | Status |
 |---|-----------|--------|--------|
-| 1 | IndexNow API fuer Bing Copilot | +2 | Offen |
-| 2 | VideoObject Schema (wenn Videos existieren) | +3 | Wartet auf Video-Content |
-| 3 | AggregateRating Schema (wenn Reviews existieren) | +2 | Wartet auf Reviews |
-| 4 | Bilder in prerendered HTML einbetten (OG-Image als `<img>`) | +2 | Offen |
-| 5 | Autor-Byline sichtbar auf prerenderten Seiten | +2 | Offen |
+| 1 | **IndexNow API** fuer Bing Copilot | +2 Technical | ✅ Erledigt – Key deployed, 8 URLs submitted (HTTP 200) |
+| 2 | **OG-Image als `<img>`** in allen 87 prerenderten Seiten | +3 Multi-Modal | ✅ Erledigt – Sichtbares Bild mit Alt-Text auf jeder Seite |
+| 3 | **Autor-Byline + Datum** auf allen 87 prerenderten Seiten | +3 Authority | ✅ Erledigt – "Von Cosmo Graef" + "Zuletzt aktualisiert: 13. Feb 2026" |
+| 4 | **Quellen-Links** auf allen 87 prerenderten Seiten | +3 Authority | ✅ Erledigt – Links zu Anthropic, Docs, npm, MCP Spec |
+| 5 | **Breadcrumb-Navigation** auf allen 87 prerenderten Seiten | +2 Readability | ✅ Erledigt – Startseite › Bereich › Seite |
+| 6 | **Cross-Links Footer** auf allen 87 prerenderten Seiten | +2 Readability | ✅ Erledigt – 5 Weiterfuehrende Seiten pro Page |
+| 7 | **GlossarView: JSON-LD DefinedTermSet** Schema | +2 Citability | ✅ Erledigt – 16 Terme als strukturierte Daten |
+| 8 | **GlossarView: OG Tags + Breadcrumbs** | +1 Technical | ✅ Erledigt |
+| 9 | **3 Landing Pages: Sichtbare Author/Quellen** | +2 Authority | ✅ Erledigt – Quellen zu Anthropic, npm, MCP, Copilot, Cursor |
+
+### Geschaetzte Score-Aenderung durch Update #3:
+
+| Kategorie | Vorher (Update #2) | Jetzt (Update #3) | Delta |
+|-----------|--------------------|--------------------|-------|
+| Citability | 78 | 80 | +2 |
+| Structural Readability | 82 | 86 | +4 |
+| Multi-Modal | 20 | 28 | +8 |
+| Authority & Brand Signals | 30 | 40 | +10 |
+| Technical Accessibility | 92 | 95 | +3 |
+| **Gesamt (gewichtet)** | **68** | **~75** | **+7** |
+
+---
+
+## Verbleibende Optimierungspotenziale
+
+### Kurzfristig (Code-basiert)
+
+| # | Massnahme | Impact | Status |
+|---|-----------|--------|--------|
+| 1 | VideoObject Schema (wenn Videos existieren) | +3 | Wartet auf Video-Content |
+| 2 | AggregateRating Schema (wenn Reviews existieren) | +2 | Wartet auf Reviews |
 
 ### Mittelfristig (externe Aktionen, +15-25 Punkte moeglich)
 
 | # | Massnahme | Impact | Status |
 |---|-----------|--------|--------|
-| 6 | **YouTube-Kanal** mit 3-5 Claude Code Tutorials | +8 | Erfordert Video-Produktion |
-| 7 | **Reddit-Praesenz** (r/ClaudeAI, r/coding Posts) | +5 | Erfordert manuelle Posts |
-| 8 | **LinkedIn-Firmenseite** + regelmaessige Beitraege | +3 | Erfordert Account-Setup |
-| 9 | **GitHub-Repository** (Open Source Teile) | +3 | Erfordert Repo-Setup |
-| 10 | **Blog-Artikel** auf dev.to/Medium | +3 | Erfordert Content-Erstellung |
-| 11 | **sameAs-Links** mit echten Social-Profilen fuellen | +3 | Wartet auf Profile |
+| 3 | **YouTube-Kanal** mit 3-5 Claude Code Tutorials | +8 | Erfordert Video-Produktion |
+| 4 | **Reddit-Praesenz** (r/ClaudeAI, r/coding Posts) | +5 | Erfordert manuelle Posts |
+| 5 | **LinkedIn-Firmenseite** + regelmaessige Beitraege | +3 | Erfordert Account-Setup |
+| 6 | **GitHub-Repository** (Open Source Teile) | +3 | Erfordert Repo-Setup |
+| 7 | **Blog-Artikel** auf dev.to/Medium | +3 | Erfordert Content-Erstellung |
+| 8 | **sameAs-Links** mit echten Social-Profilen fuellen | +3 | Wartet auf Profile |
 
 ### Langfristig (hoher Aufwand, +5-10 Punkte moeglich)
 
 | # | Massnahme | Impact | Status |
 |---|-----------|--------|--------|
-| 12 | Original-Forschung/Surveys | +5 | Erfordert Datenerhebung |
-| 13 | Wikipedia-Eintrag | +3 | Erfordert Notability |
-| 14 | Community-Building fuer organische Mentions | +5 | Fortlaufend |
+| 9 | Original-Forschung/Surveys | +5 | Erfordert Datenerhebung |
+| 10 | Wikipedia-Eintrag | +3 | Erfordert Notability |
+| 11 | Community-Building fuer organische Mentions | +5 | Fortlaufend |
 
 ---
 
 ## Fazit
 
-Der GEO-Score hat sich von **31/100 auf 68/100** verbessert (+37 Punkte). Die groessten Spruenge:
+Der GEO-Score hat sich in drei Runden von **31/100 auf ~75/100** verbessert (+44 Punkte):
 
-1. **Technical Accessibility: +47** – Prerendering war der Game-Changer. AI-Crawler sehen jetzt 87 Seiten mit vollem Content statt einer leeren Shell.
-2. **Citability: +43** – Alle FAQ-Antworten und Definitionen sind jetzt im optimalen 134-167 Woerter Bereich. Drei dedizierte Landingpages liefern zitierbare Bloecke fuer Kern-Queries.
-3. **Structural Readability: +42** – Saubere Heading-Hierarchie, frage-basierte H2s, Listen und Tabellen auf allen Seiten.
-4. **Authority: +15** – Person Schema, datePublished, Instructor-Feld. Weiterhin gebremst durch fehlende externe Brand Mentions.
-5. **Multi-Modal: +5** – Minimaler Fortschritt, da kein Video/Bild-Content erstellt wurde.
+| Runde | Datum | Score | Delta | Wichtigste Massnahmen |
+|-------|-------|-------|-------|----------------------|
+| Baseline | 12. Feb 2026 | 31 | – | Ausgangszustand |
+| Update #2 | 13. Feb 2026 | 68 | +37 | Prerendering, llms.txt, Schema.org, FAQ-Expansion, 3 Landingpages |
+| Update #3 | 13. Feb 2026 | ~75 | +7 | Author-Bylines, OG-Image, Breadcrumbs, Quellen-Links, IndexNow, DefinedTermSet |
 
-**Hauptblocker fuer 80+:** Externe Brand Mentions (YouTube, Reddit, LinkedIn). Diese erfordern manuelle Aktionen ausserhalb der Codebase und sind der einzige verbleibende Hebel fuer signifikante Verbesserung.
+**Was jetzt alle 87 Seiten haben:**
+- Sichtbares OG-Image mit Alt-Text (Multi-Modal Signal)
+- Autor-Byline mit Name, Titel und Datum (E-E-A-T Signal)
+- 4 Quellen-Links zu externen Autoritaeten (Authority Signal)
+- Breadcrumb-Navigation (Structural Signal)
+- 5 Cross-Links zu anderen Kursbereichen (Interlinking Signal)
+- IndexNow-Key fuer Bing Copilot Discoverability
+
+**Hauptblocker fuer 85+:** Externe Brand Mentions (YouTube, Reddit, LinkedIn). Diese erfordern manuelle Aktionen ausserhalb der Codebase und sind der einzige verbleibende Hebel fuer signifikante Verbesserung.

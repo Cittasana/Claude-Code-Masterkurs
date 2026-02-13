@@ -113,6 +113,9 @@ function generatePage(opts: {
   description: string;
   canonical: string;
   bodyHtml: string;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+  showAuthor?: boolean;
+  showImage?: boolean;
 }): string {
   let html = template;
 
@@ -158,11 +161,26 @@ function generatePage(opts: {
     `<meta name="twitter:description" content="${escapeHtmlAttr(opts.description)}" />`
   );
 
+  // Build breadcrumb nav
+  const breadcrumbHtml = opts.breadcrumbs && opts.breadcrumbs.length > 0
+    ? `<nav aria-label="Breadcrumb" style="font-size:14px;margin-bottom:16px;color:#94a3b8"><a href="/" style="color:#60a5fa;text-decoration:none">Startseite</a>${opts.breadcrumbs.map(b => ` › <a href="${b.url}" style="color:#60a5fa;text-decoration:none">${escapeHtmlAttr(b.name)}</a>`).join('')}</nav>`
+    : '';
+
+  // OG image visible for AI crawlers (multi-modal signal)
+  const imageHtml = opts.showImage !== false
+    ? `<img src="/og-image.png" alt="Claude Code Masterkurs – KI-gestuetztes Programmieren lernen mit Anthropics Coding-Agent" width="1200" height="630" loading="lazy" style="max-width:100%;height:auto;border-radius:8px;margin-bottom:24px" />`
+    : '';
+
+  // Author byline + date + sources (E-E-A-T + Authority signals)
+  const authorHtml = opts.showAuthor !== false
+    ? `<footer style="margin-top:32px;padding-top:16px;border-top:1px solid #334155;font-size:14px;color:#94a3b8"><p>Von <strong style="color:#e2e8f0">Cosmo Graef</strong>, Gruender &amp; Kursleiter des Claude Code Masterkurs | Zuletzt aktualisiert: 13. Februar 2026</p><p style="margin-top:8px">Quellen: <a href="https://anthropic.com" style="color:#60a5fa" rel="noopener">Anthropic</a> · <a href="https://docs.anthropic.com/en/docs/claude-code" style="color:#60a5fa" rel="noopener">Claude Code Dokumentation</a> · <a href="https://www.npmjs.com/package/@anthropic-ai/claude-code" style="color:#60a5fa" rel="noopener">npm Registry</a> · <a href="https://modelcontextprotocol.io" style="color:#60a5fa" rel="noopener">Model Context Protocol</a></p><nav style="margin-top:12px"><strong style="color:#e2e8f0">Weiterfuehrende Seiten:</strong> <a href="/was-ist-claude-code" style="color:#60a5fa">Was ist Claude Code?</a> · <a href="/vergleich" style="color:#60a5fa">Tool-Vergleich 2026</a> · <a href="/glossar" style="color:#60a5fa">Glossar</a> · <a href="/tools" style="color:#60a5fa">43 Tools &amp; Extensions</a> · <a href="/lesson/0" style="color:#60a5fa">Kurs starten</a></nav></footer>`
+    : '';
+
   // Inject content into <div id="root">
   // The React app will hydrate on top of this
   html = html.replace(
     /<div id="root">.*?<\/div>/,
-    `<div id="root">${opts.bodyHtml}</div>`
+    `<div id="root">${breadcrumbHtml}${imageHtml}${opts.bodyHtml}${authorHtml}</div>`
   );
 
   return html;
@@ -191,7 +209,13 @@ function prerenderLessons(): void {
       </article>
     `;
 
-    const html = generatePage({ title, description, canonical, bodyHtml });
+    const html = generatePage({
+      title, description, canonical, bodyHtml,
+      breadcrumbs: [
+        { name: 'Lektionen', url: '/lesson/0' },
+        { name: stripEmoji(lesson.title), url: `/lesson/${lesson.id}` },
+      ],
+    });
     writePage(`lesson/${lesson.id}`, html);
   }
   console.log(`  Lessons: ${lessons.length} pages`);
@@ -214,7 +238,13 @@ function prerenderTools(): void {
       </article>
     `;
 
-    const html = generatePage({ title, description, canonical, bodyHtml });
+    const html = generatePage({
+      title, description, canonical, bodyHtml,
+      breadcrumbs: [
+        { name: 'Tools & Extensions', url: '/tools' },
+        { name: stripEmoji(tool.title), url: `/tools/${tool.id}` },
+      ],
+    });
     writePage(`tools/${tool.id}`, html);
   }
   console.log(`  Tools:   ${allTools.length} pages`);
@@ -240,7 +270,10 @@ function prerenderToolsOverview(): void {
     </article>
   `;
 
-  const html = generatePage({ title, description, canonical, bodyHtml });
+  const html = generatePage({
+    title, description, canonical, bodyHtml,
+    breadcrumbs: [{ name: 'Tools & Extensions', url: '/tools' }],
+  });
   writePage('tools', html);
   console.log('  Tools overview: 1 page');
 }
@@ -322,11 +355,14 @@ function prerenderStaticPages(): void {
   ];
 
   for (const page of staticPages) {
+    // Extract a readable name from the title (before the dash)
+    const breadcrumbName = page.title.split(' – ')[0].trim();
     const html = generatePage({
       title: page.title,
       description: page.description,
       canonical: `${BASE_URL}/${page.path}`,
       bodyHtml: `<article>${page.content}</article>`,
+      breadcrumbs: [{ name: breadcrumbName, url: `/${page.path}` }],
     });
     writePage(page.path, html);
   }
@@ -423,7 +459,7 @@ function prerenderLanding(): void {
     </article>
   `;
 
-  // Landing page overwrites the main index.html
+  // Landing page overwrites the main index.html (no breadcrumbs on homepage)
   const html = generatePage({ title, description, canonical, bodyHtml });
   writeFileSync(join(DIST, 'index.html'), html, 'utf-8');
   console.log('  Landing: 1 page (index.html updated)');

@@ -142,8 +142,8 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
     }
     const user = await prisma.user.update({
       where: { email },
-      data: { passwordHash, role: 'admin' },
-      select: { id: true, email: true, role: true },
+      data: { passwordHash },
+      select: { id: true, email: true },
     });
     res.json({ success: true, data: user });
   } catch (error) {

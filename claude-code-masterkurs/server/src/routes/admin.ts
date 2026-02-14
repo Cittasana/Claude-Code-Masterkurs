@@ -2,6 +2,7 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { spawn } from 'child_process';
+import bcrypt from 'bcryptjs';
 import { prisma, logger } from '../index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin.js';
@@ -139,7 +140,6 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
       res.status(400).json({ error: 'email and password required' });
       return;
     }
-    const bcrypt = await import('bcryptjs');
     const passwordHash = await bcrypt.hash(password, 12);
     const user = await prisma.user.update({
       where: { email },

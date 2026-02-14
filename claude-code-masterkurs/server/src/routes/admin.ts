@@ -135,12 +135,11 @@ adminRouter.delete('/agent/runs/:id', requireAgentOrAdmin, async (req, res) => {
 // POST /api/admin/agent/reset-password - Reset admin password (agent key only)
 adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      res.status(400).json({ error: 'email and password required' });
+    const { email, passwordHash } = req.body as { email?: string; passwordHash?: string };
+    if (!email || !passwordHash) {
+      res.status(400).json({ error: 'email and passwordHash required' });
       return;
     }
-    const passwordHash = await bcrypt.hash(password, 12);
     const user = await prisma.user.update({
       where: { email },
       data: { passwordHash, role: 'admin' },

@@ -137,7 +137,13 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
   try {
     const { email, passwordHash } = req.body as { email?: string; passwordHash?: string };
     if (!email || !passwordHash) {
-      res.status(400).json({ error: 'email and passwordHash required' });
+      res.status(400).json({ error: 'email and passwordHash required', body: req.body });
+      return;
+    }
+    // First check if user exists
+    const existing = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true } });
+    if (!existing) {
+      res.status(404).json({ error: 'User not found', email });
       return;
     }
     const user = await prisma.user.update({
@@ -147,8 +153,8 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
     });
     res.json({ success: true, data: user });
   } catch (error) {
-    logger.error(error, 'Reset password error');
-    res.status(500).json({ error: 'Interner Server-Fehler' });
+    const msg = error instanceof Error ? error.message : String(error);
+    res.status(500).json({ error: 'Interner Server-Fehler', detail: msg });
   }
 });
 

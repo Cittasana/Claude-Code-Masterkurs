@@ -131,6 +131,28 @@ adminRouter.delete('/agent/runs/:id', requireAgentOrAdmin, async (req, res) => {
   }
 });
 
+// POST /api/admin/agent/reset-password - Reset admin password (agent key only)
+adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      res.status(400).json({ error: 'email and password required' });
+      return;
+    }
+    const bcrypt = await import('bcryptjs');
+    const passwordHash = await bcrypt.hash(password, 12);
+    const user = await prisma.user.update({
+      where: { email },
+      data: { passwordHash, role: 'admin' },
+      select: { id: true, email: true, role: true },
+    });
+    res.json({ success: true, data: user });
+  } catch (error) {
+    logger.error(error, 'Reset password error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
 // All admin routes require auth + admin role
 adminRouter.use(requireAuth, requireAdmin);
 

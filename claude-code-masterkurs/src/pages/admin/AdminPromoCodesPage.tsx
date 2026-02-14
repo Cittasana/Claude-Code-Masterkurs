@@ -7,7 +7,6 @@ import {
   AlertCircle,
   ToggleLeft,
   ToggleRight,
-  Pencil,
 } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 

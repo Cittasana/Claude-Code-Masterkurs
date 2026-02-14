@@ -466,6 +466,35 @@ export interface ResearchHistoryEntry {
   user?: { displayName: string };
 }
 
+// ── Agent Monitoring Types ──────────────────────────────────
+
+export interface AgentRun {
+  id: string;
+  status: 'running' | 'completed' | 'failed';
+  trigger: 'cron' | 'manual';
+  startedAt: string;
+  completedAt: string | null;
+  durationSeconds: number | null;
+  qualityScore: number | null;
+  sourcesTotal: number;
+  sourcesTier1: number;
+  sourcesTier2: number;
+  sourcesTier3: number;
+  lessonsCreated: number;
+  emailsCreated: number;
+  socialPostsCreated: number;
+  researchTopics: string[];
+  summary: string | null;
+  errorLog: string | null;
+  rawOutput?: string | null;
+  createdAt: string;
+}
+
+export interface AgentStatus {
+  isRunning: boolean;
+  currentRun?: AgentRun;
+}
+
 export const adminApi = {
   getDashboard: () =>
     api.get<{ success: boolean; data: AdminDashboardData }>('/api/admin/dashboard'),
@@ -540,6 +569,28 @@ export const adminApi = {
   getResearchHistory: (limit?: number) =>
     api.get<{ success: boolean; data: ResearchHistoryEntry[] }>(
       `/api/admin/research/history${limit ? `?limit=${limit}` : ''}`,
+    ),
+
+  // Agent Monitoring
+  getAgentRuns: (params?: { limit?: number; status?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.limit) search.set('limit', String(params.limit));
+    if (params?.status && params.status !== 'all') search.set('status', params.status);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AgentRun[] }>(
+      `/api/admin/agent/runs${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getAgentRun: (id: string) =>
+    api.get<{ success: boolean; data: AgentRun }>(`/api/admin/agent/runs/${id}`),
+
+  getAgentStatus: () =>
+    api.get<{ success: boolean; data: AgentStatus }>('/api/admin/agent/status'),
+
+  triggerAgent: () =>
+    api.post<{ success: boolean; data: { runId: string; message: string } }>(
+      '/api/admin/agent/trigger',
     ),
 };
 

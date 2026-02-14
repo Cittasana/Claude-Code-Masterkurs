@@ -12,6 +12,7 @@ import {
   LogOut,
   FileText,
   Sparkles,
+  Bot,
 } from 'lucide-react';
 
 const navigation = [
@@ -46,6 +47,12 @@ const navigation = [
     href: '/admin/research',
     icon: Search,
     description: 'AI-gestützte Recherche',
+  },
+  {
+    name: 'Agent Monitor',
+    href: '/admin/agent',
+    icon: Bot,
+    description: 'Wöchentlicher Agent',
     isNew: true,
   },
   {

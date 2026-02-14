@@ -1,5 +1,7 @@
 import { Router } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
+import { spawn } from 'child_process';
 import { prisma, logger } from '../index.js';
 import { requireAuth } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin.js';
@@ -7,8 +9,248 @@ import { writeRateLimit } from '../middleware/rateLimit.js';
 
 export const adminRouter = Router();
 
+// ── Agent API Key Middleware ────────────────────────────────────
+// Accepts either AGENT_API_KEY as Bearer token OR admin JWT
+const AGENT_API_KEY = process.env.AGENT_API_KEY;
+
+async function requireAgentOrAdmin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ') && AGENT_API_KEY) {
+    const token = authHeader.slice(7);
+    if (token === AGENT_API_KEY) {
+      next();
+      return;
+    }
+  }
+  // Fall through to normal admin auth
+  requireAuth(req, res, (err?: unknown) => {
+    if (err) { next(err); return; }
+    requireAdmin(req, res, next);
+  });
+}
+
+// ── Agent Monitoring Routes (before admin-only middleware) ──────
+
+// POST /api/admin/agent/report - Agent pushes results
+adminRouter.post('/agent/report', requireAgentOrAdmin, async (req, res) => {
+  try {
+    const schema = z.object({
+      runId: z.string().optional(),
+      status: z.enum(['running', 'completed', 'failed']),
+      trigger: z.enum(['cron', 'manual']).default('cron'),
+      qualityScore: z.number().min(0).max(100).optional(),
+      sourcesTotal: z.number().int().min(0).optional(),
+      sourcesTier1: z.number().int().min(0).optional(),
+      sourcesTier2: z.number().int().min(0).optional(),
+      sourcesTier3: z.number().int().min(0).optional(),
+      lessonsCreated: z.number().int().min(0).optional(),
+      emailsCreated: z.number().int().min(0).optional(),
+      socialPostsCreated: z.number().int().min(0).optional(),
+      researchTopics: z.array(z.string()).optional(),
+      summary: z.string().optional(),
+      errorLog: z.string().optional(),
+      rawOutput: z.string().optional(),
+    });
+
+    const data = schema.parse(req.body);
+
+    if (data.runId) {
+      // Update existing run
+      const completedAt = data.status !== 'running' ? new Date() : undefined;
+      const existing = await prisma.agentRun.findUnique({ where: { id: data.runId } });
+      const durationSeconds = completedAt && existing
+        ? Math.round((completedAt.getTime() - existing.startedAt.getTime()) / 1000)
+        : undefined;
+
+      const run = await prisma.agentRun.update({
+        where: { id: data.runId },
+        data: {
+          status: data.status,
+          completedAt,
+          durationSeconds,
+          ...(data.qualityScore !== undefined && { qualityScore: data.qualityScore }),
+          ...(data.sourcesTotal !== undefined && { sourcesTotal: data.sourcesTotal }),
+          ...(data.sourcesTier1 !== undefined && { sourcesTier1: data.sourcesTier1 }),
+          ...(data.sourcesTier2 !== undefined && { sourcesTier2: data.sourcesTier2 }),
+          ...(data.sourcesTier3 !== undefined && { sourcesTier3: data.sourcesTier3 }),
+          ...(data.lessonsCreated !== undefined && { lessonsCreated: data.lessonsCreated }),
+          ...(data.emailsCreated !== undefined && { emailsCreated: data.emailsCreated }),
+          ...(data.socialPostsCreated !== undefined && { socialPostsCreated: data.socialPostsCreated }),
+          ...(data.researchTopics !== undefined && { researchTopics: data.researchTopics }),
+          ...(data.summary !== undefined && { summary: data.summary }),
+          ...(data.errorLog !== undefined && { errorLog: data.errorLog }),
+          ...(data.rawOutput !== undefined && { rawOutput: data.rawOutput }),
+        },
+      });
+      res.json({ success: true, data: run });
+    } else {
+      // Create new run
+      const run = await prisma.agentRun.create({
+        data: {
+          status: data.status,
+          trigger: data.trigger,
+          ...(data.qualityScore !== undefined && { qualityScore: data.qualityScore }),
+          ...(data.sourcesTotal !== undefined && { sourcesTotal: data.sourcesTotal }),
+          ...(data.sourcesTier1 !== undefined && { sourcesTier1: data.sourcesTier1 }),
+          ...(data.sourcesTier2 !== undefined && { sourcesTier2: data.sourcesTier2 }),
+          ...(data.sourcesTier3 !== undefined && { sourcesTier3: data.sourcesTier3 }),
+          ...(data.lessonsCreated !== undefined && { lessonsCreated: data.lessonsCreated }),
+          ...(data.emailsCreated !== undefined && { emailsCreated: data.emailsCreated }),
+          ...(data.socialPostsCreated !== undefined && { socialPostsCreated: data.socialPostsCreated }),
+          ...(data.researchTopics !== undefined && { researchTopics: data.researchTopics }),
+          ...(data.summary !== undefined && { summary: data.summary }),
+          ...(data.errorLog !== undefined && { errorLog: data.errorLog }),
+          ...(data.rawOutput !== undefined && { rawOutput: data.rawOutput }),
+        },
+      });
+      res.status(201).json({ success: true, data: run });
+    }
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors[0].message });
+      return;
+    }
+    logger.error(error, 'Agent report error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
 // All admin routes require auth + admin role
 adminRouter.use(requireAuth, requireAdmin);
+
+// ── GET /api/admin/agent/runs ────────────────────────────────────
+adminRouter.get('/agent/runs', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
+    const status = req.query.status as string | undefined;
+
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+
+    const runs = await prisma.agentRun.findMany({
+      where,
+      orderBy: { startedAt: 'desc' },
+      take: limit,
+      select: {
+        id: true,
+        status: true,
+        trigger: true,
+        startedAt: true,
+        completedAt: true,
+        durationSeconds: true,
+        qualityScore: true,
+        sourcesTotal: true,
+        sourcesTier1: true,
+        sourcesTier2: true,
+        sourcesTier3: true,
+        lessonsCreated: true,
+        emailsCreated: true,
+        socialPostsCreated: true,
+        researchTopics: true,
+        summary: true,
+        errorLog: true,
+        createdAt: true,
+      },
+    });
+
+    res.json({ success: true, data: runs });
+  } catch (error) {
+    logger.error(error, 'Agent runs list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/agent/runs/:id ───────────────────────────────
+adminRouter.get('/agent/runs/:id', async (req, res) => {
+  try {
+    const run = await prisma.agentRun.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!run) {
+      res.status(404).json({ error: 'Agent Run nicht gefunden' });
+      return;
+    }
+
+    res.json({ success: true, data: run });
+  } catch (error) {
+    logger.error(error, 'Agent run get error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/agent/status ─────────────────────────────────
+adminRouter.get('/agent/status', async (_req, res) => {
+  try {
+    const currentRun = await prisma.agentRun.findFirst({
+      where: { status: 'running' },
+      orderBy: { startedAt: 'desc' },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        isRunning: !!currentRun,
+        currentRun: currentRun || undefined,
+      },
+    });
+  } catch (error) {
+    logger.error(error, 'Agent status error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/agent/trigger ───────────────────────────────
+adminRouter.post('/agent/trigger', writeRateLimit, async (_req, res) => {
+  try {
+    // Check if already running
+    const existing = await prisma.agentRun.findFirst({
+      where: { status: 'running' },
+    });
+
+    if (existing) {
+      res.status(409).json({
+        error: 'Agent läuft bereits',
+        data: existing,
+      });
+      return;
+    }
+
+    // Create run record
+    const run = await prisma.agentRun.create({
+      data: {
+        status: 'running',
+        trigger: 'manual',
+      },
+    });
+
+    // Spawn agent-wrapper.sh as detached child process
+    const wrapperPath = '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent/scripts/agent-wrapper.sh';
+    const child = spawn('bash', [wrapperPath, run.id], {
+      cwd: '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent',
+      detached: true,
+      stdio: 'ignore',
+      env: {
+        ...process.env,
+        AGENT_RUN_ID: run.id,
+        AGENT_TRIGGER: 'manual',
+      },
+    });
+    child.unref();
+
+    res.json({
+      success: true,
+      data: { runId: run.id, message: 'Agent gestartet' },
+    });
+  } catch (error) {
+    logger.error(error, 'Agent trigger error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
 
 // ── Validation Schemas ──────────────────────────────────────────
 

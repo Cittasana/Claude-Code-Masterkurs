@@ -411,6 +411,41 @@ model Tool {
   @@map("tools")
 }
 
+// ── Admin CMS: Agent Runs (Monitoring) ──────────────────────────
+
+model AgentRun {
+  id              String   @id @default(cuid())
+  status          String   @default("running") // running | completed | failed
+  trigger         String   @default("cron")    // cron | manual
+  startedAt       DateTime @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  durationSeconds Int?     @map("duration_seconds")
+
+  // Quality Metrics
+  qualityScore    Float?   @map("quality_score")
+  sourcesTotal    Int      @default(0) @map("sources_total")
+  sourcesTier1    Int      @default(0) @map("sources_tier1")
+  sourcesTier2    Int      @default(0) @map("sources_tier2")
+  sourcesTier3    Int      @default(0) @map("sources_tier3")
+
+  // Content Output
+  lessonsCreated     Int      @default(0) @map("lessons_created")
+  emailsCreated      Int      @default(0) @map("emails_created")
+  socialPostsCreated Int      @default(0) @map("social_posts_created")
+  researchTopics     String[] @default([]) @map("research_topics")
+
+  // Raw Data
+  summary         String?  @db.Text
+  errorLog        String?  @db.Text @map("error_log")
+  rawOutput       String?  @db.Text @map("raw_output")
+
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@index([startedAt])
+  @@map("agent_runs")
+}
+
 // ── Admin CMS: Research History ────────────────────────────────
 
 model ResearchHistory {

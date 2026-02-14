@@ -63,6 +63,7 @@ const AdminLektionenPage = lazy(() => import('./pages/admin/AdminLektionenPage')
 const AdminLektionEditorPage = lazy(() => import('./pages/admin/AdminLektionEditorPage').then(m => ({ default: m.AdminLektionEditorPage })));
 const AdminToolsPage = lazy(() => import('./pages/admin/AdminToolsPage').then(m => ({ default: m.AdminToolsPage })));
 const AdminResearchPage = lazy(() => import('./pages/admin/AdminResearchPage').then(m => ({ default: m.AdminResearchPage })));
+const AdminAgentMonitorPage = lazy(() => import('./pages/admin/AdminAgentMonitorPage').then(m => ({ default: m.AdminAgentMonitorPage })));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -103,6 +104,7 @@ function App() {
             <Route path="lektionen/:id" element={<AdminLektionEditorPage />} />
             <Route path="tools" element={<AdminToolsPage />} />
             <Route path="research" element={<AdminResearchPage />} />
+            <Route path="agent" element={<AdminAgentMonitorPage />} />
           </Route>
 
           {/* Haupt-App mit Navigation & Footer */}

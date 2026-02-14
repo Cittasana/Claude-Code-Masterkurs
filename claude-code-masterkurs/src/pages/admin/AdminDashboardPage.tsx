@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 import type { AdminDashboardData } from '../../lib/api';
+import { lessons } from '../../data/lessons';
+import { allTools } from '../../data/tools';
 
 export function AdminDashboardPage() {
   const [data, setData] = useState<AdminDashboardData | null>(null);
@@ -85,7 +87,10 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Lektionen</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{data?.lektionenCount ?? 0}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{lessons.length}</p>
+              {(data?.lektionenCount ?? 0) > 0 && (
+                <p className="mt-1 text-xs text-gray-500">+{data?.lektionenCount} CMS</p>
+              )}
             </div>
             <div className="rounded-lg bg-purple-50 p-3">
               <BookOpen className="h-6 w-6 text-purple-600" />
@@ -97,7 +102,10 @@ export function AdminDashboardPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Tools</p>
-              <p className="mt-2 text-3xl font-bold text-gray-900">{data?.toolsCount ?? 0}</p>
+              <p className="mt-2 text-3xl font-bold text-gray-900">{allTools.length}</p>
+              {(data?.toolsCount ?? 0) > 0 && (
+                <p className="mt-1 text-xs text-gray-500">+{data?.toolsCount} CMS</p>
+              )}
             </div>
             <div className="rounded-lg bg-orange-50 p-3">
               <Wrench className="h-6 w-6 text-orange-600" />
@@ -127,7 +135,7 @@ export function AdminDashboardPage() {
             <BarChart3 className="h-8 w-8 text-purple-600" />
             <div>
               <p className="font-medium text-gray-900">Tools verwalten</p>
-              <p className="text-xs text-gray-600">{data?.toolsCount ?? 0} Tools</p>
+              <p className="text-xs text-gray-600">{allTools.length} Tools</p>
             </div>
           </Link>
           <Link
@@ -137,7 +145,7 @@ export function AdminDashboardPage() {
             <TrendingUp className="h-8 w-8 text-green-600" />
             <div>
               <p className="font-medium text-gray-900">Lektionen</p>
-              <p className="text-xs text-gray-600">{data?.lektionenCount ?? 0} Lektionen</p>
+              <p className="text-xs text-gray-600">{lessons.length} Lektionen</p>
             </div>
           </Link>
           <Link

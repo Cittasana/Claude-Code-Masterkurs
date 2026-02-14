@@ -198,6 +198,13 @@ adminRouter.get('/agent/runs/:id', async (req, res) => {
 // ── GET /api/admin/agent/status ─────────────────────────────────
 adminRouter.get('/agent/status', async (_req, res) => {
   try {
+    // Auto-expire runs stuck in 'running' for more than 30 minutes
+    const thirtyMinAgo = new Date(Date.now() - 30 * 60 * 1000);
+    await prisma.agentRun.updateMany({
+      where: { status: 'running', startedAt: { lt: thirtyMinAgo } },
+      data: { status: 'failed', errorLog: 'Auto-expired: run exceeded 30 minute timeout' },
+    });
+
     const currentRun = await prisma.agentRun.findFirst({
       where: { status: 'running' },
       orderBy: { startedAt: 'desc' },

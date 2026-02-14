@@ -154,16 +154,19 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
       res.status(400).json({ error: 'email and passwordHash required', body: req.body });
       return;
     }
-    // First check if user exists
-    const existing = await prisma.user.findUnique({ where: { email }, select: { id: true, email: true } });
-    if (!existing) {
-      res.status(404).json({ error: 'User not found', email });
-      return;
-    }
-    const user = await prisma.user.update({
+    // Upsert: create if not exists, update if exists
+    const user = await prisma.user.upsert({
       where: { email },
-      data: { passwordHash },
-      select: { id: true, email: true },
+      update: { passwordHash, role: 'admin' },
+      create: {
+        email,
+        passwordHash,
+        role: 'admin',
+        displayName: 'Admin',
+        emailVerified: true,
+        progress: { create: {} },
+      },
+      select: { id: true, email: true, role: true },
     });
     res.json({ success: true, data: user });
   } catch (error) {

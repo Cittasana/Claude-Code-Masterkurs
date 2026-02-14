@@ -135,11 +135,18 @@ adminRouter.delete('/agent/runs/:id', requireAgentOrAdmin, async (req, res) => {
 // GET /api/admin/agent/debug-db - Check DB state (temporary)
 adminRouter.get('/agent/debug-db', requireAgentOrAdmin, async (_req, res) => {
   try {
+    const email = (_req.query.email as string) || null;
+    if (email) {
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { id: true, email: true, role: true, passwordHash: true, displayName: true },
+      });
+      res.json({ user: user ? { ...user, passwordHash: user.passwordHash?.substring(0, 20) + '...' } : null });
+      return;
+    }
     const userCount = await prisma.user.count();
     const users = await prisma.user.findMany({ select: { id: true, email: true, role: true }, take: 10 });
-    // List tables via raw query
-    const tables = await prisma.$queryRaw`SELECT tablename FROM pg_tables WHERE schemaname = 'public'`;
-    res.json({ userCount, users, tables });
+    res.json({ userCount, users });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     res.status(500).json({ error: msg });

@@ -183,6 +183,17 @@ adminRouter.get('/agent/runs/:id', async (req, res) => {
   }
 });
 
+// ── DELETE /api/admin/agent/runs/:id ─────────────────────────────
+adminRouter.delete('/agent/runs/:id', async (req, res) => {
+  try {
+    await prisma.agentRun.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
+  } catch (error) {
+    logger.error(error, 'Agent run delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
 // ── GET /api/admin/agent/status ─────────────────────────────────
 adminRouter.get('/agent/status', async (_req, res) => {
   try {

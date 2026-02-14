@@ -119,6 +119,18 @@ adminRouter.post('/agent/report', requireAgentOrAdmin, async (req, res) => {
   }
 });
 
+// DELETE /api/admin/agent/runs/:id - Delete an agent run (agent key or admin)
+adminRouter.delete('/agent/runs/:id', requireAgentOrAdmin, async (req, res) => {
+  try {
+    const id = req.params.id as string;
+    await prisma.agentRun.delete({ where: { id } });
+    res.json({ success: true });
+  } catch (error) {
+    logger.error(error, 'Agent run delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
 // All admin routes require auth + admin role
 adminRouter.use(requireAuth, requireAdmin);
 
@@ -179,17 +191,6 @@ adminRouter.get('/agent/runs/:id', async (req, res) => {
     res.json({ success: true, data: run });
   } catch (error) {
     logger.error(error, 'Agent run get error');
-    res.status(500).json({ error: 'Interner Server-Fehler' });
-  }
-});
-
-// ── DELETE /api/admin/agent/runs/:id ─────────────────────────────
-adminRouter.delete('/agent/runs/:id', async (req, res) => {
-  try {
-    await prisma.agentRun.delete({ where: { id: req.params.id } });
-    res.json({ success: true });
-  } catch (error) {
-    logger.error(error, 'Agent run delete error');
     res.status(500).json({ error: 'Interner Server-Fehler' });
   }
 });

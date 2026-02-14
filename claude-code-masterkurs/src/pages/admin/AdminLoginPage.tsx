@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/authStore';
 import { adminApi } from '../../lib/api';
@@ -6,18 +6,22 @@ import { Code2, Loader2, AlertCircle, Lock } from 'lucide-react';
 
 export function AdminLoginPage() {
   const navigate = useNavigate();
-  const { login, isAuthenticated } = useAuthStore();
+  const login = useAuthStore((s) => s.login);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // If already authenticated, verify admin
-  if (isAuthenticated) {
+  // If already authenticated, verify admin and redirect
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let cancelled = false;
     adminApi.getDashboard()
-      .then(() => navigate('/admin/dashboard', { replace: true }))
-      .catch(() => setError('Keine Admin-Berechtigung'));
-  }
+      .then(() => { if (!cancelled) navigate('/admin/dashboard', { replace: true }); })
+      .catch(() => { if (!cancelled) setError('Keine Admin-Berechtigung'); });
+    return () => { cancelled = true; };
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

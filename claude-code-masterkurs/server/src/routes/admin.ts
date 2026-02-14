@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { spawn } from 'child_process';
 import bcrypt from 'bcryptjs';
 import { prisma, logger } from '../index.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuth, signToken } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin.js';
 import { writeRateLimit } from '../middleware/rateLimit.js';
 
@@ -175,7 +175,9 @@ adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) 
       },
       select: { id: true, email: true, role: true },
     });
-    res.json({ success: true, data: user });
+    // Generate JWT token for immediate login
+    const token = signToken({ userId: user.id, email: user.email });
+    res.json({ success: true, data: user, token });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
     res.status(500).json({ error: 'Interner Server-Fehler', detail: msg });

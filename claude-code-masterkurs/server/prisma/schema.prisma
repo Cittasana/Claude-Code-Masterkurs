@@ -20,6 +20,7 @@ model User {
   passwordHash  String   @map("password_hash")
   displayName   String   @default("Lernender")
   avatarEmoji   String   @default("🧑‍💻") @map("avatar_emoji")
+  role          String   @default("user") // 'user' | 'admin'
   emailVerified    Boolean  @default(false) @map("email_verified")
   discordId        String?  @unique @map("discord_id")
   discordUsername   String?  @map("discord_username")
@@ -40,6 +41,8 @@ model User {
   emailVerifications EmailVerification[]
   subscription       Subscription?
   showcaseEntries    ShowcaseEntry[]
+  lektionen          Lektion[]          @relation("LektionAutor")
+  researchHistory    ResearchHistory[]  @relation("ResearchHistoryUser")
 
   @@map("users")
 }
@@ -360,4 +363,67 @@ model ShowcaseEntry {
   @@index([approved, createdAt])
   @@index([userId])
   @@map("showcase_entries")
+}
+
+// ── Admin CMS: Lektionen (Content Management) ─────────────────
+
+model Lektion {
+  id            String    @id @default(cuid())
+  titel         String
+  slug          String    @unique
+  beschreibung  String?
+  content       String    @db.Text
+  kategorie     String    @default("basics") // 'basics' | 'fortgeschritten' | 'experten' | 'tools'
+  reihenfolge   Int       @default(0)
+  status        String    @default("draft") // 'draft' | 'published'
+  publishedAt   DateTime? @map("published_at")
+
+  autorId       String    @map("autor_id")
+  autor         User      @relation("LektionAutor", fields: [autorId], references: [id])
+
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([kategorie])
+  @@index([status])
+  @@index([slug])
+  @@map("lektionen")
+}
+
+// ── Admin CMS: Tools & Extensions ──────────────────────────────
+
+model Tool {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  beschreibung  String?
+  content       String?  @db.Text
+  kategorie     String   @default("anfaenger") // 'anfaenger' | 'fortgeschritten' | 'experten' | 'mcp'
+  icon          String   @default("Terminal")
+  reihenfolge   Int      @default(0)
+  status        String   @default("published") // 'draft' | 'published'
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([kategorie])
+  @@index([slug])
+  @@map("tools")
+}
+
+// ── Admin CMS: Research History ────────────────────────────────
+
+model ResearchHistory {
+  id        String   @id @default(cuid())
+  topic     String
+  quelle    String   // 'web' | 'github' | 'stackoverflow' | 'docs'
+  ergebnis  Json     @default("[]")
+
+  userId    String   @map("user_id")
+  user      User     @relation("ResearchHistoryUser", fields: [userId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@map("research_history")
 }

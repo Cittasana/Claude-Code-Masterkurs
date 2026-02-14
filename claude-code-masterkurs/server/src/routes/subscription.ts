@@ -11,9 +11,8 @@ import { canAccessLesson, FREE_LESSON_LIMIT } from '../lib/lessons-config.js';
 export const subscriptionRouter = Router();
 
 // ── Stripe Initialization ────────────────────────────────────
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2026-01-28.clover',
-});
+const stripeKey = process.env.STRIPE_SECRET_KEY || 'sk_test_placeholder';
+const stripe = new Stripe(stripeKey, { apiVersion: '2026-01-28.clover' });
 
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
 

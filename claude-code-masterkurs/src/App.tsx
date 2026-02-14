@@ -56,6 +56,14 @@ const VergleichView = lazy(() => import('./pages/VergleichView'));
 const GlossarView = lazy(() => import('./pages/GlossarView'));
 const PromptStudioView = lazy(() => import('./pages/PromptStudioView'));
 
+// Admin CMS (lazy loaded)
+import { AdminLayout } from './components/admin/AdminLayout';
+const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
+const AdminLektionenPage = lazy(() => import('./pages/admin/AdminLektionenPage').then(m => ({ default: m.AdminLektionenPage })));
+const AdminLektionEditorPage = lazy(() => import('./pages/admin/AdminLektionEditorPage').then(m => ({ default: m.AdminLektionEditorPage })));
+const AdminToolsPage = lazy(() => import('./pages/admin/AdminToolsPage').then(m => ({ default: m.AdminToolsPage })));
+const AdminResearchPage = lazy(() => import('./pages/admin/AdminResearchPage').then(m => ({ default: m.AdminResearchPage })));
+
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
   const logEvent = useAnalyticsStore((state) => state.logEvent);
@@ -84,59 +92,71 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-apple-bg font-sans">
-        <Navigation />
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-          <Suspense fallback={<div className="flex justify-center py-20"><LoadingSpinner /></div>}>
-            <Routes>
-              <Route index element={<LandingView />} />
-              <Route path="/dashboard" element={<DashboardView />} />
-              <Route path="/lesson/:id" element={<LessonView />} />
-              <Route path="/certificate" element={<CertificateView />} />
-              <Route path="/dashboard" element={<DashboardView />} />
-              <Route path="/features" element={<FeatureReferenceView />} />
-              <Route path="/report" element={<ProgressReportView />} />
-              <Route path="/playground" element={<PlaygroundView />} />
-              <Route path="/patterns" element={<CommunityPatternsView />} />
-              <Route path="/review" element={<SpacedRepetitionView />} />
-              <Route path="/forum" element={<ForumView />} />
-              <Route path="/forum/thread/:id" element={<ForumThreadView />} />
-              <Route path="/challenges" element={<ChallengesView />} />
-              <Route path="/projects" element={<ProjectsView />} />
-              <Route path="/projects/:id" element={<ProjectsView />} />
-              <Route path="/showcase" element={<ShowcaseView />} />
-              <Route path="/templates" element={<TemplatesView />} />
-              <Route path="/templates/:id" element={<TemplateDetailView />} />
-              <Route path="/analytics" element={<LearningAnalyticsView />} />
-              <Route path="/leaderboard" element={<LeaderboardView />} />
-              <Route path="/docs" element={<DocsView />} />
-              <Route path="/resources" element={<Navigate to="/docs" replace />} />
-              <Route path="/login" element={<LoginView />} />
-              <Route path="/register" element={<RegisterView />} />
-              <Route path="/profile" element={<ProfileView />} />
-              <Route path="/password-reset" element={<PasswordResetRequestView />} />
-              <Route path="/password-reset/:token" element={<PasswordResetConfirmView />} />
-              <Route path="/verify-email/:token" element={<EmailVerifyView />} />
-              <Route path="/subscription/success" element={<SubscriptionSuccessView />} />
-              <Route path="/start-kostenlos" element={<StartKostenlosView />} />
-              <Route path="/freelancer" element={<FreelancerTrackView />} />
-              <Route path="/freelancer/:id" element={<FreelancerModuleView />} />
-              <Route path="/tools" element={<ToolsOverviewView />} />
-              <Route path="/tools/:id" element={<ToolsLessonView />} />
-              <Route path="/was-ist-claude-code" element={<WasIstClaudeCodeView />} />
-              <Route path="/vergleich" element={<VergleichView />} />
-              <Route path="/glossar" element={<GlossarView />} />
-              <Route path="/prompt-studio" element={<PromptStudioView />} />
-              <Route path="/newsletter" element={<NewsletterView />} />
-              <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
-              <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />
-              <Route path="/impressum" element={<ImpressumView />} />
-              <Route path="/datenschutz" element={<DatenschutzView />} />
-              <Route path="/nutzungsbedingungen" element={<NutzungsbedingungenView />} />
-              <Route path="*" element={<NotFoundPage />} />
-            </Routes>
-          </Suspense>
-        </main>
+      <Suspense fallback={<div className="flex justify-center py-20"><LoadingSpinner /></div>}>
+        <Routes>
+          {/* Admin CMS - eigenes Full-Screen Layout */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboardPage />} />
+            <Route path="lektionen" element={<AdminLektionenPage />} />
+            <Route path="lektionen/new" element={<AdminLektionEditorPage />} />
+            <Route path="lektionen/:id" element={<AdminLektionEditorPage />} />
+            <Route path="tools" element={<AdminToolsPage />} />
+            <Route path="research" element={<AdminResearchPage />} />
+          </Route>
+
+          {/* Haupt-App mit Navigation & Footer */}
+          <Route path="*" element={
+            <div className="min-h-screen bg-apple-bg font-sans">
+              <Navigation />
+              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+                <Routes>
+                  <Route index element={<LandingView />} />
+                  <Route path="/dashboard" element={<DashboardView />} />
+                  <Route path="/lesson/:id" element={<LessonView />} />
+                  <Route path="/certificate" element={<CertificateView />} />
+                  <Route path="/features" element={<FeatureReferenceView />} />
+                  <Route path="/report" element={<ProgressReportView />} />
+                  <Route path="/playground" element={<PlaygroundView />} />
+                  <Route path="/patterns" element={<CommunityPatternsView />} />
+                  <Route path="/review" element={<SpacedRepetitionView />} />
+                  <Route path="/forum" element={<ForumView />} />
+                  <Route path="/forum/thread/:id" element={<ForumThreadView />} />
+                  <Route path="/challenges" element={<ChallengesView />} />
+                  <Route path="/projects" element={<ProjectsView />} />
+                  <Route path="/projects/:id" element={<ProjectsView />} />
+                  <Route path="/showcase" element={<ShowcaseView />} />
+                  <Route path="/templates" element={<TemplatesView />} />
+                  <Route path="/templates/:id" element={<TemplateDetailView />} />
+                  <Route path="/analytics" element={<LearningAnalyticsView />} />
+                  <Route path="/leaderboard" element={<LeaderboardView />} />
+                  <Route path="/docs" element={<DocsView />} />
+                  <Route path="/resources" element={<Navigate to="/docs" replace />} />
+                  <Route path="/login" element={<LoginView />} />
+                  <Route path="/register" element={<RegisterView />} />
+                  <Route path="/profile" element={<ProfileView />} />
+                  <Route path="/password-reset" element={<PasswordResetRequestView />} />
+                  <Route path="/password-reset/:token" element={<PasswordResetConfirmView />} />
+                  <Route path="/verify-email/:token" element={<EmailVerifyView />} />
+                  <Route path="/subscription/success" element={<SubscriptionSuccessView />} />
+                  <Route path="/start-kostenlos" element={<StartKostenlosView />} />
+                  <Route path="/freelancer" element={<FreelancerTrackView />} />
+                  <Route path="/freelancer/:id" element={<FreelancerModuleView />} />
+                  <Route path="/tools" element={<ToolsOverviewView />} />
+                  <Route path="/tools/:id" element={<ToolsLessonView />} />
+                  <Route path="/was-ist-claude-code" element={<WasIstClaudeCodeView />} />
+                  <Route path="/vergleich" element={<VergleichView />} />
+                  <Route path="/glossar" element={<GlossarView />} />
+                  <Route path="/prompt-studio" element={<PromptStudioView />} />
+                  <Route path="/newsletter" element={<NewsletterView />} />
+                  <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
+                  <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />
+                  <Route path="/impressum" element={<ImpressumView />} />
+                  <Route path="/datenschutz" element={<DatenschutzView />} />
+                  <Route path="/nutzungsbedingungen" element={<NutzungsbedingungenView />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </main>
         <footer className="border-t border-apple-border mt-8 sm:mt-12 py-5 sm:py-6" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {/* Newsletter in Footer */}
@@ -157,8 +177,11 @@ function App() {
             </div>
           </div>
         </footer>
-        <CookieConsent />
-      </div>
+              <CookieConsent />
+            </div>
+          } />
+        </Routes>
+      </Suspense>
     </Router>
   );
 }

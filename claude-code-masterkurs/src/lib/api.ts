@@ -410,6 +410,139 @@ export const showcaseApi = {
   }) => api.post<Record<string, unknown>>('/api/showcase', data),
 };
 
+// ── Admin API ──────────────────────────────────────────────
+
+export interface AdminDashboardData {
+  totalUsers: number;
+  activeSubscriptions: number;
+  lektionenCount: number;
+  toolsCount: number;
+}
+
+export interface AdminLektion {
+  id: string;
+  titel: string;
+  slug: string;
+  beschreibung: string | null;
+  content: string;
+  kategorie: string;
+  reihenfolge: number;
+  status: string;
+  publishedAt: string | null;
+  autorId: string;
+  createdAt: string;
+  updatedAt: string;
+  autor?: { displayName: string; email: string };
+}
+
+export interface AdminTool {
+  id: string;
+  name: string;
+  slug: string;
+  beschreibung: string | null;
+  content: string | null;
+  kategorie: string;
+  icon: string;
+  reihenfolge: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ResearchResult {
+  title: string;
+  url: string;
+  excerpt: string;
+  source: string;
+  relevance: number;
+}
+
+export interface ResearchHistoryEntry {
+  id: string;
+  topic: string;
+  quelle: string;
+  ergebnis: unknown;
+  createdAt: string;
+  user?: { displayName: string };
+}
+
+export const adminApi = {
+  getDashboard: () =>
+    api.get<{ success: boolean; data: AdminDashboardData }>('/api/admin/dashboard'),
+
+  getLektionen: (params?: { kategorie?: string; status?: string; search?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.kategorie && params.kategorie !== 'all') search.set('kategorie', params.kategorie);
+    if (params?.status && params.status !== 'all') search.set('status', params.status);
+    if (params?.search) search.set('search', params.search);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminLektion[]; count: number }>(
+      `/api/admin/lektionen${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getLektion: (id: string) =>
+    api.get<{ success: boolean; data: AdminLektion }>(`/api/admin/lektionen/${id}`),
+
+  createLektion: (data: {
+    titel: string;
+    slug: string;
+    beschreibung?: string;
+    content: string;
+    kategorie?: string;
+    reihenfolge?: number;
+    status?: string;
+  }) => api.post<{ success: boolean; data: AdminLektion }>('/api/admin/lektionen', data),
+
+  updateLektion: (id: string, data: Partial<{
+    titel: string;
+    slug: string;
+    beschreibung: string;
+    content: string;
+    kategorie: string;
+    reihenfolge: number;
+    status: string;
+  }>) => api.put<{ success: boolean; data: AdminLektion }>(`/api/admin/lektionen/${id}`, data),
+
+  deleteLektion: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/lektionen/${id}`),
+
+  getTools: (params?: { kategorie?: string; search?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.kategorie && params.kategorie !== 'all') search.set('kategorie', params.kategorie);
+    if (params?.search) search.set('search', params.search);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminTool[]; count: number }>(
+      `/api/admin/tools${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createTool: (data: {
+    name: string;
+    slug: string;
+    beschreibung?: string;
+    content?: string;
+    kategorie?: string;
+    icon?: string;
+    reihenfolge?: number;
+    status?: string;
+  }) => api.post<{ success: boolean; data: AdminTool }>('/api/admin/tools', data),
+
+  deleteTool: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/tools/${id}`),
+
+  triggerResearch: (topic: string, quelle: string) =>
+    api.post<{ success: boolean; data: { results: ResearchResult[] } }>(
+      '/api/admin/research/trigger',
+      { topic, quelle },
+    ),
+
+  getResearchHistory: (limit?: number) =>
+    api.get<{ success: boolean; data: ResearchHistoryEntry[] }>(
+      `/api/admin/research/history${limit ? `?limit=${limit}` : ''}`,
+    ),
+};
+
 // ── Health Check ────────────────────────────────────────────
 
 export const healthApi = {

@@ -2,9 +2,8 @@ import { Router } from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { z } from 'zod';
 import { spawn } from 'child_process';
-import bcrypt from 'bcryptjs';
 import { prisma, logger } from '../index.js';
-import { requireAuth, signToken } from '../middleware/auth.js';
+import { requireAuth } from '../middleware/auth.js';
 import { requireAdmin } from '../middleware/admin.js';
 import { writeRateLimit } from '../middleware/rateLimit.js';
 
@@ -129,58 +128,6 @@ adminRouter.delete('/agent/runs/:id', requireAgentOrAdmin, async (req, res) => {
   } catch (error) {
     logger.error(error, 'Agent run delete error');
     res.status(500).json({ error: 'Interner Server-Fehler' });
-  }
-});
-
-// GET /api/admin/agent/debug-db - Check DB state (temporary)
-adminRouter.get('/agent/debug-db', requireAgentOrAdmin, async (_req, res) => {
-  try {
-    const email = (_req.query.email as string) || null;
-    if (email) {
-      const user = await prisma.user.findUnique({
-        where: { email },
-        select: { id: true, email: true, role: true, passwordHash: true, displayName: true },
-      });
-      res.json({ user: user ? { ...user, passwordHash: user.passwordHash?.substring(0, 20) + '...' } : null });
-      return;
-    }
-    const userCount = await prisma.user.count();
-    const users = await prisma.user.findMany({ select: { id: true, email: true, role: true }, take: 10 });
-    res.json({ userCount, users });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ error: msg });
-  }
-});
-
-// POST /api/admin/agent/reset-password - Reset admin password (agent key only)
-adminRouter.post('/agent/reset-password', requireAgentOrAdmin, async (req, res) => {
-  try {
-    const { email, passwordHash } = req.body as { email?: string; passwordHash?: string };
-    if (!email || !passwordHash) {
-      res.status(400).json({ error: 'email and passwordHash required', body: req.body });
-      return;
-    }
-    // Upsert: create if not exists, update if exists
-    const user = await prisma.user.upsert({
-      where: { email },
-      update: { passwordHash, role: 'admin' },
-      create: {
-        email,
-        passwordHash,
-        role: 'admin',
-        displayName: 'Admin',
-        emailVerified: true,
-        progress: { create: {} },
-      },
-      select: { id: true, email: true, role: true },
-    });
-    // Generate JWT token for immediate login
-    const token = signToken({ userId: user.id, email: user.email });
-    res.json({ success: true, data: user, token });
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error);
-    res.status(500).json({ error: 'Interner Server-Fehler', detail: msg });
   }
 });
 

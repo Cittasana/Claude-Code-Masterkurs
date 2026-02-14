@@ -141,13 +141,13 @@ export function AdminDashboardPage() {
             </div>
           </Link>
           <Link
-            to="/admin/research"
+            to="/admin/agent"
             className="flex items-center gap-3 rounded-lg border-2 border-dashed border-gray-200 p-4 text-left transition-colors hover:border-orange-500 hover:bg-orange-50"
           >
             <Sparkles className="h-8 w-8 text-orange-600" />
             <div>
-              <p className="font-medium text-gray-900">Research Agent</p>
-              <p className="text-xs text-gray-600">Recherche starten</p>
+              <p className="font-medium text-gray-900">Agent Monitor</p>
+              <p className="text-xs text-gray-600">Agent überwachen</p>
             </div>
           </Link>
         </div>

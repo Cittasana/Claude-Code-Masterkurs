@@ -578,6 +578,37 @@ export function AdminAgentMonitorPage() {
         </div>
       </div>
 
+      {/* Research Insights */}
+      {(() => {
+        const allTopics = runs.flatMap((r) =>
+          r.researchTopics.map((topic) => ({ topic, runId: r.id, date: r.startedAt }))
+        );
+        if (allTopics.length === 0) return null;
+        return (
+          <div className="rounded-xl border bg-white p-6 shadow-sm">
+            <h3 className="mb-4 text-lg font-bold text-gray-900">Research Insights</h3>
+            <p className="mb-3 text-sm text-gray-600">
+              Aggregierte Research-Topics aus allen {runs.filter(r => r.researchTopics.length > 0).length} Runs mit Recherche-Daten
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {[...new Set(allTopics.map(t => t.topic))].slice(0, 30).map((topic, i) => (
+                <span
+                  key={i}
+                  className="rounded-full bg-purple-50 px-3 py-1.5 text-xs font-medium text-purple-700 border border-purple-100"
+                >
+                  {topic}
+                </span>
+              ))}
+            </div>
+            {allTopics.length > 30 && (
+              <p className="mt-3 text-xs text-gray-500">
+                +{allTopics.length - 30} weitere Topics
+              </p>
+            )}
+          </div>
+        );
+      })()}
+
       {/* Run History Table */}
       <div className="rounded-xl border bg-white shadow-sm">
         <div className="border-b px-6 py-4">

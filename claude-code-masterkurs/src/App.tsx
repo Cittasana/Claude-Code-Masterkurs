@@ -62,8 +62,17 @@ const AdminDashboardPage = lazy(() => import('./pages/admin/AdminDashboardPage')
 const AdminLektionenPage = lazy(() => import('./pages/admin/AdminLektionenPage').then(m => ({ default: m.AdminLektionenPage })));
 const AdminLektionEditorPage = lazy(() => import('./pages/admin/AdminLektionEditorPage').then(m => ({ default: m.AdminLektionEditorPage })));
 const AdminToolsPage = lazy(() => import('./pages/admin/AdminToolsPage').then(m => ({ default: m.AdminToolsPage })));
-const AdminResearchPage = lazy(() => import('./pages/admin/AdminResearchPage').then(m => ({ default: m.AdminResearchPage })));
 const AdminAgentMonitorPage = lazy(() => import('./pages/admin/AdminAgentMonitorPage').then(m => ({ default: m.AdminAgentMonitorPage })));
+const AdminLoginPage = lazy(() => import('./pages/admin/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
+const AdminUsersPage = lazy(() => import('./pages/admin/AdminUsersPage').then(m => ({ default: m.AdminUsersPage })));
+const AdminSubscriptionsPage = lazy(() => import('./pages/admin/AdminSubscriptionsPage').then(m => ({ default: m.AdminSubscriptionsPage })));
+const AdminPromoCodesPage = lazy(() => import('./pages/admin/AdminPromoCodesPage').then(m => ({ default: m.AdminPromoCodesPage })));
+const AdminForumPage = lazy(() => import('./pages/admin/AdminForumPage').then(m => ({ default: m.AdminForumPage })));
+const AdminShowcasePage = lazy(() => import('./pages/admin/AdminShowcasePage').then(m => ({ default: m.AdminShowcasePage })));
+const AdminPatternsPage = lazy(() => import('./pages/admin/AdminPatternsPage').then(m => ({ default: m.AdminPatternsPage })));
+const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })));
+const AdminNewsletterPage = lazy(() => import('./pages/admin/AdminNewsletterPage').then(m => ({ default: m.AdminNewsletterPage })));
+const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -95,6 +104,9 @@ function App() {
     <Router>
       <Suspense fallback={<div className="flex justify-center py-20"><LoadingSpinner /></div>}>
         <Routes>
+          {/* Admin Login - outside AdminLayout (no auth required) */}
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+
           {/* Admin CMS - eigenes Full-Screen Layout */}
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
@@ -103,8 +115,16 @@ function App() {
             <Route path="lektionen/new" element={<AdminLektionEditorPage />} />
             <Route path="lektionen/:id" element={<AdminLektionEditorPage />} />
             <Route path="tools" element={<AdminToolsPage />} />
-            <Route path="research" element={<AdminResearchPage />} />
             <Route path="agent" element={<AdminAgentMonitorPage />} />
+            <Route path="users" element={<AdminUsersPage />} />
+            <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+            <Route path="promo-codes" element={<AdminPromoCodesPage />} />
+            <Route path="forum" element={<AdminForumPage />} />
+            <Route path="showcase" element={<AdminShowcasePage />} />
+            <Route path="patterns" element={<AdminPatternsPage />} />
+            <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="newsletter" element={<AdminNewsletterPage />} />
+            <Route path="settings" element={<AdminSettingsPage />} />
           </Route>
 
           {/* Haupt-App mit Navigation & Footer */}

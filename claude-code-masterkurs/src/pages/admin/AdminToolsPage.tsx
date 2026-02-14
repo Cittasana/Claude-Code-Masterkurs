@@ -6,6 +6,7 @@ import {
   Terminal,
   Loader2,
   AlertCircle,
+  Pencil,
 } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 import type { AdminTool } from '../../lib/api';
@@ -26,6 +27,7 @@ export function AdminToolsPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [deleting, setDeleting] = useState<string | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingTool, setEditingTool] = useState<AdminTool | null>(null);
 
   const loadTools = useCallback(async () => {
     try {
@@ -172,6 +174,13 @@ export function AdminToolsPage() {
 
                 <div className="flex items-center gap-2 opacity-0 transition-opacity group-hover:opacity-100">
                   <button
+                    onClick={() => setEditingTool(tool)}
+                    className="flex items-center gap-2 rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-100"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                    Bearbeiten
+                  </button>
+                  <button
                     onClick={() => handleDelete(tool.id)}
                     disabled={deleting === tool.id}
                     className="flex items-center gap-2 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50"
@@ -189,6 +198,17 @@ export function AdminToolsPage() {
       <div className="rounded-xl border bg-white p-4 shadow-sm">
         <p className="text-sm text-gray-600"><span className="font-semibold text-gray-900">{tools.length} Tools</span> insgesamt</p>
       </div>
+
+      {editingTool && (
+        <EditToolModal
+          tool={editingTool}
+          onSaved={(updated) => {
+            setTools((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+            setEditingTool(null);
+          }}
+          onCancel={() => setEditingTool(null)}
+        />
+      )}
     </div>
   );
 }
@@ -279,6 +299,92 @@ function CreateToolForm({ onCreated, onCancel }: { onCreated: (tool: AdminTool) 
           </button>
         </div>
       </form>
+    </div>
+  );
+}
+
+function EditToolModal({ tool, onSaved, onCancel }: { tool: AdminTool; onSaved: (tool: AdminTool) => void; onCancel: () => void }) {
+  const [name, setName] = useState(tool.name);
+  const [slug, setSlug] = useState(tool.slug);
+  const [beschreibung, setBeschreibung] = useState(tool.beschreibung || '');
+  const [kategorie, setKategorie] = useState(tool.kategorie);
+  const [reihenfolge, setReihenfolge] = useState(tool.reihenfolge);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    setError(null);
+    try {
+      const res = await adminApi.updateTool(tool.id, {
+        name,
+        slug,
+        beschreibung: beschreibung || undefined,
+        kategorie,
+        reihenfolge,
+      });
+      onSaved(res.data);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Speichern fehlgeschlagen');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onCancel}>
+      <div className="w-full max-w-lg rounded-xl border bg-white p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
+        <h2 className="mb-4 text-lg font-bold text-gray-900">Tool bearbeiten</h2>
+        {error && (
+          <div className="mb-4 flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+            <AlertCircle className="h-4 w-4" />{error}
+          </div>
+        )}
+        <form onSubmit={handleSubmit} className="grid gap-4 md:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
+            <input type="text" value={name} onChange={(e) => setName(e.target.value)} required
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Slug</label>
+            <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} required
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          </div>
+          <div className="md:col-span-2">
+            <label className="mb-1 block text-sm font-medium text-gray-700">Beschreibung</label>
+            <input type="text" value={beschreibung} onChange={(e) => setBeschreibung(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Kategorie</label>
+            <select value={kategorie} onChange={(e) => setKategorie(e.target.value)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+              <option value="anfaenger">Anfänger</option>
+              <option value="fortgeschritten">Fortgeschritten</option>
+              <option value="experten">Experten</option>
+              <option value="mcp">MCP Servers</option>
+            </select>
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-700">Reihenfolge</label>
+            <input type="number" value={reihenfolge} onChange={(e) => setReihenfolge(parseInt(e.target.value) || 0)}
+              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20" />
+          </div>
+          <div className="flex gap-2 md:col-span-2">
+            <button type="submit" disabled={saving || !name}
+              className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Pencil className="h-4 w-4" />}
+              Speichern
+            </button>
+            <button type="button" onClick={onCancel}
+              className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+              Abbrechen
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

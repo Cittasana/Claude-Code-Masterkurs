@@ -576,3 +576,427 @@ adminRouter.get('/research/history', async (req, res) => {
     res.status(500).json({ error: 'Interner Server-Fehler' });
   }
 });
+
+// ── GET /api/admin/users ────────────────────────────────────────
+adminRouter.get('/users', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = Math.min(parseInt(req.query.limit as string) || 20, 100);
+    const search = req.query.search as string | undefined;
+    const role = req.query.role as string | undefined;
+
+    const where: Record<string, unknown> = {};
+    if (role && role !== 'all') where.role = role;
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: 'insensitive' } },
+        { displayName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * limit,
+        take: limit,
+        select: {
+          id: true,
+          email: true,
+          displayName: true,
+          avatarEmoji: true,
+          role: true,
+          emailVerified: true,
+          createdAt: true,
+          subscription: { select: { status: true, isLifetime: true } },
+        },
+      }),
+      prisma.user.count({ where }),
+    ]);
+
+    res.json({ success: true, data: users, total, page, limit });
+  } catch (error) {
+    logger.error(error, 'Admin users list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/users/:id ────────────────────────────────────
+adminRouter.get('/users/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: req.params.id as string },
+      select: {
+        id: true,
+        email: true,
+        displayName: true,
+        avatarEmoji: true,
+        role: true,
+        emailVerified: true,
+        createdAt: true,
+        updatedAt: true,
+        subscription: true,
+        progress: true,
+      },
+    });
+    if (!user) { res.status(404).json({ error: 'User nicht gefunden' }); return; }
+    res.json({ success: true, data: user });
+  } catch (error) {
+    logger.error(error, 'Admin user get error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/users/:id/role ───────────────────────────────
+adminRouter.put('/users/:id/role', writeRateLimit, async (req, res) => {
+  try {
+    const { role } = z.object({ role: z.enum(['user', 'admin']) }).parse(req.body);
+    const user = await prisma.user.update({
+      where: { id: req.params.id as string },
+      data: { role },
+      select: { id: true, email: true, displayName: true, role: true },
+    });
+    res.json({ success: true, data: user });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin user role update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/users/:id ─────────────────────────────────
+adminRouter.delete('/users/:id', async (req, res) => {
+  try {
+    await prisma.user.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'User gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin user delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/subscriptions ────────────────────────────────
+adminRouter.get('/subscriptions', async (req, res) => {
+  try {
+    const status = req.query.status as string | undefined;
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+
+    const subscriptions = await prisma.subscription.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+      include: {
+        user: { select: { id: true, email: true, displayName: true } },
+        promoCode: { select: { code: true } },
+      },
+    });
+    res.json({ success: true, data: subscriptions });
+  } catch (error) {
+    logger.error(error, 'Admin subscriptions list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/subscriptions/stats ──────────────────────────
+adminRouter.get('/subscriptions/stats', async (req, res) => {
+  try {
+    const [active, lifetime, trialing, canceled, total] = await Promise.all([
+      prisma.subscription.count({ where: { status: 'active' } }),
+      prisma.subscription.count({ where: { isLifetime: true } }),
+      prisma.subscription.count({ where: { status: 'trialing' } }),
+      prisma.subscription.count({ where: { status: 'canceled' } }),
+      prisma.subscription.count(),
+    ]);
+    res.json({ success: true, data: { active, lifetime, trialing, canceled, total } });
+  } catch (error) {
+    logger.error(error, 'Admin subscriptions stats error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/promo-codes ──────────────────────────────────
+adminRouter.get('/promo-codes', async (req, res) => {
+  try {
+    const codes = await prisma.promoCode.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { _count: { select: { subscriptions: true } } },
+    });
+    res.json({ success: true, data: codes });
+  } catch (error) {
+    logger.error(error, 'Admin promo codes list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/promo-codes ─────────────────────────────────
+adminRouter.post('/promo-codes', writeRateLimit, async (req, res) => {
+  try {
+    const data = z.object({
+      code: z.string().min(1),
+      description: z.string().optional(),
+      durationMonths: z.number().int().min(1).default(6),
+      maxUses: z.number().int().min(1).nullable().default(null),
+      active: z.boolean().default(true),
+      expiresAt: z.string().datetime().optional(),
+    }).parse(req.body);
+
+    const code = await prisma.promoCode.create({
+      data: {
+        code: data.code.toUpperCase(),
+        description: data.description,
+        durationMonths: data.durationMonths,
+        maxUses: data.maxUses,
+        active: data.active,
+        expiresAt: data.expiresAt ? new Date(data.expiresAt) : null,
+      },
+    });
+    res.status(201).json({ success: true, data: code });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin promo code create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/promo-codes/:id ──────────────────────────────
+adminRouter.put('/promo-codes/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = z.object({
+      code: z.string().min(1).optional(),
+      description: z.string().optional(),
+      durationMonths: z.number().int().min(1).optional(),
+      maxUses: z.number().int().min(1).nullable().optional(),
+      active: z.boolean().optional(),
+      expiresAt: z.string().datetime().nullable().optional(),
+    }).parse(req.body);
+
+    const code = await prisma.promoCode.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...data,
+        ...(data.code && { code: data.code.toUpperCase() }),
+        ...(data.expiresAt !== undefined && { expiresAt: data.expiresAt ? new Date(data.expiresAt) : null }),
+      },
+    });
+    res.json({ success: true, data: code });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin promo code update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/promo-codes/:id ───────────────────────────
+adminRouter.delete('/promo-codes/:id', async (req, res) => {
+  try {
+    await prisma.promoCode.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Promo Code gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin promo code delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/forum/threads ────────────────────────────────
+adminRouter.get('/forum/threads', async (req, res) => {
+  try {
+    const threads = await prisma.forumThread.findMany({
+      orderBy: { lastActivityAt: 'desc' },
+      include: {
+        author: { select: { id: true, displayName: true, email: true } },
+        _count: { select: { replies: true } },
+      },
+    });
+    res.json({ success: true, data: threads });
+  } catch (error) {
+    logger.error(error, 'Admin forum threads list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/forum/threads/:id/pin ────────────────────────
+adminRouter.put('/forum/threads/:id/pin', writeRateLimit, async (req, res) => {
+  try {
+    const thread = await prisma.forumThread.findUnique({ where: { id: req.params.id as string } });
+    if (!thread) { res.status(404).json({ error: 'Thread nicht gefunden' }); return; }
+    const updated = await prisma.forumThread.update({
+      where: { id: req.params.id as string },
+      data: { pinned: !thread.pinned },
+    });
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    logger.error(error, 'Admin forum thread pin error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/forum/threads/:id ─────────────────────────
+adminRouter.delete('/forum/threads/:id', async (req, res) => {
+  try {
+    await prisma.forumThread.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Thread gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin forum thread delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/forum/replies/:id ─────────────────────────
+adminRouter.delete('/forum/replies/:id', async (req, res) => {
+  try {
+    await prisma.forumReply.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Reply gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin forum reply delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/showcase ─────────────────────────────────────
+adminRouter.get('/showcase', async (req, res) => {
+  try {
+    const entries = await prisma.showcaseEntry.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { user: { select: { id: true, displayName: true, email: true } } },
+    });
+    res.json({ success: true, data: entries });
+  } catch (error) {
+    logger.error(error, 'Admin showcase list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/showcase/:id/approve ─────────────────────────
+adminRouter.put('/showcase/:id/approve', writeRateLimit, async (req, res) => {
+  try {
+    const entry = await prisma.showcaseEntry.findUnique({ where: { id: req.params.id as string } });
+    if (!entry) { res.status(404).json({ error: 'Entry nicht gefunden' }); return; }
+    const updated = await prisma.showcaseEntry.update({
+      where: { id: req.params.id as string },
+      data: { approved: !entry.approved },
+    });
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    logger.error(error, 'Admin showcase approve error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/showcase/:id ──────────────────────────────
+adminRouter.delete('/showcase/:id', async (req, res) => {
+  try {
+    await prisma.showcaseEntry.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Showcase Entry gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin showcase delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/patterns ─────────────────────────────────────
+adminRouter.get('/patterns', async (req, res) => {
+  try {
+    const patterns = await prisma.communityPattern.findMany({
+      orderBy: { createdAt: 'desc' },
+      include: { author: { select: { id: true, displayName: true, email: true } } },
+    });
+    res.json({ success: true, data: patterns });
+  } catch (error) {
+    logger.error(error, 'Admin patterns list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/patterns/:id ──────────────────────────────
+adminRouter.delete('/patterns/:id', async (req, res) => {
+  try {
+    await prisma.communityPattern.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Pattern gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin pattern delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/analytics/overview ───────────────────────────
+adminRouter.get('/analytics/overview', async (req, res) => {
+  try {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    const [totalEvents, events7d, events30d, activeUsers, eventsByType] = await Promise.all([
+      prisma.analyticsEvent.count(),
+      prisma.analyticsEvent.count({ where: { timestamp: { gte: sevenDaysAgo } } }),
+      prisma.analyticsEvent.count({ where: { timestamp: { gte: thirtyDaysAgo } } }),
+      prisma.analyticsEvent.groupBy({ by: ['userId'], where: { timestamp: { gte: thirtyDaysAgo } } }).then(r => r.length),
+      prisma.analyticsEvent.groupBy({ by: ['type'], _count: { type: true }, orderBy: { _count: { type: 'desc' } } }),
+    ]);
+
+    const recentEvents = await prisma.analyticsEvent.findMany({
+      take: 50,
+      orderBy: { timestamp: 'desc' },
+      include: { user: { select: { displayName: true, email: true } } },
+    });
+
+    res.json({
+      success: true,
+      data: {
+        totalEvents,
+        events7d,
+        events30d,
+        activeUsers,
+        eventsByType: eventsByType.map(e => ({ type: e.type, count: e._count.type })),
+        recentEvents,
+      },
+    });
+  } catch (error) {
+    logger.error(error, 'Admin analytics overview error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/newsletter/subscribers ────────────────────────
+adminRouter.get('/newsletter/subscribers', async (req, res) => {
+  try {
+    const status = req.query.status as string | undefined;
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+
+    const subscribers = await prisma.newsletterSubscriber.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    });
+    res.json({ success: true, data: subscribers });
+  } catch (error) {
+    logger.error(error, 'Admin newsletter subscribers list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── GET /api/admin/newsletter/stats ─────────────────────────────
+adminRouter.get('/newsletter/stats', async (req, res) => {
+  try {
+    const [total, active, pending, unsubscribed] = await Promise.all([
+      prisma.newsletterSubscriber.count(),
+      prisma.newsletterSubscriber.count({ where: { status: 'active' } }),
+      prisma.newsletterSubscriber.count({ where: { status: 'pending' } }),
+      prisma.newsletterSubscriber.count({ where: { status: 'unsubscribed' } }),
+    ]);
+    res.json({ success: true, data: { total, active, pending, unsubscribed } });
+  } catch (error) {
+    logger.error(error, 'Admin newsletter stats error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/newsletter/subscribers/:id ────────────────
+adminRouter.delete('/newsletter/subscribers/:id', async (req, res) => {
+  try {
+    await prisma.newsletterSubscriber.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Subscriber entfernt' });
+  } catch (error) {
+    logger.error(error, 'Admin newsletter subscriber delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});

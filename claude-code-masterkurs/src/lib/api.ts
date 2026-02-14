@@ -495,6 +495,128 @@ export interface AgentStatus {
   currentRun?: AgentRun;
 }
 
+// ── Admin User Types ────────────────────────────────────────────
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  displayName: string;
+  avatarEmoji: string;
+  role: string;
+  emailVerified: boolean;
+  createdAt: string;
+  subscription?: { status: string; isLifetime: boolean } | null;
+}
+
+export interface AdminSubscription {
+  id: string;
+  userId: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string | null;
+  status: string;
+  isLifetime: boolean;
+  currentPeriodStart: string | null;
+  currentPeriodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  promoCodeId: string | null;
+  createdAt: string;
+  user: { id: string; email: string; displayName: string };
+  promoCode: { code: string } | null;
+}
+
+export interface AdminPromoCode {
+  id: string;
+  code: string;
+  description: string | null;
+  durationMonths: number;
+  maxUses: number | null;
+  timesUsed: number;
+  active: boolean;
+  expiresAt: string | null;
+  createdAt: string;
+  _count?: { subscriptions: number };
+}
+
+export interface AdminForumThread {
+  id: string;
+  categoryId: string;
+  title: string;
+  body: string;
+  authorId: string;
+  createdAt: string;
+  lastActivityAt: string;
+  pinned: boolean;
+  author: { id: string; displayName: string; email: string };
+  _count: { replies: number };
+}
+
+export interface AdminShowcaseEntry {
+  id: string;
+  userId: string;
+  title: string;
+  description: string;
+  githubUrl: string | null;
+  liveUrl: string | null;
+  imageUrl: string | null;
+  approved: boolean;
+  createdAt: string;
+  user: { id: string; displayName: string; email: string };
+}
+
+export interface AdminPattern {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  snippet: string;
+  language: string | null;
+  tags: string[];
+  useCase: string | null;
+  createdAt: string;
+  author: { id: string; displayName: string; email: string };
+}
+
+export interface AdminAnalyticsOverview {
+  totalEvents: number;
+  events7d: number;
+  events30d: number;
+  activeUsers: number;
+  eventsByType: { type: string; count: number }[];
+  recentEvents: Array<{
+    id: string;
+    type: string;
+    timestamp: string;
+    metadata: unknown;
+    user: { displayName: string; email: string };
+  }>;
+}
+
+export interface AdminNewsletterSubscriber {
+  id: string;
+  email: string;
+  displayName: string | null;
+  status: string;
+  source: string;
+  subscribedAt: string;
+  confirmedAt: string | null;
+  unsubscribedAt: string | null;
+}
+
+export interface AdminNewsletterStats {
+  total: number;
+  active: number;
+  pending: number;
+  unsubscribed: number;
+}
+
+export interface AdminSubscriptionStats {
+  active: number;
+  lifetime: number;
+  trialing: number;
+  canceled: number;
+  total: number;
+}
+
 export const adminApi = {
   getDashboard: () =>
     api.get<{ success: boolean; data: AdminDashboardData }>('/api/admin/dashboard'),
@@ -592,6 +714,128 @@ export const adminApi = {
     api.post<{ success: boolean; data: { runId: string; message: string } }>(
       '/api/admin/agent/trigger',
     ),
+
+  // Tool Update
+  updateTool: (id: string, data: Partial<{
+    name: string;
+    slug: string;
+    beschreibung: string;
+    content: string;
+    kategorie: string;
+    icon: string;
+    reihenfolge: number;
+    status: string;
+  }>) => api.put<{ success: boolean; data: AdminTool }>(`/api/admin/tools/${id}`, data),
+
+  // Users
+  getUsers: (params?: { page?: number; limit?: number; search?: string; role?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.page) search.set('page', String(params.page));
+    if (params?.limit) search.set('limit', String(params.limit));
+    if (params?.search) search.set('search', params.search);
+    if (params?.role && params.role !== 'all') search.set('role', params.role);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminUser[]; total: number; page: number; limit: number }>(
+      `/api/admin/users${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getUser: (id: string) =>
+    api.get<{ success: boolean; data: AdminUser }>(`/api/admin/users/${id}`),
+
+  updateUserRole: (id: string, role: string) =>
+    api.put<{ success: boolean; data: AdminUser }>(`/api/admin/users/${id}/role`, { role }),
+
+  deleteUser: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/users/${id}`),
+
+  // Subscriptions
+  getSubscriptions: (params?: { status?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.status && params.status !== 'all') search.set('status', params.status);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminSubscription[] }>(
+      `/api/admin/subscriptions${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getSubscriptionStats: () =>
+    api.get<{ success: boolean; data: AdminSubscriptionStats }>('/api/admin/subscriptions/stats'),
+
+  // Promo Codes
+  getPromoCodes: () =>
+    api.get<{ success: boolean; data: AdminPromoCode[] }>('/api/admin/promo-codes'),
+
+  createPromoCode: (data: {
+    code: string;
+    description?: string;
+    durationMonths?: number;
+    maxUses?: number | null;
+    active?: boolean;
+    expiresAt?: string;
+  }) => api.post<{ success: boolean; data: AdminPromoCode }>('/api/admin/promo-codes', data),
+
+  updatePromoCode: (id: string, data: Partial<{
+    code: string;
+    description: string;
+    durationMonths: number;
+    maxUses: number | null;
+    active: boolean;
+    expiresAt: string | null;
+  }>) => api.put<{ success: boolean; data: AdminPromoCode }>(`/api/admin/promo-codes/${id}`, data),
+
+  deletePromoCode: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/promo-codes/${id}`),
+
+  // Forum
+  getForumThreads: () =>
+    api.get<{ success: boolean; data: AdminForumThread[] }>('/api/admin/forum/threads'),
+
+  toggleThreadPin: (id: string) =>
+    api.put<{ success: boolean; data: AdminForumThread }>(`/api/admin/forum/threads/${id}/pin`),
+
+  deleteForumThread: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/forum/threads/${id}`),
+
+  deleteForumReply: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/forum/replies/${id}`),
+
+  // Showcase
+  getShowcaseEntries: () =>
+    api.get<{ success: boolean; data: AdminShowcaseEntry[] }>('/api/admin/showcase'),
+
+  toggleShowcaseApproval: (id: string) =>
+    api.put<{ success: boolean; data: AdminShowcaseEntry }>(`/api/admin/showcase/${id}/approve`),
+
+  deleteShowcaseEntry: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/showcase/${id}`),
+
+  // Patterns
+  getPatterns: () =>
+    api.get<{ success: boolean; data: AdminPattern[] }>('/api/admin/patterns'),
+
+  deletePattern: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/patterns/${id}`),
+
+  // Analytics
+  getAnalyticsOverview: () =>
+    api.get<{ success: boolean; data: AdminAnalyticsOverview }>('/api/admin/analytics/overview'),
+
+  // Newsletter
+  getNewsletterSubscribers: (params?: { status?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.status && params.status !== 'all') search.set('status', params.status);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminNewsletterSubscriber[] }>(
+      `/api/admin/newsletter/subscribers${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getNewsletterStats: () =>
+    api.get<{ success: boolean; data: AdminNewsletterStats }>('/api/admin/newsletter/stats'),
+
+  deleteNewsletterSubscriber: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/newsletter/subscribers/${id}`),
 };
 
 // ── Health Check ────────────────────────────────────────────

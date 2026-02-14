@@ -230,80 +230,65 @@ export function AdminLektionEditorPage() {
 }
 
 function ResearchPanel() {
-  const [topic, setTopic] = useState('');
-  const [quelle, setQuelle] = useState('web');
-  const [searching, setSearching] = useState(false);
-  const [results, setResults] = useState<Array<{ title: string; url: string; excerpt: string; relevance: number }>>([]);
+  const [runs, setRuns] = useState<Array<{ id: string; researchTopics: string[]; summary: string | null; startedAt: string }>>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchFilter, setSearchFilter] = useState('');
 
-  const handleSearch = async () => {
-    if (!topic) return;
-    setSearching(true);
-    try {
-      const res = await adminApi.triggerResearch(topic, quelle);
-      setResults(res.data.results);
-    } catch {
-      // silently handle
-    } finally {
-      setSearching(false);
-    }
-  };
+  useEffect(() => {
+    adminApi.getAgentRuns({ limit: 20 })
+      .then((res) => setRuns(res.data.filter((r: { researchTopics: string[] }) => r.researchTopics.length > 0)))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  const allTopics = runs.flatMap((r) =>
+    r.researchTopics.map((topic) => ({
+      topic,
+      runId: r.id,
+      date: r.startedAt,
+      summary: r.summary,
+    }))
+  );
+
+  const filtered = searchFilter
+    ? allTopics.filter((t) => t.topic.toLowerCase().includes(searchFilter.toLowerCase()))
+    : allTopics;
 
   return (
     <>
       <div className="rounded-xl border bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-purple-600" />
-          <h2 className="text-lg font-bold text-gray-900">Research Agent</h2>
+          <h2 className="text-lg font-bold text-gray-900">Research Insights</h2>
         </div>
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Topic</label>
-            <input
-              type="text"
-              placeholder="z.B. 'Python async/await patterns'"
-              value={topic}
-              onChange={(e) => setTopic(e.target.value)}
-              onKeyDown={(e) => { if (e.key === 'Enter') handleSearch(); }}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Quelle</label>
-            <select
-              value={quelle}
-              onChange={(e) => setQuelle(e.target.value)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
-            >
-              <option value="web">Web Search</option>
-              <option value="github">GitHub</option>
-              <option value="stackoverflow">Stack Overflow</option>
-              <option value="docs">Official Docs</option>
-            </select>
-          </div>
-          <button
-            onClick={handleSearch}
-            disabled={!topic || searching}
-            className="flex w-full items-center justify-center gap-2 rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-700 disabled:opacity-50"
-          >
-            {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-            {searching ? 'Suche...' : 'Research starten'}
-          </button>
-        </div>
+        <p className="mb-3 text-xs text-gray-500">Echte Research-Topics aus vergangenen Agent-Runs</p>
+        <input
+          type="text"
+          placeholder="Topics durchsuchen..."
+          value={searchFilter}
+          onChange={(e) => setSearchFilter(e.target.value)}
+          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+        />
       </div>
       <div className="rounded-xl border bg-white p-6 shadow-sm">
-        <h3 className="mb-3 text-sm font-semibold text-gray-900">Ergebnisse</h3>
-        {results.length === 0 ? (
-          <p className="text-sm text-gray-500">Starte eine Recherche, um Ergebnisse zu sehen...</p>
+        <h3 className="mb-3 text-sm font-semibold text-gray-900">Topics ({filtered.length})</h3>
+        {loading ? (
+          <div className="flex justify-center py-4">
+            <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <p className="text-sm text-gray-500">Keine Research-Topics gefunden</p>
         ) : (
-          <div className="space-y-3">
-            {results.map((r, i) => (
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {filtered.map((item, i) => (
               <div key={i} className="rounded-lg border p-3">
-                <p className="text-sm font-medium text-gray-900">{r.title}</p>
-                <p className="mt-1 text-xs text-gray-600">{r.excerpt}</p>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="rounded bg-green-100 px-2 py-0.5 text-xs text-green-700">{r.relevance}%</span>
-                  <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-600 hover:underline">Quelle</a>
-                </div>
+                <p className="text-sm font-medium text-gray-900">{item.topic}</p>
+                <p className="mt-1 text-xs text-gray-500">
+                  {new Date(item.date).toLocaleDateString('de-DE')}
+                </p>
+                {item.summary && (
+                  <p className="mt-1 text-xs text-gray-600 line-clamp-2">{item.summary}</p>
+                )}
               </div>
             ))}
           </div>

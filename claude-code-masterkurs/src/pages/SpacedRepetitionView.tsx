@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -11,8 +11,24 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useSRSStore } from '../store/srsStore';
-import { lessons } from '../data/lessons';
+import { contentApi } from '../lib/api';
+import type { AdminLessonConfig } from '../lib/api';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
+
+/** Minimal lesson shape needed for SRS view */
+interface LessonItem {
+  id: number;
+  title: string;
+  objectives: string[];
+}
+
+function toSRSLesson(l: AdminLessonConfig): LessonItem {
+  return {
+    id: l.lessonId,
+    title: l.title,
+    objectives: l.objectives,
+  };
+}
 
 function getEndOfTodayISO(): string {
   const d = new Date();
@@ -26,6 +42,16 @@ const SpacedRepetitionView = () => {
   const getItem = useSRSStore((s) => s.getItem);
   const recordReview = useSRSStore((s) => s.recordReview);
 
+  const [lessons, setLessons] = useState<LessonItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    contentApi.getLessons({ track: 'main' }).then((res) => {
+      setLessons(res.data.map(toSRSLesson));
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
   const dueIds = useMemo(() => {
     const endOfToday = getEndOfTodayISO();
     return Object.values(items)
@@ -37,8 +63,8 @@ const SpacedRepetitionView = () => {
   const [reviewingLessonId, setReviewingLessonId] = useState<number | null>(null);
 
   const dueLessons = useMemo(
-    () => dueIds.map((id) => lessons.find((l) => l.id === id)).filter(Boolean) as typeof lessons,
-    [dueIds]
+    () => dueIds.map((id) => lessons.find((l) => l.id === id)).filter(Boolean) as LessonItem[],
+    [dueIds, lessons]
   );
 
   const reviewingLesson = reviewingLessonId != null ? lessons.find((l) => l.id === reviewingLessonId) : null;
@@ -54,6 +80,14 @@ const SpacedRepetitionView = () => {
     recordReview(reviewingLessonId, false);
     setReviewingLessonId(null);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in-up">

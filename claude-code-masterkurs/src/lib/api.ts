@@ -417,6 +417,16 @@ export interface AdminDashboardData {
   activeSubscriptions: number;
   lektionenCount: number;
   toolsCount: number;
+  forumCategoriesCount: number;
+  officialDocsCount: number;
+  featuresCount: number;
+  quizzesCount: number;
+  challengesCount: number;
+  lessonConfigsCount: number;
+  projectConfigsCount: number;
+  capstoneConfigsCount: number;
+  projectTemplatesCount: number;
+  playgroundTasksCount: number;
 }
 
 export interface AdminLektion {
@@ -615,6 +625,188 @@ export interface AdminSubscriptionStats {
   trialing: number;
   canceled: number;
   total: number;
+}
+
+// Forum Category Config
+export interface AdminForumCategory {
+  id: string;
+  categoryId: string;
+  title: string;
+  description: string;
+  icon: string;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Official Doc
+export interface AdminOfficialDoc {
+  id: string;
+  title: string;
+  url: string;
+  category: string;
+  description: string | null;
+  lang: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Feature Reference
+export interface AdminFeature {
+  id: string;
+  featureId: string;
+  name: string;
+  category: string;
+  description: string;
+  details: string | null;
+  tips: string[];
+  example: string;
+  documentation: string;
+  tags: string[];
+  lastUpdate: boolean;
+  bannerLabel: string | null;
+  sortOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Quiz Config
+export interface AdminQuiz {
+  id: string;
+  quizId: string;
+  lessonId: number;
+  title: string;
+  type: string;
+  points: number;
+  passingScore: number;
+  maxAttempts: number;
+  questions: unknown[];
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Challenge Config
+export interface AdminChallenge {
+  id: string;
+  challengeId: string;
+  title: string;
+  description: string;
+  category: string;
+  source: string;
+  difficulty: string;
+  timeLimit: number;
+  points: number;
+  instruction: string;
+  starterCode: string;
+  language: string;
+  hints: string[];
+  validations: unknown[];
+  solution: string;
+  relatedLessons: number[];
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Lesson Config
+export interface AdminLessonConfig {
+  id: string;
+  lessonId: number;
+  level: number;
+  title: string;
+  description: string;
+  duration: string;
+  objectives: string[];
+  content: unknown[];
+  track: string;
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Project Config
+export interface AdminProjectConfig {
+  id: string;
+  projectId: string;
+  level: number;
+  title: string;
+  description: string;
+  difficulty: string;
+  duration: string;
+  requirements: string[];
+  starterCode: string | null;
+  hints: string[];
+  solution: string | null;
+  resources: string[];
+  validationMeta: unknown;
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Capstone Config
+export interface AdminCapstoneConfig {
+  id: string;
+  capstoneId: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  estimatedHours: number;
+  techStack: string[];
+  requirements: string[];
+  steps: unknown[];
+  thumbnailEmoji: string | null;
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Project Template Config
+export interface AdminProjectTemplate {
+  id: string;
+  templateId: string;
+  title: string;
+  description: string;
+  difficulty: number;
+  estimatedHours: number;
+  techStack: string[];
+  features: string[];
+  claudeMd: string;
+  fileStructure: string | null;
+  steps: unknown[];
+  githubUrl: string | null;
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Playground Task Config
+export interface AdminPlaygroundTask {
+  id: string;
+  taskId: string;
+  projectId: string;
+  title: string;
+  description: string;
+  instruction: string;
+  requirements: string[];
+  mode: string;
+  language: string;
+  starterCode: string;
+  hints: string[];
+  validationMeta: unknown[];
+  scenarioMeta: unknown | null;
+  sortOrder: number;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export const adminApi = {
@@ -836,6 +1028,236 @@ export const adminApi = {
 
   deleteNewsletterSubscriber: (id: string) =>
     api.delete<{ success: boolean; message: string }>(`/api/admin/newsletter/subscribers/${id}`),
+
+  // Forum Categories
+  getForumCategories: () =>
+    api.get<{ success: boolean; data: AdminForumCategory[] }>('/api/admin/forum-categories'),
+
+  createForumCategory: (data: Partial<AdminForumCategory>) =>
+    api.post<{ success: boolean; data: AdminForumCategory }>('/api/admin/forum-categories', data),
+
+  updateForumCategory: (id: string, data: Partial<AdminForumCategory>) =>
+    api.put<{ success: boolean; data: AdminForumCategory }>(`/api/admin/forum-categories/${id}`, data),
+
+  deleteForumCategory: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/forum-categories/${id}`),
+
+  // Official Docs
+  getOfficialDocs: () =>
+    api.get<{ success: boolean; data: AdminOfficialDoc[] }>('/api/admin/official-docs'),
+
+  createOfficialDoc: (data: Partial<AdminOfficialDoc>) =>
+    api.post<{ success: boolean; data: AdminOfficialDoc }>('/api/admin/official-docs', data),
+
+  updateOfficialDoc: (id: string, data: Partial<AdminOfficialDoc>) =>
+    api.put<{ success: boolean; data: AdminOfficialDoc }>(`/api/admin/official-docs/${id}`, data),
+
+  deleteOfficialDoc: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/official-docs/${id}`),
+
+  // Features
+  getFeatures: () =>
+    api.get<{ success: boolean; data: AdminFeature[] }>('/api/admin/features'),
+
+  createFeature: (data: Partial<AdminFeature>) =>
+    api.post<{ success: boolean; data: AdminFeature }>('/api/admin/features', data),
+
+  updateFeature: (id: string, data: Partial<AdminFeature>) =>
+    api.put<{ success: boolean; data: AdminFeature }>(`/api/admin/features/${id}`, data),
+
+  deleteFeature: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/features/${id}`),
+
+  // Quizzes
+  getQuizzes: (params?: { lessonId?: number }) => {
+    const search = new URLSearchParams();
+    if (params?.lessonId !== undefined) search.set('lessonId', String(params.lessonId));
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminQuiz[] }>(
+      `/api/admin/quizzes${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createQuiz: (data: Partial<AdminQuiz>) =>
+    api.post<{ success: boolean; data: AdminQuiz }>('/api/admin/quizzes', data),
+
+  updateQuiz: (id: string, data: Partial<AdminQuiz>) =>
+    api.put<{ success: boolean; data: AdminQuiz }>(`/api/admin/quizzes/${id}`, data),
+
+  deleteQuiz: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/quizzes/${id}`),
+
+  // Challenges
+  getChallenges: (params?: { source?: string; category?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.source) search.set('source', params.source);
+    if (params?.category) search.set('category', params.category);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminChallenge[] }>(
+      `/api/admin/challenges${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createChallenge: (data: Partial<AdminChallenge>) =>
+    api.post<{ success: boolean; data: AdminChallenge }>('/api/admin/challenges', data),
+
+  updateChallenge: (id: string, data: Partial<AdminChallenge>) =>
+    api.put<{ success: boolean; data: AdminChallenge }>(`/api/admin/challenges/${id}`, data),
+
+  deleteChallenge: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/challenges/${id}`),
+
+  // Lesson Configs
+  getLessonConfigs: (params?: { track?: string; level?: number }) => {
+    const search = new URLSearchParams();
+    if (params?.track) search.set('track', params.track);
+    if (params?.level !== undefined) search.set('level', String(params.level));
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminLessonConfig[] }>(
+      `/api/admin/lesson-configs${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createLessonConfig: (data: Partial<AdminLessonConfig>) =>
+    api.post<{ success: boolean; data: AdminLessonConfig }>('/api/admin/lesson-configs', data),
+
+  updateLessonConfig: (id: string, data: Partial<AdminLessonConfig>) =>
+    api.put<{ success: boolean; data: AdminLessonConfig }>(`/api/admin/lesson-configs/${id}`, data),
+
+  deleteLessonConfig: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/lesson-configs/${id}`),
+
+  // Project Configs
+  getProjectConfigs: (params?: { level?: number }) => {
+    const search = new URLSearchParams();
+    if (params?.level !== undefined) search.set('level', String(params.level));
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminProjectConfig[] }>(
+      `/api/admin/project-configs${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createProjectConfig: (data: Partial<AdminProjectConfig>) =>
+    api.post<{ success: boolean; data: AdminProjectConfig }>('/api/admin/project-configs', data),
+
+  updateProjectConfig: (id: string, data: Partial<AdminProjectConfig>) =>
+    api.put<{ success: boolean; data: AdminProjectConfig }>(`/api/admin/project-configs/${id}`, data),
+
+  deleteProjectConfig: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/project-configs/${id}`),
+
+  // Capstone Configs
+  getCapstoneConfigs: () =>
+    api.get<{ success: boolean; data: AdminCapstoneConfig[] }>('/api/admin/capstone-configs'),
+
+  createCapstoneConfig: (data: Partial<AdminCapstoneConfig>) =>
+    api.post<{ success: boolean; data: AdminCapstoneConfig }>('/api/admin/capstone-configs', data),
+
+  updateCapstoneConfig: (id: string, data: Partial<AdminCapstoneConfig>) =>
+    api.put<{ success: boolean; data: AdminCapstoneConfig }>(`/api/admin/capstone-configs/${id}`, data),
+
+  deleteCapstoneConfig: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/capstone-configs/${id}`),
+
+  // Project Templates
+  getProjectTemplates: () =>
+    api.get<{ success: boolean; data: AdminProjectTemplate[] }>('/api/admin/project-templates'),
+
+  createProjectTemplate: (data: Partial<AdminProjectTemplate>) =>
+    api.post<{ success: boolean; data: AdminProjectTemplate }>('/api/admin/project-templates', data),
+
+  updateProjectTemplate: (id: string, data: Partial<AdminProjectTemplate>) =>
+    api.put<{ success: boolean; data: AdminProjectTemplate }>(`/api/admin/project-templates/${id}`, data),
+
+  deleteProjectTemplate: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/project-templates/${id}`),
+
+  // Playground Tasks
+  getPlaygroundTasks: (params?: { projectId?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.projectId) search.set('projectId', params.projectId);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminPlaygroundTask[] }>(
+      `/api/admin/playground-tasks${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  createPlaygroundTask: (data: Partial<AdminPlaygroundTask>) =>
+    api.post<{ success: boolean; data: AdminPlaygroundTask }>('/api/admin/playground-tasks', data),
+
+  updatePlaygroundTask: (id: string, data: Partial<AdminPlaygroundTask>) =>
+    api.put<{ success: boolean; data: AdminPlaygroundTask }>(`/api/admin/playground-tasks/${id}`, data),
+
+  deletePlaygroundTask: (id: string) =>
+    api.delete<{ success: boolean; message: string }>(`/api/admin/playground-tasks/${id}`),
+};
+
+// ── Content API ────────────────────────────────────────────
+
+export const contentApi = {
+  getForumCategories: () =>
+    api.get<{ success: boolean; data: AdminForumCategory[] }>('/api/content/forum-categories'),
+
+  getOfficialDocs: () =>
+    api.get<{ success: boolean; data: AdminOfficialDoc[] }>('/api/content/official-docs'),
+
+  getFeatures: (params?: { category?: string; search?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.category) search.set('category', params.category);
+    if (params?.search) search.set('search', params.search);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminFeature[] }>(
+      `/api/content/features${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getQuizzes: (params?: { lessonId?: number }) => {
+    const search = new URLSearchParams();
+    if (params?.lessonId !== undefined) search.set('lessonId', String(params.lessonId));
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminQuiz[] }>(
+      `/api/content/quizzes${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getChallenges: (params?: { source?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.source) search.set('source', params.source);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminChallenge[] }>(
+      `/api/content/challenges${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getLessons: (params?: { track?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.track) search.set('track', params.track);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminLessonConfig[] }>(
+      `/api/content/lessons${qs ? `?${qs}` : ''}`,
+    );
+  },
+
+  getLesson: (lessonId: number) =>
+    api.get<{ success: boolean; data: AdminLessonConfig }>(`/api/content/lessons/${lessonId}`),
+
+  getProjects: () =>
+    api.get<{ success: boolean; data: AdminProjectConfig[] }>('/api/content/projects'),
+
+  getCapstones: () =>
+    api.get<{ success: boolean; data: AdminCapstoneConfig[] }>('/api/content/capstones'),
+
+  getProjectTemplates: () =>
+    api.get<{ success: boolean; data: AdminProjectTemplate[] }>('/api/content/project-templates'),
+
+  getPlaygroundTasks: (params?: { projectId?: string }) => {
+    const search = new URLSearchParams();
+    if (params?.projectId) search.set('projectId', params.projectId);
+    const qs = search.toString();
+    return api.get<{ success: boolean; data: AdminPlaygroundTask[] }>(
+      `/api/content/playground-tasks${qs ? `?${qs}` : ''}`,
+    );
+  },
 };
 
 // ── Health Check ────────────────────────────────────────────

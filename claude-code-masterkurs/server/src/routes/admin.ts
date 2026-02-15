@@ -248,18 +248,26 @@ adminRouter.post('/agent/trigger', writeRateLimit, async (_req, res) => {
     });
 
     // Spawn agent-wrapper.sh as detached child process
-    const wrapperPath = '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent/scripts/agent-wrapper.sh';
-    const child = spawn('bash', [wrapperPath, run.id], {
-      cwd: '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent',
-      detached: true,
-      stdio: 'ignore',
-      env: {
-        ...process.env,
-        AGENT_RUN_ID: run.id,
-        AGENT_TRIGGER: 'manual',
-      },
-    });
-    child.unref();
+    const wrapperPath = process.env.AGENT_WRAPPER_PATH || '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent/scripts/agent-wrapper.sh';
+    const agentCwd = process.env.AGENT_CWD || '/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent';
+    try {
+      const child = spawn('bash', [wrapperPath, run.id], {
+        cwd: agentCwd,
+        detached: true,
+        stdio: 'ignore',
+        env: {
+          ...process.env,
+          AGENT_RUN_ID: run.id,
+          AGENT_TRIGGER: 'manual',
+        },
+      });
+      child.on('error', (err) => {
+        logger.warn({ err }, 'Agent spawn failed (bash or script not available)');
+      });
+      child.unref();
+    } catch (err) {
+      logger.warn({ err }, 'Agent spawn failed');
+    }
 
     res.json({
       success: true,
@@ -303,11 +311,26 @@ const researchSchema = z.object({
 
 adminRouter.get('/dashboard', async (_req, res) => {
   try {
-    const [totalUsers, activeSubscriptions, lektionenCount, toolsCount] = await Promise.all([
+    const [
+      totalUsers, activeSubscriptions, lektionenCount, toolsCount,
+      forumCategoriesCount, officialDocsCount, featuresCount, quizzesCount,
+      challengesCount, lessonConfigsCount, projectConfigsCount, capstoneConfigsCount,
+      projectTemplatesCount, playgroundTasksCount,
+    ] = await Promise.all([
       prisma.user.count(),
       prisma.subscription.count({ where: { status: 'active' } }),
       prisma.lektion.count(),
       prisma.tool.count(),
+      prisma.forumCategoryConfig.count(),
+      prisma.officialDoc.count(),
+      prisma.featureRef.count(),
+      prisma.quizConfig.count(),
+      prisma.challengeConfig.count(),
+      prisma.lessonConfig.count(),
+      prisma.projectConfig.count(),
+      prisma.capstoneConfig.count(),
+      prisma.projectTemplateConfig.count(),
+      prisma.playgroundTaskConfig.count(),
     ]);
 
     res.json({
@@ -317,6 +340,16 @@ adminRouter.get('/dashboard', async (_req, res) => {
         activeSubscriptions,
         lektionenCount,
         toolsCount,
+        forumCategoriesCount,
+        officialDocsCount,
+        featuresCount,
+        quizzesCount,
+        challengesCount,
+        lessonConfigsCount,
+        projectConfigsCount,
+        capstoneConfigsCount,
+        projectTemplatesCount,
+        playgroundTasksCount,
       },
     });
   } catch (error) {
@@ -921,6 +954,832 @@ adminRouter.delete('/patterns/:id', async (req, res) => {
     res.json({ success: true, message: 'Pattern gelöscht' });
   } catch (error) {
     logger.error(error, 'Admin pattern delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ══════════════════════════════════════════════════════════════════
+// ── Content Config CRUD Endpoints ────────────────────────────────
+// ══════════════════════════════════════════════════════════════════
+
+// ── Forum Category Config Schemas ───────────────────────────────
+
+const forumCategorySchema = z.object({
+  categoryId: z.string().min(1, 'categoryId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  icon: z.string().default(''),
+  sortOrder: z.number().int().min(0).default(0),
+});
+
+// ── GET /api/admin/forum-categories ─────────────────────────────
+adminRouter.get('/forum-categories', async (req, res) => {
+  try {
+    const { search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const categories = await prisma.forumCategoryConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: categories, count: categories.length });
+  } catch (error) {
+    logger.error(error, 'Admin forum-categories list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/forum-categories ────────────────────────────
+adminRouter.post('/forum-categories', writeRateLimit, async (req, res) => {
+  try {
+    const data = forumCategorySchema.parse(req.body);
+    const category = await prisma.forumCategoryConfig.create({ data });
+    res.status(201).json({ success: true, data: category });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin forum-category create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/forum-categories/:id ─────────────────────────
+adminRouter.put('/forum-categories/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = forumCategorySchema.partial().parse(req.body);
+    const category = await prisma.forumCategoryConfig.update({
+      where: { id: req.params.id as string },
+      data,
+    });
+    res.json({ success: true, data: category });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin forum-category update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/forum-categories/:id ───────────────────────
+adminRouter.delete('/forum-categories/:id', async (req, res) => {
+  try {
+    await prisma.forumCategoryConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Forum-Kategorie gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin forum-category delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Official Docs Schema ────────────────────────────────────────
+
+const officialDocSchema = z.object({
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  url: z.string().url('Gueltige URL erforderlich'),
+  category: z.string().min(1, 'Kategorie ist erforderlich'),
+  description: z.string().optional(),
+  lang: z.string().optional(),
+  sortOrder: z.number().int().min(0).default(0),
+});
+
+// ── GET /api/admin/official-docs ────────────────────────────────
+adminRouter.get('/official-docs', async (req, res) => {
+  try {
+    const { search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const docs = await prisma.officialDoc.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: docs, count: docs.length });
+  } catch (error) {
+    logger.error(error, 'Admin official-docs list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/official-docs ───────────────────────────────
+adminRouter.post('/official-docs', writeRateLimit, async (req, res) => {
+  try {
+    const data = officialDocSchema.parse(req.body);
+    const doc = await prisma.officialDoc.create({ data });
+    res.status(201).json({ success: true, data: doc });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin official-doc create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/official-docs/:id ────────────────────────────
+adminRouter.put('/official-docs/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = officialDocSchema.partial().parse(req.body);
+    const doc = await prisma.officialDoc.update({
+      where: { id: req.params.id as string },
+      data,
+    });
+    res.json({ success: true, data: doc });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin official-doc update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/official-docs/:id ──────────────────────────
+adminRouter.delete('/official-docs/:id', async (req, res) => {
+  try {
+    await prisma.officialDoc.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Offizielle Doku gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin official-doc delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Features Schema ─────────────────────────────────────────────
+
+const featureSchema = z.object({
+  featureId: z.string().min(1, 'featureId ist erforderlich'),
+  name: z.string().min(1, 'Name ist erforderlich'),
+  category: z.string().min(1, 'Kategorie ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  details: z.string().optional(),
+  tips: z.any().default([]),
+  example: z.string().min(1, 'Beispiel ist erforderlich'),
+  documentation: z.string().min(1, 'Dokumentation ist erforderlich'),
+  tags: z.any().default([]),
+  lastUpdate: z.boolean().default(false),
+  bannerLabel: z.string().optional(),
+  sortOrder: z.number().int().min(0).default(0),
+});
+
+// ── GET /api/admin/features ─────────────────────────────────────
+adminRouter.get('/features', async (req, res) => {
+  try {
+    const { category, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (category && category !== 'all') where.category = category;
+    if (search) {
+      where.OR = [
+        { name: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const features = await prisma.featureRef.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: features, count: features.length });
+  } catch (error) {
+    logger.error(error, 'Admin features list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/features ────────────────────────────────────
+adminRouter.post('/features', writeRateLimit, async (req, res) => {
+  try {
+    const data = featureSchema.parse(req.body);
+    const feature = await prisma.featureRef.create({ data });
+    res.status(201).json({ success: true, data: feature });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin feature create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/features/:id ─────────────────────────────────
+adminRouter.put('/features/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = featureSchema.partial().parse(req.body);
+    const feature = await prisma.featureRef.update({
+      where: { id: req.params.id as string },
+      data,
+    });
+    res.json({ success: true, data: feature });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin feature update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/features/:id ──────────────────────────────
+adminRouter.delete('/features/:id', async (req, res) => {
+  try {
+    await prisma.featureRef.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Feature gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin feature delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Quizzes Schema ──────────────────────────────────────────────
+
+const quizSchema = z.object({
+  quizId: z.string().min(1, 'quizId ist erforderlich'),
+  lessonId: z.number().int().min(0, 'lessonId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  type: z.string().min(1, 'Typ ist erforderlich'),
+  points: z.number().int().min(0).default(5),
+  passingScore: z.number().int().min(0).default(80),
+  maxAttempts: z.number().int().min(1).default(3),
+  questions: z.any(),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/quizzes ──────────────────────────────────────
+adminRouter.get('/quizzes', async (req, res) => {
+  try {
+    const { lessonId, status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (lessonId) where.lessonId = parseInt(lessonId as string, 10);
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const quizzes = await prisma.quizConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: quizzes, count: quizzes.length });
+  } catch (error) {
+    logger.error(error, 'Admin quizzes list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/quizzes ─────────────────────────────────────
+adminRouter.post('/quizzes', writeRateLimit, async (req, res) => {
+  try {
+    const data = quizSchema.parse(req.body);
+    const quiz = await prisma.quizConfig.create({ data: data as any });
+    res.status(201).json({ success: true, data: quiz });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin quiz create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/quizzes/:id ──────────────────────────────────
+adminRouter.put('/quizzes/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = quizSchema.partial().parse(req.body);
+    const { status: quizStatus, ...rest } = data;
+    const quiz = await prisma.quizConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(quizStatus !== undefined && { status: quizStatus }),
+      } as any,
+    });
+    res.json({ success: true, data: quiz });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin quiz update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/quizzes/:id ───────────────────────────────
+adminRouter.delete('/quizzes/:id', async (req, res) => {
+  try {
+    await prisma.quizConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Quiz gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin quiz delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Challenges Schema ───────────────────────────────────────────
+
+const challengeSchema = z.object({
+  challengeId: z.string().min(1, 'challengeId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  category: z.string().min(1, 'Kategorie ist erforderlich'),
+  source: z.string().default('claude-code'),
+  difficulty: z.string().min(1, 'Schwierigkeit ist erforderlich'),
+  timeLimit: z.number().int().min(0).default(0),
+  points: z.number().int().min(0).default(100),
+  instruction: z.string().min(1, 'Anleitung ist erforderlich'),
+  starterCode: z.string().min(1, 'Starter-Code ist erforderlich'),
+  language: z.string().default('typescript'),
+  hints: z.any().default([]),
+  validations: z.any().default([]),
+  solution: z.string().min(1, 'Lösung ist erforderlich'),
+  relatedLessons: z.any().default([]),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/challenges ───────────────────────────────────
+adminRouter.get('/challenges', async (req, res) => {
+  try {
+    const { category, source, status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (category && category !== 'all') where.category = category;
+    if (source && source !== 'all') where.source = source;
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const challenges = await prisma.challengeConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: challenges, count: challenges.length });
+  } catch (error) {
+    logger.error(error, 'Admin challenges list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/challenges ──────────────────────────────────
+adminRouter.post('/challenges', writeRateLimit, async (req, res) => {
+  try {
+    const data = challengeSchema.parse(req.body);
+    const challenge = await prisma.challengeConfig.create({ data });
+    res.status(201).json({ success: true, data: challenge });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin challenge create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/challenges/:id ───────────────────────────────
+adminRouter.put('/challenges/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = challengeSchema.partial().parse(req.body);
+    const { status: challengeStatus, ...rest } = data;
+    const challenge = await prisma.challengeConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(challengeStatus !== undefined && { status: challengeStatus }),
+      },
+    });
+    res.json({ success: true, data: challenge });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin challenge update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/challenges/:id ────────────────────────────
+adminRouter.delete('/challenges/:id', async (req, res) => {
+  try {
+    await prisma.challengeConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Challenge gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin challenge delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Lesson Configs Schema ───────────────────────────────────────
+
+const lessonConfigSchema = z.object({
+  lessonId: z.number().int().min(0, 'lessonId ist erforderlich'),
+  level: z.number().int().min(1).default(1),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  duration: z.string().min(1, 'Dauer ist erforderlich'),
+  objectives: z.any().default([]),
+  content: z.any(),
+  track: z.string().default('main'),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/lesson-configs ───────────────────────────────
+adminRouter.get('/lesson-configs', async (req, res) => {
+  try {
+    const { track, status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (track && track !== 'all') where.track = track;
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const lessons = await prisma.lessonConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: lessons, count: lessons.length });
+  } catch (error) {
+    logger.error(error, 'Admin lesson-configs list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/lesson-configs ──────────────────────────────
+adminRouter.post('/lesson-configs', writeRateLimit, async (req, res) => {
+  try {
+    const data = lessonConfigSchema.parse(req.body);
+    const lesson = await prisma.lessonConfig.create({ data: data as any });
+    res.status(201).json({ success: true, data: lesson });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin lesson-config create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/lesson-configs/:id ───────────────────────────
+adminRouter.put('/lesson-configs/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = lessonConfigSchema.partial().parse(req.body);
+    const { status: lessonStatus, ...rest } = data;
+    const lesson = await prisma.lessonConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(lessonStatus !== undefined && { status: lessonStatus }),
+      } as any,
+    });
+    res.json({ success: true, data: lesson });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin lesson-config update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/lesson-configs/:id ─────────────────────────
+adminRouter.delete('/lesson-configs/:id', async (req, res) => {
+  try {
+    await prisma.lessonConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Lesson-Config gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin lesson-config delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Project Configs Schema ──────────────────────────────────────
+
+const projectConfigSchema = z.object({
+  projectId: z.string().min(1, 'projectId ist erforderlich'),
+  level: z.number().int().min(1).default(1),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  difficulty: z.string().min(1, 'Schwierigkeit ist erforderlich'),
+  duration: z.string().min(1, 'Dauer ist erforderlich'),
+  requirements: z.any().default([]),
+  starterCode: z.string().optional(),
+  hints: z.any().default([]),
+  solution: z.string().optional(),
+  resources: z.any().default([]),
+  validationMeta: z.any().default({}),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/project-configs ──────────────────────────────
+adminRouter.get('/project-configs', async (req, res) => {
+  try {
+    const { status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const projects = await prisma.projectConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: projects, count: projects.length });
+  } catch (error) {
+    logger.error(error, 'Admin project-configs list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/project-configs ─────────────────────────────
+adminRouter.post('/project-configs', writeRateLimit, async (req, res) => {
+  try {
+    const data = projectConfigSchema.parse(req.body);
+    const project = await prisma.projectConfig.create({ data });
+    res.status(201).json({ success: true, data: project });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin project-config create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/project-configs/:id ──────────────────────────
+adminRouter.put('/project-configs/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = projectConfigSchema.partial().parse(req.body);
+    const { status: projectStatus, ...rest } = data;
+    const project = await prisma.projectConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(projectStatus !== undefined && { status: projectStatus }),
+      },
+    });
+    res.json({ success: true, data: project });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin project-config update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/project-configs/:id ────────────────────────
+adminRouter.delete('/project-configs/:id', async (req, res) => {
+  try {
+    await prisma.projectConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Projekt-Config gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin project-config delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Capstone Configs Schema ─────────────────────────────────────
+
+const capstoneConfigSchema = z.object({
+  capstoneId: z.string().min(1, 'capstoneId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  difficulty: z.number().int().min(1).default(1),
+  estimatedHours: z.number().int().min(1).default(4),
+  techStack: z.any().default([]),
+  requirements: z.any().default([]),
+  steps: z.any().default([]),
+  thumbnailEmoji: z.string().optional(),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/capstone-configs ─────────────────────────────
+adminRouter.get('/capstone-configs', async (req, res) => {
+  try {
+    const { status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const capstones = await prisma.capstoneConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: capstones, count: capstones.length });
+  } catch (error) {
+    logger.error(error, 'Admin capstone-configs list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/capstone-configs ────────────────────────────
+adminRouter.post('/capstone-configs', writeRateLimit, async (req, res) => {
+  try {
+    const data = capstoneConfigSchema.parse(req.body);
+    const capstone = await prisma.capstoneConfig.create({ data });
+    res.status(201).json({ success: true, data: capstone });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin capstone-config create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/capstone-configs/:id ─────────────────────────
+adminRouter.put('/capstone-configs/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = capstoneConfigSchema.partial().parse(req.body);
+    const { status: capstoneStatus, ...rest } = data;
+    const capstone = await prisma.capstoneConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(capstoneStatus !== undefined && { status: capstoneStatus }),
+      },
+    });
+    res.json({ success: true, data: capstone });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin capstone-config update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/capstone-configs/:id ───────────────────────
+adminRouter.delete('/capstone-configs/:id', async (req, res) => {
+  try {
+    await prisma.capstoneConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Capstone-Config gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin capstone-config delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Project Templates Schema ────────────────────────────────────
+
+const projectTemplateSchema = z.object({
+  templateId: z.string().min(1, 'templateId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  difficulty: z.number().int().min(1).default(1),
+  estimatedHours: z.number().int().min(1).default(4),
+  techStack: z.any().default([]),
+  features: z.any().default([]),
+  claudeMd: z.string().min(1, 'claudeMd ist erforderlich'),
+  fileStructure: z.string().optional(),
+  steps: z.any().default([]),
+  githubUrl: z.string().optional(),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/project-templates ────────────────────────────
+adminRouter.get('/project-templates', async (req, res) => {
+  try {
+    const { status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const templates = await prisma.projectTemplateConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: templates, count: templates.length });
+  } catch (error) {
+    logger.error(error, 'Admin project-templates list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/project-templates ───────────────────────────
+adminRouter.post('/project-templates', writeRateLimit, async (req, res) => {
+  try {
+    const data = projectTemplateSchema.parse(req.body);
+    const template = await prisma.projectTemplateConfig.create({ data });
+    res.status(201).json({ success: true, data: template });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin project-template create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/project-templates/:id ────────────────────────
+adminRouter.put('/project-templates/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = projectTemplateSchema.partial().parse(req.body);
+    const { status: templateStatus, ...rest } = data;
+    const template = await prisma.projectTemplateConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(templateStatus !== undefined && { status: templateStatus }),
+      },
+    });
+    res.json({ success: true, data: template });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin project-template update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/project-templates/:id ──────────────────────
+adminRouter.delete('/project-templates/:id', async (req, res) => {
+  try {
+    await prisma.projectTemplateConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Projekt-Template gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin project-template delete error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── Playground Tasks Schema ─────────────────────────────────────
+
+const playgroundTaskSchema = z.object({
+  taskId: z.string().min(1, 'taskId ist erforderlich'),
+  projectId: z.string().min(1, 'projectId ist erforderlich'),
+  title: z.string().min(1, 'Titel ist erforderlich'),
+  description: z.string().min(1, 'Beschreibung ist erforderlich'),
+  instruction: z.string().min(1, 'Anleitung ist erforderlich'),
+  requirements: z.any().default([]),
+  mode: z.string().default('editor'),
+  language: z.string().default('typescript'),
+  starterCode: z.string().min(1, 'Starter-Code ist erforderlich'),
+  hints: z.any().default([]),
+  validationMeta: z.any().default([]),
+  scenarioMeta: z.any().optional(),
+  sortOrder: z.number().int().min(0).default(0),
+  status: z.enum(['draft', 'published']).default('published'),
+});
+
+// ── GET /api/admin/playground-tasks ─────────────────────────────
+adminRouter.get('/playground-tasks', async (req, res) => {
+  try {
+    const { projectId, status, search } = req.query;
+    const where: Record<string, unknown> = {};
+    if (projectId) where.projectId = projectId;
+    if (status && status !== 'all') where.status = status;
+    if (search) {
+      where.OR = [
+        { title: { contains: search as string, mode: 'insensitive' } },
+        { description: { contains: search as string, mode: 'insensitive' } },
+      ];
+    }
+    const tasks = await prisma.playgroundTaskConfig.findMany({
+      where,
+      orderBy: { sortOrder: 'asc' },
+    });
+    res.json({ success: true, data: tasks, count: tasks.length });
+  } catch (error) {
+    logger.error(error, 'Admin playground-tasks list error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── POST /api/admin/playground-tasks ────────────────────────────
+adminRouter.post('/playground-tasks', writeRateLimit, async (req, res) => {
+  try {
+    const data = playgroundTaskSchema.parse(req.body);
+    const task = await prisma.playgroundTaskConfig.create({ data });
+    res.status(201).json({ success: true, data: task });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin playground-task create error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── PUT /api/admin/playground-tasks/:id ─────────────────────────
+adminRouter.put('/playground-tasks/:id', writeRateLimit, async (req, res) => {
+  try {
+    const data = playgroundTaskSchema.partial().parse(req.body);
+    const { status: taskStatus, ...rest } = data;
+    const task = await prisma.playgroundTaskConfig.update({
+      where: { id: req.params.id as string },
+      data: {
+        ...rest,
+        ...(taskStatus !== undefined && { status: taskStatus }),
+      },
+    });
+    res.json({ success: true, data: task });
+  } catch (error) {
+    if (error instanceof z.ZodError) { res.status(400).json({ error: error.errors[0].message }); return; }
+    logger.error(error, 'Admin playground-task update error');
+    res.status(500).json({ error: 'Interner Server-Fehler' });
+  }
+});
+
+// ── DELETE /api/admin/playground-tasks/:id ───────────────────────
+adminRouter.delete('/playground-tasks/:id', async (req, res) => {
+  try {
+    await prisma.playgroundTaskConfig.delete({ where: { id: req.params.id as string } });
+    res.json({ success: true, message: 'Playground-Task gelöscht' });
+  } catch (error) {
+    logger.error(error, 'Admin playground-task delete error');
     res.status(500).json({ error: 'Interner Server-Fehler' });
   }
 });

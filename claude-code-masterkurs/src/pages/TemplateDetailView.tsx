@@ -14,7 +14,8 @@ import {
   LayoutGrid,
   Rocket,
 } from 'lucide-react';
-import { getTemplateById } from '../data/projectTemplates';
+import { contentApi } from '../lib/api';
+import type { AdminProjectTemplate } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
@@ -36,10 +37,21 @@ const DIFFICULTY_COLORS: Record<number, string> = {
 const TemplateDetailView = () => {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
-  const template = getTemplateById(id || '');
+  const [template, setTemplate] = useState<AdminProjectTemplate | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [copiedClaudeMd, setCopiedClaudeMd] = useState(false);
   const [copiedPrompt, setCopiedPrompt] = useState<number | null>(null);
+
+  useEffect(() => {
+    contentApi.getProjectTemplates()
+      .then(res => {
+        const found = res.data.find(t => t.templateId === id);
+        setTemplate(found ?? null);
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [id]);
 
   useEffect(() => {
     Prism.highlightAll();
@@ -74,6 +86,8 @@ const TemplateDetailView = () => {
     }
   };
 
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
+
   if (!template) {
     return (
       <div className="max-w-7xl mx-auto animate-fade-in-up text-center py-20">
@@ -106,7 +120,7 @@ const TemplateDetailView = () => {
         </Link>
         <span className="text-apple-border">/</span>
         <span className="text-apple-textSecondary">
-          {t(`templates.data.${template.id}.title`, { defaultValue: template.title })}
+          {t(`templates.data.${template.templateId}.title`, { defaultValue: template.title })}
         </span>
       </div>
 
@@ -124,10 +138,10 @@ const TemplateDetailView = () => {
               </span>
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold text-apple-text mb-2">
-              {t(`templates.data.${template.id}.title`, { defaultValue: template.title })}
+              {t(`templates.data.${template.templateId}.title`, { defaultValue: template.title })}
             </h1>
             <p className="text-apple-textSecondary max-w-2xl">
-              {t(`templates.data.${template.id}.description`, { defaultValue: template.description })}
+              {t(`templates.data.${template.templateId}.description`, { defaultValue: template.description })}
             </p>
           </div>
           {template.githubUrl && (
@@ -313,7 +327,7 @@ const TemplateDetailView = () => {
 
         {activeTab === 'steps' && (
           <div className="space-y-4">
-            {template.steps.map((step, i) => (
+            {(template.steps as { title: string; description: string; claudePrompt: string }[]).map((step, i) => (
               <div key={i} className="apple-card">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-start space-x-3">

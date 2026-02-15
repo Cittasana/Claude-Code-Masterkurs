@@ -1,14 +1,17 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { MessageCircle, Pin, ChevronRight, Plus } from 'lucide-react';
-import { forumCategories } from '../data/forumCategories';
+import { contentApi } from '../lib/api';
+import type { AdminForumCategory } from '../lib/api';
 import { useForumStore } from '../store/forumStore';
 import type { ForumCategoryId } from '../types';
 
 const ForumView = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [forumCategories, setForumCategories] = useState<AdminForumCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<ForumCategoryId | null>(null);
   const [showNewThread, setShowNewThread] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -17,6 +20,10 @@ const ForumView = () => {
   const getThreadsByCategory = useForumStore((s) => s.getThreadsByCategory);
   const addThread = useForumStore((s) => s.addThread);
   const threads = getThreadsByCategory(selectedCategory);
+
+  useEffect(() => {
+    contentApi.getForumCategories().then(res => setForumCategories(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
 
   const handleCreateThread = (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +47,8 @@ const ForumView = () => {
     if (diffDays < 7) return `vor ${diffDays} Tag${diffDays > 1 ? 'en' : ''}`;
     return d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
   };
+
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
@@ -93,7 +102,7 @@ const ForumView = () => {
                 className="w-full bg-apple-bg border border-apple-border rounded-apple px-4 py-2.5 text-apple-text text-sm focus:border-apple-accent/50 focus:outline-none focus:ring-1 focus:ring-apple-accent/30"
               >
                 {forumCategories.map((c) => (
-                  <option key={c.id} value={c.id}>{c.icon} {c.title}</option>
+                  <option key={c.categoryId} value={c.categoryId}>{c.icon} {c.title}</option>
                 ))}
               </select>
             </div>
@@ -160,10 +169,10 @@ const ForumView = () => {
           </button>
           {forumCategories.map((cat) => (
             <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
+              key={cat.categoryId}
+              onClick={() => setSelectedCategory(selectedCategory === (cat.categoryId as ForumCategoryId) ? null : cat.categoryId as ForumCategoryId)}
               className={`flex items-center gap-2 px-4 py-2.5 rounded-apple text-sm font-medium transition-all duration-200 ${
-                selectedCategory === cat.id
+                selectedCategory === cat.categoryId
                   ? 'bg-apple-accent text-white'
                   : 'bg-apple-elevated text-apple-textSecondary border border-apple-border hover:border-apple-borderLight'
               }`}
@@ -180,7 +189,7 @@ const ForumView = () => {
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-mono uppercase tracking-wider text-apple-muted">
             {selectedCategory
-              ? forumCategories.find((c) => c.id === selectedCategory)?.title ?? 'Themen'
+              ? forumCategories.find((c) => c.categoryId === selectedCategory)?.title ?? 'Themen'
               : 'Alle Themen'}
           </h2>
           <span className="text-apple-muted text-sm font-mono">
@@ -197,7 +206,7 @@ const ForumView = () => {
         ) : (
           <ul className="divide-y divide-apple-border">
             {threads.map((thread) => {
-              const category = forumCategories.find((c) => c.id === thread.categoryId);
+              const category = forumCategories.find((c) => c.categoryId === thread.categoryId);
               return (
                 <li key={thread.id}>
                   <Link

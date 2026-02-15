@@ -14,8 +14,7 @@ import {
   GraduationCap,
   BookMarked,
 } from 'lucide-react';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
+import { contentApi } from '../lib/api';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
 import { useSRSStore } from '../store/srsStore';
@@ -25,6 +24,7 @@ import PaywallOverlay from '../components/Paywall/PaywallOverlay';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
 import { useLearningTimer } from '../hooks/useLearningTimer';
+import type { Lesson, Quiz, LessonContent as LessonContentType, Question } from '../types';
 
 const LessonView = () => {
   useLearningTimer({ context: 'lesson' });
@@ -40,6 +40,53 @@ const LessonView = () => {
   const [tocOpen, setTocOpen] = useState(false);
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // ── API Data Loading ──────────────────────────────────────
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    Promise.all([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+    ])
+      .then(([lessonsRes, quizzesRes]) => {
+        if (cancelled) return;
+        const mappedLessons: Lesson[] = lessonsRes.data.map((l) => ({
+          id: l.lessonId,
+          level: l.level as Lesson['level'],
+          title: l.title,
+          description: l.description,
+          duration: l.duration,
+          objectives: l.objectives,
+          content: l.content as LessonContentType[],
+        }));
+        const mappedQuizzes: Quiz[] = quizzesRes.data.map((q) => ({
+          id: q.quizId,
+          lessonId: q.lessonId,
+          title: q.title,
+          type: q.type as Quiz['type'],
+          points: q.points,
+          passingScore: q.passingScore,
+          maxAttempts: q.maxAttempts,
+          questions: q.questions as Question[],
+        }));
+        setLessons(mappedLessons);
+        setQuizzes(mappedQuizzes);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setLessons([]);
+          setQuizzes([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setDataLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const lessonId = parseInt(id || '0');
   const lesson = lessons.find((l) => l.id === lessonId);
@@ -136,6 +183,14 @@ const LessonView = () => {
     }
     setTocOpen(false);
   }, []);
+
+  if (dataLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!lesson) {
     return (

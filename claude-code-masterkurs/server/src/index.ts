@@ -17,6 +17,7 @@ import { discordRouter } from './routes/discord.js';
 import { newsletterRouter } from './routes/newsletter.js';
 import { showcaseRouter } from './routes/showcase.js';
 import { adminRouter } from './routes/admin.js';
+import { contentRouter } from './routes/content.js';
 import { globalRateLimit } from './middleware/rateLimit.js';
 import { initSentry, Sentry } from './lib/sentry.js';
 import { startDiscordBot, stopDiscordBot } from './lib/discord-bot.js';
@@ -133,6 +134,7 @@ app.use('/api/discord', discordRouter);
 app.use('/api/newsletter', newsletterRouter);
 app.use('/api/showcase', showcaseRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/content', contentRouter);
 
 // ── 404 Handler ──────────────────────────────────────────────
 app.use((_req, res) => {

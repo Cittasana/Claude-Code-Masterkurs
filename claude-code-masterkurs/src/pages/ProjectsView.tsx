@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -12,11 +12,27 @@ import {
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import {
-  capstoneProjects,
   getCapstoneProjectDifficultyKey,
 } from '../data/capstoneProjects';
 import type { CapstoneProject } from '../data/capstoneProjects';
+import { contentApi } from '../lib/api';
+import type { AdminCapstoneConfig } from '../lib/api';
 import { useProjectHubStore } from '../store/projectHubStore';
+
+/** Map API capstone config to the local CapstoneProject shape */
+function toCapstoneProject(c: AdminCapstoneConfig): CapstoneProject {
+  return {
+    id: c.capstoneId,
+    title: c.title,
+    description: c.description,
+    difficulty: c.difficulty as 1 | 2 | 3,
+    estimatedHours: c.estimatedHours,
+    techStack: c.techStack,
+    requirements: c.requirements,
+    steps: (c.steps as { id: string; title: string; description: string }[]) ?? [],
+    thumbnailEmoji: c.thumbnailEmoji ?? '',
+  };
+}
 
 /* ================================================================
    ProjectsView – Capstone project overview + detail view
@@ -24,6 +40,23 @@ import { useProjectHubStore } from '../store/projectHubStore';
 
 const ProjectsView = () => {
   const { id } = useParams<{ id: string }>();
+  const [capstoneProjects, setCapstoneProjects] = useState<CapstoneProject[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    contentApi.getCapstones().then((res) => {
+      setCapstoneProjects(res.data.map(toCapstoneProject));
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (id) {
     const project = capstoneProjects.find((p) => p.id === id);
@@ -31,14 +64,14 @@ const ProjectsView = () => {
     return <ProjectDetail project={project} />;
   }
 
-  return <ProjectOverview />;
+  return <ProjectOverview capstoneProjects={capstoneProjects} />;
 };
 
 /* ================================================================
    ProjectOverview – Grid with filter
    ================================================================ */
 
-function ProjectOverview() {
+function ProjectOverview({ capstoneProjects }: { capstoneProjects: CapstoneProject[] }) {
   const { t } = useTranslation();
   const [filterDifficulty, setFilterDifficulty] = useState<number | null>(null);
   const { completedSteps } = useProjectHubStore();
@@ -46,7 +79,7 @@ function ProjectOverview() {
   const filtered = useMemo(() => {
     if (filterDifficulty === null) return capstoneProjects;
     return capstoneProjects.filter((p) => p.difficulty === filterDifficulty);
-  }, [filterDifficulty]);
+  }, [filterDifficulty, capstoneProjects]);
 
   const getDifficultyLabel = (d: 1 | 2 | 3) => t(getCapstoneProjectDifficultyKey(d));
 

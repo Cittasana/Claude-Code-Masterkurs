@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -8,13 +8,54 @@ import {
   Lock,
   ListChecks,
 } from 'lucide-react';
-import { projects } from '../data/projects';
-import { getTasksForProject } from '../data/playgroundTasks';
+import { contentApi } from '../lib/api';
+import type { AdminProjectConfig, AdminPlaygroundTask, AdminLessonConfig } from '../lib/api';
 import { useUserProgress } from '../store/userProgress';
-import { lessons } from '../data/lessons';
 import SimulatedTerminal from '../components/Playground/SimulatedTerminal';
 import type { PlaygroundTask } from '../types';
 import { useLearningTimer } from '../hooks/useLearningTimer';
+
+/** Minimal project shape used in this view */
+interface ProjectItem {
+  id: string;
+  level: number;
+  title: string;
+  description: string;
+}
+
+/** Map API project config to local shape */
+function toProjectItem(p: AdminProjectConfig): ProjectItem {
+  return {
+    id: p.projectId,
+    level: p.level,
+    title: p.title,
+    description: p.description,
+  };
+}
+
+/** Map API playground task to the local PlaygroundTask shape */
+function toPlaygroundTask(t: AdminPlaygroundTask): PlaygroundTask {
+  return {
+    id: t.taskId,
+    projectId: t.projectId,
+    title: t.title,
+    description: t.description,
+    instruction: t.instruction,
+    requirements: t.requirements,
+    mode: t.mode as 'editor' | 'terminal',
+    language: t.language,
+    starterCode: t.starterCode,
+    validations: [],
+    hints: t.hints,
+    scenario: t.scenarioMeta as PlaygroundTask['scenario'],
+  };
+}
+
+/** Minimal lesson shape for unlock logic */
+interface LessonItem {
+  id: number;
+  level: number;
+}
 
 const PlaygroundView = () => {
   useLearningTimer({ context: 'playground' });
@@ -24,28 +65,52 @@ const PlaygroundView = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [selectedTask, setSelectedTask] = useState<PlaygroundTask | null>(null);
 
+  const [projectsList, setProjectsList] = useState<ProjectItem[]>([]);
+  const [allTasks, setAllTasks] = useState<PlaygroundTask[]>([]);
+  const [lessonItems, setLessonItems] = useState<LessonItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      contentApi.getProjects(),
+      contentApi.getPlaygroundTasks(),
+      contentApi.getLessons({ track: 'main' }),
+    ]).then(([projectsRes, tasksRes, lessonsRes]) => {
+      setProjectsList(projectsRes.data.map(toProjectItem));
+      setAllTasks(tasksRes.data.map(toPlaygroundTask));
+      setLessonItems(lessonsRes.data.map((l: AdminLessonConfig) => ({ id: l.lessonId, level: l.level })));
+      setLoading(false);
+    }).catch(() => setLoading(false));
+  }, []);
+
   // Grouped projects by level
-  const level1 = projects.filter((p) => p.level === 1);
-  const level2 = projects.filter((p) => p.level === 2);
-  const level3 = projects.filter((p) => p.level === 3);
+  const level1 = projectsList.filter((p) => p.level === 1);
+  const level2 = projectsList.filter((p) => p.level === 2);
+  const level3 = projectsList.filter((p) => p.level === 3);
+
+  // Helper: get tasks for a project ID from loaded data
+  const getTasksForProject = useCallback(
+    (projectId: string) => allTasks.filter((t) => t.projectId === projectId),
+    [allTasks]
+  );
 
   // Check if project is unlocked (same logic as ProjectView)
   const isProjectUnlocked = useCallback(
     (level: number) => {
       if (level === 1) return true;
-      const requiredLessons = lessons.filter((l) => l.level < level);
+      const requiredLessons = lessonItems.filter((l) => l.level < level);
       const completedRequired = requiredLessons.filter((l) =>
         lessonsCompleted.includes(l.id)
       ).length;
       return completedRequired >= Math.ceil(requiredLessons.length * 0.3);
     },
-    [lessonsCompleted]
+    [lessonsCompleted, lessonItems]
   );
 
   // Tasks for selected project
   const currentTasks = useMemo(
     () => (selectedProjectId ? getTasksForProject(selectedProjectId) : []),
-    [selectedProjectId]
+    [selectedProjectId, getTasksForProject]
   );
 
   // Select a task
@@ -70,6 +135,14 @@ const PlaygroundView = () => {
     },
     []
   );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
@@ -123,6 +196,7 @@ const PlaygroundView = () => {
               selectedProjectId={selectedProjectId}
               isUnlocked={isProjectUnlocked(1)}
               onSelect={handleSelectProject}
+              getTasksForProject={getTasksForProject}
             />
 
             {/* Level 2 */}
@@ -133,6 +207,7 @@ const PlaygroundView = () => {
               selectedProjectId={selectedProjectId}
               isUnlocked={isProjectUnlocked(2)}
               onSelect={handleSelectProject}
+              getTasksForProject={getTasksForProject}
             />
 
             {/* Level 3 */}
@@ -143,6 +218,7 @@ const PlaygroundView = () => {
               selectedProjectId={selectedProjectId}
               isUnlocked={isProjectUnlocked(3)}
               onSelect={handleSelectProject}
+              getTasksForProject={getTasksForProject}
             />
 
             {/* Task List (when project selected) */}
@@ -283,13 +359,15 @@ function ProjectGroup({
   selectedProjectId,
   isUnlocked,
   onSelect,
+  getTasksForProject,
 }: {
   label: string;
   color: string;
-  projects: typeof projects;
+  projects: ProjectItem[];
   selectedProjectId: string | null;
   isUnlocked: boolean;
   onSelect: (id: string) => void;
+  getTasksForProject: (id: string) => PlaygroundTask[];
 }) {
   const tasksAvailable = (id: string) => getTasksForProject(id).length > 0;
 

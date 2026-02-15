@@ -1,13 +1,29 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Trophy, Award, Download, Lock, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Trophy, Award, Download, Lock, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
-import { projects } from '../data/projects';
+import { contentApi } from '../lib/api';
 
 const CertificateView = () => {
   const { t, i18n } = useTranslation();
+  const [lessons, setLessons] = useState<{ lessonId: number }[]>([]);
+  const [quizzes, setQuizzes] = useState<{ quizId: string }[]>([]);
+  const [projects, setProjects] = useState<{ projectId: string }[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getProjects(),
+    ]).then(([lessonsRes, quizzesRes, projectsRes]) => {
+      setLessons(lessonsRes.data.map(l => ({ lessonId: l.lessonId })));
+      setQuizzes(quizzesRes.data.map(q => ({ quizId: q.quizId })));
+      setProjects(projectsRes.data.map(p => ({ projectId: p.projectId })));
+    }).catch(() => {}).finally(() => setDataLoading(false));
+  }, []);
+
   const {
     lessonsCompleted,
     quizzesCompleted,
@@ -15,6 +31,10 @@ const CertificateView = () => {
     totalPoints,
     streak,
   } = useUserProgress();
+  if (dataLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>;
+  }
+
   const totalLessons = lessons.length;
   const totalQuizzes = quizzes.length;
   const totalProjects = projects.length;

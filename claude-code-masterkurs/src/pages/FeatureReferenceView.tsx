@@ -1,20 +1,32 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Search, BookOpen, Terminal, Copy, Check, ChevronDown, ChevronRight, ExternalLink, Zap } from 'lucide-react';
-import { features, featureCategories } from '../data/features';
+import { contentApi } from '../lib/api';
+import type { AdminFeature } from '../lib/api';
 
 const FeatureReferenceView = () => {
   const { t } = useTranslation();
+  const [features, setFeatures] = useState<AdminFeature[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedFeature, setExpandedFeature] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  useEffect(() => {
+    contentApi.getFeatures().then(res => setFeatures(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const featureCategories = useMemo(
+    () => [...new Set(features.map(f => f.category))],
+    [features]
+  );
+
   const lastUpdateFeatures = useMemo(
     () => features.filter((f) => f.lastUpdate === true),
-    []
+    [features]
   );
 
   const filteredFeatures = useMemo(() => {
@@ -28,7 +40,7 @@ const FeatureReferenceView = () => {
       const matchesCategory = !selectedCategory || f.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [features, searchTerm, selectedCategory]);
 
   const groupedFeatures = useMemo(() => {
     const groups: Record<string, typeof features> = {};
@@ -44,6 +56,8 @@ const FeatureReferenceView = () => {
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">
@@ -82,7 +96,7 @@ const FeatureReferenceView = () => {
                   const label = f.bannerLabel || f.name;
                   const isCli = f.name.startsWith('/') || f.name.startsWith('--');
                   return (
-                    <span key={f.id}>
+                    <span key={f.featureId}>
                       {i > 0 && ', '}
                       {isCli ? (
                         <>
@@ -178,17 +192,17 @@ const FeatureReferenceView = () => {
 
             <div className="space-y-2">
               {categoryFeatures.map((feature) => {
-                const isExpanded = expandedFeature === feature.id;
+                const isExpanded = expandedFeature === feature.featureId;
                 return (
                   <div
-                    key={feature.id}
+                    key={feature.featureId}
                     className={`apple-card !p-0 overflow-hidden transition-all duration-200 ${
                       isExpanded ? 'border-apple-accent/30' : ''
                     }`}
                   >
                     <button
                       onClick={() =>
-                        setExpandedFeature(isExpanded ? null : feature.id)
+                        setExpandedFeature(isExpanded ? null : feature.featureId)
                       }
                       className="w-full flex items-center justify-between p-4 hover:bg-apple-hover/30 transition-colors text-left"
                     >
@@ -278,11 +292,11 @@ const FeatureReferenceView = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleCopy(feature.example, feature.id);
+                                  handleCopy(feature.example, feature.featureId);
                                 }}
                                 className="flex items-center space-x-1 text-xs text-apple-muted hover:text-apple-accent transition-colors"
                               >
-                                {copiedId === feature.id ? (
+                                {copiedId === feature.featureId ? (
                                   <>
                                     <Check size={12} />
                                     <span>Kopiert</span>

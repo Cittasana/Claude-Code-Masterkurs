@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -10,8 +10,7 @@ import {
   Loader2,
   AlertCircle,
 } from 'lucide-react';
-import { lessons } from '../data/lessons';
-import { freeSignupApi, newsletterApi, ApiError } from '../lib/api';
+import { contentApi, freeSignupApi, newsletterApi, ApiError } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import { FREE_LESSON_LIMIT } from '../lib/lessons-config';
 import TestimonialSection from '../components/Landing/TestimonialSection';
@@ -26,9 +25,16 @@ const StartKostenlosView = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [newsletterOptIn, setNewsletterOptIn] = useState(true);
+  const [lessons, setLessonsData] = useState<{ lessonId: number; title: string; description: string; duration: string }[]>([]);
+
+  useEffect(() => {
+    contentApi.getLessons({ track: 'main' }).then(res => {
+      setLessonsData(res.data.map(l => ({ lessonId: l.lessonId, title: l.title, description: l.description, duration: l.duration })));
+    }).catch(() => {});
+  }, []);
 
   // Get the first 5 lessons (free tier)
-  const freeLessons = lessons.filter((l) => l.id < FREE_LESSON_LIMIT);
+  const freeLessons = lessons.filter((l) => l.lessonId < FREE_LESSON_LIMIT);
 
   const handleFreeSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,12 +116,12 @@ const StartKostenlosView = () => {
           <div className="space-y-4">
             {freeLessons.map((lesson, index) => (
               <div
-                key={lesson.id}
+                key={lesson.lessonId}
                 className="group relative rounded-apple-lg bg-apple-surface border border-apple-border hover:border-apple-accent/40 transition-all duration-200 overflow-hidden"
               >
                 {isAuthenticated ? (
                   <Link
-                    to={`/lesson/${lesson.id}`}
+                    to={`/lesson/${lesson.lessonId}`}
                     className="flex items-start gap-4 sm:gap-5 p-5 sm:p-6"
                   >
                     <LessonCardContent lesson={lesson} index={index} t={t} />

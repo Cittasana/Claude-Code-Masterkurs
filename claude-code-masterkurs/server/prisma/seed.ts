@@ -1,7 +1,40 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
+// ── Static content data imports ─────────────────────────────────
+import { forumCategories } from '../../src/data/forumCategories.js';
+import {
+  officialDocsOverview,
+  officialDocsCore,
+  officialDocsExtend,
+  officialDocsOutsideTerminal,
+} from '../../src/data/officialDocs.js';
+import { features } from '../../src/data/features.js';
+import { quizzes } from '../../src/data/quizzes.js';
+import { challenges } from '../../src/data/challenges.js';
+import { liveCodingChallenges } from '../../src/data/liveCodingChallenges.js';
+import { lessons } from '../../src/data/lessons.js';
+import { freelancerModules } from '../../src/data/freelancerTrack.js';
+import { projects } from '../../src/data/projects.js';
+import { capstoneProjects } from '../../src/data/capstoneProjects.js';
+import { projectTemplates } from '../../src/data/projectTemplates.js';
+import { playgroundTasks } from '../../src/data/playgroundTasks.js';
+
 const prisma = new PrismaClient();
+
+/** Convert RegExp instances to their string source for JSON storage. */
+function regexToString(v: unknown): unknown {
+  if (v instanceof RegExp) return v.source;
+  if (Array.isArray(v)) return v.map(regexToString);
+  if (v && typeof v === 'object') {
+    const out: Record<string, unknown> = {};
+    for (const [k, val] of Object.entries(v)) {
+      out[k] = regexToString(val);
+    }
+    return out;
+  }
+  return v;
+}
 
 // ─────────────────────────────────────────────────────────────
 // Seed Data - Populates the database with initial data
@@ -246,11 +279,408 @@ async function main() {
     console.log(`  ✅ Promo Code: ${promo.code} (${promo.durationMonths} Monate)`);
   }
 
+  // ════════════════════════════════════════════════════════════
+  // CONTENT CONFIGS – Static data from src/data/
+  // ════════════════════════════════════════════════════════════
+
+  // ── Forum Category Configs ─────────────────────────────────
+  console.log('\n📂 Seeding content configs...');
+  console.log('  Forum Categories...');
+  for (let i = 0; i < forumCategories.length; i++) {
+    const fc = forumCategories[i];
+    await prisma.forumCategoryConfig.upsert({
+      where: { categoryId: fc.id },
+      update: {
+        title: fc.title,
+        description: fc.description,
+        icon: fc.icon,
+        sortOrder: i,
+      },
+      create: {
+        categoryId: fc.id,
+        title: fc.title,
+        description: fc.description,
+        icon: fc.icon,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${forumCategories.length} forum categories`);
+
+  // ── Official Docs ──────────────────────────────────────────
+  console.log('  Official Docs...');
+  const docSections: { category: string; docs: typeof officialDocsOverview }[] = [
+    { category: 'overview', docs: officialDocsOverview },
+    { category: 'core', docs: officialDocsCore },
+    { category: 'extend', docs: officialDocsExtend },
+    { category: 'outsideTerminal', docs: officialDocsOutsideTerminal },
+  ];
+  let docOrder = 0;
+  for (const section of docSections) {
+    for (const doc of section.docs) {
+      await prisma.officialDoc.upsert({
+        where: { id: `doc-${section.category}-${docOrder}` },
+        update: {
+          title: doc.title,
+          url: doc.url,
+          category: section.category,
+          description: doc.description,
+          lang: doc.lang ?? null,
+          sortOrder: docOrder,
+        },
+        create: {
+          id: `doc-${section.category}-${docOrder}`,
+          title: doc.title,
+          url: doc.url,
+          category: section.category,
+          description: doc.description,
+          lang: doc.lang ?? null,
+          sortOrder: docOrder,
+        },
+      });
+      docOrder++;
+    }
+  }
+  console.log(`    ✓ ${docOrder} official docs`);
+
+  // ── Features ───────────────────────────────────────────────
+  console.log('  Features...');
+  for (let i = 0; i < features.length; i++) {
+    const f = features[i];
+    await prisma.featureRef.upsert({
+      where: { featureId: f.id },
+      update: {
+        name: f.name,
+        category: f.category,
+        description: f.description,
+        details: f.details ?? null,
+        tips: f.tips ?? [],
+        example: f.example,
+        documentation: f.documentation,
+        tags: f.tags ?? [],
+        lastUpdate: (f as Record<string, unknown>).lastUpdate === true,
+        bannerLabel: ((f as Record<string, unknown>).bannerLabel as string) ?? null,
+        sortOrder: i,
+      },
+      create: {
+        featureId: f.id,
+        name: f.name,
+        category: f.category,
+        description: f.description,
+        details: f.details ?? null,
+        tips: f.tips ?? [],
+        example: f.example,
+        documentation: f.documentation,
+        tags: f.tags ?? [],
+        lastUpdate: (f as Record<string, unknown>).lastUpdate === true,
+        bannerLabel: ((f as Record<string, unknown>).bannerLabel as string) ?? null,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${features.length} features`);
+
+  // ── Quizzes ────────────────────────────────────────────────
+  console.log('  Quizzes...');
+  for (let i = 0; i < quizzes.length; i++) {
+    const q = quizzes[i];
+    await prisma.quizConfig.upsert({
+      where: { quizId: q.id },
+      update: {
+        lessonId: q.lessonId,
+        title: q.title,
+        type: q.type,
+        points: q.points,
+        passingScore: q.passingScore,
+        maxAttempts: q.maxAttempts,
+        questions: q.questions as unknown as Record<string, unknown>[],
+        sortOrder: i,
+      },
+      create: {
+        quizId: q.id,
+        lessonId: q.lessonId,
+        title: q.title,
+        type: q.type,
+        points: q.points,
+        passingScore: q.passingScore,
+        maxAttempts: q.maxAttempts,
+        questions: q.questions as unknown as Record<string, unknown>[],
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${quizzes.length} quizzes`);
+
+  // ── Challenges (claude-code + live-coding) ─────────────────
+  console.log('  Challenges...');
+  const allChallenges = [...challenges, ...liveCodingChallenges];
+  for (let i = 0; i < allChallenges.length; i++) {
+    const c = allChallenges[i];
+    await prisma.challengeConfig.upsert({
+      where: { challengeId: c.id },
+      update: {
+        title: c.title,
+        description: c.description,
+        category: c.category,
+        source: c.source ?? 'claude-code',
+        difficulty: c.difficulty,
+        timeLimit: c.timeLimit ?? 0,
+        points: c.points,
+        instruction: c.instruction,
+        starterCode: c.starterCode,
+        language: c.language,
+        hints: c.hints ?? [],
+        validations: regexToString(c.validations ?? []) as object[],
+        solution: c.solution,
+        relatedLessons: c.relatedLessons ?? [],
+        sortOrder: i,
+      },
+      create: {
+        challengeId: c.id,
+        title: c.title,
+        description: c.description,
+        category: c.category,
+        source: c.source ?? 'claude-code',
+        difficulty: c.difficulty,
+        timeLimit: c.timeLimit ?? 0,
+        points: c.points,
+        instruction: c.instruction,
+        starterCode: c.starterCode,
+        language: c.language,
+        hints: c.hints ?? [],
+        validations: regexToString(c.validations ?? []) as object[],
+        solution: c.solution,
+        relatedLessons: c.relatedLessons ?? [],
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${allChallenges.length} challenges (${challenges.length} claude-code + ${liveCodingChallenges.length} live-coding)`);
+
+  // ── Lessons (main track + freelancer track) ────────────────
+  console.log('  Lessons...');
+  const allLessons: { lesson: (typeof lessons)[number]; track: string }[] = [
+    ...lessons.map((l) => ({ lesson: l, track: 'main' })),
+    ...freelancerModules.map((l) => ({ lesson: l, track: 'freelancer' })),
+  ];
+  for (let i = 0; i < allLessons.length; i++) {
+    const { lesson: l, track } = allLessons[i];
+    await prisma.lessonConfig.upsert({
+      where: { lessonId: l.id },
+      update: {
+        level: l.level,
+        title: l.title,
+        description: l.description,
+        duration: l.duration,
+        objectives: l.objectives ?? [],
+        content: l.content as unknown as object,
+        track,
+        sortOrder: i,
+      },
+      create: {
+        lessonId: l.id,
+        level: l.level,
+        title: l.title,
+        description: l.description,
+        duration: l.duration,
+        objectives: l.objectives ?? [],
+        content: l.content as unknown as object,
+        track,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${allLessons.length} lessons (${lessons.length} main + ${freelancerModules.length} freelancer)`);
+
+  // ── Projects ───────────────────────────────────────────────
+  console.log('  Projects...');
+  for (let i = 0; i < projects.length; i++) {
+    const p = projects[i];
+    const validationMeta = {
+      tests: (p.validation?.tests ?? []).map((t) => ({
+        name: t.name,
+        description: t.description,
+        points: t.points,
+      })),
+      minScore: p.validation?.minScore ?? 0,
+    };
+    await prisma.projectConfig.upsert({
+      where: { projectId: p.id },
+      update: {
+        level: p.level,
+        title: p.title,
+        description: p.description,
+        difficulty: p.difficulty,
+        duration: p.duration,
+        requirements: p.requirements ?? [],
+        starterCode: p.starterCode ?? null,
+        hints: p.hints ?? [],
+        solution: p.solution ?? null,
+        resources: p.resources ?? [],
+        validationMeta: validationMeta as object,
+        sortOrder: i,
+      },
+      create: {
+        projectId: p.id,
+        level: p.level,
+        title: p.title,
+        description: p.description,
+        difficulty: p.difficulty,
+        duration: p.duration,
+        requirements: p.requirements ?? [],
+        starterCode: p.starterCode ?? null,
+        hints: p.hints ?? [],
+        solution: p.solution ?? null,
+        resources: p.resources ?? [],
+        validationMeta: validationMeta as object,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${projects.length} projects`);
+
+  // ── Capstone Projects ──────────────────────────────────────
+  console.log('  Capstone Projects...');
+  for (let i = 0; i < capstoneProjects.length; i++) {
+    const cp = capstoneProjects[i];
+    await prisma.capstoneConfig.upsert({
+      where: { capstoneId: cp.id },
+      update: {
+        title: cp.title,
+        description: cp.description,
+        difficulty: cp.difficulty,
+        estimatedHours: cp.estimatedHours,
+        techStack: cp.techStack ?? [],
+        requirements: cp.requirements ?? [],
+        steps: cp.steps as unknown as object[],
+        thumbnailEmoji: cp.thumbnailEmoji ?? null,
+        sortOrder: i,
+      },
+      create: {
+        capstoneId: cp.id,
+        title: cp.title,
+        description: cp.description,
+        difficulty: cp.difficulty,
+        estimatedHours: cp.estimatedHours,
+        techStack: cp.techStack ?? [],
+        requirements: cp.requirements ?? [],
+        steps: cp.steps as unknown as object[],
+        thumbnailEmoji: cp.thumbnailEmoji ?? null,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${capstoneProjects.length} capstone projects`);
+
+  // ── Project Templates ──────────────────────────────────────
+  console.log('  Project Templates...');
+  for (let i = 0; i < projectTemplates.length; i++) {
+    const t = projectTemplates[i];
+    await prisma.projectTemplateConfig.upsert({
+      where: { templateId: t.id },
+      update: {
+        title: t.title,
+        description: t.description,
+        difficulty: t.difficulty,
+        estimatedHours: t.estimatedHours,
+        techStack: t.techStack ?? [],
+        features: t.features ?? [],
+        claudeMd: t.claudeMd,
+        fileStructure: t.fileStructure ?? null,
+        steps: t.steps as unknown as object[],
+        githubUrl: t.githubUrl ?? null,
+        sortOrder: i,
+      },
+      create: {
+        templateId: t.id,
+        title: t.title,
+        description: t.description,
+        difficulty: t.difficulty,
+        estimatedHours: t.estimatedHours,
+        techStack: t.techStack ?? [],
+        features: t.features ?? [],
+        claudeMd: t.claudeMd,
+        fileStructure: t.fileStructure ?? null,
+        steps: t.steps as unknown as object[],
+        githubUrl: t.githubUrl ?? null,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${projectTemplates.length} project templates`);
+
+  // ── Playground Tasks ──────────────────────────────────────
+  console.log('  Playground Tasks...');
+  for (let i = 0; i < playgroundTasks.length; i++) {
+    const pt = playgroundTasks[i];
+    const scenarioMeta = pt.scenario
+      ? regexToString({
+          welcomeMessage: pt.scenario.welcomeMessage,
+          steps: pt.scenario.steps.map((s) => ({
+            id: s.id,
+            prompt: s.prompt,
+            expectedCommands: s.expectedCommands,
+            acceptPattern: s.acceptPattern,
+            response: s.response,
+            errorResponse: s.errorResponse,
+            hint: s.hint,
+            points: s.points,
+          })),
+        })
+      : null;
+
+    await prisma.playgroundTaskConfig.upsert({
+      where: { taskId: pt.id },
+      update: {
+        projectId: pt.projectId,
+        title: pt.title,
+        description: pt.description,
+        instruction: pt.instruction,
+        requirements: pt.requirements ?? [],
+        mode: pt.mode,
+        language: pt.language,
+        starterCode: pt.starterCode ?? '',
+        hints: pt.hints ?? [],
+        validationMeta: regexToString(pt.validations ?? []) as object[],
+        scenarioMeta: scenarioMeta as object | null,
+        sortOrder: i,
+      },
+      create: {
+        taskId: pt.id,
+        projectId: pt.projectId,
+        title: pt.title,
+        description: pt.description,
+        instruction: pt.instruction,
+        requirements: pt.requirements ?? [],
+        mode: pt.mode,
+        language: pt.language,
+        starterCode: pt.starterCode ?? '',
+        hints: pt.hints ?? [],
+        validationMeta: regexToString(pt.validations ?? []) as object[],
+        scenarioMeta: scenarioMeta as object | null,
+        sortOrder: i,
+      },
+    });
+  }
+  console.log(`    ✓ ${playgroundTasks.length} playground tasks`);
+
+  // ════════════════════════════════════════════════════════════
+
   console.log('\n✅ Seed complete!');
   console.log(`   ${SEED_USERS.length} Users + Progress`);
   console.log(`   ${SEED_THREADS.length} Forum Threads`);
   console.log(`   ${SEED_REPLIES.length} Forum Replies`);
   console.log(`   ${promoCodes.length} Promo Codes`);
+  console.log(`   ${forumCategories.length} Forum Category Configs`);
+  console.log(`   ${docOrder} Official Docs`);
+  console.log(`   ${features.length} Features`);
+  console.log(`   ${quizzes.length} Quizzes`);
+  console.log(`   ${allChallenges.length} Challenges`);
+  console.log(`   ${allLessons.length} Lessons`);
+  console.log(`   ${projects.length} Projects`);
+  console.log(`   ${capstoneProjects.length} Capstone Projects`);
+  console.log(`   ${projectTemplates.length} Project Templates`);
+  console.log(`   ${playgroundTasks.length} Playground Tasks`);
   console.log('\n   Demo-Login: beliebige-email@demo.local / demo1234');
   console.log('   Test Promo-Codes: WELCOME2024, EARLYBIRD, TEST2024');
 }

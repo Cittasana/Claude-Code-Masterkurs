@@ -15,6 +15,15 @@ import {
   Bot,
   Settings,
   LogOut,
+  FolderOpen,
+  Zap,
+  HelpCircle,
+  Swords,
+  FileText,
+  Rocket,
+  Puzzle,
+  Play,
+  ExternalLink,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -39,16 +48,35 @@ const sidebarSections: NavSection[] = [
   {
     title: 'Content',
     items: [
-      { name: 'Lektionen', href: '/admin/lektionen', icon: BookOpen },
+      { name: 'Lektionen (Config)', href: '/admin/lesson-configs', icon: BookOpen },
       { name: 'Tools & Extensions', href: '/admin/tools', icon: Wrench },
+      { name: 'Quizzes', href: '/admin/quizzes', icon: HelpCircle },
+      { name: 'Challenges', href: '/admin/challenges', icon: Swords },
+      { name: 'Feature Referenz', href: '/admin/features', icon: Zap },
+    ],
+  },
+  {
+    title: 'Projekte',
+    items: [
+      { name: 'Projekte', href: '/admin/project-configs', icon: FolderOpen },
+      { name: 'Capstones', href: '/admin/capstone-configs', icon: Rocket },
+      { name: 'Templates', href: '/admin/project-templates', icon: Puzzle },
+      { name: 'Playground Tasks', href: '/admin/playground-tasks', icon: Play },
     ],
   },
   {
     title: 'Community',
     items: [
       { name: 'Forum', href: '/admin/forum', icon: MessageSquare },
+      { name: 'Forum Kategorien', href: '/admin/forum-categories', icon: FileText },
       { name: 'Showcase', href: '/admin/showcase', icon: Trophy },
       { name: 'Patterns', href: '/admin/patterns', icon: Code2 },
+    ],
+  },
+  {
+    title: 'Referenzen',
+    items: [
+      { name: 'Offizielle Docs', href: '/admin/official-docs', icon: ExternalLink },
     ],
   },
   {

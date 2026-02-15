@@ -14,11 +14,12 @@ import {
   Briefcase,
   Lock,
 } from 'lucide-react';
-import { freelancerModules } from '../data/freelancerTrack';
+import { contentApi } from '../lib/api';
 import { useUserProgress } from '../store/userProgress';
 import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
 import LessonContent from '../components/Lessons/LessonContent';
 import { useLearningTimer } from '../hooks/useLearningTimer';
+import type { Lesson, LessonContent as LessonContentType } from '../types';
 
 /** First 2 modules (index 0, 1) are free */
 const FREE_MODULE_LIMIT = 2;
@@ -36,6 +37,35 @@ const FreelancerModuleView = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [tocOpen, setTocOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
+
+  // ── API Data Loading ──────────────────────────────────────
+  const [freelancerModules, setFreelancerModules] = useState<Lesson[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    contentApi.getLessons({ track: 'freelancer' })
+      .then((res) => {
+        if (cancelled) return;
+        const mapped: Lesson[] = res.data.map((l) => ({
+          id: l.lessonId,
+          level: l.level as Lesson['level'],
+          title: l.title,
+          description: l.description,
+          duration: l.duration,
+          objectives: l.objectives,
+          content: l.content as LessonContentType[],
+        }));
+        setFreelancerModules(mapped);
+      })
+      .catch(() => {
+        if (!cancelled) setFreelancerModules([]);
+      })
+      .finally(() => {
+        if (!cancelled) setDataLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
 
   const moduleId = parseInt(id || '100');
   const module = freelancerModules.find((m) => m.id === moduleId);
@@ -96,6 +126,14 @@ const FreelancerModuleView = () => {
     }
     setTocOpen(false);
   }, []);
+
+  if (dataLoading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (!module) {
     return (

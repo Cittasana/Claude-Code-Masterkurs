@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -6,19 +6,38 @@ import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, A
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
-import { challenges } from '../data/challenges';
-import { liveCodingChallenges } from '../data/liveCodingChallenges';
-import { projectTemplates } from '../data/projectTemplates';
-import { capstoneProjects as capstoneProjectsList } from '../data/capstoneProjects';
+import { contentApi } from '../lib/api';
+import type { AdminLessonConfig, AdminQuiz, AdminChallenge, AdminProjectTemplate, AdminCapstoneConfig } from '../lib/api';
 import { useChallengeStore } from '../store/challengeStore';
 import DiscordWidget from '../components/DiscordWidget';
-import { freelancerModules } from '../data/freelancerTrack';
 import { allTools } from '../data/tools';
-
-const totalChallengesCount = challenges.length + liveCodingChallenges.length;
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
+
+/** Minimal lesson shape for dashboard */
+interface DashLessonItem {
+  id: number;
+  level: number;
+  title: string;
+}
+
+/** Minimal capstone shape for dashboard */
+interface DashCapstoneItem {
+  id: string;
+  title: string;
+  description: string;
+  difficulty: 1 | 2 | 3;
+  estimatedHours: number;
+  thumbnailEmoji: string;
+}
+
+/** Minimal template shape for dashboard */
+interface DashTemplateItem {
+  id: string;
+  title: string;
+  difficulty: number;
+  estimatedHours: number;
+  techStack: string[];
+}
 
 const DashboardView = () => {
   const { t } = useTranslation();
@@ -41,6 +60,47 @@ const DashboardView = () => {
     return Object.values(srsItems).filter((item) => item.nextReviewAt <= iso).length;
   }, [srsItems]);
 
+  // ── API data state ──────────────────────────────────────────
+  const [lessons, setLessons] = useState<DashLessonItem[]>([]);
+  const [quizzes, setQuizzes] = useState<AdminQuiz[]>([]);
+  const [totalChallengesCount, setTotalChallengesCount] = useState(0);
+  const [projectTemplates, setProjectTemplates] = useState<DashTemplateItem[]>([]);
+  const [capstoneProjectsList, setCapstoneProjectsList] = useState<DashCapstoneItem[]>([]);
+  const [freelancerModules, setFreelancerModules] = useState<DashLessonItem[]>([]);
+  const [contentLoading, setContentLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getChallenges(),
+      contentApi.getProjectTemplates(),
+      contentApi.getCapstones(),
+      contentApi.getLessons({ track: 'freelancer' }),
+    ]).then(([lessonsRes, quizzesRes, challengesRes, templatesRes, capstonesRes, freelancerRes]) => {
+      setLessons(lessonsRes.data.map((l: AdminLessonConfig) => ({ id: l.lessonId, level: l.level, title: l.title })));
+      setQuizzes(quizzesRes.data);
+      setTotalChallengesCount(challengesRes.data.length);
+      setProjectTemplates(templatesRes.data.map((t: AdminProjectTemplate) => ({
+        id: t.templateId,
+        title: t.title,
+        difficulty: t.difficulty,
+        estimatedHours: t.estimatedHours,
+        techStack: t.techStack,
+      })));
+      setCapstoneProjectsList(capstonesRes.data.map((c: AdminCapstoneConfig) => ({
+        id: c.capstoneId,
+        title: c.title,
+        description: c.description,
+        difficulty: c.difficulty as 1 | 2 | 3,
+        estimatedHours: c.estimatedHours,
+        thumbnailEmoji: c.thumbnailEmoji ?? '',
+      })));
+      setFreelancerModules(freelancerRes.data.map((l: AdminLessonConfig) => ({ id: l.lessonId, level: l.level, title: l.title })));
+      setContentLoading(false);
+    }).catch(() => setContentLoading(false));
+  }, []);
+
   // Leaderboard integration
   const lbInit = useLeaderboardStore((s) => s.init);
   const lbSync = useLeaderboardStore((s) => s.syncCurrentUser);
@@ -60,7 +120,7 @@ const DashboardView = () => {
   const lbRank = useMemo(() => lbGetRank('all', 'points'), [lbGetRank]);
 
   const totalLessons = lessons.length;
-  const overallProgress = Math.round((lessonsCompleted.length / totalLessons) * 100);
+  const overallProgress = totalLessons > 0 ? Math.round((lessonsCompleted.length / totalLessons) * 100) : 0;
 
   const level1Lessons = lessons.filter((l) => l.level === 1).length;
   const level2Lessons = lessons.filter((l) => l.level === 2).length;
@@ -91,12 +151,20 @@ const DashboardView = () => {
 
   const quizRequirement = Math.round(totalQuizzes * 0.8);
   const projectRequirement = 6;
-  const quizProgress = Math.min(100, Math.round((completedQuizzes / quizRequirement) * 100));
+  const quizProgress = quizRequirement > 0 ? Math.min(100, Math.round((completedQuizzes / quizRequirement) * 100)) : 0;
   const projectProgress = Math.min(100, Math.round((projectsCompleted.length / projectRequirement) * 100));
   const certificationProgress = Math.min(100, Math.round((quizProgress + projectProgress) / 2));
 
   const hours = Math.floor(timeInvested / 60);
   const minutes = timeInvested % 60;
+
+  if (contentLoading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 animate-fade-in-up">

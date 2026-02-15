@@ -73,6 +73,16 @@ const AdminPatternsPage = lazy(() => import('./pages/admin/AdminPatternsPage').t
 const AdminAnalyticsPage = lazy(() => import('./pages/admin/AdminAnalyticsPage').then(m => ({ default: m.AdminAnalyticsPage })));
 const AdminNewsletterPage = lazy(() => import('./pages/admin/AdminNewsletterPage').then(m => ({ default: m.AdminNewsletterPage })));
 const AdminSettingsPage = lazy(() => import('./pages/admin/AdminSettingsPage').then(m => ({ default: m.AdminSettingsPage })));
+const AdminForumCategoriesPage = lazy(() => import('./pages/admin/AdminForumCategoriesPage').then(m => ({ default: m.AdminForumCategoriesPage })));
+const AdminOfficialDocsPage = lazy(() => import('./pages/admin/AdminOfficialDocsPage').then(m => ({ default: m.AdminOfficialDocsPage })));
+const AdminFeaturesPage = lazy(() => import('./pages/admin/AdminFeaturesPage').then(m => ({ default: m.AdminFeaturesPage })));
+const AdminQuizzesPage = lazy(() => import('./pages/admin/AdminQuizzesPage').then(m => ({ default: m.AdminQuizzesPage })));
+const AdminChallengesPage = lazy(() => import('./pages/admin/AdminChallengesPage').then(m => ({ default: m.AdminChallengesPage })));
+const AdminLessonConfigsPage = lazy(() => import('./pages/admin/AdminLessonConfigsPage').then(m => ({ default: m.AdminLessonConfigsPage })));
+const AdminProjectConfigsPage = lazy(() => import('./pages/admin/AdminProjectConfigsPage').then(m => ({ default: m.AdminProjectConfigsPage })));
+const AdminCapstoneConfigsPage = lazy(() => import('./pages/admin/AdminCapstoneConfigsPage').then(m => ({ default: m.AdminCapstoneConfigsPage })));
+const AdminProjectTemplatesPage = lazy(() => import('./pages/admin/AdminProjectTemplatesPage').then(m => ({ default: m.AdminProjectTemplatesPage })));
+const AdminPlaygroundTasksPage = lazy(() => import('./pages/admin/AdminPlaygroundTasksPage').then(m => ({ default: m.AdminPlaygroundTasksPage })));
 
 function App() {
   const incrementStreak = useUserProgress((state) => state.incrementStreak);
@@ -125,6 +135,16 @@ function App() {
             <Route path="analytics" element={<AdminAnalyticsPage />} />
             <Route path="newsletter" element={<AdminNewsletterPage />} />
             <Route path="settings" element={<AdminSettingsPage />} />
+            <Route path="forum-categories" element={<AdminForumCategoriesPage />} />
+            <Route path="official-docs" element={<AdminOfficialDocsPage />} />
+            <Route path="features" element={<AdminFeaturesPage />} />
+            <Route path="quizzes" element={<AdminQuizzesPage />} />
+            <Route path="challenges" element={<AdminChallengesPage />} />
+            <Route path="lesson-configs" element={<AdminLessonConfigsPage />} />
+            <Route path="project-configs" element={<AdminProjectConfigsPage />} />
+            <Route path="capstone-configs" element={<AdminCapstoneConfigsPage />} />
+            <Route path="project-templates" element={<AdminProjectTemplatesPage />} />
+            <Route path="playground-tasks" element={<AdminPlaygroundTasksPage />} />
           </Route>
 
           {/* Haupt-App mit Navigation & Footer */}

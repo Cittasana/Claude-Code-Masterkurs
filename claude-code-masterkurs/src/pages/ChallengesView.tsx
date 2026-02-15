@@ -18,25 +18,12 @@ import {
   Play,
   Star,
 } from 'lucide-react';
-import { challenges, challengeCategories, challengeDifficulties } from '../data/challenges';
-import {
-  liveCodingChallenges,
-  liveCodingCategories,
-  liveCodingDifficulties,
-} from '../data/liveCodingChallenges';
+import { contentApi } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useChallengeStore } from '../store/challengeStore';
 import { getCategoryI18nKey } from '../utils/challengeI18n';
-import type { CodingChallenge, ChallengeResult } from '../types';
+import type { CodingChallenge, ChallengeResult, ChallengeValidation } from '../types';
 import { useLearningTimer } from '../hooks/useLearningTimer';
-
-/** Alle Challenges: Claude Code (Kurs) + Live Coding (Algorithmen), separat von Projekten */
-const allChallenges: CodingChallenge[] = [
-  ...challenges,
-  ...liveCodingChallenges,
-];
-const allCategories = [...new Set([...challengeCategories, ...liveCodingCategories])];
-const allDifficulties = [...new Set([...challengeDifficulties, ...liveCodingDifficulties])];
 
 /* ================================================================
    ChallengesView – Live Coding Challenges
@@ -58,6 +45,46 @@ const ChallengesView = () => {
   const [filterCategory, setFilterCategory] = useState<string>('Alle');
   const [filterSource, setFilterSource] = useState<SourceFilter>('all');
   const { results, isCompleted } = useChallengeStore();
+
+  // ── API Data Loading ──────────────────────────────────────
+  const [allChallenges, setAllChallenges] = useState<CodingChallenge[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    contentApi.getChallenges()
+      .then((res) => {
+        if (cancelled) return;
+        const mapped: CodingChallenge[] = res.data.map((c) => ({
+          id: c.challengeId,
+          title: c.title,
+          description: c.description,
+          category: c.category as CodingChallenge['category'],
+          source: c.source as CodingChallenge['source'],
+          difficulty: c.difficulty as CodingChallenge['difficulty'],
+          timeLimit: c.timeLimit,
+          points: c.points,
+          instruction: c.instruction,
+          starterCode: c.starterCode,
+          language: c.language,
+          hints: c.hints,
+          validations: c.validations as ChallengeValidation[],
+          solution: c.solution,
+          relatedLessons: c.relatedLessons,
+        }));
+        setAllChallenges(mapped);
+      })
+      .catch(() => {
+        if (!cancelled) setAllChallenges([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
+  const allCategories = useMemo(() => [...new Set(allChallenges.map((c) => c.category))], [allChallenges]);
+  const allDifficulties = useMemo(() => [...new Set(allChallenges.map((c) => c.difficulty))], [allChallenges]);
 
   const getDifficultyLabel = (d: string) =>
     d === 'Alle' ? t('challenges.all') : (DIFFICULTY_KEYS[d] ? t(DIFFICULTY_KEYS[d]) : d);
@@ -81,7 +108,15 @@ const ChallengesView = () => {
       if (filterCategory !== 'Alle' && ch.category !== filterCategory) return false;
       return true;
     });
-  }, [filterDifficulty, filterCategory, filterSource]);
+  }, [allChallenges, filterDifficulty, filterCategory, filterSource]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   if (selectedChallenge) {
     return (

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -15,10 +15,11 @@ import {
   Rocket,
   ArrowRight,
 } from 'lucide-react';
-import { freelancerModules } from '../data/freelancerTrack';
+import { contentApi } from '../lib/api';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
 import { useSubscriptionAccess } from '../hooks/useSubscriptionAccess';
+import type { Lesson, LessonContent as LessonContentType } from '../types';
 
 /** First 2 modules are free (IDs 100, 101) */
 const FREE_MODULE_LIMIT = 2;
@@ -33,9 +34,38 @@ const FreelancerTrackView = () => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const hasPremium = useSubscriptionAccess();
 
+  // ── API Data Loading ──────────────────────────────────────
+  const [freelancerModules, setFreelancerModules] = useState<Lesson[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    contentApi.getLessons({ track: 'freelancer' })
+      .then((res) => {
+        if (cancelled) return;
+        const mapped: Lesson[] = res.data.map((l) => ({
+          id: l.lessonId,
+          level: l.level as Lesson['level'],
+          title: l.title,
+          description: l.description,
+          duration: l.duration,
+          objectives: l.objectives,
+          content: l.content as LessonContentType[],
+        }));
+        setFreelancerModules(mapped);
+      })
+      .catch(() => {
+        if (!cancelled) setFreelancerModules([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, []);
+
   const completedModuleIds = useMemo(
     () => freelancerModules.filter((m) => lessonsCompleted.includes(m.id)).map((m) => m.id),
-    [lessonsCompleted],
+    [freelancerModules, lessonsCompleted],
   );
 
   const progress = freelancerModules.length > 0
@@ -48,6 +78,14 @@ const FreelancerTrackView = () => {
     { icon: DollarSign, value: '100-200', labelKey: 'freelancer.statsHourly' },
     { icon: Users, value: '5+', labelKey: 'freelancer.statsClients' },
   ];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-20">
+        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-5xl mx-auto animate-fade-in-up">

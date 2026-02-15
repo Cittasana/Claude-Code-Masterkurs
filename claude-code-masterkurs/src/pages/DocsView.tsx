@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
@@ -21,13 +22,10 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
-import {
-  officialDocsOverview,
-  officialDocsCore,
-  officialDocsExtend,
-  officialDocsOutsideTerminal,
-  officialDocsIndexUrl,
-} from '../data/officialDocs';
+import { contentApi } from '../lib/api';
+import type { AdminOfficialDoc } from '../lib/api';
+
+const officialDocsIndexUrl = 'https://code.claude.com/docs/llms.txt';
 
 // ─────────────────────────────────────────────────────────────
 // Dokumentations- / Informationsseite
@@ -199,6 +197,20 @@ function DocsCtaSection() {
 }
 
 const DocsView = () => {
+  const [allDocs, setAllDocs] = useState<AdminOfficialDoc[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    contentApi.getOfficialDocs().then(res => setAllDocs(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
+  const officialDocsOverview = allDocs.filter(d => d.category === 'overview');
+  const officialDocsCore = allDocs.filter(d => d.category === 'core');
+  const officialDocsExtend = allDocs.filter(d => d.category === 'extend');
+  const officialDocsOutsideTerminal = allDocs.filter(d => d.category === 'outsideTerminal');
+
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
+
   return (
     <div className="min-h-screen animate-fade-in-up">
       <Helmet>

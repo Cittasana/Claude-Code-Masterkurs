@@ -1,15 +1,33 @@
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Download, Printer, Trophy, BookOpen, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
+import { Download, Printer, Trophy, BookOpen, CheckCircle2, Clock, TrendingUp, Loader2 } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
-import { projects } from '../data/projects';
+import { contentApi } from '../lib/api';
+
+interface LessonData { lessonId: number; level: number; title: string; }
+interface QuizData { quizId: string; title: string; }
 
 const ProgressReportView = () => {
   const { t } = useTranslation();
   const reportRef = useRef<HTMLDivElement>(null);
+  const [lessons, setLessons] = useState<LessonData[]>([]);
+  const [quizzes, setQuizzes] = useState<QuizData[]>([]);
+  const [projects, setProjects] = useState<{ projectId: string }[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getProjects(),
+    ]).then(([lessonsRes, quizzesRes, projectsRes]) => {
+      setLessons(lessonsRes.data.map(l => ({ lessonId: l.lessonId, level: l.level, title: l.title })));
+      setQuizzes(quizzesRes.data.map(q => ({ quizId: q.quizId, title: q.title })));
+      setProjects(projectsRes.data.map(p => ({ projectId: p.projectId })));
+    }).catch(() => {}).finally(() => setDataLoading(false));
+  }, []);
+
   const {
     lessonsCompleted,
     quizzesCompleted,
@@ -20,21 +38,25 @@ const ProgressReportView = () => {
     skillProgress,
   } = useUserProgress();
 
+  if (dataLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>;
+  }
+
   const totalLessons = lessons.length;
-  const overallProgress = Math.round((lessonsCompleted.length / totalLessons) * 100);
+  const overallProgress = totalLessons > 0 ? Math.round((lessonsCompleted.length / totalLessons) * 100) : 0;
 
   const level1Lessons = lessons.filter((l) => l.level === 1);
   const level2Lessons = lessons.filter((l) => l.level === 2);
   const level3Lessons = lessons.filter((l) => l.level === 3);
 
   const level1Completed = lessonsCompleted.filter((id) =>
-    level1Lessons.find((l) => l.id === id)
+    level1Lessons.find((l) => l.lessonId === id)
   ).length;
   const level2Completed = lessonsCompleted.filter((id) =>
-    level2Lessons.find((l) => l.id === id)
+    level2Lessons.find((l) => l.lessonId === id)
   ).length;
   const level3Completed = lessonsCompleted.filter((id) =>
-    level3Lessons.find((l) => l.id === id)
+    level3Lessons.find((l) => l.lessonId === id)
   ).length;
 
   const completedQuizzes = quizzesCompleted.filter((q) => q.completed);
@@ -94,17 +116,17 @@ const ProgressReportView = () => {
     ];
 
     lessonsCompleted.forEach((id) => {
-      const lesson = lessons.find((l) => l.id === id);
+      const lesson = lessons.find((l) => l.lessonId === id);
       if (lesson) {
         lines.push(`- [x] Lektion ${id}: ${lesson.title}`);
       }
     });
 
-    const uncompletedLessons = lessons.filter((l) => !lessonsCompleted.includes(l.id));
+    const uncompletedLessons = lessons.filter((l) => !lessonsCompleted.includes(l.lessonId));
     if (uncompletedLessons.length > 0) {
       lines.push('', `### ${t('report.pendingLessons')}`, '');
       uncompletedLessons.forEach((l) => {
-        lines.push(`- [ ] Lektion ${l.id}: ${l.title}`);
+        lines.push(`- [ ] Lektion ${l.lessonId}: ${l.title}`);
       });
     }
 
@@ -120,7 +142,7 @@ const ProgressReportView = () => {
     );
 
     quizzesCompleted.forEach((qr) => {
-      const quiz = quizzes.find((q) => q.id === qr.quizId);
+      const quiz = quizzes.find((q) => q.quizId === qr.quizId);
       lines.push(
         `- ${qr.completed ? '[x]' : '[ ]'} ${quiz?.title || qr.quizId}: ${qr.score}% (${qr.attempts} Versuch${qr.attempts !== 1 ? 'e' : ''})`
       );
@@ -274,7 +296,7 @@ const ProgressReportView = () => {
           {quizzesCompleted.length > 0 ? (
             <div className="space-y-2">
               {quizzesCompleted.map((qr) => {
-                const quiz = quizzes.find((q) => q.id === qr.quizId);
+                const quiz = quizzes.find((q) => q.quizId === qr.quizId);
                 return (
                   <div
                     key={qr.quizId}

@@ -462,3 +462,223 @@ model ResearchHistory {
   @@index([userId])
   @@map("research_history")
 }
+
+// ── Content Configs: Forum Categories ───────────────────────────
+
+model ForumCategoryConfig {
+  id          String   @id @default(cuid())
+  categoryId  String   @unique @map("category_id")
+  title       String
+  description String
+  icon        String   @default("")
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("forum_category_configs")
+}
+
+// ── Content Configs: Official Docs ──────────────────────────────
+
+model OfficialDoc {
+  id          String   @id @default(cuid())
+  title       String
+  url         String
+  category    String
+  description String?
+  lang        String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("official_docs")
+}
+
+// ── Content Configs: Feature Reference ──────────────────────────
+
+model FeatureRef {
+  id            String   @id @default(cuid())
+  featureId     String   @unique @map("feature_id")
+  name          String
+  category      String
+  description   String
+  details       String?  @db.Text
+  tips          Json     @default("[]")
+  example       String
+  documentation String
+  tags          Json     @default("[]")
+  lastUpdate    Boolean  @default(false) @map("last_update")
+  bannerLabel   String?  @map("banner_label")
+  sortOrder     Int      @default(0) @map("sort_order")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@map("feature_refs")
+}
+
+// ── Content Configs: Quizzes ────────────────────────────────────
+
+model QuizConfig {
+  id           String   @id @default(cuid())
+  quizId       String   @unique @map("quiz_id")
+  lessonId     Int      @map("lesson_id")
+  title        String
+  type         String
+  points       Int      @default(5)
+  passingScore Int      @default(80) @map("passing_score")
+  maxAttempts  Int      @default(3) @map("max_attempts")
+  questions    Json
+  sortOrder    Int      @default(0) @map("sort_order")
+  status       String   @default("published")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@index([lessonId])
+  @@map("quiz_configs")
+}
+
+// ── Content Configs: Challenges ─────────────────────────────────
+
+model ChallengeConfig {
+  id            String   @id @default(cuid())
+  challengeId   String   @unique @map("challenge_id")
+  title         String
+  description   String   @db.Text
+  category      String
+  source        String   @default("claude-code")
+  difficulty    String
+  timeLimit     Int      @default(0) @map("time_limit")
+  points        Int      @default(100)
+  instruction   String   @db.Text
+  starterCode   String   @db.Text @map("starter_code")
+  language      String   @default("typescript")
+  hints         Json     @default("[]")
+  validations   Json     @default("[]")
+  solution      String   @db.Text
+  relatedLessons Json    @default("[]") @map("related_lessons")
+  sortOrder     Int      @default(0) @map("sort_order")
+  status        String   @default("published")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([category])
+  @@index([source])
+  @@map("challenge_configs")
+}
+
+// ── Content Configs: Lesson Configs ─────────────────────────────
+
+model LessonConfig {
+  id          String   @id @default(cuid())
+  lessonId    Int      @unique @map("lesson_id")
+  level       Int      @default(1)
+  title       String
+  description String   @db.Text
+  duration    String
+  objectives  Json     @default("[]")
+  content     Json
+  track       String   @default("main")
+  sortOrder   Int      @default(0) @map("sort_order")
+  status      String   @default("published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([level])
+  @@index([track])
+  @@map("lesson_configs")
+}
+
+// ── Content Configs: Projects ───────────────────────────────────
+
+model ProjectConfig {
+  id            String   @id @default(cuid())
+  projectId     String   @unique @map("project_id")
+  level         Int      @default(1)
+  title         String
+  description   String   @db.Text
+  difficulty    String
+  duration      String
+  requirements  Json     @default("[]")
+  starterCode   String?  @db.Text @map("starter_code")
+  hints         Json     @default("[]")
+  solution      String?  @db.Text
+  resources     Json     @default("[]")
+  validationMeta Json    @default("{}") @map("validation_meta")
+  sortOrder     Int      @default(0) @map("sort_order")
+  status        String   @default("published")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@index([level])
+  @@map("project_configs")
+}
+
+// ── Content Configs: Capstone Projects ──────────────────────────
+
+model CapstoneConfig {
+  id          String   @id @default(cuid())
+  capstoneId  String   @unique @map("capstone_id")
+  title       String
+  description String   @db.Text
+  difficulty  Int      @default(1)
+  estimatedHours Int   @default(4) @map("estimated_hours")
+  techStack   Json     @default("[]") @map("tech_stack")
+  requirements Json    @default("[]")
+  steps       Json     @default("[]")
+  thumbnailEmoji String? @map("thumbnail_emoji")
+  sortOrder   Int      @default(0) @map("sort_order")
+  status      String   @default("published")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("capstone_configs")
+}
+
+// ── Content Configs: Project Templates ──────────────────────────
+
+model ProjectTemplateConfig {
+  id              String   @id @default(cuid())
+  templateId      String   @unique @map("template_id")
+  title           String
+  description     String   @db.Text
+  difficulty      Int      @default(1)
+  estimatedHours  Int      @default(4) @map("estimated_hours")
+  techStack       Json     @default("[]") @map("tech_stack")
+  features        Json     @default("[]")
+  claudeMd        String   @db.Text @map("claude_md")
+  fileStructure   String?  @db.Text @map("file_structure")
+  steps           Json     @default("[]")
+  githubUrl       String?  @map("github_url")
+  sortOrder       Int      @default(0) @map("sort_order")
+  status          String   @default("published")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@map("project_template_configs")
+}
+
+// ── Content Configs: Playground Tasks ───────────────────────────
+
+model PlaygroundTaskConfig {
+  id            String   @id @default(cuid())
+  taskId        String   @unique @map("task_id")
+  projectId     String   @map("project_id")
+  title         String
+  description   String   @db.Text
+  instruction   String   @db.Text
+  requirements  Json     @default("[]")
+  mode          String   @default("editor")
+  language      String   @default("typescript")
+  starterCode   String   @db.Text @map("starter_code")
+  hints         Json     @default("[]")
+  validationMeta Json    @default("[]") @map("validation_meta")
+  scenarioMeta   Json?   @map("scenario_meta")
+  sortOrder      Int     @default(0) @map("sort_order")
+  status         String  @default("published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@index([projectId])
+  @@map("playground_task_configs")
+}

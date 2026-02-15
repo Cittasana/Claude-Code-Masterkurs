@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Line,
@@ -32,13 +32,12 @@ import {
   Zap,
   Award,
   Brain,
+  Loader2,
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useAnalyticsStore } from '../store/analyticsStore';
 import { useUserProgress } from '../store/userProgress';
-import { lessons } from '../data/lessons';
-import { quizzes } from '../data/quizzes';
-import { projects } from '../data/projects';
+import { contentApi } from '../lib/api';
 
 // ── Register Chart.js components ───────────────────────────────────
 ChartJS.register(
@@ -146,6 +145,23 @@ function heatmapColor(count: number): string {
 
 const LearningAnalyticsView = () => {
   const { t } = useTranslation();
+  const [lessons, setLessons] = useState<{ lessonId: number }[]>([]);
+  const [quizzes, setQuizzes] = useState<{ quizId: string }[]>([]);
+  const [projects, setProjects] = useState<{ projectId: string }[]>([]);
+  const [dataLoading, setDataLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getProjects(),
+    ]).then(([lessonsRes, quizzesRes, projectsRes]) => {
+      setLessons(lessonsRes.data.map(l => ({ lessonId: l.lessonId })));
+      setQuizzes(quizzesRes.data.map(q => ({ quizId: q.quizId })));
+      setProjects(projectsRes.data.map(p => ({ projectId: p.projectId })));
+    }).catch(() => {}).finally(() => setDataLoading(false));
+  }, []);
+
   const weekdays = [
     t('analytics.weekdayMo'),
     t('analytics.weekdayTu'),
@@ -180,6 +196,10 @@ const LearningAnalyticsView = () => {
   } = useUserProgress();
 
   const [velocityWeeks, setVelocityWeeks] = useState(8);
+
+  if (dataLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-apple-accent" /></div>;
+  }
 
   // ── Memoized data ──────────────────────────────────────────────
 
@@ -342,7 +362,7 @@ const LearningAnalyticsView = () => {
           quizzesCompleted.filter((q) => q.completed).length,
           totalQuizzes - quizzesCompleted.filter((q) => q.completed).length,
           projectsCompleted.length,
-          9 - projectsCompleted.length,
+          projects.length - projectsCompleted.length,
         ],
         backgroundColor: [
           CHART_COLORS.accent,

@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import {
@@ -8,7 +8,8 @@ import {
   Filter,
   Star,
 } from 'lucide-react';
-import { projectTemplates } from '../data/projectTemplates';
+import { contentApi } from '../lib/api';
+import type { AdminProjectTemplate } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 
 const DIFFICULTY_COLORS: Record<number, string> = {
@@ -19,12 +20,18 @@ const DIFFICULTY_COLORS: Record<number, string> = {
 
 const TemplatesView = () => {
   const { t } = useTranslation();
+  const [projectTemplates, setProjectTemplates] = useState<AdminProjectTemplate[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filterDifficulty, setFilterDifficulty] = useState<number | null>(null);
+
+  useEffect(() => {
+    contentApi.getProjectTemplates().then(res => setProjectTemplates(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
 
   const filtered = useMemo(() => {
     if (filterDifficulty === null) return projectTemplates;
     return projectTemplates.filter((tpl) => tpl.difficulty === filterDifficulty);
-  }, [filterDifficulty]);
+  }, [projectTemplates, filterDifficulty]);
 
   const getDifficultyLabel = (d: number) => {
     switch (d) {
@@ -38,6 +45,8 @@ const TemplatesView = () => {
         return '';
     }
   };
+
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
 
   return (
     <div className="max-w-7xl mx-auto animate-fade-in-up">
@@ -128,8 +137,8 @@ const TemplatesView = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((tpl) => (
           <Link
-            key={tpl.id}
-            to={`/templates/${tpl.id}`}
+            key={tpl.templateId}
+            to={`/templates/${tpl.templateId}`}
             className="apple-card-hover text-left group relative"
           >
             {/* Difficulty badge */}
@@ -146,10 +155,10 @@ const TemplatesView = () => {
             </div>
 
             <h3 className="text-base font-bold text-apple-text mb-1.5 group-hover:text-apple-accent transition-colors">
-              {t(`templates.data.${tpl.id}.title`, { defaultValue: tpl.title })}
+              {t(`templates.data.${tpl.templateId}.title`, { defaultValue: tpl.title })}
             </h3>
             <p className="text-sm text-apple-textSecondary line-clamp-2 mb-3">
-              {t(`templates.data.${tpl.id}.description`, { defaultValue: tpl.description })}
+              {t(`templates.data.${tpl.templateId}.description`, { defaultValue: tpl.description })}
             </p>
 
             {/* Tech Stack Tags */}

@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { MessageCircle, Pin, Send, ArrowLeft } from 'lucide-react';
-import { forumCategories } from '../data/forumCategories';
+import { contentApi } from '../lib/api';
+import type { AdminForumCategory } from '../lib/api';
 import { useForumStore } from '../store/forumStore';
 
 const ForumThreadView = () => {
@@ -11,12 +12,18 @@ const ForumThreadView = () => {
   const getReplies = useForumStore((s) => s.getReplies);
   const addReply = useForumStore((s) => s.addReply);
 
+  const [forumCategories, setForumCategories] = useState<AdminForumCategory[]>([]);
+  const [loading, setLoading] = useState(true);
   const [replyText, setReplyText] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    contentApi.getForumCategories().then(res => setForumCategories(res.data)).catch(() => {}).finally(() => setLoading(false));
+  }, []);
+
   const thread = id ? getThread(id) : undefined;
   const replies = thread ? getReplies(thread.id) : [];
-  const category = thread ? forumCategories.find((c) => c.id === thread.categoryId) : undefined;
+  const category = thread ? forumCategories.find((c) => c.categoryId === thread.categoryId) : undefined;
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleString('de-DE', {
@@ -35,6 +42,8 @@ const ForumThreadView = () => {
     setReplyText('');
     setSubmitting(false);
   };
+
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
 
   if (!id || !thread) {
     return (

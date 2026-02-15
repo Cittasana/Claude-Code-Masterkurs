@@ -9,21 +9,9 @@ import {
   Pencil,
   X,
 } from 'lucide-react';
-import { adminApi } from '../../lib/api';
+import { adminApi, type AdminLessonConfig } from '../../lib/api';
 
-interface LessonConfig {
-  id: string;
-  lessonId: number;
-  level: 1 | 2 | 3;
-  title: string;
-  description: string;
-  duration: string;
-  objectives: string[];
-  content: Record<string, unknown>[];
-  track: 'main' | 'freelancer';
-  sortOrder: number;
-  status: string;
-}
+type LessonConfig = AdminLessonConfig;
 
 const trackTabs = [
   { value: 'all', label: 'Alle' },
@@ -55,7 +43,6 @@ export function AdminLessonConfigsPage() {
       const res = await adminApi.getLessonConfigs({
         track: selectedTrack !== 'all' ? selectedTrack : undefined,
         level: selectedLevel || undefined,
-        search: searchQuery || undefined,
       });
       setLessons(res.data);
     } catch (err: unknown) {

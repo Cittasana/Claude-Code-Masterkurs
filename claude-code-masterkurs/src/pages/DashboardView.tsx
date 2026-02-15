@@ -7,7 +7,7 @@ import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
 import { contentApi } from '../lib/api';
-import type { AdminLessonConfig, AdminQuiz, AdminChallenge, AdminProjectTemplate, AdminCapstoneConfig } from '../lib/api';
+import type { AdminLessonConfig, AdminQuiz, AdminProjectTemplate, AdminCapstoneConfig } from '../lib/api';
 import { useChallengeStore } from '../store/challengeStore';
 import DiscordWidget from '../components/DiscordWidget';
 import { allTools } from '../data/tools';

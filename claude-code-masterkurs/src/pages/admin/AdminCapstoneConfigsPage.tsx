@@ -9,22 +9,9 @@ import {
   Pencil,
   X,
 } from 'lucide-react';
-import { adminApi } from '../../lib/api';
+import { adminApi, type AdminCapstoneConfig } from '../../lib/api';
 
-interface CapstoneConfig {
-  id: string;
-  capstoneId: string;
-  title: string;
-  description: string;
-  difficulty: 1 | 2 | 3;
-  estimatedHours: number;
-  techStack: string[];
-  requirements: string[];
-  steps: { title: string; description: string }[];
-  thumbnailEmoji?: string;
-  sortOrder: number;
-  status: string;
-}
+type CapstoneConfig = AdminCapstoneConfig;
 
 export function AdminCapstoneConfigsPage() {
   const [capstones, setCapstones] = useState<CapstoneConfig[]>([]);
@@ -38,9 +25,7 @@ export function AdminCapstoneConfigsPage() {
   const loadCapstones = useCallback(async () => {
     try {
       setError(null);
-      const res = await adminApi.getCapstoneConfigs({
-        search: searchQuery || undefined,
-      });
+      const res = await adminApi.getCapstoneConfigs();
       setCapstones(res.data);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Fehler beim Laden');

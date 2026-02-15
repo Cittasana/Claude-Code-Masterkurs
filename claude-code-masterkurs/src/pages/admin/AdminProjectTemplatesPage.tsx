@@ -9,24 +9,9 @@ import {
   Pencil,
   X,
 } from 'lucide-react';
-import { adminApi } from '../../lib/api';
+import { adminApi, type AdminProjectTemplate } from '../../lib/api';
 
-interface ProjectTemplate {
-  id: string;
-  templateId: string;
-  title: string;
-  description: string;
-  difficulty: number;
-  estimatedHours: number;
-  techStack: string[];
-  features: string[];
-  claudeMd: string;
-  fileStructure: string | null;
-  steps: { title: string; description: string }[];
-  githubUrl: string | null;
-  sortOrder: number;
-  status: string;
-}
+type ProjectTemplate = AdminProjectTemplate;
 
 export function AdminProjectTemplatesPage() {
   const [templates, setTemplates] = useState<ProjectTemplate[]>([]);

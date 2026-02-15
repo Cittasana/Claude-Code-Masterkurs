@@ -294,7 +294,7 @@ const StartKostenlosView = () => {
 // ── Lesson Card Content (extracted for Link/div wrapper) ──────────
 
 interface LessonCardContentProps {
-  lesson: { id: number; title: string; description: string; duration: string };
+  lesson: { lessonId: number; title: string; description: string; duration: string };
   index: number;
   t: (key: string, options?: Record<string, unknown>) => string;
 }

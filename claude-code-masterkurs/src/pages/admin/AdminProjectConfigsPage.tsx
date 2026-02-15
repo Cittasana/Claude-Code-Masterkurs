@@ -9,25 +9,9 @@ import {
   Pencil,
   X,
 } from 'lucide-react';
-import { adminApi } from '../../lib/api';
+import { adminApi, type AdminProjectConfig } from '../../lib/api';
 
-interface ProjectConfig {
-  id: string;
-  projectId: string;
-  level: 1 | 2 | 3;
-  title: string;
-  description: string;
-  difficulty: string;
-  duration: string;
-  requirements: string[];
-  starterCode?: string;
-  hints: string[];
-  solution?: string;
-  resources: string[];
-  validationMeta: Record<string, unknown>;
-  sortOrder: number;
-  status: string;
-}
+type ProjectConfig = AdminProjectConfig;
 
 const levelFilters = [
   { value: 0, label: 'Alle Level' },
@@ -51,7 +35,6 @@ export function AdminProjectConfigsPage() {
       setError(null);
       const res = await adminApi.getProjectConfigs({
         level: selectedLevel || undefined,
-        search: searchQuery || undefined,
       });
       setProjects(res.data);
     } catch (err: unknown) {

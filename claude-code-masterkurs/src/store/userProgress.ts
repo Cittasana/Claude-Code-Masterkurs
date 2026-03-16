@@ -241,8 +241,9 @@ export const useUserProgress = create<UserProgressStore>()(
           const data = await progressApi.get();
           if (!data) return;
           const state = get();
+
           // Quiz- und Projekt-Ergebnisse vom Server mappen (timestamp als ISO-String)
-          const quizzesCompleted: QuizResult[] = (data.quizzesCompleted as Array<Record<string, unknown>> || []).map(
+          const serverQuizzes: QuizResult[] = (data.quizzesCompleted as Array<Record<string, unknown>> || []).map(
             (q) => ({
               quizId: String(q.quizId),
               lessonId: Number(q.lessonId),
@@ -252,7 +253,7 @@ export const useUserProgress = create<UserProgressStore>()(
               timestamp: typeof q.timestamp === 'string' ? q.timestamp : (q.timestamp ? new Date(q.timestamp as string | Date).toISOString() : new Date().toISOString()),
             })
           );
-          const projectsCompleted: ProjectResult[] = (data.projectsCompleted as Array<Record<string, unknown>> || []).map(
+          const serverProjects: ProjectResult[] = (data.projectsCompleted as Array<Record<string, unknown>> || []).map(
             (p) => ({
               projectId: String(p.projectId),
               completed: Boolean(p.completed),
@@ -263,17 +264,49 @@ export const useUserProgress = create<UserProgressStore>()(
                 : [],
             })
           );
+
+          // MERGE-Strategie: Behalte den BESSEREN Wert (lokal ODER Server)
+          const serverLessons = (data.lessonsCompleted as number[]) || [];
+          // Vereinige lokale + Server-Lektionen (de-dupliziert)
+          const mergedLessons = [...new Set([...state.lessonsCompleted, ...serverLessons])].sort((a, b) => a - b);
+
+          // Quizzes: Merge nach quizId, behalte höheren Score
+          const quizMap = new Map<string, QuizResult>();
+          for (const q of state.quizzesCompleted) quizMap.set(q.quizId, q);
+          for (const q of serverQuizzes) {
+            const existing = quizMap.get(q.quizId);
+            if (!existing || q.score > existing.score) quizMap.set(q.quizId, q);
+          }
+          const mergedQuizzes = [...quizMap.values()];
+
+          // Projekte: Merge nach projectId, behalte höheren Score
+          const projMap = new Map<string, ProjectResult>();
+          for (const p of state.projectsCompleted) projMap.set(p.projectId, p);
+          for (const p of serverProjects) {
+            const existing = projMap.get(p.projectId);
+            if (!existing || p.score > existing.score) projMap.set(p.projectId, p);
+          }
+          const mergedProjects = [...projMap.values()];
+
           set({
-            lessonsCompleted: (data.lessonsCompleted as number[]) ?? state.lessonsCompleted,
-            quizzesCompleted: quizzesCompleted.length ? quizzesCompleted : state.quizzesCompleted,
-            projectsCompleted: projectsCompleted.length ? projectsCompleted : state.projectsCompleted,
-            currentLesson: (data.currentLesson as number) ?? state.currentLesson,
-            totalPoints: (data.totalPoints as number) ?? state.totalPoints,
-            streak: (data.streak as number) ?? state.streak,
+            lessonsCompleted: mergedLessons,
+            quizzesCompleted: mergedQuizzes,
+            projectsCompleted: mergedProjects,
+            currentLesson: Math.max(state.currentLesson, (data.currentLesson as number) || 0),
+            totalPoints: Math.max(state.totalPoints, (data.totalPoints as number) || 0),
+            streak: Math.max(state.streak, (data.streak as number) || 0),
             lastSessionDate: (data.lastSessionDate as string) ?? state.lastSessionDate,
-            timeInvested: (data.timeInvested as number) ?? state.timeInvested,
+            timeInvested: Math.max(state.timeInvested, (data.timeInvested as number) || 0),
             skillProgress: (data.skillProgress as typeof state.skillProgress) ?? state.skillProgress,
-            videosWatched: (data.videosWatched as typeof state.videosWatched) ?? state.videosWatched,
+            videosWatched: { ...(state.videosWatched || {}), ...((data.videosWatched as typeof state.videosWatched) || {}) },
+          });
+
+          // Merged-Daten zurück zum Server pushen (damit Server auch aktuell ist)
+          syncInBackground({
+            lessonsCompleted: mergedLessons,
+            totalPoints: Math.max(state.totalPoints, (data.totalPoints as number) || 0),
+            streak: Math.max(state.streak, (data.streak as number) || 0),
+            timeInvested: Math.max(state.timeInvested, (data.timeInvested as number) || 0),
           });
         } catch (err) {
           if (err instanceof ApiError && err.status === 404) return; // Noch kein Fortschritt auf dem Server

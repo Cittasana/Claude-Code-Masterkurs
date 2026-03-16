@@ -382,6 +382,81 @@ ci(github): add lint job
     tags: ['prompt', 'template', 'best-practice'],
   },
   {
+    id: 'n-context-management',
+    title: 'Context Management Best Practices',
+    description: 'Community-Konsens: Die 5 wichtigsten Regeln für effektives Context Management.',
+    category: 'Workflows',
+    author: 'CCM · Community-Konsens März 2026',
+    snippet: `# Context Management — Die Top 5 Regeln
+# (Community-Konsens, bestätigt durch offizielle Best Practices)
+
+# 1. Nach jeder abgeschlossenen Aufgabe:
+/clear
+
+# 2. Proaktiv bei ~70% Context-Nutzung:
+/compact
+
+# 3. Regelmäßig auditieren was Claude "sieht":
+/context
+
+# 4. Planen vor Coden (Shift+Tab 2x oder):
+/plan fix the auth bug
+
+# 5. Explorative Aufgaben an Subagents delegieren:
+# → "Nutze einen Subagent um alle TODO-Kommentare zu finden"
+
+# Faustregel: Wenn du Claude 2x zum selben Thema
+# korrigiert hast → /clear und neu starten
+
+# CLAUDE.md: Max 50-100 Zeilen Root-Datei
+# Details in @imports auslagern (Progressive Disclosure)`,
+    language: 'bash',
+    tags: ['context', 'management', 'best-practice', 'performance', '2026'],
+    useCase: 'Performance-Optimierung in jeder Claude Code Session',
+    lastUpdate: true,
+    bannerLabel: 'Context Management',
+  },
+  {
+    id: 'n-hooks-autoformat',
+    title: 'Hooks: Auto-Format + Sicherheit (Copy-Paste)',
+    description: 'Produktionsreife Hook-Konfiguration für automatisches Formatting und Security-Schutz.',
+    category: 'Workflows',
+    author: 'CCM · Community Best Practice',
+    snippet: `// .claude/settings.json — Copy-Paste-fertig
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "type": "command",
+        "matcher": "Bash",
+        "command": "echo '$CLAUDE_TOOL_INPUT' | grep -q 'rm -rf' && exit 1 || exit 0"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "type": "command",
+        "matcher": "Write",
+        "command": "npx prettier --write $CLAUDE_FILE_PATH"
+      }
+    ],
+    "PostCompact": [
+      {
+        "type": "command",
+        "command": "echo 'Context compacted at $(date)' >> ~/.claude/compact.log"
+      }
+    ]
+  }
+}
+// PreToolUse: Blockiert gefährliche rm -rf Befehle
+// PostToolUse: Formatiert jede geschriebene Datei automatisch
+// PostCompact: Loggt wann Context komprimiert wurde (NEU)`,
+    language: 'jsonc',
+    tags: ['hooks', 'auto-format', 'sicherheit', 'postcompact', '2026'],
+    useCase: 'Deterministische Code-Qualität und Sicherheit',
+    lastUpdate: true,
+    bannerLabel: 'Hooks Setup',
+  },
+  {
     id: 'n-official-docs',
     title: 'Offizielle Dokumentation (code.claude.com)',
     description: 'Zentrale Referenz: CLI, Settings, MCP, Plugins, Changelog.',

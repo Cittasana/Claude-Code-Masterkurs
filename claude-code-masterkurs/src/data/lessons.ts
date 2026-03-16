@@ -78,7 +78,7 @@ Für wen eignet sich was? Copilot ist ideal wenn du schnell Code tippen willst u
         language: 'markdown',
         content: `| Feature | Claude Code | GitHub Copilot | Cursor | Windsurf |
 |---------|-------------|----------------|--------|----------|
-| Projekt-Verständnis (200K+) | ✅ | ⚠️ | ✅ | ✅ |
+| Projekt-Verständnis (bis 1M Tokens) | ✅ | ⚠️ | ✅ | ✅ |
 | Autonome Task-Ausführung | ✅ | ⚠️ | ✅ | ✅ |
 | Git Integration | ✅ | ❌ | ✅ | ✅ |
 | MCP Server Support | ✅ | ❌ | ✅ | ⚠️ |
@@ -91,7 +91,8 @@ Für wen eignet sich was? Copilot ist ideal wenn du schnell Code tippen willst u
 | Sandboxing (OS-Level) | ✅ | ❌ | ❌ | ❌ |
 | CI/CD Headless Mode | ✅ | ❌ | ❌ | ❌ |
 
-Stand: Februar 2026 | ✅ = Vollständig | ⚠️ = Teilweise | ❌ = Nicht vorhanden`,
+Stand: März 2026 | ✅ = Vollständig | ⚠️ = Teilweise | ❌ = Nicht vorhanden
+Claude Code: 46% "Most Loved" | Cursor: 19% | Copilot: 9% (Quelle: Developer Survey 2026)`,
       },
       {
         type: 'heading',
@@ -566,7 +567,7 @@ Claude Opus: Das leistungsstärkste Modell mit der höchsten Reasoning-Fähigkei
 
 Modellwahl in der Praxis: Du kannst das Modell bei jedem Start wählen ('claude --model opus') oder innerhalb einer Session wechseln. Die Faustregel: Starte mit Sonnet. Wenn die Ergebnisse nicht gut genug sind, wechsle zu Opus. Wenn die Aufgabe trivial ist, nutze Haiku.
 
-Token-Limits beachten: Jedes Modell hat ein maximales Context Window (wie viel Text es gleichzeitig verarbeiten kann). Aktuell bieten alle Claude-Modelle 200K Input Tokens — das reicht für sehr große Projekte. Die Output-Limits variieren: Haiku und Sonnet bis 8K Tokens, Opus bis 32K Tokens.
+Token-Limits beachten: Jedes Modell hat ein maximales Context Window (wie viel Text es gleichzeitig verarbeiten kann). Seit März 2026 bieten Opus 4.6 und Sonnet 4.6 ein 1M Token Context Window (vorher 200K) — das reicht für ganze Codebases in einem Kontext. Haiku hat weiterhin 200K. Die Output-Limits variieren: Haiku bis 8K Tokens, Sonnet bis 16K und Opus bis 32K Tokens.
 
 Die Kosten im Überblick: Haiku kostet ~0.25 USD pro Million Input Tokens. Sonnet ~3 USD. Opus ~15 USD. Das klingt abstrakt — in der Praxis bedeutet es: Eine typische Session mit Sonnet kostet 0.05-0.30 USD. Mit Opus das 5-fache. Deshalb ist die richtige Modellwahl der größte Kostenhebel.`,
       },
@@ -575,25 +576,26 @@ Die Kosten im Überblick: Haiku kostet ~0.25 USD pro Million Input Tokens. Sonne
         language: 'markdown',
         content: `| Modell | Intelligenz | Speed | Kosten | Best For |
 |--------|-------------|-------|--------|----------|
-| **Opus 4.5** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | Komplexe Tasks, Architecture Design |
-| **Sonnet 4.5** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 💰💰 | Daily Development, Balanced |
+| **Opus 4.6** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | Komplexe Tasks, Architecture Design |
+| **Sonnet 4.6** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 💰💰 | Daily Development, Balanced |
 | **Haiku 4.5** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 💰 | Simple Tasks, Quick Fixes |`,
       },
       {
         type: 'heading',
-        content: '⚡ Opus 4.5 - Maximum Intelligence',
+        content: '⚡ Opus 4.6 - Maximum Intelligence',
       },
       {
         type: 'list',
-        content: `- **Context Window**: 200K Tokens
-- **Output**: Bis zu 16K Tokens
+        content: `- **Context Window**: 1M Tokens (seit März 2026 GA — vorher 200K)
+- **Output**: Bis zu 32K Tokens
 - **Pricing**: $15 / 1M input tokens, $75 / 1M output tokens
 - **Use Cases**:
   - Komplexe Architektur-Entscheidungen
   - Große Refactoring-Operationen
   - Multi-File Code Reviews
   - Advanced Debugging
-  - Research & Analysis`,
+  - Research & Analysis
+  - Ganze Codebases in einem Kontext halten`,
       },
       {
         type: 'code',
@@ -603,12 +605,12 @@ claude --model opus "Refaktoriere das gesamte Auth-System zu Clean Architecture"
       },
       {
         type: 'heading',
-        content: '🚀 Sonnet 4.5 - Best Balance (DEFAULT)',
+        content: '🚀 Sonnet 4.6 - Best Balance (DEFAULT)',
       },
       {
         type: 'list',
-        content: `- **Context Window**: 200K Tokens
-- **Output**: Bis zu 8K Tokens
+        content: `- **Context Window**: 1M Tokens (seit März 2026 GA — vorher 200K)
+- **Output**: Bis zu 16K Tokens
 - **Pricing**: $3 / 1M input tokens, $15 / 1M output tokens
 - **Use Cases**:
   - Feature Development
@@ -630,8 +632,8 @@ claude "Erstelle eine neue React Component für User Profile"`,
       },
       {
         type: 'list',
-        content: `- **Context Window**: 200K Tokens
-- **Output**: Bis zu 4K Tokens
+        content: `- **Context Window**: 200K Tokens (Haiku hat weiterhin 200K)
+- **Output**: Bis zu 8K Tokens
 - **Pricing**: $0.25 / 1M input tokens, $1.25 / 1M output tokens
 - **Use Cases**:
   - Quick Fixes
@@ -1970,9 +1972,9 @@ Konsequenz: Alles Wichtige muss entweder in der CLAUDE.md stehen oder explizit i
 
 Ein Token ist ungefähr ein Wort oder 4 Zeichen. Der Satz 'Claude Code ist ein mächtiges Tool' besteht aus etwa 7 Tokens. Eine typische Quelldatei mit 100 Zeilen hat ca. 1.000-2.000 Tokens. Die gesamte CLAUDE.md hat vielleicht 1.000-3.000 Tokens.
 
-Die aktuellen Modell-Limits: Claude Opus hat ein Context Window von 200.000 Input-Tokens und kann 32.000 Output-Tokens generieren. Claude Sonnet hat ebenfalls 200.000 Input-Tokens. Claude Haiku hat ein kleineres Fenster. Diese Zahlen klingen nach viel — aber sie füllen sich schneller als du denkst.
+Die aktuellen Modell-Limits (seit März 2026): Claude Opus 4.6 und Sonnet 4.6 haben ein Context Window von 1.000.000 Input-Tokens (1M) — fünfmal mehr als das vorherige 200K-Limit. Opus kann 32.000, Sonnet 16.000 Output-Tokens generieren. Claude Haiku hat weiterhin 200.000 Input-Tokens. Diese Zahlen klingen nach viel — aber sie füllen sich schneller als du denkst.
 
-Eine typische Session nach 20 Nachrichten: System-Prompt und CLAUDE.md: ~3.000 Tokens. MCP Server Tool-Beschreibungen: ~5.000-20.000 Tokens (je nach Anzahl aktiver Server). Bisherige Konversation (alle Nachrichten hin und her): ~20.000-50.000 Tokens. Gelesene Dateien und Tool-Ergebnisse: ~30.000-100.000 Tokens. Zusammen: 58.000-173.000 Tokens — und das Limit ist 200.000.
+Eine typische Session nach 20 Nachrichten: System-Prompt und CLAUDE.md: ~3.000 Tokens. MCP Server Tool-Beschreibungen: ~5.000-20.000 Tokens (je nach Anzahl aktiver Server). Bisherige Konversation (alle Nachrichten hin und her): ~20.000-50.000 Tokens. Gelesene Dateien und Tool-Ergebnisse: ~30.000-100.000 Tokens. Zusammen: 58.000-173.000 Tokens. Mit dem 1M-Limit hast du jetzt deutlich mehr Luft — aber Context Management bleibt wichtig, weil die Performance ab ~90% Auslastung dennoch degradiert.
 
 Was passiert wenn du das Limit erreichst? Claude Code warnt dich nicht automatisch. Stattdessen beginnt die Qualität schleichend zu sinken: Frühere Details werden weniger berücksichtigt, Entscheidungen werden inkonsistent, und Claude kann sich an Dinge von vor 15 Nachrichten nicht mehr zuverlässig erinnern.
 
@@ -1983,9 +1985,9 @@ Deshalb ist proaktives Token-Management essentiell: Regelmäßig /context prüfe
         language: 'text',
         content: `MODEL TOKEN LIMITS
 ━━━━━━━━━━━━━━━━━━
-Opus 4:      200K Input  | 32K Output
-Sonnet 4:    200K Input  | 16K Output
-Haiku 3.5:   200K Input  | 8K Output
+Opus 4.6:    1M Input    | 32K Output  (seit März 2026)
+Sonnet 4.6:  1M Input    | 16K Output  (seit März 2026)
+Haiku 4.5:   200K Input  | 8K Output
 
 TOKEN APPROXIMATION
 ━━━━━━━━━━━━━━━━━━━
@@ -2002,9 +2004,10 @@ Typische .ts Datei     ≈ 2.000 Tokens
 Große Datei (500 Zln)  ≈ 10.000 Tokens
 CLAUDE.md (gut)        ≈ 1.500-3.000 Tokens
 
-200K Tokens klingt viel — aber:
-→ 20 große Dateien = 200.000 Tokens
-→ Das Context Window ist SCHNELLER voll als du denkst`,
+1M Tokens klingt enorm — aber:
+→ 100 große Dateien = ~1.000.000 Tokens
+→ Context Management bleibt dennoch wichtig
+→ Performance degradiert ab ~90% Auslastung`,
       },
       {
         type: 'heading',
@@ -2071,7 +2074,7 @@ Wann /compact nutzen? Faustregel: Nach 15-20 Nachrichten, oder wenn /context zei
 
 /clear löscht den gesamten Kontext und startet quasi eine neue Session — aber im gleichen Terminal-Fenster. Nutze das wenn du eine komplett andere Aufgabe beginnen willst und der bisherige Kontext nur stören würde.
 
-/context zeigt dir den aktuellen Füllstand des Context Windows: Wie viele Tokens sind belegt? Wovon? Wie viel Platz ist noch frei? Besonders nützlich um die größten Kontext-Fresser zu identifizieren.
+/context zeigt dir den aktuellen Füllstand des Context Windows: Wie viele Tokens sind belegt? Wovon? Wie viel Platz ist noch frei? Mit dem 1M Context Window hast du mehr Spielraum, aber die Monitoring-Tools sind trotzdem essentiell um Qualitätsverlust zu vermeiden.
 
 /cost zeigt den Token-Verbrauch und die Kosten der aktuellen Session. Nicht direkt ein Context-Steuerungs-Tool, aber hilfreich um ein Gefühl für den Verbrauch zu entwickeln.
 
@@ -2086,7 +2089,7 @@ Mein täglicher Workflow: /context am Anfang prüfen → Aufgabe bearbeiten → 
 /cost
 # → Current session:
 # → Input tokens: 45,230 | Output tokens: 12,450
-# → Cost: $0.32 | Context usage: 28% (45K/200K)
+# → Cost: $0.32 | Context usage: 5% (45K/1M)
 
 # Kontext komprimieren (WICHTIGSTES Tool)
 /compact
@@ -2186,7 +2189,7 @@ Mit .claudeignore: Nur relevanter Quellcode wird gelesen
         type: 'text',
         content: `Um Context Management wirklich zu verinnerlichen, musst du sehen wie der Kontext sich in einer typischen Session entwickelt. Hier ist der Verlauf einer realistischen 30-minütigen Arbeitssession — mit Token-Verbrauch und optimalen Eingriffspunkten.
 
-Minute 0-2 — Session-Start: Claude lädt die CLAUDE.md (~2.000 Tokens), die MCP-Server-Beschreibungen (~8.000 Tokens) und scannt die Projektstruktur (~3.000 Tokens). Gesamt: ~13.000/200.000 Tokens (6,5% Auslastung). Alles im grünen Bereich.
+Minute 0-2 — Session-Start: Claude lädt die CLAUDE.md (~2.000 Tokens), die MCP-Server-Beschreibungen (~8.000 Tokens) und scannt die Projektstruktur (~3.000 Tokens). Gesamt: ~13.000/1.000.000 Tokens (1,3% Auslastung bei 1M; bei 200K wären es 6,5%). Alles im grünen Bereich.
 
 Minute 3-10 — Analyse und erste Aufgabe: Du beschreibst deine Aufgabe, Claude liest 3-5 relevante Dateien. Gesamt: ~35.000 Tokens (17,5%). Noch reichlich Platz. Claude arbeitet perfekt.
 
@@ -2419,7 +2422,7 @@ claude --include "src/api/products.ts" --include "src/middleware/cache.ts"
         type: 'list',
         content: `**Context = Claude's Wissen während einer Session**
 - CLAUDE.md + geladene Dateien + Konversation
-- 200K Token Limit, aber praktisch weniger nutzbar
+- 1M Token Limit (Opus/Sonnet 4.6), aber Context Management bleibt wichtig
 - Informationen am Anfang und Ende werden besser erinnert
 
 **Die 5 Phasen kennen:**
@@ -2473,7 +2476,7 @@ Das Besondere an MCP: Es ist ein OFFENER Standard. Das bedeutet, jeder kann MCP 
 
 Wichtig zu verstehen: MCP Server laufen LOKAL auf deinem Rechner. Deine Daten werden nicht an Dritte gesendet. Der MCP Server verbindet sich mit dem externen Dienst und stellt die Ergebnisse Claude zur Verfügung — Claude selbst kommuniziert nie direkt mit den externen Diensten.
 
-Ein Wort der Warnung: Jeder aktive MCP Server verbraucht Platz im Context Window. Zu viele gleichzeitig aktive Server können dein Context Window von 200K auf unter 70K Tokens reduzieren. Die Empfehlung: Maximal 10 MCP Server gleichzeitig, mit unter 80 aktiven Tools insgesamt.`,
+Ein Wort der Warnung: Jeder aktive MCP Server verbraucht Platz im Context Window. Zu viele gleichzeitig aktive Server können den nutzbaren Kontext erheblich reduzieren. Die Empfehlung: Maximal 10 MCP Server gleichzeitig, mit unter 80 aktiven Tools insgesamt. Tipp: Seit neueren Versionen reduziert Tool Search Lazy Loading den Context-Verbrauch durch MCP-Tools um bis zu 95%.`,
       },
       {
         type: 'highlight',
@@ -4841,7 +4844,7 @@ Warum ist das wichtig? Weil es Dinge gibt die IMMER passieren müssen, nicht nur
 
 Hooks lösen genau diese Probleme. Du definierst: Bei welchem Event soll was passieren? Das Event tritt ein → der Befehl wird ausgeführt. Jedes Mal, garantiert, ohne Ausnahme. Das ist eine Ebene der Zuverlässigkeit die kein Prompt erreichen kann.
 
-Aktuell gibt es 9 verschiedene Hook-Events: von SessionStart über UserPromptSubmit, PreToolUse, PostToolUse, Notification bis Stop. Für jedes Event kannst du einen oder mehrere Shell-Befehle definieren. Die Befehle können alles sein was dein Terminal ausführen kann: Skripte, CLI-Tools, API-Aufrufe, Dateisystem-Operationen.
+Aktuell gibt es 10+ verschiedene Hook-Events: von SessionStart über UserPromptSubmit, PreToolUse, PostToolUse, PostCompact (neu seit März 2026 — feuert nach Context-Komprimierung), Notification bis Stop. Für jedes Event kannst du einen oder mehrere Shell-Befehle definieren. Die Befehle können alles sein was dein Terminal ausführen kann: Skripte, CLI-Tools, API-Aufrufe, Dateisystem-Operationen.
 
 Hooks werden in der Settings-Datei konfiguriert — entweder global (für alle Projekte), pro Projekt (committed ins Repository für das Team), oder lokal (nur für dich). Die Konfiguration ist JSON-basiert und unterstützt optionale Matcher die bestimmen bei welchen spezifischen Tools oder Dateien der Hook auslösen soll.`,
       },
@@ -7371,7 +7374,7 @@ Lösung:
         type: 'text',
         content: `Context-Probleme sind die häufigste und gleichzeitig subtilste Ursache für schlechte Ergebnisse. Claude vergisst Entscheidungen, widerspricht sich, generiert inkonsistenten Code oder ignoriert deine Vorgaben — all das sind typische Symptome eines überfüllten oder schlecht gemanagten Context Windows.
 
-Die Grundursache ist fast immer die gleiche: Das Context Window ist zu voll. Bei 200K Tokens Kapazität klingt das nach viel, aber eine typische Session füllt sich schneller als du denkst: Jede gelesene Datei, jede Antwort, jedes Zwischen-Ergebnis verbraucht Tokens. Nach 20-30 intensiven Nachrichten ist der Kontext oft zu 80-90% ausgelastet.
+Die Grundursache ist fast immer die gleiche: Das Context Window ist zu voll. Selbst mit dem 1M Token Limit (Opus/Sonnet 4.6) füllt sich eine Session schneller als du denkst: Jede gelesene Datei, jede Antwort, jedes Zwischen-Ergebnis verbraucht Tokens. Nach 40-60 intensiven Nachrichten kann der Kontext bei 70-90% liegen — und ab 90% degradiert die Qualität merklich.
 
 Die Warnsignale erkennen: Claude wiederholt sich (es hat vergessen was es bereits gesagt hat). Claude widerspricht früheren Aussagen. Claude ignoriert Regeln aus der CLAUDE.md die es anfangs noch befolgt hat. Claude generiert Code der nicht zu den bereits generierten Dateien passt. Code-Qualität nimmt plötzlich ab.
 
@@ -7691,7 +7694,7 @@ Was ist Context Engineering? Es ist die Kunst und Wissenschaft, die GESAMTE Info
 
 Der Unterschied zu Prompt Engineering: Prompt Engineering optimiert eine EINZELNE Nachricht. Context Engineering optimiert das GESAMTE System. Ein perfekter Prompt in einem schlecht gemanagten Kontext liefert schlechtere Ergebnisse als ein durchschnittlicher Prompt in einem perfekt gestalteten Kontext.
 
-Warum ist das so wichtig? Weil das Context Window die fundamentale Beschränkung jedes KI-Agents ist. 200.000 Tokens klingen nach viel, aber in einem Enterprise-Projekt mit CLAUDE.md, MCP-Servern, Skills und 30 Nachrichten Konversation bist du schnell bei 80% — und die Qualität sinkt.
+Warum ist das so wichtig? Weil das Context Window die fundamentale Beschränkung jedes KI-Agents ist. Selbst mit 1M Tokens (Opus/Sonnet 4.6) bist du in einem Enterprise-Projekt mit CLAUDE.md, MCP-Servern, Skills und 50+ Nachrichten Konversation schnell bei 60-80% — und die Qualität sinkt ab 90%.
 
 Context Engineering löst dieses Problem durch vier Strategien (die wir in dieser Lektion im Detail behandeln): WRITE (permanenten Kontext bereitstellen), SELECT (gezielt relevante Informationen laden), COMPRESS (Kontext komprimieren ohne wichtige Details zu verlieren), und ISOLATE (Aufgaben in separate Kontexte aufteilen).
 
@@ -7953,7 +7956,7 @@ Die goldene Regel: Lade nur was Claude JETZT braucht, nicht was es VIELLEICHT br
         language: 'bash',
         content: `# ANTI-PATTERN: Alles laden
 claude "Analysiere das gesamte Projekt"
-# → 200K Tokens sofort verbraucht, Context Rot vorprogrammiert
+# → Hunderttausende Tokens sofort verbraucht, Context Rot vorprogrammiert
 
 # BEST PRACTICE: Gezielt laden
 claude --include "src/auth/**/*" "Implementiere Password Reset"
@@ -8077,7 +8080,7 @@ Der Basis-Verbrauch (bevor du die erste Nachricht tippst): CLAUDE.md ~2.000-5.00
 
 Der Konversations-Verbrauch: Jede Nachricht (dein Prompt + Claudes Antwort) verbraucht ~500-5.000 Tokens, je nach Komplexität. Bei 20 Nachrichten: ~10.000-100.000 Tokens. Tool-Ergebnisse (gelesene Dateien, Grep-Resultate) verbrauchen zusätzlich ~1.000-10.000 pro Aufruf.
 
-Ein Budget-Plan für eine typische Session: Basis: 15.000 Tokens (fest). Konversation: 60.000 Tokens (variabel). Tool-Ergebnisse: 40.000 Tokens (variabel). Reserve: 85.000 Tokens (Puffer). Gesamt: 200.000 Tokens.
+Ein Budget-Plan für eine typische Session (Opus/Sonnet 4.6 mit 1M): Basis: 15.000 Tokens (fest). Konversation: 200.000 Tokens (variabel). Tool-Ergebnisse: 300.000 Tokens (variabel). Reserve: 485.000 Tokens (Puffer). Gesamt: 1.000.000 Tokens. Für Haiku (200K): Basis 15K, Konversation 60K, Tools 40K, Reserve 85K.
 
 Wenn der Basis-Verbrauch zu hoch ist: MCP Server reduzieren (größter einzelner Hebel), CLAUDE.md kürzen (Details in Skills auslagern), oder Skills-Index optimieren.
 
@@ -8091,7 +8094,7 @@ Das Budget-Monitoring: /cost zeigt den aktuellen Verbrauch. /context zeigt die A
         content: `CONTEXT BUDGET TEMPLATE
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Verfügbar: 200,000 Tokens (100%)
+Verfügbar: 1,000,000 Tokens (100%) — Opus/Sonnet 4.6
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 System Prompt:          ~2,000  (1%)    [Fest]
 CLAUDE.md:              ~2,000  (1%)    [Fest, aber optimierbar]
@@ -9803,7 +9806,7 @@ Ein Praxis-Tipp: Erstelle eine persönliche Kosten-Tabelle. Notiere nach jeder S
 # │ Cache Read:      30,000         │
 # │ Cache Write:      5,000         │
 # │ Total Cost:      $0.32          │
-# │ Context Usage:   28% (56K/200K) │
+# │ Context Usage:   6% (56K/1M)    │
 # │ Model:           claude-sonnet  │
 # └─────────────────────────────────┘
 
@@ -11472,7 +11475,7 @@ In Claude Code ist Opus 4.6 die erste Wahl wenn es um die schwierigsten Aufgaben
       },
       {
         type: 'text',
-        content: `Das Standard-Kontextfenster von Claude-Modellen ist 200K Token. Opus 4.6 erweitert dies auf bis zu 1 Million Token im Beta.
+        content: `Das Standard-Kontextfenster war bei älteren Claude-Modellen 200K Token. Seit März 2026 bieten Opus 4.6 und Sonnet 4.6 ein 1M Token Context Window als GA (Generally Available) — ohne Beta-Header, zum Standard-Preis.
 
 **Was bedeutet 1M Token in der Praxis?**
 - Eine durchschnittliche Code-Datei hat 200-500 Token.
@@ -11480,7 +11483,7 @@ In Claude Code ist Opus 4.6 die erste Wahl wenn es um die schwierigsten Aufgaben
 - Mit 1M Token kannst du also mehrere komplette Projekte oder ein sehr großes Projekt vollständig im Kontext haben.
 - Lange Konversationen mit vielen File-Reads und Tool-Outputs bleiben länger im Kontext, bevor Compaction nötig wird.
 
-**Aber Achtung:** Mehr Kontext ≠ automatisch bessere Ergebnisse. Die offiziellen Best Practices betonen: Das Kontextfenster ist die wichtigste Ressource, die du managen musst. Bei vollem Kontext leidet die Qualität – auch bei Opus. Und mehr Token im Kontext = höhere Kosten (besonders im Fast Mode mit >200K: $60/$225 MTok).
+**Aber Achtung:** Mehr Kontext ≠ automatisch bessere Ergebnisse. Die offiziellen Best Practices betonen: Das Kontextfenster ist die wichtigste Ressource, die du managen musst. Bei vollem Kontext leidet die Qualität – auch bei 1M. Und mehr Token im Kontext = höhere Kosten (besonders im Fast Mode mit >200K: $60/$225 MTok).
 
 Die empfohlene Strategie: Nutze Skills und Subagents, um den Kontext gezielt zu beladen statt alles auf einmal zu laden. Lies nicht blind alle Dateien ein, sondern lass Claude zuerst suchen und dann gezielt lesen.`,
       },
@@ -11551,7 +11554,7 @@ Nutzt du Agent Teams oder mehrere Subagents?
   → JA: Opus für den Lead, Sonnet für einfache Teammates
   → NEIN: ↓
 
-Brauchst du mehr als 200K Token Kontext?
+Wann brauchst du das volle 1M Context Window?
   → JA: Opus (1M Kontext-Fenster)
   → NEIN: Sonnet
 

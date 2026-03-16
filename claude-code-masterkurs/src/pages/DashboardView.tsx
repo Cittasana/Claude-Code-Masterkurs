@@ -2,7 +2,7 @@ import { useMemo, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, ExternalLink, Users, FolderGit2, Briefcase, Wrench, ArrowRight, Sparkles } from 'lucide-react';
+import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, FolderGit2, Briefcase, Wrench, ArrowRight, Sparkles } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';

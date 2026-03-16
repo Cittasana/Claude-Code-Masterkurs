@@ -232,39 +232,27 @@ const DashboardView = () => {
         />
       </div>
 
-      {/* Neueste Updates – Kacheln */}
+      {/* Neueste Updates – dynamisch aus DB */}
       <div className="apple-card">
         <h3 className="text-lg font-bold text-apple-text mb-4 flex items-center space-x-2">
           <Zap className="text-apple-accent" size={20} />
           <span>Neueste Updates</span>
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-          <Link
-            to="/lesson/30"
-            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group relative"
-          >
-            <span className="absolute -top-2 -right-2 bg-apple-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEU</span>
-            <Sparkles size={22} className="text-apple-accent mb-2" />
-            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Voice Mode & Code Review</span>
-            <span className="text-xs text-apple-muted mt-1">Sprachsteuerung, QA</span>
-          </Link>
-          <Link
-            to="/lesson/31"
-            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group relative"
-          >
-            <span className="absolute -top-2 -right-2 bg-apple-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEU</span>
-            <Activity size={22} className="text-apple-accent mb-2" />
-            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">1M Context Masterclass</span>
-            <span className="text-xs text-apple-muted mt-1">Context Management</span>
-          </Link>
-          <Link
-            to="/lesson/29"
-            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
-          >
-            <ExternalLink size={22} className="text-apple-accent mb-2" />
-            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Claude Code überall</span>
-            <span className="text-xs text-apple-muted mt-1">Web, Desktop, IDE, Docs</span>
-          </Link>
+          {lessons.slice(-3).reverse().map((lesson, idx) => (
+            <Link
+              key={lesson.id}
+              to={`/lesson/${lesson.id}`}
+              className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group relative"
+            >
+              {idx < 2 && (
+                <span className="absolute -top-2 -right-2 bg-apple-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEU</span>
+              )}
+              <Sparkles size={22} className="text-apple-accent mb-2" />
+              <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">{lesson.title}</span>
+              <span className="text-xs text-apple-muted mt-1">Lektion {lesson.id}</span>
+            </Link>
+          ))}
           <Link
             to="/features"
             className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"

@@ -197,11 +197,7 @@ const LearningAnalyticsView = () => {
 
   const [velocityWeeks, setVelocityWeeks] = useState(8);
 
-  if (dataLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-apple-accent" /></div>;
-  }
-
-  // ── Memoized data ──────────────────────────────────────────────
+  // ── Memoized data (MUSS vor jedem early return stehen — Rules of Hooks) ──
 
   const activityMap = useMemo(() => getActivityMap(), [events]);
   const heatmapWeeks = useMemo(() => generateHeatmapWeeks(activityMap, 12), [activityMap]);
@@ -452,6 +448,10 @@ const LearningAnalyticsView = () => {
 
   const hours = Math.floor(timeInvested / 60);
   const minutes = timeInvested % 60;
+
+  if (dataLoading) {
+    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-apple-accent" /></div>;
+  }
 
   return (
     <div className="space-y-8 animate-fade-in-up">

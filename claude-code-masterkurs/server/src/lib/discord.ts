@@ -255,6 +255,22 @@ export function buildOAuthUrl(redirectUri: string, state: string): string {
   return `https://discord.com/oauth2/authorize?${params.toString()}`;
 }
 
+/**
+ * Builds the Discord OAuth2 authorization URL for login/register.
+ * Uses 'identify email' scopes (guilds.join added after linking).
+ */
+export function buildLoginOAuthUrl(redirectUri: string, state: string): string {
+  const params = new URLSearchParams({
+    client_id: DISCORD_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'identify email guilds.join',
+    state,
+  });
+
+  return `https://discord.com/oauth2/authorize?${params.toString()}`;
+}
+
 // ── Configuration Check ─────────────────────────────────────
 
 /**

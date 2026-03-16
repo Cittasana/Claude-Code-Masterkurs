@@ -7,6 +7,7 @@ import { signToken, requireAuth } from '../middleware/auth.js';
 import { authRateLimit } from '../middleware/rateLimit.js';
 import { sendPasswordResetEmail, sendEmailVerificationEmail, sendFreeWelcomeEmail } from '../lib/email.js';
 import { sanitizeUserInput } from '../lib/sanitize.js';
+import { notifyNewSignup } from '../lib/discord-webhooks.js';
 
 export const authRouter = Router();
 
@@ -84,6 +85,9 @@ authRouter.post('/register', authRateLimit, async (req, res) => {
     });
 
     const token = signToken({ userId: user.id, email: user.email });
+
+    // Discord webhook notification (non-blocking)
+    notifyNewSignup({ email: user.email, displayName: user.displayName }).catch(() => {});
 
     logger.info({ userId: user.id }, 'User registered');
     res.status(201).json({ user, token });
@@ -482,6 +486,9 @@ authRouter.post('/signup/free', authRateLimit, async (req, res) => {
     });
 
     const token = signToken({ userId: user.id, email: user.email });
+
+    // Discord webhook notification (non-blocking)
+    notifyNewSignup({ email: user.email, displayName: user.displayName }).catch(() => {});
 
     logger.info({ userId: user.id, tier: 'free' }, 'Free tier user registered');
     res.status(201).json({

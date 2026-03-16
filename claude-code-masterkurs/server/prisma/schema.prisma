@@ -43,6 +43,7 @@ model User {
   showcaseEntries    ShowcaseEntry[]
   lektionen          Lektion[]          @relation("LektionAutor")
   researchHistory    ResearchHistory[]  @relation("ResearchHistoryUser")
+  supportTickets     SupportTicket[]
 
   @@map("users")
 }
@@ -681,4 +682,25 @@ model PlaygroundTaskConfig {
 
   @@index([projectId])
   @@map("playground_task_configs")
+}
+
+// ── Support Tickets ─────────────────────────────────────────
+// Discord-integrated support ticketing system
+
+model SupportTicket {
+  id              String   @id @default(cuid())
+  userId          String   @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  discordThreadId String?  @unique @map("discord_thread_id")
+  subject         String
+  status          String   @default("open") // 'open' | 'in_progress' | 'resolved' | 'closed'
+  priority        String   @default("normal") // 'low' | 'normal' | 'high' | 'urgent'
+
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([userId])
+  @@index([status])
+  @@map("support_tickets")
 }

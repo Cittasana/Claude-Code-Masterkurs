@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useSearchParams } from 'react-router-dom';
 import { useEffect, lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import Navigation from './components/Navigation/Navigation';
@@ -55,6 +55,7 @@ const WasIstClaudeCodeView = lazy(() => import('./pages/WasIstClaudeCodeView'));
 const VergleichView = lazy(() => import('./pages/VergleichView'));
 const GlossarView = lazy(() => import('./pages/GlossarView'));
 const PromptStudioView = lazy(() => import('./pages/PromptStudioView'));
+const SupportView = lazy(() => import('./pages/SupportView'));
 
 // Admin CMS (lazy loaded)
 import { AdminLayout } from './components/admin/AdminLayout';
@@ -151,6 +152,7 @@ function App() {
           <Route path="*" element={
             <div className="min-h-screen bg-apple-bg font-sans">
               <Navigation />
+              <DiscordLoginHandler />
               <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <Routes>
                   <Route index element={<LandingView />} />
@@ -190,6 +192,7 @@ function App() {
                   <Route path="/vergleich" element={<VergleichView />} />
                   <Route path="/glossar" element={<GlossarView />} />
                   <Route path="/prompt-studio" element={<PromptStudioView />} />
+                  <Route path="/support" element={<SupportView />} />
                   <Route path="/newsletter" element={<NewsletterView />} />
                   <Route path="/newsletter/confirm/:token" element={<NewsletterConfirmView />} />
                   <Route path="/newsletter/unsubscribe/:token" element={<NewsletterUnsubscribeView />} />
@@ -226,6 +229,37 @@ function App() {
       </Suspense>
     </Router>
   );
+}
+
+/** Handles Discord login redirect: stores token from URL params and redirects to dashboard */
+function DiscordLoginHandler() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const refreshUser = useAuthStore((state) => state.refreshUser);
+
+  useEffect(() => {
+    const discordLogin = searchParams.get('discord_login');
+    const token = searchParams.get('token');
+
+    if (discordLogin === 'success' && token) {
+      // Store token in auth store (same format as persist middleware expects)
+      const authData = {
+        state: { user: null, token, isAuthenticated: true },
+        version: 0,
+      };
+      localStorage.setItem('claude-code-auth', JSON.stringify(authData));
+
+      // Refresh user data from server
+      useAuthStore.setState({ token, isAuthenticated: true });
+      refreshUser();
+
+      // Clean URL
+      searchParams.delete('discord_login');
+      searchParams.delete('token');
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, [searchParams, setSearchParams, refreshUser]);
+
+  return null;
 }
 
 function NotFoundPage() {

@@ -4,6 +4,7 @@ import { prisma, logger } from '../index.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { writeRateLimit } from '../middleware/rateLimit.js';
 import { sanitizeUserInput } from '../lib/sanitize.js';
+import { notifyNewForumPost } from '../lib/discord-webhooks.js';
 
 export const forumRouter = Router();
 
@@ -162,6 +163,13 @@ forumRouter.post('/threads', requireAuth, writeRateLimit, async (req, res) => {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const t = thread as any;
+
+    // Discord webhook notification (non-blocking)
+    notifyNewForumPost({
+      title: t.title,
+      categoryId: t.categoryId,
+      author: t.author.displayName,
+    }).catch(() => {});
 
     res.status(201).json({
       id: t.id,

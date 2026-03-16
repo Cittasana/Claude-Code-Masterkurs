@@ -7,6 +7,7 @@ import { createPipedriveContact } from '../lib/pipedrive.js';
 import { sendDiscordInviteEmail } from '../lib/email.js';
 import { updateDiscordRole, getTierFromSubscription } from '../lib/discord.js';
 import { canAccessLesson, FREE_LESSON_LIMIT } from '../lib/lessons-config.js';
+import { notifyNewSubscription, notifySubscriptionCanceled } from '../lib/discord-webhooks.js';
 
 export const subscriptionRouter = Router();
 
@@ -648,6 +649,12 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     sendDiscordInviteEmail(user.email, user.displayName, tier).catch((error) => {
       logger.error({ error, userId }, 'Discord Invite-Email nach Checkout fehlgeschlagen');
     });
+
+    // ── Discord: Webhook-Notification (non-blocking) ────────
+    notifyNewSubscription(
+      { email: user.email, displayName: user.displayName },
+      tier,
+    ).catch(() => {});
   }
 }
 
@@ -717,13 +724,18 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   // ── Discord: Rolle auf Free zurücksetzen (non-blocking) ──
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { discordId: true },
+    select: { discordId: true, email: true, displayName: true },
   });
 
   if (user?.discordId) {
     updateDiscordRole(user.discordId, 'free').catch((error) => {
       logger.error({ error, userId, discordId: user.discordId }, 'Discord Role-Downgrade fehlgeschlagen');
     });
+  }
+
+  // ── Discord: Webhook-Notification (non-blocking) ──
+  if (user) {
+    notifySubscriptionCanceled({ email: user.email, displayName: user.displayName }).catch(() => {});
   }
 }
 

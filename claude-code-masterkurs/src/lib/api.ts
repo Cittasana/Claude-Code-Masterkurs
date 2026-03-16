@@ -90,6 +90,12 @@ export const api = {
       body: body ? JSON.stringify(body) : undefined,
     }),
 
+  patch: <T>(endpoint: string, body?: unknown) =>
+    request<T>(endpoint, {
+      method: 'PATCH',
+      body: body ? JSON.stringify(body) : undefined,
+    }),
+
   delete: <T>(endpoint: string) =>
     request<T>(endpoint, { method: 'DELETE' }),
 };
@@ -361,8 +367,35 @@ export const discordApi = {
   /** Returns the Discord OAuth URL to initiate the connection flow */
   getAuthUrl: () => api.get<{ url: string }>('/api/discord/auth-url'),
 
+  /** Returns the Discord OAuth URL for login/register (no auth required) */
+  getLoginUrl: () => api.get<{ url: string }>('/api/discord/login-url'),
+
   /** Disconnects the Discord account from the user profile */
   disconnect: () => api.post<{ message: string }>('/api/discord/disconnect'),
+};
+
+// ── Tickets API ─────────────────────────────────────────────
+
+export interface SupportTicket {
+  id: string;
+  userId: string;
+  discordThreadId: string | null;
+  subject: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+  updatedAt: string;
+  user: { id: string; displayName: string; email: string; avatarEmoji: string };
+}
+
+export const ticketsApi = {
+  getAll: () => api.get<{ tickets: SupportTicket[] }>('/api/tickets'),
+
+  create: (data: { subject: string; priority?: string }) =>
+    api.post<{ ticket: SupportTicket }>('/api/tickets', data),
+
+  updateStatus: (id: string, status: string) =>
+    api.patch<{ ticket: SupportTicket }>(`/api/tickets/${id}/status`, { status }),
 };
 
 // ── Newsletter API ──────────────────────────────────────────

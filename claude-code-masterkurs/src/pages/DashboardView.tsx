@@ -240,20 +240,22 @@ const DashboardView = () => {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           <Link
-            to="/lesson/27"
-            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+            to="/lesson/30"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group relative"
           >
-            <Zap size={22} className="text-apple-accent mb-2" />
-            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Fast Mode & Opus 4.6</span>
-            <span className="text-xs text-apple-muted mt-1">Schnellere Antworten</span>
+            <span className="absolute -top-2 -right-2 bg-apple-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEU</span>
+            <Sparkles size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Voice Mode & Code Review</span>
+            <span className="text-xs text-apple-muted mt-1">Sprachsteuerung, QA</span>
           </Link>
           <Link
-            to="/lesson/28"
-            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group"
+            to="/lesson/31"
+            className="apple-card flex flex-col p-4 hover:border-apple-accent/40 transition-all duration-200 group relative"
           >
-            <Users size={22} className="text-apple-accent mb-2" />
-            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">Agent Teams & Checkpointing</span>
-            <span className="text-xs text-apple-muted mt-1">Multi-Agent, Rewind</span>
+            <span className="absolute -top-2 -right-2 bg-apple-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEU</span>
+            <Activity size={22} className="text-apple-accent mb-2" />
+            <span className="font-semibold text-apple-text text-sm group-hover:text-apple-accent transition-colors">1M Context Masterclass</span>
+            <span className="text-xs text-apple-muted mt-1">Context Management</span>
           </Link>
           <Link
             to="/lesson/29"

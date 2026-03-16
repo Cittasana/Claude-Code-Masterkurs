@@ -12,6 +12,7 @@
 
 import {
   Client,
+  ChannelType,
   GatewayIntentBits,
   EmbedBuilder,
   REST,
@@ -67,6 +68,27 @@ const commands = [
   new SlashCommandBuilder()
     .setName('help')
     .setDescription('Zeigt Hilfe & Support-Informationen'),
+  new SlashCommandBuilder()
+    .setName('ticket')
+    .setDescription('Erstellt ein Support-Ticket')
+    .addStringOption((option) =>
+      option
+        .setName('betreff')
+        .setDescription('Kurze Beschreibung deines Problems')
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName('prioritaet')
+        .setDescription('Prioritaet des Tickets')
+        .setRequired(false)
+        .addChoices(
+          { name: 'Niedrig', value: 'low' },
+          { name: 'Normal', value: 'normal' },
+          { name: 'Hoch', value: 'high' },
+          { name: 'Dringend', value: 'urgent' },
+        )
+    ),
 ];
 
 // ── Bot Client ──────────────────────────────────────────────
@@ -242,6 +264,9 @@ async function handleSlashCommand(interaction: ChatInputCommandInteraction): Pro
       case 'help':
         await handleHelpCommand(interaction);
         break;
+      case 'ticket':
+        await handleTicketCommand(interaction);
+        break;
       default:
         await interaction.reply({
           content: 'Unbekannter Command.',
@@ -286,7 +311,7 @@ async function handleProgressCommand(interaction: ChatInputCommandInteraction): 
 
   const progress = user.progress;
   const completedCount = progress?.lessonsCompleted?.length || 0;
-  const totalLessons = 27;
+  const totalLessons = 32;
   const percentage = Math.round((completedCount / totalLessons) * 100);
   const tier = user.subscription?.isLifetime
     ? 'Lifetime'
@@ -362,10 +387,99 @@ async function handleHelpCommand(interaction: ChatInputCommandInteraction): Prom
         '',
         '**Bot-Commands:**',
         '- `/progress` – Zeigt deinen Lernfortschritt',
+        '- `/ticket <betreff>` – Erstellt ein Support-Ticket',
         '- `/help` – Zeigt diese Hilfe',
       ].join('\n')
     )
     .setFooter({ text: 'Claude Code Masterkurs' })
+    .setTimestamp();
+
+  await interaction.reply({ embeds: [embed], ephemeral: true });
+}
+
+async function handleTicketCommand(interaction: ChatInputCommandInteraction): Promise<void> {
+  const discordUserId = interaction.user.id;
+  const subject = interaction.options.getString('betreff', true);
+  const priority = interaction.options.getString('prioritaet') || 'normal';
+
+  // Find user by Discord ID
+  const user = await prisma.user.findUnique({
+    where: { discordId: discordUserId },
+    select: { id: true, displayName: true },
+  });
+
+  if (!user) {
+    await interaction.reply({
+      content: [
+        'Dein Account ist nicht verknuepft.',
+        `Bitte verbinde Discord auf der Website: ${APP_URL}/dashboard`,
+      ].join('\n'),
+      ephemeral: true,
+    });
+    return;
+  }
+
+  // Create ticket in database
+  const ticket = await prisma.supportTicket.create({
+    data: {
+      userId: user.id,
+      subject,
+      priority,
+    },
+  });
+
+  // Try to create a thread in the support-tickets channel
+  let threadUrl = '';
+  const guild = interaction.guild;
+  if (guild) {
+    const supportChannel = guild.channels.cache.find(
+      (ch) => ch.name.includes('support-tickets') && ch.type === ChannelType.GuildText
+    );
+
+    if (supportChannel && supportChannel.type === ChannelType.GuildText) {
+      try {
+        const thread = await supportChannel.threads.create({
+          name: `[${priority.toUpperCase()}] ${subject}`,
+          reason: `Support-Ticket von ${user.displayName}`,
+        });
+
+        // Update ticket with thread ID
+        await prisma.supportTicket.update({
+          where: { id: ticket.id },
+          data: { discordThreadId: thread.id },
+        });
+
+        // Send initial message in thread
+        const embed = new EmbedBuilder()
+          .setColor(priority === 'urgent' ? 0xe74c3c : priority === 'high' ? 0xe67e22 : 0x3498db)
+          .setTitle(`Support-Ticket: ${subject}`)
+          .addFields(
+            { name: 'Erstellt von', value: user.displayName, inline: true },
+            { name: 'Prioritaet', value: priority, inline: true },
+            { name: 'Status', value: 'Offen', inline: true },
+            { name: 'Ticket-ID', value: ticket.id, inline: false },
+          )
+          .setFooter({ text: 'Antworten in diesem Thread fuer Support-Kommunikation' })
+          .setTimestamp();
+
+        await thread.send({ embeds: [embed] });
+        threadUrl = `\nThread: <#${thread.id}>`;
+      } catch (error) {
+        logger.error({ error, ticketId: ticket.id }, 'Failed to create support thread');
+      }
+    }
+  }
+
+  const embed = new EmbedBuilder()
+    .setColor(0x2ecc71)
+    .setTitle('Ticket erstellt!')
+    .setDescription(`Dein Support-Ticket wurde erfolgreich erstellt.${threadUrl}`)
+    .addFields(
+      { name: 'Betreff', value: subject, inline: false },
+      { name: 'Prioritaet', value: priority, inline: true },
+      { name: 'Ticket-ID', value: ticket.id, inline: true },
+    )
+    .setFooter({ text: 'Wir melden uns so schnell wie moeglich!' })
     .setTimestamp();
 
   await interaction.reply({ embeds: [embed], ephemeral: true });

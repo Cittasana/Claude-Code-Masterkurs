@@ -18691,4 +18691,515 @@ JSON
       },
     ],
   },
+  {
+    id: 47,
+    level: 3,
+    title: 'Multi-Agent Showdown — Claude Code vs. Cursor vs. Codex CLI',
+    description:
+      'Drei Vendor-Ansätze für Multi-Agent-Coding im direkten Vergleich: Worktrees (Claude Code), async Dispatch (Cursor /multitask), hierarchische Goal-Trees (OpenAI Codex). Welches Tool für welches Szenario — und welche Patterns sind universell?',
+    duration: '45 Minuten',
+    objectives: [
+      'Die drei dominanten Multi-Agent-Architekturen im Mai 2026 verstehen',
+      'Worktree-Pattern, /multitask und /root/agent_a praktisch unterscheiden',
+      'Anhand realer Szenarien das passende Tool wählen',
+      'Universelle Multi-Agent-Patterns von Vendor-spezifischer UX trennen',
+      'Die Trade-offs Control vs. UX-Komfort begründet abwägen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum dieser Vergleich jetzt?',
+      },
+      {
+        type: 'text',
+        content:
+          'Mai 2026 hat innerhalb von 72 Stunden vier Multi-Agent-Updates auf den Markt gebracht: Cursor 3.3 mit "Build in Parallel" und Auto-PR-Split (7. Mai), GitHub Copilot CLI 1.0.44 mit LLM-Bypass-Hooks und Cross-Family-Critic (8. Mai), Claude Code 2.1.137 mit MCP-Tool-Hooks und `$defaults`-Token (9. Mai), parallel dazu OpenAI Codex CLI 0.130 mit persistierten /goal-Workflows und MultiAgentV2.\n\nDas ist keine zufällige Häufung. Multi-Agent ist 2026 der primäre Differenzierungs-Kampf zwischen AI-Coding-Tools — und alle vier Vendor gehen einen anderen Weg. Wer den Markt versteht, kann fundiert entscheiden, welches Tool für welches Szenario passt und welche Patterns sich vendorübergreifend lohnen zu lernen.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Die Kernfrage',
+        content:
+          'Nicht "welches Tool ist das beste?", sondern: **welche Architektur passt zu welchem Workflow?** Power-User vs. Editor-zentrische Teams vs. Enterprise-IT vs. Multi-Agent-Researcher — vier Zielgruppen, vier Antworten.',
+      },
+      {
+        type: 'heading',
+        content: '🏛️ Die drei Architekturen',
+      },
+      {
+        type: 'text',
+        content:
+          'Claude Code, Cursor und Codex CLI lösen das Multi-Agent-Problem fundamental unterschiedlich. Hier die drei Patterns im direkten Vergleich:',
+      },
+      {
+        type: 'heading',
+        content: '1. Claude Code — Worktree-Pattern (Power-User)',
+      },
+      {
+        type: 'text',
+        content:
+          'Claude Code organisiert Multi-Agent **explizit über Git-Worktrees**: Du erstellst pro Task einen isolierten Worktree, spawnst dort einen Subagent, und merged das Ergebnis zurück. Es gibt keinen "Multi-Agent-Button" — der User orchestriert.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Claude Code Worktree-Pattern
+# 1. Worktree fuer Task A
+git worktree add ../worktrees/feat-auth feat/auth
+cd ../worktrees/feat-auth
+claude "Implementiere JWT-Auth in lib/auth.ts"
+
+# 2. Parallel: Worktree fuer Task B (anderes Terminal)
+git worktree add ../worktrees/feat-billing feat/billing
+cd ../worktrees/feat-billing
+claude "Implementiere Stripe-Integration in lib/billing.ts"
+
+# 3. Zusammenfuehrung
+cd ../../main-repo
+git merge feat/auth
+git merge feat/billing
+git worktree remove ../worktrees/feat-auth
+git worktree remove ../worktrees/feat-billing`,
+      },
+      {
+        type: 'text',
+        content:
+          'Vorteile: Maximaler Control. Headless-tauglich (CI/CD, Cron-Jobs). Konflikte werden früh sichtbar. Worktrees sind isolierte File-Systeme — kein Memory-Sharing, kein State-Leak. Mit 2.1.133 ist der Default `worktree.baseRef: fresh` (siehe Lesson 45) → neue Worktrees branchen aus `origin/<default>`, nicht aus lokalem HEAD.\n\nNachteile: User muss Worktrees, Branches und Merges selber managen. UX-Overhead. Kein eingebauter Dispatch-Mechanismus — paralleles Spawnen passiert über separate Terminals oder Subagent-Calls (`Task` Tool, `claude -p`).',
+      },
+      {
+        type: 'heading',
+        content: '2. Cursor — /multitask + Build in Parallel (Editor-UX)',
+      },
+      {
+        type: 'text',
+        content:
+          'Cursor packt Multi-Agent **in einen Button**. Du beschreibst die Aufgabe, drückst "Build in Parallel" — Cursor analysiert den Plan, identifiziert unabhängige Teile, feuert sie async ab und serialisiert die abhängigen.',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `Cursor /multitask Flow:
+
+User Input:
+  "Refactor auth, billing und notification-modul parallel"
+
+Cursor Plan-Analyse:
+  ✓ auth-refactor   → unabhaengig    → Subagent A (parallel)
+  ✓ billing-refactor → unabhaengig    → Subagent B (parallel)
+  ✓ notification-refactor → braucht auth → wartet auf A
+
+[Build in Parallel]-Button -> async dispatch
+  Subagent A: schreibt lib/auth.ts
+  Subagent B: schreibt lib/billing.ts
+  (Subagent C wartet)
+
+Ergebnis im Chat zusammengefuehrt
+[Auto-PR-Split]-Button -> Cursor schlaegt 3 PRs vor:
+  PR #1: auth-refactor
+  PR #2: billing-refactor
+  PR #3: notification-refactor (depends on #1)`,
+      },
+      {
+        type: 'text',
+        content:
+          'Vorteile: Niedrige Eintrittshürde. UX gewinnt Demos und überzeugt Teams. Auto-PR-Split ist ein echter UX-Trick — der Plan wird automatisch in logische Slices zerlegt, Snapshot vor Split, User genehmigt. Editor-zentrisch → integriert sich nahtlos in den IDE-Flow.\n\nNachteile: Wenig Headless-Tauglichkeit (es ist eine GUI-Funktion). Black-Box-Dispatch — User sieht nicht direkt, warum etwas parallelisiert wurde oder nicht. Keine echten Worktrees — alles passiert im selben Repo-State.',
+      },
+      {
+        type: 'heading',
+        content: '3. Codex CLI — Hierarchische Goal-Trees (Multi-Agent-Researcher)',
+      },
+      {
+        type: 'text',
+        content:
+          'OpenAI Codex CLI baut an einem First-Class-Multi-Agent-Framework, das in **expliziten Hierarchien** denkt. Agents bekommen Pfad-Adressen wie `/root/agent_a/sub_1`, können sich gegenseitig adressieren, und der `/goal`-Workflow persistiert sessionsübergreifend.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Codex CLI /goal-Workflow
+codex /goal create "Refactor monorepo: extract shared types"
+# -> Agent /root spawnt automatisch
+
+codex /goal show
+# /root        (Lead-Agent)
+# |-/agent_a   (extract type definitions)
+# |-/agent_b   (update imports across packages)
+# +-/agent_c   (write migration tests)
+
+# Codex pausiert /agent_b bis /agent_a fertig
+codex /goal pause /root/agent_b
+
+# Session beendet, naechsten Tag wieder:
+codex /goal resume
+# -> alle Sub-Agents in genauem letzten State`,
+      },
+      {
+        type: 'text',
+        content:
+          'Vorteile: Persistierte Goals — eine der wenigen Features, die Claude Code **nicht** hat (kein nativ sessionsübergreifendes Task-Tracking ohne Skill/Plugin). Hierarchien skalieren konzeptuell besser für komplexe Research-Workflows. Inter-Agent-Messaging über strukturierte Pfade.\n\nNachteile: Komplexität. Bei 3-4 parallelen Tasks ist die Hierarchie Overhead. Codex CLI hat aktuell die kleinste Userbase der drei — Community-Material ist dünn.',
+      },
+      {
+        type: 'heading',
+        content: '📊 Vergleichsmatrix',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Dimension                | Claude Code      | Cursor 3.3        | Codex CLI 0.130   |
+|--------------------------|------------------|-------------------|-------------------|
+| **Primitive**            | Worktrees + Subagents | async Dispatch | Goal-Trees        |
+| **Trigger**              | CLI-Befehl       | Button im Chat    | /goal create      |
+| **State-Isolation**      | Filesystem (echt) | Logisch (im Repo) | Logisch + persisted |
+| **Headless-Tauglich**    | ⭐⭐⭐⭐⭐         | ⭐                | ⭐⭐⭐⭐            |
+| **UX-Eintrittshuerde**   | Hoch             | Niedrig           | Hoch              |
+| **Persistierte Sessions** | Nein (Plugin)   | Limited           | ⭐⭐⭐⭐⭐ /goal     |
+| **Inter-Agent-Messaging** | Subagent-Calls  | nicht exponiert   | /root/agent_a     |
+| **Auto-PR-Split**        | nein (manuell)   | ⭐⭐⭐⭐⭐ /multitask| nein              |
+| **Worktree-Default**     | fresh (origin)   | n/a               | per goal-config   |
+| **Best fuer**            | Power-User, CI/CD | Editor-Teams     | Research/Hierarchien |`,
+      },
+      {
+        type: 'heading',
+        content: '🧭 Entscheidungs-Logik — welches Tool wann?',
+      },
+      {
+        type: 'list',
+        content: `- **Claude Code wählen wenn:**
+  - Headless-Workflows (CI/CD, Cron, Scripted-Releases)
+  - Multi-User-Workshop (Worktrees garantieren Isolation)
+  - Volle Hook/Plugin-Extensibility wichtiger als UX
+  - Bestehende Git-Workflows tief integriert
+  - Self-Hosted/On-Prem-Requirement
+
+- **Cursor 3.3 wählen wenn:**
+  - Team-Adoption hat hohe Priorität (UX gewinnt Demos)
+  - Editor-zentrische Devs ohne CLI-Vorliebe
+  - Auto-PR-Split wirklich genutzt wird (Refactors, die in viele PRs zerfallen)
+  - Cursor-Subscription bereits vorhanden
+
+- **Codex CLI wählen wenn:**
+  - Komplexe Multi-Agent-Research mit echten Hierarchien
+  - Sessionsübergreifende Task-Trees (z.B. mehrtägige Migrations)
+  - OpenAI-Ökosystem (Function Calling, ChatGPT-Integration)
+  - Akademische / Experimentations-Settings
+
+- **Mehrere kombinieren wenn:**
+  - Claude Code für daily-driver Coding + Codex CLI für mehrtägige Research-Threads
+  - Cursor in der IDE + Claude Code im Terminal für Headless-Jobs
+  - "Kein Hersteller besitzt die besten Ideen" — Cross-Family-Critic in Copilot CLI ist genau das Eingeständnis`,
+      },
+      {
+        type: 'heading',
+        content: '🔁 Universelle Patterns — was alle vier gemeinsam haben',
+      },
+      {
+        type: 'text',
+        content:
+          'Hinter der UX-Unterschiede liegen Patterns, die sich vendorübergreifend wiederholen. Wer diese versteht, ist nicht an einen Vendor gebunden:',
+      },
+      {
+        type: 'list',
+        content: `- **Worktrees als Substrat**: Claude Code (explizit), Cursor (intern), Codex (per Goal-Config), Copilot (über VS-Code-Workspaces) — alle vier nutzen isolierte Workspaces als Multi-Agent-Substrat. Das ist die wichtigste verborgene Standardisierung 2026.
+- **Plan-First, dann Dispatch**: alle vier analysieren erst den Plan, identifizieren Unabhängigkeiten, dispatchen dann parallel. Das Muster heisst überall anders, aber funktioniert identisch.
+- **Snapshot vor Multi-Agent-Operationen**: Cursors Auto-PR-Split macht es explizit, Claude Code via Worktree-Isolation implizit. Niemand löst die "Rollback bei Multi-Agent-Fehler"-Frage anders.
+- **Async-Coordination ueber Events/Hooks**: alle vier haben Mechanismen, um auf Sub-Agent-Completion zu reagieren — Hooks in Claude Code, Callbacks in Cursor, /goal-events in Codex.
+- **Budget/Limit-Awareness**: alle vier haben Mechanismen, um Multi-Agent-Spend zu beschränken (Advisor \`max_advisor_spend_usd\`, Cursor Subscription-Quotas, Codex Thread-Caps). Multi-Agent ohne Budget-Cap eskaliert exponentiell.`,
+      },
+      {
+        type: 'heading',
+        content: '🧪 Mini-Hands-On — drei Tools, dasselbe Szenario',
+      },
+      {
+        type: 'text',
+        content:
+          'Szenario: "Refactor die `User`-Klasse — splitte sie in `User`, `Profile`, `Preferences` und passe alle Imports an." Wie löst jedes Tool das?',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Claude Code — explizite Worktrees + Subagents
+git worktree add ../wt/user-split feat/user-split
+cd ../wt/user-split
+claude "Split User-Klasse in User, Profile, Preferences. \\
+        Spawn Subagent fuer jedes neue Modul, \\
+        adjust imports across packages parallel."
+
+# Cursor — /multitask + Build in Parallel
+# Im Chat: "Split User-Klasse in 3 Module, parallelisiere die Imports"
+# [Build in Parallel] -> async dispatch
+# [Auto-PR-Split] -> 3 PRs vorgeschlagen
+
+# Codex CLI — /goal mit Hierarchie
+codex /goal create "Split User into 3 modules + adjust imports"
+# /root spawnt automatisch /agent_a (extract User), /agent_b (extract Profile),
+# /agent_c (extract Preferences), /agent_d (adjust imports — waits)`,
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Die ehrliche Antwort',
+        content:
+          'Alle drei lösen das Szenario gleichwertig. Die Wahl ist eine UX- und Workflow-Frage — nicht eine Capability-Frage. Vier Stunden Refactor sind in jedem Tool vier Stunden.',
+      },
+      {
+        type: 'heading',
+        content: '⚠️ Common Mistakes',
+      },
+      {
+        type: 'list',
+        content: `- **"Mehr Agents = mehr Speed"** — Multi-Agent ist kein Magic-Speed-Up. Pro-Agent-Overhead frisst Speedup, sobald Tasks zu klein werden. Faustregel: Wenn ein Task < 5 Minuten Solo dauert, lohnt Multi-Agent nicht.
+- **"Alle Tasks parallelisieren"** — abhängige Tasks parallelisieren erzeugt nur Konflikte. Plan-Analyse muss VOR Dispatch passieren. Cursors /multitask macht das automatisch, Claude Code erwartet, dass DU das machst.
+- **"Sub-Agent-Tiefe maximieren"** — Codex erlaubt /root/agent_a/sub_1/sub_2 — aber praktisch wird's ab Tiefe 2 unkontrollierbar. Default-Tiefe: 1.
+- **"Multi-Agent ohne Budget-Cap"** — vier parallele Opus-Agents x 1 Stunde = $$$. Immer Caps setzen (Anthropic: \`max_advisor_spend_usd\`, Cursor: Quota-Plan, Codex: Thread-Cap).
+- **"Verschiedene Tools mischen, ohne State-Strategy"** — Cursor schreibt im Repo, gleichzeitig Claude Code in einem Worktree → Merge-Hell. Ein Tool pro Task.`,
+      },
+      {
+        type: 'heading',
+        content: '🎓 Strategische Einordnung',
+      },
+      {
+        type: 'text',
+        content:
+          'Mai 2026 hat den Markt sortiert: **Anthropic gewinnt Power-User** (API-First, Headless, tiefe Extensibility), **Cursor gewinnt UX-fokussierte Teams** (Editor-Integration, Auto-Splits, niedrige Eintrittshürde), **GitHub Copilot gewinnt Enterprise-IT** (Distribution, Cross-Family-Pragmatismus), **OpenAI Codex gewinnt Multi-Agent-Researcher** (Hierarchien, persistierte Goals).\n\nFür dich als Kursteilnehmer heisst das: lerne **die Patterns**, nicht die einzelnen Tools. Worktrees, Plan-First-Dispatch, Hook-getriebene Koordination, Budget-Caps — das überlebt jedes Vendor-Update. Die Knöpfe ändern sich, die Konzepte bleiben.',
+      },
+      {
+        type: 'highlight',
+        title: '🎯 Zusammenfassung',
+        content: `✅ Drei Architekturen: Worktrees (Claude Code), async Dispatch (Cursor), Goal-Trees (Codex)
+✅ Worktrees sind das verborgene Standard-Substrat für alle vier Vendor
+✅ Claude Code für Power-User + Headless, Cursor für UX-Teams, Codex für Hierarchien
+✅ Plan-First + Snapshot + Budget-Cap = die drei universellen Multi-Agent-Sicherheits-Patterns
+✅ "Mehr Agents = mehr Speed" ist ein Antipattern bei kurzen Tasks
+✅ Tools mischen nur mit klarer State-Strategy (ein Tool pro Task)`,
+      },
+    ],
+  },
+  {
+    id: 48,
+    level: 1,
+    title: 'Skill-Antipatterns — Mega-Skill, Kitchen-Sink-Session, Day-One-Hoarding',
+    description:
+      'Drei Antipatterns, die im Mai 2026 die Community-Best-Practices-Diskussion dominieren. Wer sie kennt, baut nachhaltige Workflows. Wer sie ignoriert, prompt-engineert in Endlosschleife. Kurze, scharfe Lektion mit Fix-Patterns.',
+    duration: '15 Minuten',
+    objectives: [
+      'Die drei häufigsten Skill- und Session-Antipatterns benennen können',
+      'Mega-Skill in Single-Responsibility-Skills aufteilen',
+      'Kitchen-Sink-Sessions durch `/clear` zwischen Themen vermeiden',
+      'Day-One-Hoarding durch den "First 30 Days Stack" ersetzen',
+      'Diese Antipatterns in eigenen Workflows erkennen und refaktorieren',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Drei Antipatterns, immer wieder',
+      },
+      {
+        type: 'text',
+        content:
+          'In den letzten Wochen sind drei Antipatterns konstant in jeder Community-Best-Practices-Sammlung aufgetaucht — DEV.to, Builder.io, claudefa.st, Firecrawl, Mejba. Sie erscheinen so häufig, weil sie der Default-Fehler sind, in den jeder neue Claude-Code-User reinläuft. Diese Lektion zeigt sie scharf — und gibt dir für jeden den konkreten Fix.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Was Antipatterns sind',
+        content:
+          'Ein Antipattern ist nicht "etwas, das nicht funktioniert". Es ist "etwas, das oberflächlich richtig wirkt, aber dich in eine Sackgasse führt". Alle drei Antipatterns wirken im Moment der Anwendung produktiv. Die Kosten kommen später — als unzuverlässige Skills, vollgemüllter Context, oder Lernkurven-Lähmung.',
+      },
+      {
+        type: 'heading',
+        content: '🚫 Antipattern 1: Der Mega-Skill',
+      },
+      {
+        type: 'text',
+        content:
+          'Ein Skill, der alles auf einmal macht: Commit erstellen + PR öffnen + Branch-Naming + Changelog updaten + Slack-Benachrichtigung senden. Klingt produktiv — ist aber unzuverlässig. Claude entscheidet pro Skill, ob er triggert oder nicht. Bei einem Mega-Skill mit fünf Verantwortungen ist die Trigger-Description zwangsweise vage:',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        content: `# ❌ ANTIPATTERN: Mega-Skill
+---
+name: git-workflow
+description: Handles git operations including commits, PRs, branches, and changelog updates
+---
+
+# Problem 1: Triggert bei "commit" UND bei "PR" UND bei "changelog" UND bei "branch"
+# -> aktiviert sich auch wenn nur EINS davon gebraucht wird
+# -> verbraucht Context fuer 5 Verantwortungen, wenn nur 1 noetig ist
+
+# Problem 2: Wenn ein Step fehlschlaegt (z.B. PR-Creation), bricht die ganze Chain ab
+# Problem 3: Schwer zu testen / debuggen
+# Problem 4: Updates muessen 5 Verantwortungen gleichzeitig respektieren`,
+      },
+      {
+        type: 'text',
+        content:
+          '**Fix**: Eine Verantwortung pro Skill. Ein Skill = ein Trigger-Wort = ein Verb. Die Skills komponieren sich dann automatisch, wenn Claude mehrere triggern muss.',
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        content: `# ✅ KORREKT: Single-Responsibility-Skills
+---
+name: git-commit
+description: Create a structured git commit with type(scope)-format. Triggers on "commit", "stage", "save changes".
+---
+
+---
+name: git-pr
+description: Open a GitHub pull request with auto-generated title and body. Triggers on "create PR", "open pull request", "submit PR".
+---
+
+---
+name: changelog-update
+description: Append a new entry to CHANGELOG.md based on recent commits. Triggers on "changelog", "release notes".
+---
+
+# Vorteile:
+# - Jeder Skill hat scharfe Trigger-Description
+# - Failure isoliert (commit failt nicht durch PR-Fehler)
+# - Einzeln testbar
+# - Komponierbar: "commit and PR" triggert beide nacheinander`,
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Die Single-Responsibility-Regel',
+        content:
+          'Ein Skill macht **eine** Sache. Wenn die Description ein "und" enthält, ist es ein Mega-Skill. Refactor zu zwei Skills.',
+      },
+      {
+        type: 'heading',
+        content: '🚫 Antipattern 2: Die Kitchen-Sink-Session',
+      },
+      {
+        type: 'text',
+        content:
+          'Eine Session, in der du erst eine Bug-Fix in Repo A machst, dann nachfragst wie Stripe-Pricing funktioniert, dann ein Refactor in Repo B startest, dann eine Email an einen Kunden formulierst, und dann zurück zu Repo A wechselst. Claude liest jeden vorherigen Turn — der Context füllt sich mit irrelevanten Tokens. Bei Turn 30 weiss Claude nicht mehr, ob du gerade über Repo A oder B redest.',
+      },
+      {
+        type: 'list',
+        content: `- **Symptome:**
+  - Claude zitiert plötzlich Code aus einer früheren, nicht mehr relevanten Datei
+  - Hallucinated Imports aus Repos, die du längst verlassen hast
+  - "Wait, hatten wir nicht...?" → Confusion zwischen Threads
+  - Compaction triggert ständig → Context-Verlust
+  - Slow responses (mehr Tokens = höhere Latenz + Cost)`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# ❌ ANTIPATTERN: Kitchen-Sink-Session
+# Eine durchgaengige Session ueber 3 Stunden:
+> Fix bug in auth.ts
+> ... 20 min spaeter ...
+> Wie funktioniert Stripe-Webhooks?
+> ... 30 min spaeter ...
+> Refactor billing.ts (Repo B!)
+> ... 40 min spaeter ...
+> Schreib Email an Kunde X
+> ... 30 min spaeter ...
+> Zurueck zu auth.ts ... was war nochmal der Bug?
+# -> Claude vermischt Repos, hallucinated Imports
+
+# ✅ KORREKT: Klare Cuts mit /clear
+> Fix bug in auth.ts
+# ... done, committed ...
+> /clear
+> Refactor billing.ts (Repo B)
+# ... done ...
+> /clear
+> Schreib Email an Kunde X
+# Jeder Thread bekommt frischen Context, scharfen Focus`,
+      },
+      {
+        type: 'text',
+        content:
+          '**Fix**: `/clear` zwischen Themen. Frische Sessions sind billig — verlorener Context ist teuer. Faustregel: Wenn du das Thema wechselst, `/clear`. Wenn du das Repo wechselst, garantiert `/clear`.',
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Die Cut-Regel',
+        content:
+          'Eine Session = ein Thema = ein Repo. Bei Themen-Wechsel `/clear`. Compaction ist nicht "free recovery" — es ist ein letzter Notausgang, kein Workflow-Tool.',
+      },
+      {
+        type: 'heading',
+        content: '🚫 Antipattern 3: Day-One-Hoarding',
+      },
+      {
+        type: 'text',
+        content:
+          'Tag 1 mit Claude Code: 80 Skills installiert, 30 Plugins aktiviert, 15 MCP-Server konfiguriert. Tag 2: nichts funktioniert wie erwartet, Skills triggern an falschen Stellen, MCPs blockieren sich gegenseitig. Tag 3: Frustration, "Claude Code ist überkompliziert".\n\nDas Problem: Du hast keine Mental-Model davon, welcher Skill was tut und wann er feuert. Du kannst Fehler nicht zuordnen. Du kannst nicht optimieren, weil du nicht weisst, was nominal funktionieren sollte.',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `# ❌ ANTIPATTERN: Day-One-Hoarding
+Tag 1 nachmittags:
+  - 80 Skills aus dem Marketplace installiert
+  - 30 Plugins aktiviert
+  - 15 MCP-Server verbunden (Filesystem, Git, Brave, Postgres, SQLite, GitHub,
+    Puppeteer, Slack, Linear, Notion, Calendar, Drive, Mail, Stripe, Vercel)
+  - Custom CLAUDE.md mit 2000 Zeilen kopiert
+
+Tag 2:
+  - Skill X triggert wenn er nicht soll
+  - MCP-Server Y schluckt 80% der Latenz
+  - Welcher der 80 Skills hat eigentlich gerade was gemacht?
+  - Context-Window ist voll mit irrelevanten System-Prompts`,
+      },
+      {
+        type: 'text',
+        content:
+          '**Fix**: Der "First 30 Days Stack". Drei Tools, vier Wochen tief lernen, dann erst nachladen. Was die drei sind, ist persönlich — aber die Anzahl ist nicht.',
+      },
+      {
+        type: 'list',
+        content: `- **First 30 Days Stack (Community-Konsens):**
+  1. **Filesystem-MCP** + **Git-MCP** — die zwei MCPs, die jeder Coding-Workflow braucht
+  2. **EINEN Skill für deine Hauptaufgabe** — z.B. \`/karimo\` für PRDs, oder \`/lean-ship\` für Coding, oder \`/seo-audit\` wenn du SEO machst
+  3. **CLAUDE.md mit < 200 Zeilen** — Projekt-Kontext, mehr nicht
+
+- **Nach 4 Wochen erweitern wenn:**
+  - Du das aktuelle Setup ohne Nachdenken nutzt
+  - Du genau weisst, welcher Skill wofür triggert
+  - Du Fehler zuordnen kannst ("ah, das war Skill X — weil Y in der Description steht")
+
+- **Anti-Heuristik:** Wenn du nicht erklären kannst, was Skill X tut, ohne in die Datei zu schauen → Skill deinstallieren oder lernen, nicht beides behalten.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Die Three-Tools-Regel',
+        content:
+          'Drei Tools, vier Wochen. Dann erst die nächsten zwei. Tools zu beherrschen ist eine Investition mit Cliff-Curve — die ersten 80% des Werts kommen aus tiefer Beherrschung von wenigen.',
+      },
+      {
+        type: 'heading',
+        content: '🧪 Self-Check — Hast du eines dieser Antipatterns?',
+      },
+      {
+        type: 'list',
+        content: `- **Mega-Skill-Check:** Lies die Description eines deiner Skills laut vor. Enthält sie ein "und"? → Refactor.
+- **Kitchen-Sink-Check:** Wie lang ist deine aktuelle Session in Turns? > 50 ohne /clear? → Wahrscheinlich Kitchen-Sink. Nächstes Theme: /clear.
+- **Day-One-Hoarding-Check:** Liste die 5 Skills auf, die du diese Woche aktiv genutzt hast. Wenn du > 5 installiert hast und nur < 5 nutzt — der Rest macht Lärm. Deaktivieren.
+- **Bonus-Check:** Kannst du in 30 Sekunden erklären, was JEDER deiner installierten Plugins tut? Wenn nein → Day-One-Hoarding bestätigt.`,
+      },
+      {
+        type: 'heading',
+        content: '🎓 Warum diese drei zusammen?',
+      },
+      {
+        type: 'text',
+        content:
+          'Mega-Skill, Kitchen-Sink-Session und Day-One-Hoarding teilen einen Wurzel-Fehler: **zu viel Kontext gleichzeitig**. Mega-Skill packt zu viel in einen Skill-Block, Kitchen-Sink packt zu viel in eine Session, Day-One-Hoarding packt zu viel in dein Setup. Die Disziplin ist immer dieselbe: weniger pro Einheit, dafür schärfer. Single Responsibility auf Skill-Ebene, Single Theme auf Session-Ebene, Three Tools auf Setup-Ebene.',
+      },
+      {
+        type: 'highlight',
+        title: '🎯 Zusammenfassung',
+        content: `✅ **Mega-Skill** vermeiden → Single Responsibility, ein Skill = ein Verb
+✅ **Kitchen-Sink-Session** vermeiden → /clear zwischen Themen, immer bei Repo-Wechsel
+✅ **Day-One-Hoarding** vermeiden → First 30 Days Stack: 2 MCPs + 1 Skill + < 200 Zeilen CLAUDE.md
+✅ Gemeinsamer Wurzel-Fehler: zu viel Kontext gleichzeitig
+✅ Gemeinsamer Fix: weniger pro Einheit, dafür scharf
+✅ Self-Check-Heuristik: enthält die Description ein "und"? Refactor.`,
+      },
+    ],
+  },
 ];

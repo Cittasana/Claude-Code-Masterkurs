@@ -1,5 +1,8 @@
 name: Seed Production Content
 
+# Re-trigger 2026-05-12: RAILWAY_DATABASE_URL secret switched from internal
+# to DATABASE_PUBLIC_URL so the runner can reach Postgres from outside.
+
 on:
   push:
     branches: [main]

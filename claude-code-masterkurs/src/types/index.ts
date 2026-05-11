@@ -14,8 +14,8 @@ export interface LessonContent {
   content: string;
   language?: string;
   title?: string;
-  /** Video: 'youtube' | 'vimeo' */
-  provider?: 'youtube' | 'vimeo';
+  /** Video: 'youtube' | 'vimeo' | 'local' */
+  provider?: 'youtube' | 'vimeo' | 'local';
   /** Video: ID from URL (e.g. YouTube: dQw4w9WgXcQ, Vimeo: 123456789) */
   videoId?: string;
 }

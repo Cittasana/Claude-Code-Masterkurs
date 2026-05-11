@@ -17,6 +17,13 @@ export const lessons: Lesson[] = [
       'Use Cases und Einsatzgebiete identifizieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-00.mp4',
+      title: '🎬 Lektion 00: Was ist Claude Code?',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🎯 Was ist Claude Code?',
@@ -80,19 +87,21 @@ Für wen eignet sich was? Copilot ist ideal wenn du schnell Code tippen willst u
 |---------|-------------|----------------|--------|----------|
 | Projekt-Verständnis (bis 1M Tokens) | ✅ | ⚠️ | ✅ | ✅ |
 | Autonome Task-Ausführung | ✅ | ⚠️ | ✅ | ✅ |
-| Git Integration | ✅ | ❌ | ✅ | ✅ |
+| Computer Use (Desktop-Steuerung) | ✅ | ❌ | ❌ | ❌ |
+| Git Integration | ✅ | ⚠️ | ✅ | ✅ |
 | MCP Server Support | ✅ | ❌ | ✅ | ⚠️ |
-| Custom Agents/Subagents | ✅ | ❌ | ⚠️ | ❌ |
+| Custom Agents/Subagents | ✅ | ⚠️ | ⚠️ | ❌ |
 | Agent SDK (eigene Agents) | ✅ | ❌ | ❌ | ❌ |
 | CLI + IDE + Web + Desktop | ✅ | ❌ | ❌ | ❌ |
 | Plan Mode | ✅ | ❌ | ⚠️ | ⚠️ |
 | Hooks & Automation | ✅ | ❌ | ❌ | ❌ |
 | Skills (portabel) | ✅ | ❌ | ❌ | ❌ |
 | Sandboxing (OS-Level) | ✅ | ❌ | ❌ | ❌ |
+| Agentic Code Review | ✅ | ✅ | ⚠️ | ❌ |
 | CI/CD Headless Mode | ✅ | ❌ | ❌ | ❌ |
 
 Stand: März 2026 | ✅ = Vollständig | ⚠️ = Teilweise | ❌ = Nicht vorhanden
-Claude Code: 46% "Most Loved" | Cursor: 19% | Copilot: 9% (Quelle: Developer Survey 2026)`,
+Claude Code: 46% "Most Loved" | Anthropic: 73% Enterprise-Erstkaeufe (Quelle: Ramp-Daten 03/2026)`,
       },
       {
         type: 'heading',
@@ -170,10 +179,15 @@ Alles in < 2 Minuten!`,
       },
       {
         type: 'list',
-        content: `- **200+ File Context**: Kann 200+ Dateien gleichzeitig verstehen
+        content: `- **1M Token Context**: Kann ganze Codebases gleichzeitig verstehen (GA, 600 Media-Elemente)
+- **Computer Use**: Claude kann seit März 2026 deinen Mac-Desktop steuern (Research Preview)
 - **20+ Languages**: Unterstützt alle gängigen Programmiersprachen
-- **5-10x Speedup**: Durchschnittliche Geschwindigkeitssteigerung
-- **95%+ Accuracy**: Code-Qualität bei strukturierten Tasks
+- **5-10x Speedup**: Durchschnittliche Geschwindigkeitssteigerung (Rakuten: 79% schnellere Time-to-Market)
+- **85% Adoption**: 85% aller Entwickler nutzen AI-Tools, 51% täglich
+- **+340% AI-Coding-Jobs**: Stellenanzeigen mit AI-Coding-Erfahrung YoY (Hired.com 2026)
+- **40% Enterprise AI Agents**: Gartner prognostiziert 40% Enterprise-Apps mit AI Agents bis Ende 2026
+- **73% Erstkaeufe**: Anthropic gewinnt 73% aller Enterprise-AI-Erstkaeufe (Ramp-Daten 03/2026)
+- **12.5 Mio. Zeilen**: Claude Code implementierte Activation Vector Extraction in einer 12,5-Mio-Zeilen-Codebase in 7 Stunden
 - **100+ MCP Servers**: Verfügbare Integrationen`,
       },
       {
@@ -235,6 +249,13 @@ Alles in < 2 Minuten!`,
       'Erstes Projekt aufsetzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-01.mp4',
+      title: '🎬 Lektion 01: Installation & Setup',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '💻 System Requirements',
@@ -430,8 +451,8 @@ claude --version
 claude models
 # Output:
 # Available models:
-#   - claude-opus-4-5-20251101
-#   - claude-sonnet-4-5-20250929
+#   - claude-opus-4-6-20260319
+#   - claude-sonnet-4-6-20260319
 #   - claude-haiku-4-5-20251001
 
 # Test API Connection
@@ -506,6 +527,13 @@ claude init
       'Kosten optimieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-02.mp4',
+      title: '🎬 Lektion 02: Authentifizierung & Model-Auswahl',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🔐 API-Key Management',
@@ -567,7 +595,7 @@ Claude Opus: Das leistungsstärkste Modell mit der höchsten Reasoning-Fähigkei
 
 Modellwahl in der Praxis: Du kannst das Modell bei jedem Start wählen ('claude --model opus') oder innerhalb einer Session wechseln. Die Faustregel: Starte mit Sonnet. Wenn die Ergebnisse nicht gut genug sind, wechsle zu Opus. Wenn die Aufgabe trivial ist, nutze Haiku.
 
-Token-Limits beachten: Jedes Modell hat ein maximales Context Window (wie viel Text es gleichzeitig verarbeiten kann). Seit März 2026 bieten Opus 4.6 und Sonnet 4.6 ein 1M Token Context Window (vorher 200K) — das reicht für ganze Codebases in einem Kontext. Haiku hat weiterhin 200K. Die Output-Limits variieren: Haiku bis 8K Tokens, Sonnet bis 16K und Opus bis 32K Tokens.
+Token-Limits beachten: Jedes Modell hat ein maximales Context Window (wie viel Text es gleichzeitig verarbeiten kann). Seit März 2026 bieten Opus 4.6 und Sonnet 4.6 ein 1M Token Context Window (vorher 200K) — das reicht für ganze Codebases in einem Kontext. Haiku hat weiterhin 200K. Die Output-Limits wurden im März 2026 deutlich erhöht: Opus 4.6 hat jetzt 64K Tokens Default-Output, und sowohl Opus als auch Sonnet können bis zu 128K Output-Tokens generieren. Haiku bleibt bei 8K.
 
 Die Kosten im Überblick: Haiku kostet ~0.25 USD pro Million Input Tokens. Sonnet ~3 USD. Opus ~15 USD. Das klingt abstrakt — in der Praxis bedeutet es: Eine typische Session mit Sonnet kostet 0.05-0.30 USD. Mit Opus das 5-fache. Deshalb ist die richtige Modellwahl der größte Kostenhebel.`,
       },
@@ -576,18 +604,48 @@ Die Kosten im Überblick: Haiku kostet ~0.25 USD pro Million Input Tokens. Sonne
         language: 'markdown',
         content: `| Modell | Intelligenz | Speed | Kosten | Best For |
 |--------|-------------|-------|--------|----------|
-| **Opus 4.6** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | Komplexe Tasks, Architecture Design |
+| **Opus 4.7** (NEU) | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | Schwerste Tasks, autonome Agents (Default seit 16.04.2026) |
+| **Opus 4.6** | ⭐⭐⭐⭐⭐ | ⭐⭐ | 💰💰💰 | Komplexe Tasks (Vorgänger, weiterhin verfügbar) |
 | **Sonnet 4.6** | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ | 💰💰 | Daily Development, Balanced |
 | **Haiku 4.5** | ⭐⭐⭐ | ⭐⭐⭐⭐⭐ | 💰 | Simple Tasks, Quick Fixes |`,
       },
       {
         type: 'heading',
-        content: '⚡ Opus 4.6 - Maximum Intelligence',
+        content: '⚡ Opus 4.7 - Neues Flaggschiff (Default seit 16.04.2026)',
       },
       {
         type: 'list',
-        content: `- **Context Window**: 1M Tokens (seit März 2026 GA — vorher 200K)
-- **Output**: Bis zu 32K Tokens
+        content: `- **Release**: 16. April 2026, Drop-in Replacement für Opus 4.6
+- **Context Window**: 1M Tokens, 3x höhere Vision-Auflösung (bis 3.75 MP)
+- **Effort-Level**: Neu \`xhigh\` für tiefstes Reasoning bei schwersten Refactorings
+- **Task-Budgets**: Token-Limit pro Task gegen Kosten-Ausreisser bei langen Agent-Loops
+- **Pricing**: $5 / 1M input, $25 / 1M output (günstiger als Opus 4.6!)
+- **Performance**: +13% Lift auf Coding-Benchmarks, 3x mehr Production-Tasks gelöst
+- **Use Cases**:
+  - Autonome Agents ohne enge Aufsicht
+  - Komplexe Architektur-Entscheidungen
+  - Screenshot-basiertes UI-Debugging dank höherer Vision-Auflösung
+  - Multi-File Refactorings mit \`--effort xhigh\``,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Opus 4.7 mit xhigh-Effort für schwierigen Refactor
+claude --model claude-opus-4-7 --effort xhigh \\
+  "Refactor the auth middleware to support OAuth2 PKCE"
+
+# Task-Budget setzen — verhindert Kosten-Ausreisser
+claude --model claude-opus-4-7 --task-budget 50000 \\
+  "Migrate the database layer to Drizzle"`,
+      },
+      {
+        type: 'heading',
+        content: '⚡ Opus 4.6 - Vorgänger (weiterhin verfügbar)',
+      },
+      {
+        type: 'list',
+        content: `- **Context Window**: 1M Tokens (GA ohne Beta-Header, Media-Cap: 600 Elemente)
+- **Output**: 64K Tokens Default, bis zu 128K Tokens möglich
 - **Pricing**: $15 / 1M input tokens, $75 / 1M output tokens
 - **Use Cases**:
   - Komplexe Architektur-Entscheidungen
@@ -595,7 +653,8 @@ Die Kosten im Überblick: Haiku kostet ~0.25 USD pro Million Input Tokens. Sonne
   - Multi-File Code Reviews
   - Advanced Debugging
   - Research & Analysis
-  - Ganze Codebases in einem Kontext halten`,
+  - Ganze Codebases in einem Kontext halten
+  - Langform-Code-Generierung in einem einzigen Response`,
       },
       {
         type: 'code',
@@ -609,8 +668,8 @@ claude --model opus "Refaktoriere das gesamte Auth-System zu Clean Architecture"
       },
       {
         type: 'list',
-        content: `- **Context Window**: 1M Tokens (seit März 2026 GA — vorher 200K)
-- **Output**: Bis zu 16K Tokens
+        content: `- **Context Window**: 1M Tokens (GA ohne Beta-Header, Media-Cap: 600 Elemente)
+- **Output**: Bis zu 128K Tokens möglich (deutlich erhöht seit März 2026)
 - **Pricing**: $3 / 1M input tokens, $15 / 1M output tokens
 - **Use Cases**:
   - Feature Development
@@ -766,6 +825,13 @@ Nutze Haiku für:
       'Den Conversation Flow verstehen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-03.mp4',
+      title: '🎬 Lektion 03: Erste Schritte & Befehle',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🚀 Claude Code starten',
@@ -1166,6 +1232,13 @@ Und schließlich: Vergessen die Kosten im Blick zu behalten. Regelmäßig /cost 
       'Den messbaren Unterschied zwischen Arbeiten mit und ohne Kontext erleben',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-04.mp4',
+      title: '🎬 Lektion 04: CLAUDE.md Mastery',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧠 Das Mentale Modell — Wie Claude dein Projekt versteht',
@@ -1904,6 +1977,13 @@ Der Wachstumsprozess: Nutze Claude Code eine Woche mit einer Stufe-1 CLAUDE.md. 
       'Strategien für große Projekte und lange Sessions beherrschen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-05.mp4',
+      title: '🎬 Lektion 05: Context Management',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧠 Wie Claude Informationen verarbeitet',
@@ -1972,7 +2052,7 @@ Konsequenz: Alles Wichtige muss entweder in der CLAUDE.md stehen oder explizit i
 
 Ein Token ist ungefähr ein Wort oder 4 Zeichen. Der Satz 'Claude Code ist ein mächtiges Tool' besteht aus etwa 7 Tokens. Eine typische Quelldatei mit 100 Zeilen hat ca. 1.000-2.000 Tokens. Die gesamte CLAUDE.md hat vielleicht 1.000-3.000 Tokens.
 
-Die aktuellen Modell-Limits (seit März 2026): Claude Opus 4.6 und Sonnet 4.6 haben ein Context Window von 1.000.000 Input-Tokens (1M) — fünfmal mehr als das vorherige 200K-Limit. Opus kann 32.000, Sonnet 16.000 Output-Tokens generieren. Claude Haiku hat weiterhin 200.000 Input-Tokens. Diese Zahlen klingen nach viel — aber sie füllen sich schneller als du denkst.
+Die aktuellen Modell-Limits (März 2026): Claude Opus 4.6 und Sonnet 4.6 haben ein Context Window von 1.000.000 Input-Tokens (1M) — GA ohne Beta-Header, mit einem Media-Cap von 600 Elementen pro Request. Die Output-Limits wurden deutlich erhöht: Opus hat jetzt 64.000 Tokens Default-Output, und sowohl Opus als auch Sonnet können bis zu 128.000 Output-Tokens generieren. Claude Haiku hat weiterhin 200.000 Input-Tokens und 8.000 Output-Tokens. Diese Zahlen klingen nach viel — aber sie füllen sich schneller als du denkst.
 
 Eine typische Session nach 20 Nachrichten: System-Prompt und CLAUDE.md: ~3.000 Tokens. MCP Server Tool-Beschreibungen: ~5.000-20.000 Tokens (je nach Anzahl aktiver Server). Bisherige Konversation (alle Nachrichten hin und her): ~20.000-50.000 Tokens. Gelesene Dateien und Tool-Ergebnisse: ~30.000-100.000 Tokens. Zusammen: 58.000-173.000 Tokens. Mit dem 1M-Limit hast du jetzt deutlich mehr Luft — aber Context Management bleibt wichtig, weil die Performance ab ~90% Auslastung dennoch degradiert.
 
@@ -1985,8 +2065,8 @@ Deshalb ist proaktives Token-Management essentiell: Regelmäßig /context prüfe
         language: 'text',
         content: `MODEL TOKEN LIMITS
 ━━━━━━━━━━━━━━━━━━
-Opus 4.6:    1M Input    | 32K Output  (seit März 2026)
-Sonnet 4.6:  1M Input    | 16K Output  (seit März 2026)
+Opus 4.6:    1M Input    | 64K Default / 128K Max Output
+Sonnet 4.6:  1M Input    | bis 128K Output möglich
 Haiku 4.5:   200K Input  | 8K Output
 
 TOKEN APPROXIMATION
@@ -2460,6 +2540,13 @@ claude --include "src/api/products.ts" --include "src/middleware/cache.ts"
       'Eigene MCP Server erstellen können',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-06.mp4',
+      title: '🎬 Lektion 06: MCP Server Integration',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🔌 Was ist MCP?',
@@ -2853,6 +2940,44 @@ claude mcp add supabase npx @supabase/mcp-server \\
   --env SUPABASE_KEY="your-key"`,
       },
       {
+        type: 'heading',
+        content: '📦 MCP Result Storage: 500K Zeichen (neu seit v2.1.91)',
+      },
+      {
+        type: 'text',
+        content: `Seit Claude Code v2.1.91 können MCP-Server bis zu **500.000 Zeichen pro Result** zurückgeben — das ist 5x mehr als bisher. Das klingt technisch, hat aber massive praktische Auswirkungen: Große Database-Schemas, vollständige OpenAPI-Specs und große Code-Indizes wurden bisher stillschweigend gekürzt — ohne dass Claude oder du es gemerkt hättest.
+
+Das Problem war subtil: Claude bekam ein abgeschnittenes Schema, arbeitete aber so als wäre es vollständig. Das führte zu falschen Queries, fehlenden Feldern in der generierten API, und schwer nachvollziehbaren Fehlern. Mit 500K Zeichen ist dieses Problem für die meisten realen Anwendungsfälle gelöst.
+
+Der optionale \`_meta\` Hint im MCP Result signalisiert dem Client, dass das Result bewusst groß ist. Das ist nicht zwingend, aber Best Practice wenn du weißt dass deine Results groß sein können — zum Beispiel bei einem Datenbank-Schema-Server oder einem Code-Index-Server.
+
+Für den Alltag bedeutet das: Wenn du einen MCP-Server für Supabase, PostgreSQL oder einen großen API-Client nutzt, kannst du jetzt vollständige Schemas laden ohne Angst vor stiller Kürzung.`,
+      },
+      {
+        type: 'code',
+        language: 'jsonc',
+        content: `// MCP Tool Result mit 500K Size-Hint (Best Practice seit v2.1.91)
+// Setze diesen _meta Hint in deinem MCP Server wenn Results groß sein können
+{
+  "content": [
+    {
+      "type": "text",
+      "text": "... vollständiges Datenbank-Schema oder große API-Spec hier ..."
+    }
+  ],
+  "_meta": {
+    "anthropic/maxResultSizeChars": 500000
+  }
+}
+
+// Vorher (v2.1.90 und älter):
+// Schema wurde bei ~100K Zeichen abgeschnitten → Claude sah unvollständiges Schema
+// → Falsche Queries, fehlende Felder, schwer debuggbare Fehler
+
+// Jetzt (v2.1.91+):
+// Schema kommt vollständig an → korrekte Queries, alle Felder sichtbar`,
+      },
+      {
         type: 'highlight',
         title: '💡 MCP Best Practice',
         content: `**Weniger ist mehr bei MCP Servern:**
@@ -2860,6 +2985,11 @@ claude mcp add supabase npx @supabase/mcp-server \\
 - Nur Server aktivieren die du gerade brauchst
 - claude mcp disable server-name zum Deaktivieren
 - claude mcp enable server-name zum Reaktivieren
+
+**500K Result Storage (v2.1.91+):**
+- Große Schemas (Datenbank, OpenAPI) werden nicht mehr still gekürzt
+- Optionaler \`_meta\` Hint empfohlen für bewusst große Results
+- Löst das "mein Schema kommt abgeschnitten an"-Problem
 
 💡 Tipp: Lektion 23 (Kosten-Optimierung) erklärt wie MCP Server den Token-Verbrauch beeinflussen.`,
       },
@@ -2882,6 +3012,13 @@ claude mcp add supabase npx @supabase/mcp-server \\
       'Community Skills nutzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-07.mp4',
+      title: '🎬 Lektion 07: Skills & Workflows erstellen',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🎯 Skills vs. Slash Commands',
@@ -3275,6 +3412,13 @@ Analysiere Änderungen und führe relevante Tests aus.
       'Multi-Agent Patterns verstehen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-08.mp4',
+      title: '🎬 Lektion 08: Subagents Deep Dive',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🤖 Was sind Subagents?',
@@ -3696,6 +3840,13 @@ claude --verbose
       'Agents in Workflows integrieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-09.mp4',
+      title: '🎬 Lektion 09: Custom Agents erstellen',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🏗️ Agent Architektur',
@@ -4074,6 +4225,13 @@ curl -X POST $SLACK_WEBHOOK \\
       'Team-Dynamiken zwischen Agents verstehen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-10.mp4',
+      title: '🎬 Lektion 10: Agent Personality & Configuration',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🎭 Agent Persönlichkeiten',
@@ -4376,6 +4534,13 @@ Interaktion:
       'Git-Workflows optimieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-11.mp4',
+      title: '🎬 Lektion 11: Git-Integration Profi',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🔀 Git Integration Overview',
@@ -4830,6 +4995,13 @@ Nutze Branch Protection Rules auf GitHub!`,
       'Notification- und SessionStart-Hooks nutzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-12.mp4',
+      title: '🎬 Lektion 12: Hooks & Automation',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '⚡ Was sind Hooks?',
@@ -5231,14 +5403,92 @@ MATCHERS:
         content: '🎓 Zusammenfassung',
       },
       {
+        type: 'heading',
+        content: '⏸️ Defer-Hook: Human-in-the-Loop für headless Agents (neu April 2026)',
+      },
+      {
+        type: 'text',
+        content: `Seit April 2026 gibt es einen dritten Exit-Code für PreToolUse Hooks: **Exit 3 = Defer**. Bisher konnten Hooks nur erlauben (Exit 0) oder blockieren (Exit 2) — mit Defer kann ein Hook eine headless Session pausieren und auf manuelle Freigabe warten.
+
+Das ist ein Game-Changer für agentic Workflows: Ein Langzeit-Agent kann bei kritischen Operationen automatisch stoppen, eine Benachrichtigung senden, und nach manueller Genehmigung via \`--resume\` automatisch weiterlaufen. Das entspricht dem "Human-in-the-Loop"-Pattern das im Enterprise-Kontext Pflicht ist.
+
+Typisches Szenario: Ein automatisierter Deployment-Agent soll auf Production deployen. Der Defer-Hook erkennt den Deploy-Befehl, pausiert die Session, schickt eine Slack-Nachricht an den DevOps-Lead, und wartet. Nach Freigabe (\`claude -p --resume SESSION_ID\`) läuft der Agent weiter.
+
+Die drei Exit-Codes im Überblick:
+- **Exit 0**: Aktion erlauben (Standard)
+- **Exit 2**: Aktion blockieren (Hard Stop — Claude bekommt Fehlermeldung zurück)
+- **Exit 3**: Aktion zurückstellen (Defer — Session pausiert, wartet auf Resume)
+
+Defer ist besonders für nächtliche Batch-Agents relevant: Der Agent arbeitet autonom durch eine Aufgabenliste, pausiert aber bei destruktiven Operationen und wartet auf das OK des Entwicklers am nächsten Morgen.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/bin/bash
+# .claude/hooks/defer-dangerous.sh
+# Pausiert headless Session bei gefährlichen Befehlen
+# Eintragen in settings.json unter PreToolUse → Bash
+
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+# Kritische Operationen → defer (nicht blockieren)
+DANGEROUS_PATTERNS=(
+  "rm -rf"
+  "DROP TABLE"
+  "kubectl delete"
+  "terraform destroy"
+  "git push --force"
+)
+
+for pattern in "\${DANGEROUS_PATTERNS[@]}"; do
+  if [[ "$COMMAND" == *"$pattern"* ]]; then
+    # Optional: Benachrichtigung senden
+    # curl -s -X POST "$SLACK_WEBHOOK" \\
+    #   -d "{\"text\": \"⚠️ Claude wartet auf Freigabe: $COMMAND\"}" >/dev/null
+    echo "Needs human review: $pattern detected in command"
+    exit 3  # Defer: Session pausiert, wartet auf --resume
+  fi
+done
+
+exit 0  # Alle anderen Befehle erlauben`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// .claude/settings.json — Defer-Hook registrieren
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/defer-dangerous.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+// Session nach manueller Prüfung fortsetzen:
+// claude -p --resume SESSION_ID
+//
+// SESSION_ID beim Session-Start angezeigt oder via:
+// claude sessions list`,
+      },
+      {
         type: 'list',
-        content: `✅ **PreToolUse**: Aktionen blockieren oder validieren (Exit 2 = Block)
+        content: `✅ **PreToolUse**: Aktionen blockieren oder validieren (Exit 2 = Block, Exit 3 = Defer)
 ✅ **PostToolUse**: Auto-Formatting, Linting, Logging
 ✅ **Notification**: Desktop-Alerts wenn Claude wartet
 ✅ **SessionStart**: Kontext automatisch injizieren
 ✅ **Stop**: Auto-Tests und Qualitätschecks nach Antwort
 ✅ **PreCompact**: Transkript-Backup vor Komprimierung
-✅ **Matchers**: Filtern welche Tools den Hook triggern`,
+✅ **Matchers**: Filtern welche Tools den Hook triggern
+✅ **Defer (Exit 3)**: Human-in-the-Loop für headless Agents — Session pausiert, wartet auf --resume`,
       },
     ],
   },
@@ -5256,6 +5506,13 @@ MATCHERS:
       'Commands mit Hooks kombinieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-13.mp4',
+      title: '🎬 Lektion 13: Custom Slash Commands',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '⚡ Was sind Custom Slash Commands?',
@@ -5630,6 +5887,13 @@ git push
       'Claude gezielt steuern: Wann nachfragen, wann Annahmen treffen, wann Alternativen zeigen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-14.mp4',
+      title: '🎬 Lektion 14: Advanced Prompting Techniques',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧠 Die Psychologie des Promptings',
@@ -6170,6 +6434,13 @@ Ich entscheide dann welchen wir nehmen."
       'Wann welchen Modus nutzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-15.mp4',
+      title: '🎬 Lektion 15: Plan & Thinking Mode',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧠 Extended Thinking erklärt',
@@ -6527,6 +6798,13 @@ Komplexer Task → Ultrathink   → ~$0.15-0.30`,
       'Background Agents und async Workflows nutzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-16.mp4',
+      title: '🎬 Lektion 16: Agent Orchestration',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🤖 Was ist Agent Orchestration?',
@@ -6879,6 +7157,13 @@ export CLAUDE_CODE_TASK_LIST_ID=shared-list-123
       'Kosten-Management und Monitoring einrichten',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-17.mp4',
+      title: '🎬 Lektion 17: Production Best Practices',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🏭 Claude Code in Production',
@@ -7267,6 +7552,13 @@ echo "Cost: $COST"
       'Debug-Tools und -Techniken meistern',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-18.mp4',
+      title: '🎬 Lektion 18: Troubleshooting Pro',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🔍 Der 5-Schritte Diagnose-Check',
@@ -7682,6 +7974,13 @@ Fehler 8: Updates ignorieren. Claude Code wird regelmäßig aktualisiert. Neue V
       'Eine vollständige Kontext-Dokumentation für eigene Projekte erstellen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-19.mp4',
+      title: '🎬 Lektion 19: Context Engineering Masterclass',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧠 Context Engineering — Die neue Schlüsseldisziplin',
@@ -8445,6 +8744,13 @@ WANN du eingreifen musst — bevor es zu spät ist.`,
       'CLI vs. IDE: Die richtige Umgebung wählen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-20.mp4',
+      title: '🎬 Lektion 20: IDE-Integrationen',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🖥️ Claude Code – Mehr als nur Terminal',
@@ -8823,7 +9129,9 @@ Besonders wertvoll für Background Agents: Du startest einen Claude Code Backgro
 
 Für Teams: Worktrees funktionieren pro Entwickler lokal. Jeder kann seine eigene Worktree-Struktur haben. Die Ergebnisse werden über normale Git-Workflows (Push, PR, Merge) zusammengeführt.
 
-Mein Empfehlung: Erstelle einen Worktree für jede parallele Claude Code Session. Das kostet minimal Speicherplatz (nur die geänderten Dateien werden kopiert) und eliminiert Branch-Wechsel-Overhead komplett.`,
+Mein Empfehlung: Erstelle einen Worktree für jede parallele Claude Code Session. Das kostet minimal Speicherplatz (nur die geänderten Dateien werden kopiert) und eliminiert Branch-Wechsel-Overhead komplett.
+
+**Wichtig (seit Claude Code 2.1.133):** Der \`worktree.baseRef\`-Default wurde von \`head\` zurück auf \`fresh\` gestellt. Das bedeutet: \`/worktree\` erstellt neue Branches per Default aus \`origin/<default>\` und nicht mehr aus deinem lokalen HEAD. Wenn du seit 2.1.128 darauf vertraut hast, dass unpushed Commits im neuen Worktree landen, setze jetzt explizit \`"worktree": { "baseRef": "head" }\` in deiner Settings.json — sonst startest du jeden Sub-Agent auf dem letzten gepushten Stand. Eine dedizierte Lektion zum \`worktree.baseRef\`-Migration-Guide findest du als Lektion 45.`,
       },
       {
         type: 'code',
@@ -8877,6 +9185,13 @@ code ../my-project-fix-bug`,
       'Security Best Practices für Teams umsetzen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-21.mp4',
+      title: '🎬 Lektion 21: Sandboxing & Security Deep Dive',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🛡️ Warum Sandboxing essentiell ist',
@@ -9286,6 +9601,13 @@ Regelmäßige Audits: Monatlich die Konfiguration prüfen, Logs auf ungewöhnlic
       'Sichere Pipeline-Konfiguration erstellen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-22.mp4',
+      title: '🎬 Lektion 22: CI/CD & Headless Mode',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🤖 Headless Mode – Claude ohne Terminal',
@@ -9730,6 +10052,13 @@ claude -p "Review" --model opus   # Premium (komplexe Tasks)`,
       'Versteckte Kostentreiber identifizieren und eliminieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-23.mp4',
+      title: '🎬 Lektion 23: Kosten-Optimierung Profi',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '💰 Die wahren Kosten von Claude Code',
@@ -10128,6 +10457,13 @@ FÜR ADMINS (Enterprise/Team Plan):
       'IDE-Integrationen (Xcode, VS Code) verstehen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-24.mp4',
+      title: '🎬 Lektion 24: Claude Agent SDK',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🤖 Was ist das Claude Agent SDK?',
@@ -10491,6 +10827,13 @@ Das SDK-Ökosystem wächst: Die Community baut Integrationen für immer mehr Pla
       'Team-Plugins und Enterprise-Distribution',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-25.mp4',
+      title: '🎬 Lektion 25: Plugins & Marketplace',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🧩 Was sind Claude Code Plugins?',
@@ -10810,6 +11153,13 @@ Die Kombination aus Managed Settings und interner Distribution gibt dir maximale
       'Professionelle Team-Workflows etablieren',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-26.mp4',
+      title: '🎬 Lektion 26: Real-World Workflow Patterns',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🏗️ Die 3 Haupt-Workflows',
@@ -11265,6 +11615,13 @@ EMPFEHLUNG:
       'Kontext-Management als wichtigste Ressource verstehen',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-27.mp4',
+      title: '🎬 Lektion 27: Fast Mode & Opus 4.6',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '⚡ Was ist Fast Mode?',
@@ -11687,6 +12044,13 @@ Jede Nachricht, jedes gelesene File, jeder Befehlsoutput und jede Tool-Antwort v
       'Best Practices, Quality Gates mit Hooks und Troubleshooting',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-28.mp4',
+      title: '🎬 Lektion 28: Agent Teams & Checkpointing',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       // --- TEIL 1: AGENT TEAMS ---
       {
         type: 'heading',
@@ -12129,8 +12493,78 @@ Checkpoints sind für schnelle, Session-Level-Recovery. Für dauerhafte Versions
 **In Agent Teams:** /rewind stellt In-Process-Teammates NICHT wieder her. Nach Resume kann der Lead versuchen, nicht mehr existierende Teammates anzuschreiben. Lösung: Lead bitten, neue Teammates zu spawnen.`,
       },
       {
+        type: 'heading',
+        content: '🚀 Claude Managed Agents — Enterprise-Plattform (April 2026)',
+      },
+      {
+        type: 'text',
+        content: `Am 8. April 2026 hat Anthropic **Claude Managed Agents** gelauncht — eine komplett verwaltete Plattform für produktionsreife Agenten. Das ist der nächste Schritt über lokale Agent Teams und lokales Checkpointing hinaus: Anthropic betreibt die Infrastruktur, du kümmerst dich nur um die Logik.
+
+Der Unterschied zu Agent Teams: Agent Teams laufen lokal auf deinem Rechner, teilen deine Ressourcen und stoppen wenn du das Terminal schließt. Managed Agents laufen in Anthropics Cloud — mit isolierten Sandboxes, automatischem State-Management und persistenten Sessions die auch über Tage laufen können.
+
+Das Modell ist einfach: Du zahlst **$0.08 pro Stunde** Laufzeit plus die normalen Claude API-Kosten für die Token. Für einen Freelancer bedeutet das: Ein Code-Review-Agent der stündlich alle offenen PRs reviewt, kostet ca. $0.08 × 24 = $1.92 pro Tag in Infrastruktur — plus die API-Kosten für die tatsächliche Review-Arbeit.
+
+Die Deployment-Optionen sind flexibel: Du kannst Agents über die Claude Console (GUI), über Claude Code (direkt aus dem IDE-Flow), oder über ein neues CLI deployen. Enterprise-Kunden wie Notion, Rakuten und Asana nutzen Managed Agents bereits für produktive Workflows.
+
+Für wen ist das relevant? Für jeden der Agenten bauen will die 24/7 laufen, ohne eigene Server aufzusetzen. Besonders für Freelancer die Kunden-Workflows automatisieren wollen ist das attraktiv: Kein AWS, kein Kubernetes, kein Ops-Overhead.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Claude Managed Agents — Deployment (April 2026)
+
+# Option 1: Neues CLI
+claude agents deploy --config agent.json --managed
+
+# Option 2: Claude Code Slash Command
+# /agents deploy
+
+# Option 3: Claude Console (GUI)
+# → console.anthropic.com → Agents → New Agent
+
+# agent.json — Beispiel-Konfiguration:
+# {
+#   "name": "pr-review-agent",
+#   "model": "claude-sonnet-4-6",
+#   "tools": ["code_review", "github"],
+#   "schedule": "on-pr-open",
+#   "permissions": {
+#     "read": ["github:pulls", "github:code"],
+#     "write": ["github:comments"]
+#   }
+# }
+
+# Preis: $0.08/Stunde + Claude API Token-Kosten
+# Beispiel: 24/7 PR-Review-Agent = ~$1.92/Tag Infrastruktur`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `AGENT TEAMS vs. MANAGED AGENTS — Entscheidungshilfe
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AGENT TEAMS (lokal, experimentell):
+├── Laufen auf deinem Rechner
+├── Ideal: komplexe Ad-hoc-Aufgaben (einmalig, multi-hour)
+├── Kosten: Nur API-Tokens (keine Infrastruktur)
+├── Limit: Session endet wenn Terminal geschlossen wird
+└── Tipp: Für Entwickler die gerade arbeiten
+
+MANAGED AGENTS (Cloud, GA seit 08.04.2026):
+├── Laufen in Anthropics Sandbox-Infrastruktur
+├── Ideal: 24/7 Workflows, Batch-Jobs, CI/CD-Automation
+├── Kosten: $0.08/h Infrastruktur + API-Tokens
+├── Limit: Keine (persistente Sessions, kein Timeout)
+└── Tipp: Für produktive, autonome Workflows
+
+EMPFEHLUNG:
+├── Einmalige Analyse → Agent Teams
+├── Wiederkehrender Workflow → Managed Agents
+└── Production-kritisch → Managed Agents + Hooks`,
+      },
+      {
         type: 'highlight',
-        title: '🎓 Zusammenfassung: Agent Teams + Checkpointing',
+        title: '🎓 Zusammenfassung: Agent Teams + Checkpointing + Managed Agents',
         content: `**Agent Teams:**
 ✅ Mehrere Claude-Instanzen als koordiniertes Team
 ✅ Lead + Teammates + geteilte Task-Liste + Mailbox
@@ -12144,7 +12578,14 @@ Checkpoints sind für schnelle, Session-Level-Recovery. Für dauerhafte Versions
 ✅ 5 Optionen: Restore Code+Chat, nur Chat, nur Code, Summarize, Abbrechen
 ✅ Esc+Esc oder /rewind zum Öffnen
 ✅ Bash/externe Änderungen nicht erfasst – Git weiterhin nutzen
-✅ Sessions übergreifend, 30 Tage aufbewahrt`,
+✅ Sessions übergreifend, 30 Tage aufbewahrt
+
+**Claude Managed Agents (neu April 2026):**
+✅ Enterprise-Plattform: Sandboxed, Checkpointing, Persistent Sessions
+✅ $0.08/Stunde + Claude API-Kosten — kein eigener Server nötig
+✅ Deployment via CLI, Claude Code oder Console (GUI)
+✅ Ideal für 24/7 Workflows: PR-Reviews, Batch-Jobs, CI/CD
+✅ Early Adopter: Notion, Rakuten, Asana`,
       },
     ],
   },
@@ -12164,6 +12605,13 @@ Checkpoints sind für schnelle, Session-Level-Recovery. Für dauerhafte Versions
       'Einen nachhaltigen Workflow aufbauen: Kurs + Docs + Changelog + Community',
     ],
     content: [
+    {
+      type: 'video',
+      provider: 'local',
+      videoId: '/videos/lektion-29.mp4',
+      title: '🎬 Lektion 29: Claude Code überall',
+      content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+    },
       {
         type: 'heading',
         content: '🌐 Claude Code überall',
@@ -13824,7 +14272,8 @@ EMPFEHLUNG:
     {
       type: 'highlight',
       title: '🎓 Zusammenfassung',
-      content: `✅ 1M Context Window: GA für Opus 4.6 und Sonnet 4.6, zum Standard-Preis
+      content: `✅ 1M Context Window: GA ohne Beta-Header, Media-Cap 600 Elemente
+✅ Output-Limits erhöht: Opus 64K Default / 128K Max, Sonnet bis 128K
 ✅ ~750.000 Wörter oder 30.000-50.000 Zeilen Code in einem Kontext
 ✅ Context Management bleibt wichtig – ab 90% Auslastung degradiert Performance
 ✅ /context regelmäßig prüfen – wie eine Tankuhr
@@ -13837,4 +14286,4409 @@ EMPFEHLUNG:
     },
   ],
 },
+
+  // ========================================
+  // LEKTION 32: Agentic Coding Trends 2026
+  // ========================================
+  {
+    id: 32,
+    level: 3,
+    title: 'Agentic Coding Trends 2026 — Die Zukunft der Softwareentwicklung',
+    description: 'Die 8 wichtigsten Trends aus dem Anthropic Agentic Coding Report und was sie für deine tägliche Arbeit bedeuten',
+    duration: '45 Minuten',
+    objectives: [
+      'Die 8 Kern-Trends des Anthropic Agentic Coding Reports 2026 verstehen',
+      'Den Wandel von Implementation zu Agent-Supervision nachvollziehen',
+      'Multi-Agent-Workflows und Agent Teams praktisch einsetzen',
+      'Die Marktdynamik und Wettbewerberlandschaft einordnen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🌍 Der Zustand der Softwareentwicklung 2026',
+      },
+      {
+        type: 'text',
+        content: `Die Softwareentwicklung hat sich in den letzten 12 Monaten fundamental verändert. Anthropic hat einen umfassenden Trends-Report veröffentlicht, der auf Daten von Millionen von Entwickler-Sessions basiert. Die Kernbotschaft: Wir befinden uns mitten in einem Paradigmenwechsel — von manueller Code-Erstellung zu Agent-gestützter Supervision.
+
+Das sind keine abstrakten Zukunftsvisionen. 85% aller Entwickler nutzen bereits AI-Tools, 51% davon täglich. Der AI Coding Market ist auf $8.5 Milliarden angewachsen (von $6.8 Mrd. in 2025) und wird bis 2032 auf $127 Milliarden prognostiziert — ein CAGR von 48.1%. Und Anthropic gewinnt laut Ramp-Daten 73% aller Enterprise-Erstkaeufe. Du lernst also nicht irgendein Nischentool — du lernst das Tool, das die Mehrheit der Unternehmen als Erstes wählt.
+
+In dieser Lektion analysieren wir die 8 Kern-Trends, was sie für deine tägliche Arbeit bedeuten und wie du dich optimal positionierst.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `MARKT-ZAHLEN (Stand: März 2026)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AI Coding Market 2026:           $8.5 Mrd.    (↑ von $6.8 Mrd.)
+Prognose 2032:                   $127 Mrd.    (CAGR 48.1%)
+AI Agents Market 2030:           $52.62 Mrd.  (CAGR 46.3%)
+Developer Adoption:              85%+         (51% taeglich)
+AI-Anteil an Arbeit:             ~60%         (bei erfahrenen Devs)
+Anthropic Enterprise-Erstkaeufe: 73%          (Ramp-Daten)
+Claude Code "Most Loved":       46%          (Developer Survey)`,
+      },
+      {
+        type: 'heading',
+        content: '📊 Trend 1: Engineering wird Agent-Supervision',
+      },
+      {
+        type: 'text',
+        content: `Der erste und wichtigste Trend: Die Rolle des Softwareentwicklers verschiebt sich fundamental. Statt selbst Code zu schreiben, wirst du zum Supervisor von AI-Agents — du gibst Richtung vor, reviewst Ergebnisse und triffst architekturelle Entscheidungen.
+
+Das bedeutet nicht, dass Coding-Skills irrelevant werden. Im Gegenteil: Du brauchst sie mehr denn je, um die Qualität der Agent-Outputs beurteilen zu können. Aber die tägliche Arbeit verschiebt sich von "Ich tippe Code" zu "Ich beschreibe was gebraucht wird, reviewe den Plan, gebe Feedback und approve das Ergebnis".
+
+Der Plan-First Development Workflow ist die praktische Manifestation dieses Trends: Du beschreibst die Anforderung, Claude erstellt einen Plan, du reviewst und verfeinerst ihn, dann implementiert Claude. Deine Kernkompetenz wird es, gute Pläne zu erkennen und schlechte zu korrigieren — nicht selbst jeden Loop und jede Variable zu tippen.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Der neue Workflow: Agent-Supervision
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Phase 1: Direction geben (DU)
+"Wir brauchen ein Rate-Limiting-System fuer unsere API.
+ Anforderungen:
+ - Token-Bucket-Algorithmus
+ - Redis-Backend
+ - Per-User und Per-Endpoint Limits
+ - Graceful Degradation bei Redis-Ausfall
+ Erstelle einen Plan. Schreibe KEINEN Code."
+
+# Phase 2: Plan reviewen (DU)
+# Claude liefert einen detaillierten Plan
+# Du identifizierst: "Redis-Fallback fehlt.
+# Was passiert bei Redis-Ausfall? Fuege
+# einen In-Memory-Fallback hinzu."
+
+# Phase 3: Implementierung (CLAUDE)
+"Plan sieht gut aus. Implementiere jetzt."
+# Claude implementiert autonom, du reviewst am Ende
+
+# Phase 4: Review + Approve (DU)
+# Code-Review, Tests pruefen, Edge Cases checken`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Schlüssel-Erkenntnis',
+        content: 'Entwickler die AI-Tools effektiv nutzen, übernehmen ~60% ihrer Arbeit an Agents. Die besten Ergebnisse erzielen diejenigen, die klar kommunizieren können WAS gebaut werden soll — nicht WIE jede Zeile Code aussehen soll.',
+      },
+      {
+        type: 'heading',
+        content: '🚀 Trend 2: Die Autonomie-Explosion',
+      },
+      {
+        type: 'text',
+        content: `AI-Coding-Agents führen jetzt durchschnittlich 20 autonome Aktionen pro Session aus — doppelt so viel wie vor 6 Monaten. Das klingt nach einer kleinen Zahl, aber die Implikation ist enorm: Claude Code liest Dateien, analysiert Code, schreibt Implementierungen, erstellt Tests, führt sie aus, fixt Fehler und committed — alles in einer Kette ohne dass du jeden Schritt einzeln bestätigen musst.
+
+Diese Autonomie hat sich durch mehrere Faktoren beschleunigt: Größere Context Windows (1M Tokens), bessere Tool-Nutzung, verbessertes Reasoning und das Permission-System das dir die Kontrolle gibt ohne jeden Schritt manuell zu genehmigen.
+
+Die praktische Konsequenz: Du kannst größere Aufgaben delegieren. Statt "Erstelle eine Funktion" kannst du sagen "Implementiere das komplette Feature inkl. Tests, Error-Handling und Dokumentation". Claude wird autonom die nötigen Schritte planen und ausführen.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Autonome Kette: 20+ Aktionen in einer Session
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Ein einziger Prompt loest eine Kette aus:
+"Implementiere einen CSV-Import fuer Kundendaten.
+ - Lese die bestehende Datenstruktur aus src/types/client.ts
+ - Erstelle einen Parser mit Validierung
+ - Fuege Fehlerbehandlung hinzu (ungueltige Zeilen loggen)
+ - Schreibe Unit-Tests fuer alle Edge Cases
+ - Aktualisiere die API-Route
+ - Teste den kompletten Flow"
+
+# Claude fuehrt autonom aus:
+# 1. Read: src/types/client.ts (Typ-Analyse)
+# 2. Read: src/routes/import.ts (bestehende Route)
+# 3. Glob: tests/**/*.test.ts (Test-Muster lernen)
+# 4. Write: src/lib/csv-parser.ts (neuer Parser)
+# 5. Write: src/lib/csv-validator.ts (Validierung)
+# 6. Edit: src/routes/import.ts (Route erweitern)
+# 7. Write: tests/csv-parser.test.ts (Tests)
+# 8. Bash: npm test (Tests ausfuehren)
+# 9. Edit: Fix fehlschlagende Tests
+# 10. Bash: npm test (Erneut testen — alles gruen)
+# → 10+ autonome Aktionen, ein Prompt`,
+      },
+      {
+        type: 'heading',
+        content: '🤖 Trend 3: Multi-Agent wird Standard',
+      },
+      {
+        type: 'text',
+        content: `Gartner meldet einen 1.445% Anstieg bei Multi-Agent-Anfragen (Q1/2024 bis Q2/2025). Multi-Agent ist kein Experiment mehr — es wird zum Standard-Workflow für komplexe Aufgaben.
+
+In Claude Code manifestiert sich das in drei Stufen: Erstens Subagents — spezialisierte Helfer die vom Hauptthread gestartet werden und parallele Aufgaben erledigen (bereits produktionsreif). Zweitens das Agent Tool in Skills und CLAUDE.md — du definierst spezialisierte Agent-Typen die für bestimmte Aufgaben optimiert sind. Drittens Agent Teams (experimentell) — ein Lead-Agent koordiniert mehrere Worker-Agents mit eigenem Kontext.
+
+Der Schlüsselvorteil von Multi-Agent: Parallelisierung und Context-Isolation. Statt alles in einem riesigen Context zu halten, kann jeder Agent seinen eigenen fokussierten Context haben. Das spart Tokens und verbessert die Qualität, weil kein Agent mit irrelevanten Informationen überladen wird.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Multi-Agent in der Praxis
+# ━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Stufe 1: Subagents (produktionsreif)
+# In Claude Code werden Subagents automatisch fuer
+# parallele Aufgaben gestartet, z.B.:
+"Analysiere alle 5 Services in src/services/ parallel
+ und erstelle fuer jeden ein Interface-Dokument."
+# → Claude startet 5 Subagents parallel
+
+# Stufe 2: Agent Teams (experimentell)
+# Aktivierung:
+export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+claude
+
+# Konzept: Team Lead + Teammates
+# - Lead: Koordiniert, weist Tasks zu, synthetisiert
+# - Teammate 1: Frontend-Spezialist
+# - Teammate 2: Backend-Spezialist
+# - Teammate 3: Test-Spezialist
+# Jeder hat eigenen Context + Tools
+
+# Stufe 3: Agent SDK (eigene Multi-Agent-Systeme)
+# Python SDK v0.1.48 und TypeScript SDK v0.2.71
+# Beide stabil und Production-Ready`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Praxis-Tipp',
+        content: '1.445% Anstieg bei Multi-Agent-Anfragen bedeutet: Die Early Adopters sind schon da. Wer jetzt Multi-Agent-Workflows lernt, hat einen erheblichen Vorsprung. Starte mit Subagents (der einfachste Einstieg) und arbeite dich zu Agent Teams vor.',
+      },
+      {
+        type: 'heading',
+        content: '🌐 Trend 4: Demokratisierung — AI-Coding für alle Rollen',
+      },
+      {
+        type: 'text',
+        content: `AI-Coding expandiert weit über die klassische Softwareentwicklung hinaus. Security-Teams nutzen Claude Code für Vulnerability-Scans und Penetration-Tests. Ops-Teams automatisieren Infrastructure-as-Code. Designer generieren Prototypen. Data Scientists schreiben Pipelines. Product Manager erstellen Specs die direkt implementierbar sind.
+
+Das bedeutet für dich: Claude Code ist nicht nur ein Tool für "Entwickler". Es ist ein Tool für jeden der mit Code arbeitet — oder arbeiten möchte. Der Kurs vermittelt dir Fähigkeiten die in immer mehr Rollen gefragt sind.
+
+Für erfahrene Entwickler bedeutet diese Demokratisierung auch: Du wirst häufiger mit AI-geniertem Code arbeiten, der von Nicht-Entwicklern erstellt wurde. Die Fähigkeit, solchen Code zu reviewen, zu verbessern und in Production-Quality zu bringen, wird eine Kernkompetenz.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# AI-Coding fuer verschiedene Rollen
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# Security Team:
+"Scanne src/ nach OWASP Top 10 Vulnerabilities.
+ Pruefe besonders SQL-Injection, XSS und
+ unvalidierte Redirects."
+
+# DevOps/Infrastructure:
+"Erstelle ein Terraform-Modul fuer einen
+ ECS-Cluster mit Auto-Scaling, ALB und
+ CloudWatch-Monitoring."
+
+# Data Science:
+"Erstelle eine Python-Pipeline die CSV-Daten
+ aus S3 laedt, bereinigt (Duplikate, Nullwerte)
+ und als Parquet nach S3 zurueckschreibt."
+
+# Product Manager:
+"Analysiere die aktuelle User-Auth und erstelle
+ eine technische Spec fuer OAuth2-Support
+ mit Google und GitHub als Provider."
+
+# Designer:
+"Erstelle einen React-Prototypen fuer ein
+ Dashboard mit Sidebar, Charts und einer
+ Tabelle. Nutze Tailwind und shadcn/ui."`,
+      },
+      {
+        type: 'heading',
+        content: '📈 Trend 5: Reale Performance-Gains — Die Zahlen',
+      },
+      {
+        type: 'text',
+        content: `Die beeindruckendste Referenz-Story aus dem Anthropic Report: Claude Code hat Activation Vector Extraction in einer 12,5-Millionen-Zeilen-Codebase in sieben Stunden mit 99,9% numerischer Genauigkeit implementiert. Das ist ein Task der ein Team von Entwicklern Wochen gekostet hätte.
+
+Rakuten berichtet von 79% schnellerer Time-to-Market: Was vorher 24 Tage dauerte, wird jetzt in 5 Tagen geliefert. Das sind keine Marketing-Zahlen — das sind gemessene Ergebnisse aus echten Enterprise-Deployments.
+
+Diese Performance-Gains kommen nicht automatisch. Sie erfordern den richtigen Workflow: Plan-First Development, saubere CLAUDE.md Dateien, gutes Context Management und die Fähigkeit, Claude effektiv zu steuern. Genau das lernst du in diesem Kurs.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `REFERENZ-STORIES (verifiziert)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Anthropic intern:
+  → 12.5 Mio. Zeilen Codebase
+  → Activation Vector Extraction
+  → 7 Stunden, 99.9% Genauigkeit
+
+Rakuten:
+  → 79% schnellere Time-to-Market
+  → 24 Tage → 5 Tage
+  → Enterprise-Scale
+
+Allgemein (Anthropic Report):
+  → 20 autonome Aktionen pro Session (2x mehr als vor 6 Mon.)
+  → ~60% der Arbeit wird an Agents uebergeben
+  → 85% Developer Adoption, 51% taeglich`,
+      },
+      {
+        type: 'heading',
+        content: '🏛️ Trend 6: Legacy-Code-Support',
+      },
+      {
+        type: 'text',
+        content: `Ein überraschender Trend: AI-Agents werden zunehmend für Legacy-Code eingesetzt — COBOL, Fortran, sogar Nischen-Sprachen die kaum noch jemand beherrscht. Claude Code kann diese Sprachen lesen, verstehen und modernisieren.
+
+Das ist ein enormer Markt: Milliarden von Zeilen Legacy-Code laufen in Banken, Versicherungen und Regierungsbehörden. Entwickler die diese Sprachen beherrschen gehen in Rente. AI-Agents füllen diese Lücke — sie können COBOL lesen und in moderne Sprachen übersetzen, dabei die Geschäftslogik bewahren.
+
+Für dich als Claude-Code-Nutzer bedeutet das: Auch wenn du keinen Legacy-Code hast, ist die Fähigkeit von Claude, beliebige Sprachen zu verstehen, ein Vorteil. Du kannst mit Codebases arbeiten die du selbst nicht vollständig verstehst — Claude übersetzt und erklärt.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Legacy-Code analysieren und modernisieren
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# COBOL-Analyse:
+"Analysiere diese COBOL-Datei und erklaere die
+ Geschaeftslogik in einfachen Worten. Welche
+ Berechnungen werden durchgefuehrt?"
+
+# COBOL → Python Migration:
+"Uebersetze diese COBOL-Routine in Python.
+ Bewahre die exakte Geschaeftslogik.
+ Schreibe Tests die die Aequivalenz pruefen."
+
+# Fortran → Modern C++:
+"Konvertiere dieses Fortran-Modul in modernen
+ C++20 Code. Nutze std::array statt raw arrays
+ und std::optional wo angemessen."
+
+# Nischen-Sprache verstehen:
+"Erklaere was dieser [Sprache]-Code macht.
+ Ich kenne die Sprache nicht — beschreibe
+ jeden Block so dass ein Python-Entwickler
+ es verstehen wuerde."`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Trend 7: Kosten-Effizienz und Context-Management',
+      },
+      {
+        type: 'text',
+        content: `Der siebte Trend fokussiert sich auf eine praktische Realität: AI-Agents kosten Geld, und der effiziente Umgang mit Tokens ist ein Wettbewerbsvorteil. Die besten Teams optimieren ihr Context-Management um Retries zu minimieren und mehr Arbeit pro Token zu erledigen.
+
+Die neuen Output-Limits helfen hier enorm: Opus 4.6 hat jetzt 64K Tokens Default-Output (bis zu 128K möglich), Sonnet ebenfalls bis 128K. Das bedeutet weniger "Weiter"-Prompts bei langen Code-Generierungen — jeder zusätzliche Prompt verbraucht den gesamten bisherigen Context erneut als Input.
+
+Praktische Kosten-Optimierung: Starte mit Sonnet für die meisten Aufgaben, wechsle zu Opus nur wenn nötig. Nutze /compact regelmäßig. Halte deine CLAUDE.md schlank (unter 100 Zeilen). Nutze Subagents für parallele Aufgaben — sie haben eigene Contexts und überlasten den Hauptthread nicht.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Kosten-Effizienz Best Practices
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+# 1. Modell-Wahl (groesster Hebel)
+claude --model sonnet   # Standard: Sonnet (guenstig + gut)
+claude --model opus     # Nur fuer komplexe Aufgaben
+claude --model haiku    # Fuer triviale Tasks
+
+# 2. Context-Management
+/compact                # Regelmaessig komprimieren
+/context                # Auslastung pruefen
+/clear                  # Nach jeder abgeschlossenen Aufgabe
+
+# 3. Output-Limits nutzen (Maerz 2026)
+# Opus:   64K Default / 128K Max → weniger "Weiter"-Prompts
+# Sonnet: bis 128K Output → laengere Code-Bloecke in einem Response
+
+# 4. Session-Splitting statt Mega-Sessions
+# Session 1: Plan erstellen    (spart Context)
+# Session 2: Implementierung   (frischer Context)
+# Session 3: Review + Tests    (fokussierter Context)
+
+# 5. CLAUDE.md optimieren
+# ≤100 Zeilen, nur Regeln
+# Details in @imports: @docs/architecture.md
+# Spart tausende Tokens pro Nachricht`,
+      },
+      {
+        type: 'heading',
+        content: '📊 Trend 8: 85% Adoption — AI-Coding ist Mainstream',
+      },
+      {
+        type: 'text',
+        content: `Der letzte Trend ist vielleicht der wichtigste: AI-Coding ist kein Nischenphenomen mehr. 85% aller Entwickler nutzen AI-Tools, 51% täglich. Das bedeutet: Wer KEINE AI-Tools nutzt, ist in der Minderheit und hat einen messbaren Produktivitätsnachteil.
+
+Für den Arbeitsmarkt bedeutet das: "AI-Assisted Development" ist keine Bonus-Fähigkeit mehr auf dem Lebenslauf — es wird zur Grundvoraussetzung. Unternehmen erwarten, dass Entwickler AI-Tools effektiv einsetzen können. Dieser Kurs positioniert dich nicht als Early Adopter, sondern als Profi in einem Mainstream-Tool.
+
+Die Adoption beschleunigt sich weiter: Der Markt für AI-Coding-Agents wächst mit 46.3% CAGR und wird bis 2030 auf $52.62 Milliarden geschätzt. Neue Daten: Stellenanzeigen mit AI-Coding-Tool-Erfahrung sind laut Hired.com um +340% YoY gestiegen, während reine Implementations-Rollen um 17% sanken. Gartner prognostiziert, dass 40% aller Enterprise-Apps bis Ende 2026 AI Agents einbetten — hoch von <5% in 2025.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `ADOPTION-KURVE 2024-2026
+━━━━━━━━━━━━━━━━━━━━━━━
+2024 Q1:  ~40% nutzen AI-Tools
+2024 Q4:  ~60% nutzen AI-Tools
+2025 Q2:  ~75% nutzen AI-Tools
+2026 Q1:  85%+ nutzen AI-Tools, 51% taeglich
+
+AUTONOMIE-ENTWICKLUNG
+━━━━━━━━━━━━━━━━━━━━━
+2025 H2:  ~10 autonome Aktionen pro Session
+2026 Q1:  ~20 autonome Aktionen pro Session (2x)
+Prognose: Exponentielles Wachstum der Autonomie
+
+WER FUEHRT DEN MARKT AN?
+━━━━━━━━━━━━━━━━━━━━━━━
+Claude Code:  46% "Most Loved", Computer Use (23.03.)
+              73% Enterprise-Erstkaeufe (Ramp-Daten)
+              Mythos-Modell in Entwicklung (oberhalb Opus)
+Cursor:       Self-Hosted Cloud Agents (25.03.)
+Copilot:      Agentic Code Review, 50% schnellerer Agent
+Windsurf:     Model-agnostisch (Cognition AI)
+
+JOB-MARKT-SHIFT (Hired.com 2026)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+AI-Coding Stellenanzeigen:    +340% YoY
+Reine Implementations-Rollen: -17% YoY
+Enterprise AI Agent Adoption: 40% bis Ende 2026 (Gartner)`,
+      },
+      {
+        type: 'heading',
+        content: '🆚 Wettbewerber-Landschaft März 2026',
+      },
+      {
+        type: 'text',
+        content: `Um die Position von Claude Code richtig einzuordnen, musst du die Wettbewerber verstehen. Der Markt bewegt sich schnell und jeder Anbieter hat eine eigene Strategie.
+
+GitHub Copilot hat GPT-5.3-Codex als Long-Term-Support-Modell eingeführt (18.03.2026) und setzt auf Enterprise-Distribution. Neu seit Ende März: Agentic Code Review — Copilot sammelt automatisch Projekt-Kontext, schlägt Fixes vor und kann den Coding Agent für Fix-PRs triggern. Der Coding Agent wurde 50% schneller und Semantic Code Search findet konzeptuell verwandten Code statt nur Keyword-Matches. Management APIs (Public Preview) ermöglichen Org-Level Repository-Zugriff.
+
+Cursor ist der aggressivste Wettbewerber. Neu seit März: Self-Hosted Cloud Agents (25.03.) — Code, Build-Output und Secrets bleiben im eigenen Netzwerk, ein direkter Enterprise-Play. Composer 2 (19.03.) liefert "frontier-level coding performance" bei schwierigen Tasks. Dazu Bugbot Autofix: Problem finden → Cloud Agent starten → Fix-PR erstellen — vollautomatisch. Claude Code hat dagegen Terminal-native Power, Computer Use, Agent Teams, SDK und Skills.
+
+Windsurf (jetzt Cognition AI, ~$250M Deal) positioniert sich als model-agnostisch mit Gemini 3 Pro und GPT-5.2 Support. Die Übernahme durch die Devin-Macher deutet auf eine Fusion von IDE + autonomem Agent hin.`,
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Tool | Staerke | Aktueller Fokus (Ende Maerz 2026) |
+|------|---------|--------------------------------------|
+| **Claude Code** | 46% Most Loved, Computer Use | Terminal-native, Desktop-Steuerung, Agent Teams, 1M Context |
+| **Cursor** | IDE + Self-Hosted Cloud Agents | Composer 2, Bugbot Autofix, Enterprise-Security |
+| **Copilot** | Distribution, Agentic Code Review | Vollautom. Review-Fix-Loop, Semantic Search, 50% schneller |
+| **Windsurf** | Speed, Model-Agnostik | Cognition-Integration, Multi-Model |
+
+Neuste Differenzierungen (Ende Maerz 2026):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Claude Code: Computer Use (Desktop-Steuerung) — einzigartig!
+Cursor:      Self-Hosted Cloud Agents (Code bleibt im eigenen Netzwerk)
+Copilot:     Agentic Code Review (Review → Fix → PR automatisch)
+Alle:        Fokus auf Enterprise-Sicherheit und Autonomie`,
+      },
+      {
+        type: 'heading',
+        content: '🔬 Anthropic als Unternehmen — Warum das wichtig ist',
+      },
+      {
+        type: 'text',
+        content: `Update Ende März: Ein Bundesrichter in San Francisco hat am 26.03. eine einstweilige Verfügung gegen die Pentagon-Sperre erlassen und "First Amendment Retaliation" zitiert — die Regierung dürfe ein Unternehmen nicht bestrafen, weil es ethische Grenzen für militärische AI-Nutzung setzt. Anthropic-CEO Dario Amodei: "Werde nicht erlauben, dass Claude für autonome Waffen oder die Überwachung von US-Bürgern eingesetzt wird." Die Sperre ist vorlaeufig aufgehoben, das Verfahren läuft weiter.
+
+Am 26.03. wurden durch einen Konfigurationsfehler interne Dokumente zu "Claude Mythos" (Codename: Capybara) geleakt — ein neues Modell-Tier oberhalb von Opus mit "dramatically higher scores" in Coding, Reasoning und Cybersecurity. Anthropic bestätigte: "Step change in AI performance" und "most capable model we've built to date". Wenn Mythos gelauncht wird, ändert sich das Spielfeld komplett. Für Kursteilnehmer bedeutet das: Du bist auf dem richtigen Ökosystem.
+
+Parallel dazu hat Anthropic das "Anthropic Institute" gegründet (geleitet von Co-Founder Jack Clark) und investiert $100M in das Claude Partner Network — ein Ökosystem für Unternehmen, die auf Claude aufbauen.
+
+Warum ist das relevant für einen Claude Code Kurs? Weil die Ethik-Position von Anthropic ein Differenzierungsmerkmal ist. Du investierst nicht nur in ein Tool, sondern in ein Ökosystem das von einem Unternehmen gebaut wird, das sich aktiv für verantwortungsvolle AI einsetzt und vor Gericht gewinnt.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Enterprise-Argument',
+        content: '73% Enterprise-Erstkaeufe (Ramp-Daten März 2026) + Ethik-Differenzierung = Claude Code ist nicht nur das technisch beste Tool, sondern auch das vertrauenswürdigste für Enterprise-Einsatz.',
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Praktische Übungen',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `ÜBUNG 1: Plan-First Workflow (15 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Waehle eine Feature-Idee fuer dein Projekt
+2. Starte Claude Code und sage:
+   "Erstelle einen Plan fuer [Feature].
+    Schreibe KEINEN Code."
+3. Reviewe den Plan kritisch:
+   - Fehlt ein Edge Case?
+   - Stimmt die Reihenfolge?
+   - Gibt es Abhaengigkeiten die Claude uebersehen hat?
+4. Gib Feedback und lass den Plan verbessern
+5. Erst dann: "Implementiere jetzt."
+→ Vergleiche: Wie gut ist das Ergebnis vs. direkte
+  Implementierung ohne Plan?
+
+ÜBUNG 2: Multi-Agent (20 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Gib Claude eine Aufgabe die parallelisierbar ist:
+   "Analysiere die 3 groessten Dateien in src/ parallel
+    und erstelle fuer jede ein Refactoring-Proposal."
+2. Beobachte wie Claude Subagents startet
+3. Pruefe: Sind die Ergebnisse konsistent?
+4. Bonus: Aktiviere Agent Teams (experimentell)
+   export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
+
+ÜBUNG 3: Wettbewerber-Vergleich (10 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Oeffne die Vergleichstabelle oben
+2. Bewerte: Welche Features sind fuer DEINEN
+   Workflow am wichtigsten?
+3. Erstelle eine persoenliche "Warum Claude Code"-Liste
+4. Tipp: "CLI + Agent SDK + Skills" ist das
+   Differenzierungsmerkmal fuer Power-User`,
+      },
+      {
+        type: 'heading',
+        content: '📚 Community-Ressourcen',
+      },
+      {
+        type: 'list',
+        content: `- **Boris Cherny Interview** (mindwiredai.com, 25.03.): Der Creator von Claude Code teilt seinen Workflow — 100-Zeilen CLAUDE.md, 10-15 parallele Sessions, Zwei-Claude-Methode
+- **50 Claude Code Tips** (Builder.io): Umfassender Praxis-Guide, gut strukturiert
+- **7 Best Practices from Real Projects** (eesel AI): Aus echten Projekten abgeleitet, pragmatisch
+- **Anthropic Agentic Coding Trends Report**: resources.anthropic.com — die Originalquelle für alle 8 Trends
+- **claude-code-ultimate-guide** (GitHub, FlorianBruniaux): Umfassender Guide von Beginner bis Power-User
+- **Agent Teams Docs**: code.claude.com/docs/en/agent-teams
+- **Agent SDK Tutorial**: letsdatascience.com — Python + TypeScript SDK`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Engineering verschiebt sich von Implementation zu Agent-Supervision
+✅ Computer Use (23.03.) — Claude steuert deinen Mac-Desktop (einzigartig!)
+✅ Claude Mythos/Capybara — neues Modell-Tier oberhalb Opus in Entwicklung
+✅ Multi-Agent wird Standard — 1.445% Anstieg bei Multi-Agent-Anfragen
+✅ +340% AI-Coding-Stellenanzeigen YoY — AI-Skills werden Pflicht
+✅ 40% Enterprise-Apps mit AI Agents bis Ende 2026 (Gartner)
+✅ Reale Gains: Rakuten 79% schneller, 12.5M-Zeilen-Codebase in 7 Stunden
+✅ Cursor: Self-Hosted Cloud Agents | Copilot: Agentic Code Review
+✅ Anthropic: 73% Enterprise-Erstkaeufe + Gerichtssieg gegen Pentagon
+✅ Claude Code bleibt "Most Loved" (46%) mit einzigartigem Feature-Set`,
+      },
+    ],
+  },
+  {
+  id: 33,
+  level: 3,
+  title: 'Computer Use – Claude steuert deinen Mac',
+  description:
+    'Claude kann jetzt deinen Mac-Desktop steuern: Screenshots aufnehmen, Maus bewegen, klicken, tippen und scrollen. Lerne, wie der Vision-Loop funktioniert, wann du Computer Use statt MCP oder Bash nutzt, und wie du es sicher und effektiv einsetzt.',
+  duration: '55 Minuten',
+  objectives: [
+    'Computer Use als Konzept verstehen und den Vision-Loop erklären können',
+    'Computer Use auf macOS aktivieren und korrekt konfigurieren',
+    'Das Prioritäten-System (Connectors > MCP > Computer Use) verinnerlichen',
+    'Praktische Use Cases für Dev-Tools, Browser-Testing und App-Automatisierung kennen',
+    'Grenzen und Sicherheitsaspekte des Research Preview einschätzen',
+    'Computer Use gezielt von MCP und Bash abgrenzen und die richtige Methode wählen',
+  ],
+  content: [
+    // ============================
+    // SEKTION 1: WAS IST COMPUTER USE?
+    // ============================
+    {
+      type: 'heading',
+      content: '🎯 Sektion 1: Was ist Computer Use?',
+    },
+    {
+      type: 'text',
+      content: `Am 23. März 2026 hat Anthropic ein Feature als Research Preview gelauncht, das die Interaktion mit Claude grundlegend verändert: Computer Use. Claude kann jetzt deinen Mac-Desktop direkt steuern – Screenshots aufnehmen, die Maus bewegen und klicken, Tastatur-Eingaben machen, scrollen und Apps öffnen. Das klingt nach Science Fiction, ist aber bereits nutzbar.
+
+Stell dir vor, du sagst Claude: "Öffne die Systemeinstellungen und aktiviere den Dark Mode." Statt dir eine Anleitung zu geben, macht Claude es einfach selbst. Es nimmt einen Screenshot, erkennt den aktuellen Zustand deines Desktops, bewegt die Maus zur richtigen Stelle, klickt, und überprüft per erneutem Screenshot, ob die Aktion erfolgreich war. Das ist Computer Use.`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Research Preview – Was das bedeutet',
+      content: `Computer Use ist aktuell ein Research Preview, verfügbar nur auf macOS für Pro- und Max-Subscriber. Das bedeutet: Das Feature funktioniert, ist aber noch nicht perfekt. Es kann Fehler machen, falsche Bereiche klicken oder UI-Elemente falsch interpretieren. Anthropic sammelt aktiv Feedback, um Computer Use zu verbessern. Behandle es wie einen sehr fähigen, aber noch lernenden Assistenten – nicht wie ein ausgereiftes Produktions-Tool.`,
+    },
+    {
+      type: 'text',
+      content: `Das Revolutionäre an Computer Use ist, dass Claude damit die "letzte Meile" überbrückt. Bisher konnte Claude nur mit Tools interagieren, für die explizite APIs, MCP-Server oder CLI-Befehle existierten. Wenn eine App keine API hatte, musstest du selbst klicken. Jetzt kann Claude jede App bedienen, die du auch bedienen kannst – über die gleiche visuelle Oberfläche, die du nutzt. Das macht Claude zum universellen Automator.`,
+    },
+    {
+      type: 'heading',
+      content: '🔄 Der Vision-Loop – Das Herzstück von Computer Use',
+    },
+    {
+      type: 'text',
+      content: `Computer Use funktioniert über einen kontinuierlichen Kreislauf, den sogenannten Vision-Loop. Dieser Loop ist das zentrale Konzept, das du verstehen musst, um Computer Use effektiv zu nutzen. Claude "sieht" deinen Bildschirm nicht in Echtzeit – es arbeitet mit Snapshots.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `DER VISION-LOOP – SO FUNKTIONIERT COMPUTER USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Schritt 1: SCREENSHOT
+  → Claude nimmt einen Screenshot deines Bildschirms auf
+  → Das Bild wird als Input an das Modell gesendet
+
+Schritt 2: ANALYSE
+  → Claude analysiert den Screenshot visuell
+  → Erkennt UI-Elemente: Buttons, Menüs, Textfelder, Icons
+  → Versteht den aktuellen Zustand der Anwendung
+  → Plant die nächste Aktion
+
+Schritt 3: AKTION
+  → Claude führt eine Aktion aus:
+     • Maus bewegen und klicken (Links-/Rechtsklick)
+     • Text per Tastatur eingeben
+     • Scrollen (hoch/runter)
+     • Tastenkombinationen drücken (Cmd+S, Cmd+Tab, etc.)
+     • Apps über Spotlight oder Dock öffnen
+
+Schritt 4: SCREENSHOT (Verifizierung)
+  → Claude nimmt erneut einen Screenshot auf
+  → Vergleicht: Hat die Aktion den gewünschten Effekt?
+  → Falls JA: Nächste Aktion oder fertig
+  → Falls NEIN: Korrektur-Aktion → zurück zu Schritt 3
+
+  ┌──────────┐    ┌──────────┐    ┌──────────┐
+  │Screenshot│───▶│ Analyse  │───▶│  Aktion  │
+  └──────────┘    └──────────┘    └──────────┘
+       ▲                               │
+       │         ┌──────────┐          │
+       └─────────│Screenshot│◀─────────┘
+                 │(Verify)  │
+                 └──────────┘`,
+    },
+    {
+      type: 'text',
+      content: `Dieser Loop wiederholt sich, bis die Aufgabe erledigt ist. Das Entscheidende ist der Verifizierungs-Screenshot nach jeder Aktion: Claude prüft, ob der Klick tatsächlich das erwartete Ergebnis hatte. Wenn nicht, korrigiert es sich selbst. Das macht Computer Use robust, aber auch langsamer als direkte API-Aufrufe – jeder Schritt braucht einen Screenshot-Analyse-Zyklus. Für einfache Aktionen dauert das wenige Sekunden, für komplexere Workflows mit vielen Schritten kann es eine Minute oder länger dauern.`,
+    },
+
+    // ============================
+    // SEKTION 2: SETUP & AKTIVIERUNG
+    // ============================
+    {
+      type: 'heading',
+      content: '🚀 Sektion 2: Setup & Aktivierung auf macOS',
+    },
+    {
+      type: 'text',
+      content: `Computer Use ist ausschließlich auf macOS verfügbar und erfordert ein Pro- oder Max-Abo bei Anthropic. Die Aktivierung erfolgt über die Claude Desktop App – nicht über die Webversion, nicht über die API. Hier die Schritt-für-Schritt-Anleitung.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `VORAUSSETZUNGEN
+━━━━━━━━━━━━━━
+✅ macOS (aktuelles System empfohlen)
+✅ Claude Pro oder Claude Max Abo
+✅ Claude Desktop App installiert (neueste Version)
+✅ Bildschirm-Aufnahme-Berechtigung für Claude
+✅ Bedienungshilfen-Berechtigung für Claude
+
+AKTIVIERUNG – SCHRITT FÜR SCHRITT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Claude Desktop App öffnen
+   → Stelle sicher, dass du die neueste Version hast
+
+2. Settings öffnen
+   → Claude Desktop → Einstellungen (Cmd + ,)
+   → Oder über das Menü: Claude → Settings
+
+3. Computer Use aktivieren
+   → Navigiere zum Abschnitt "Computer Use"
+   → Schalte "Enable Computer Use" ein
+
+4. macOS-Berechtigungen erteilen
+   → Beim ersten Start fragt macOS nach zwei Berechtigungen:
+
+   a) Bildschirmaufnahme (Screen Recording)
+      → Systemeinstellungen → Datenschutz & Sicherheit
+        → Bildschirmaufnahme → Claude aktivieren
+      → Ohne diese Berechtigung kann Claude keine
+        Screenshots aufnehmen
+
+   b) Bedienungshilfen (Accessibility)
+      → Systemeinstellungen → Datenschutz & Sicherheit
+        → Bedienungshilfen → Claude aktivieren
+      → Ohne diese Berechtigung kann Claude keine
+        Maus-/Tastatur-Aktionen ausführen
+
+5. Neustart der App
+   → Nach dem Erteilen der Berechtigungen:
+     Claude Desktop komplett beenden (Cmd + Q)
+     und neu starten`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Berechtigungen nachträglich ändern',
+      content: `Wenn du eine Berechtigung beim ersten Start versehentlich abgelehnt hast, kannst du sie jederzeit in den macOS-Systemeinstellungen nachträglich erteilen. Gehe zu Systemeinstellungen → Datenschutz & Sicherheit → Bildschirmaufnahme (bzw. Bedienungshilfen) und aktiviere den Schalter neben "Claude". Danach musst du die Claude App neu starten, damit die Änderung greift.`,
+    },
+    {
+      type: 'text',
+      content: `Computer Use funktioniert sowohl in der Claude Desktop App (Cowork-Modus) als auch in Claude Code. In Claude Code nutzt du Computer Use, wenn du Claude bittest, eine GUI-Aktion auszuführen, für die kein CLI-Befehl oder MCP-Server verfügbar ist. Claude entscheidet dabei intelligent, welchen Weg es nimmt – mehr dazu in Sektion 4.`,
+    },
+    {
+      type: 'code',
+      language: 'bash',
+      content: `# Computer Use in Claude Code testen
+# Starte Claude Code und gib eine GUI-Aufgabe:
+
+# Einfacher Test – Finder öffnen
+> "Öffne den Finder und erstelle einen neuen Ordner namens 'test-cu' auf dem Desktop"
+
+# Claude wird:
+# 1. Screenshot aufnehmen
+# 2. Finder öffnen (über Spotlight oder Dock)
+# 3. Zum Desktop navigieren
+# 4. Neuen Ordner erstellen
+# 5. Ordner umbenennen
+# 6. Per Screenshot verifizieren
+
+# Wichtig: Claude fragt vor GUI-Aktionen um Erlaubnis!
+# Du siehst einen Prompt wie:
+# "I'd like to take a screenshot and interact with your desktop.
+#  Allow? [y/n]"`,
+    },
+    {
+      type: 'text',
+      content: `Sicherheitshinweis: Claude fragt dich vor jeder Computer-Use-Aktion um Erlaubnis. Du siehst, was Claude vorhat (z.B. "Ich möchte auf den Button 'Speichern' klicken"), und kannst ablehnen. Das ist ein bewusstes Design-Prinzip – Claude handelt nie ohne dein Einverständnis auf deinem Desktop.`,
+    },
+
+    // ============================
+    // SEKTION 3: WIE DER VISION-LOOP FUNKTIONIERT
+    // ============================
+    {
+      type: 'heading',
+      content: '👁️ Sektion 3: Der Vision-Loop im Detail',
+    },
+    {
+      type: 'text',
+      content: `Du hast den Vision-Loop bereits konzeptionell kennengelernt. Jetzt schauen wir uns an, was in jedem Schritt genau passiert und wie Claude Entscheidungen trifft. Dieses Verständnis hilft dir, bessere Anweisungen zu geben und Fehler zu vermeiden.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `SCHRITT 1: SCREENSHOT-AUFNAHME
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Was passiert:
+  → Claude nutzt die macOS Screen-Capture-API
+  → Nimmt den gesamten Bildschirm auf (oder den relevanten Bereich)
+  → Das Bild wird als Pixel-Daten an das Modell gesendet
+  → Auflösung wird ggf. herunterskaliert für Effizienz
+
+Tipps für bessere Screenshots:
+  → Halte den Desktop aufgeräumt
+  → Vermeide überlappende Fenster
+  → Dunkle und helle Themes funktionieren beide
+  → Größere UI-Elemente werden besser erkannt
+
+SCHRITT 2: VISUELLE ANALYSE
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+Was Claude erkennt:
+  → Fenster-Grenzen und -Titel
+  → Buttons, Menüs, Tabs, Dropdown-Listen
+  → Textfelder und deren Inhalt
+  → Icons und deren wahrscheinliche Funktion
+  → Scrollbars und Scroll-Position
+  → Dialoge, Pop-ups, Benachrichtigungen
+
+Was Claude NICHT gut erkennt:
+  → Sehr kleine UI-Elemente (< 16px)
+  → Subtile Farb-Unterschiede (z.B. aktiv/inaktiv)
+  → Animationen (nur Snapshots, kein Video)
+  → Overlays die teilweise transparent sind
+
+SCHRITT 3: AKTIONS-AUSFÜHRUNG
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Verfügbare Aktionen:
+  → mouse_move(x, y)     – Maus zu Koordinaten bewegen
+  → left_click()         – Linksklick
+  → right_click()        – Rechtsklick
+  → double_click()       – Doppelklick
+  → type_text("...")     – Text eingeben
+  → key_press("cmd+s")  – Tastenkombination
+  → scroll(direction)    – Hoch/runter scrollen
+
+SCHRITT 4: VERIFIZIERUNG
+━━━━━━━━━━━━━━━━━━━━━━━━
+Nach jeder Aktion:
+  → Neuer Screenshot
+  → Vergleich: Hat sich der erwartete Zustand eingestellt?
+  → Selbst-Korrektur bei Fehlern
+  → Maximal 3-5 Korrektur-Versuche pro Aktion`,
+    },
+    {
+      type: 'text',
+      content: `Ein wichtiges Detail: Claude verarbeitet den Screenshot als Bild-Input, genau wie wenn du ein Bild in den Chat hochladen würdest. Das bedeutet, dass die gleichen multimodalen Fähigkeiten genutzt werden, die Claude auch für Bildanalyse hat. Der Unterschied ist, dass Claude hier nicht nur analysiert, sondern auch handelt – es schließt den Loop zwischen Wahrnehmung und Aktion.`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Warum der Loop manchmal langsam ist',
+      content: `Jeder Durchlauf des Vision-Loops braucht: 1) Screenshot aufnehmen (~0,5s), 2) Bild an Claude senden (~1-2s), 3) Analyse und Entscheidung (~2-5s), 4) Aktion ausführen (~0,5s). Das sind 4-8 Sekunden pro Schritt. Ein Workflow mit 10 Schritten dauert also 40-80 Sekunden. Das ist deutlich langsamer als ein CLI-Befehl (Millisekunden) oder ein MCP-Aufruf (1-3 Sekunden). Deshalb ist Computer Use immer die letzte Option, wenn schnellere Wege nicht verfügbar sind.`,
+    },
+    {
+      type: 'text',
+      content: `Um Claude die Arbeit zu erleichtern, solltest du bei Computer-Use-Aufgaben ein paar Dinge beachten: Maximiere das Fenster der Ziel-App, damit UI-Elemente groß und gut erkennbar sind. Schließe unnötige Fenster. Vermeide Fenster-Überlappungen. Und beschreibe so genau wie möglich, was du willst – "Klicke auf den blauen Button rechts oben" ist besser als "Klicke irgendwo".`,
+    },
+
+    // ============================
+    // SEKTION 4: PRIORITÄTEN-SYSTEM
+    // ============================
+    {
+      type: 'heading',
+      content: '📋 Sektion 4: Das Prioritäten-System – Wann nutzt Claude was?',
+    },
+    {
+      type: 'text',
+      content: `Eine der cleversten Design-Entscheidungen bei Computer Use ist das Prioritäten-System. Claude greift nicht sofort zur Maus – es prüft zuerst, ob es schnellere und zuverlässigere Wege gibt. Dieses Priorisierungssystem ist hierarchisch aufgebaut und folgt einer klaren Logik: Je direkter und deterministischer der Zugriff, desto besser.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `CLAUDES PRIORITÄTEN-SYSTEM
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PRIORITÄT 1: DIREKTE CONNECTORS (Höchste Priorität)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  → Native Integrationen wie Slack, Google Calendar, Gmail
+  → Strukturierte API-Aufrufe, 100% zuverlässig
+  → Millisekunden-Antwortzeit
+  → Beispiel: "Schicke eine Slack-Nachricht" → Slack-Connector
+
+PRIORITÄT 2: MCP-SERVER
+━━━━━━━━━━━━━━━━━━━━━━━
+  → Benutzerdefinierte Tool-Server (Supabase, Stripe, etc.)
+  → Strukturierte Eingabe/Ausgabe, hohe Zuverlässigkeit
+  → 1-3 Sekunden Antwortzeit
+  → Beispiel: "Erstelle einen Stripe-Kunden" → Stripe MCP
+
+PRIORITÄT 3: BASH / CLI
+━━━━━━━━━━━━━━━━━━━━━━━
+  → Terminal-Befehle für Dateisystem, Git, npm, etc.
+  → Deterministisch, schnell, gut dokumentiert
+  → Millisekunden bis Sekunden
+  → Beispiel: "Installiere lodash" → npm install lodash
+
+PRIORITÄT 4: COMPUTER USE (Niedrigste Priorität)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  → Visuelle Desktop-Interaktion als Fallback
+  → Nicht-deterministisch, langsamer, fehleranfälliger
+  → 4-8 Sekunden pro Aktion
+  → Beispiel: "Ändere die Figma-Farbe" → Computer Use
+    (weil Figma keine CLI hat)
+
+ENTSCHEIDUNGS-FLUSS:
+  Aufgabe → Gibt es einen Connector? → JA → Connector nutzen
+                                      → NEIN ↓
+            Gibt es einen MCP-Server? → JA → MCP nutzen
+                                      → NEIN ↓
+            Gibt es einen CLI-Befehl? → JA → Bash nutzen
+                                      → NEIN ↓
+            Computer Use als Fallback → Desktop-Interaktion`,
+    },
+    {
+      type: 'text',
+      content: `Dieses System ist nicht willkürlich – es folgt einem klaren Prinzip: Determinismus vor Heuristik. Ein API-Aufruf liefert immer das gleiche Ergebnis bei gleicher Eingabe. Ein Mausklick auf einen Button hängt davon ab, ob Claude den Button korrekt erkennt, ob er an der erwarteten Stelle ist, ob kein Pop-up ihn verdeckt. Je weiter oben in der Hierarchie, desto zuverlässiger und schneller ist die Methode.`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Was das für dich in der Praxis bedeutet',
+      content: `Wenn du Claude bittest, eine Nachricht in Slack zu senden, wird es NICHT den Slack-Desktop-Client öffnen und die Nachricht per Maus und Tastatur eintippen. Es wird den Slack-Connector nutzen – viel schneller und zuverlässiger. Computer Use kommt erst zum Einsatz, wenn kein anderer Weg existiert. Das ist ein bewusster Fallback, kein primäres Werkzeug. Du musst Claude also nicht sagen "nutze den Connector statt Computer Use" – das macht es automatisch.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `BEISPIELE: WAS NUTZT CLAUDE FÜR WELCHE AUFGABE?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+"Sende eine Slack-Nachricht an #team"
+  → Connector (Slack-Integration) ✅
+  → NICHT: Slack-App öffnen und tippen ❌
+
+"Erstelle einen neuen Supabase-Bucket"
+  → MCP-Server (Supabase MCP) ✅
+  → NICHT: Supabase-Dashboard im Browser öffnen ❌
+
+"Installiere die neueste Version von React"
+  → Bash (npm install react@latest) ✅
+  → NICHT: npmjs.com im Browser öffnen ❌
+
+"Ändere die Hintergrundfarbe in Figma"
+  → Computer Use (kein Figma-CLI verfügbar) ✅
+  → Figma hat keine Terminal-Schnittstelle
+
+"Teste das Login-Formular im Browser"
+  → Computer Use (visuelle Interaktion nötig) ✅
+  → Alternativ: Playwright MCP für automatisierte Tests
+
+"Ändere eine Einstellung in den macOS Systemeinstellungen"
+  → Computer Use (GUI-only Einstellungen) ✅
+  → Einige Settings per defaults-Befehl möglich`,
+    },
+    {
+      type: 'text',
+      content: `Beachte den letzten Punkt: Manche macOS-Einstellungen können sowohl über die GUI als auch per Terminal (defaults write ...) geändert werden. In solchen Fällen wird Claude den Terminal-Befehl bevorzugen, weil er schneller und zuverlässiger ist. Computer Use kommt nur zum Einsatz, wenn wirklich keine andere Option existiert.`,
+    },
+
+    // ============================
+    // SEKTION 5: PRAKTISCHE USE CASES
+    // ============================
+    {
+      type: 'heading',
+      content: '🛠️ Sektion 5: Praktische Use Cases',
+    },
+    {
+      type: 'text',
+      content: `Genug Theorie – schauen wir uns an, wo Computer Use wirklich glänzt. Die stärksten Use Cases sind dort, wo GUI-Interaktion unvermeidbar ist und keine API oder CLI existiert. Hier sind die wichtigsten Szenarien für Entwickler.`,
+    },
+    {
+      type: 'heading',
+      content: '🔍 Use Case 1: Dev-Tools debuggen',
+    },
+    {
+      type: 'text',
+      content: `Stell dir vor, du hast einen visuellen Bug in deiner App – ein Element wird falsch positioniert, eine Animation ruckelt, oder ein Dropdown öffnet sich an der falschen Stelle. Du kannst Claude bitten, den Browser DevTools zu öffnen, den Element-Inspektor zu nutzen und die CSS-Eigenschaften zu analysieren. Das ist mit reinem CLI nicht möglich, weil die visuelle Inspektion das Problem ist.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `USE CASE: VISUELLEN BUG MIT DEVTOOLS DEBUGGEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dein Prompt an Claude:
+  "Öffne Chrome, navigiere zu localhost:3000/dashboard,
+   öffne die DevTools, inspiziere den Header-Bereich
+   und finde heraus, warum das Logo abgeschnitten wird."
+
+Was Claude tut (Vision-Loop):
+  1. Screenshot → Erkennt Chrome im Dock
+  2. Klick auf Chrome-Icon → Chrome öffnet sich
+  3. Screenshot → Erkennt Adresszeile
+  4. Klick auf Adresszeile → Text eingeben: localhost:3000/dashboard
+  5. Enter drücken → Seite lädt
+  6. Screenshot → Seite ist geladen
+  7. Cmd+Option+I → DevTools öffnen
+  8. Screenshot → DevTools sind offen
+  9. Klick auf Element-Inspektor (Pfeil-Icon)
+  10. Klick auf den Header-Bereich
+  11. Screenshot → CSS-Eigenschaften sichtbar
+  12. Analyse: "Das Logo hat overflow: hidden und eine
+      feste Höhe von 32px, aber das Bild ist 48px hoch.
+      Setze die Höhe auf auto oder erhöhe sie auf 48px."`,
+    },
+    {
+      type: 'text',
+      content: `Das Besondere hier: Claude verbindet seine visuellen Fähigkeiten (das Logo "sehen" und das Problem erkennen) mit seiner Code-Kenntnis (die CSS-Eigenschaft als Ursache identifizieren). Diese Kombination ist mit reinem CLI nicht möglich. Natürlich kannst du alternativ Playwright MCP für automatisierte Browser-Interaktion nutzen – aber für spontanes visuelles Debugging ist Computer Use oft schneller einzurichten.`,
+    },
+    {
+      type: 'heading',
+      content: '🌐 Use Case 2: Browser-Testing',
+    },
+    {
+      type: 'text',
+      content: `Ein weiterer starker Use Case ist das manuelle Testing im Browser. Statt selbst durch deine App zu klicken und zu prüfen, ob alles funktioniert, kann Claude das für dich übernehmen. Besonders nützlich für Formulare, Multi-Step-Workflows und responsive Design-Checks.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `USE CASE: LOGIN-FLOW TESTEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Dein Prompt an Claude:
+  "Teste den Login-Flow meiner App auf localhost:3000.
+   Probiere diese Szenarien:
+   1. Falsches Passwort → Wird eine Fehlermeldung angezeigt?
+   2. Leere Felder → Wird Validierung angezeigt?
+   3. Korrektes Login (test@example.com / test123)
+      → Komme ich zum Dashboard?"
+
+Was Claude tut:
+  Szenario 1:
+  → Navigiert zu localhost:3000
+  → Gibt test@example.com in E-Mail-Feld ein
+  → Gibt "falsch" in Passwort-Feld ein
+  → Klickt "Login"
+  → Screenshot → Prüft auf Fehlermeldung
+  → Ergebnis: "Fehlermeldung 'Invalid credentials'
+     wird in Rot unter dem Formular angezeigt. ✅"
+
+  Szenario 2:
+  → Leert beide Felder
+  → Klickt "Login"
+  → Screenshot → Prüft auf Validierung
+  → Ergebnis: "Beide Felder zeigen 'Required' in Rot.
+     Der Submit-Button ist nicht deaktiviert – das sollte
+     er vielleicht sein. 🟡"
+
+  Szenario 3:
+  → Gibt korrekte Credentials ein
+  → Klickt "Login"
+  → Screenshot → Prüft auf Dashboard
+  → Ergebnis: "Redirect zum Dashboard erfolgreich.
+     User-Name wird in der Navbar angezeigt. ✅"`,
+    },
+    {
+      type: 'text',
+      content: `Beachte, wie Claude beim zweiten Szenario proaktiv einen Verbesserungsvorschlag macht – der Submit-Button sollte deaktiviert sein bei leeren Feldern. Das ist der Mehrwert gegenüber reinem E2E-Testing: Claude denkt mit und erkennt UX-Probleme, die in einem automatisierten Test-Script nicht abgefragt werden. Für regelmäßige, reproduzierbare Tests solltest du trotzdem Playwright oder Cypress verwenden – Computer Use ist ideal für explorative, einmalige Tests.`,
+    },
+    {
+      type: 'heading',
+      content: '⚙️ Use Case 3: App-Automatisierung',
+    },
+    {
+      type: 'text',
+      content: `Der dritte große Use Case ist die Automatisierung von Desktop-Apps, die keine API oder CLI haben. Denk an Apps wie Figma, Photoshop, Notion (Desktop-App), oder spezifische Branchen-Software. Mit Computer Use kann Claude diese Apps bedienen, als würde ein Mensch davor sitzen.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `USE CASE: WIEDERHOLTE GUI-AUFGABE AUTOMATISIEREN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Beispiel: Export von 5 Design-Varianten aus einer Design-App
+
+Dein Prompt an Claude:
+  "Öffne die Design-App, und exportiere die Datei
+   'hero-section' in folgenden Formaten:
+   - PNG 1x (Desktop)
+   - PNG 2x (Retina)
+   - SVG
+   - WebP
+   Speichere alle in ~/Desktop/exports/"
+
+Was Claude tut:
+  → Öffnet die Design-App
+  → Navigiert zur Datei "hero-section"
+  → Öffnet Export-Dialog
+  → Wählt PNG, setzt Scale auf 1x
+  → Exportiert nach ~/Desktop/exports/
+  → Öffnet Export-Dialog erneut
+  → Wählt PNG, setzt Scale auf 2x
+  → Exportiert...
+  → Wiederholt für SVG und WebP
+
+Ergebnis:
+  "Alle 4 Exporte erfolgreich gespeichert:
+   ~/Desktop/exports/hero-section.png (1x)
+   ~/Desktop/exports/hero-section@2x.png (2x)
+   ~/Desktop/exports/hero-section.svg
+   ~/Desktop/exports/hero-section.webp"`,
+    },
+    {
+      type: 'text',
+      content: `Solche repetitiven GUI-Aufgaben sind perfekt für Computer Use. Du sparst dir das manuelle Durchklicken von Export-Dialogen und kannst die Zeit für kreativere Arbeit nutzen. Aber sei realistisch: Bei sehr komplexen GUI-Workflows mit vielen verschachtelten Menüs und Dialogen kann Computer Use an seine Grenzen stoßen. Mehr dazu in Sektion 6.`,
+    },
+
+    // ============================
+    // SEKTION 6: GRENZEN & VORSICHTSMAßNAHMEN
+    // ============================
+    {
+      type: 'heading',
+      content: '⚠️ Sektion 6: Grenzen & Vorsichtsmaßnahmen',
+    },
+    {
+      type: 'text',
+      content: `Computer Use ist ein Research Preview – und das merkst du in der Praxis. Es funktioniert oft erstaunlich gut, hat aber klare Grenzen, die du kennen musst. Hier die wichtigsten Einschränkungen und wie du damit umgehst.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `BEKANNTE GRENZEN VON COMPUTER USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. FEHLERHAFTE KLICKS
+   → Claude kann UI-Elemente falsch erkennen
+   → Besonders bei kleinen Buttons oder ähnlich aussehenden Elementen
+   → Mitigation: Fenster maximieren, UI-Elemente vergrößern
+
+2. GESCHWINDIGKEIT
+   → 4-8 Sekunden pro Aktion (Vision-Loop)
+   → Ein 10-Schritt-Workflow dauert 40-80 Sekunden
+   → Nicht geeignet für zeitkritische Aufgaben
+
+3. DYNAMISCHE UI-ELEMENTE
+   → Animationen werden nicht erkannt (nur Snapshots)
+   → Pop-ups und Tooltips können irritieren
+   → Loading-Spinner: Claude wartet, aber nicht unbegrenzt
+
+4. AUFLÖSUNG UND SKALIERUNG
+   → Sehr hochauflösende Displays: Mehr Daten pro Screenshot
+   → Sehr kleine UI-Elemente werden leichter übersehen
+   → HiDPI-Skalierung kann Koordinaten verschieben
+
+5. MULTI-MONITOR
+   → Verhalten bei mehreren Bildschirmen kann variieren
+   → Am besten: Ziel-App auf dem Hauptbildschirm
+
+6. KONTEXTABHÄNGIGKEIT
+   → Claude kennt den vorherigen Zustand der App nicht
+   → Jeder Screenshot ist ein "frischer Blick"
+   → Komplexe App-Zustände müssen beschrieben werden`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Sensible Daten und Sicherheit',
+      content: `Computer Use nimmt Screenshots deines gesamten Bildschirms auf. Das bedeutet: Alles, was auf deinem Bildschirm sichtbar ist, wird an Claude gesendet – inklusive geöffneter E-Mails, Passwort-Manager, Chat-Nachrichten, und persönlicher Dokumente. Schließe sensible Apps und Fenster, bevor du Computer Use aktivierst. Zeige keine Passwörter, API-Keys, Kreditkartennummern oder vertrauliche Geschäftsdaten auf dem Bildschirm. Auch wenn Anthropic strenge Datenschutzrichtlinien hat: Was nicht gesendet wird, kann nicht kompromittiert werden.`,
+    },
+    {
+      type: 'list',
+      content: `- Schließe Passwort-Manager und Banking-Apps vor Computer-Use-Sessions
+- Logge dich aus sensiblen Accounts aus, die im Browser geöffnet sind
+- Vermeide es, API-Keys oder Secrets in sichtbaren Terminal-Fenstern zu haben
+- Nutze Computer Use nicht für Aufgaben, die Login-Credentials erfordern
+- Räume deinen Desktop auf – weniger sichtbare Daten = weniger Risiko
+- Prüfe nach der Session, ob unbeabsichtigte Aktionen stattgefunden haben`,
+    },
+    {
+      type: 'text',
+      content: `Ein weiterer wichtiger Punkt: Computer Use kann unbeabsichtigte Aktionen ausführen. Wenn Claude einen Button falsch erkennt und darauf klickt, könnte es z.B. versehentlich eine E-Mail senden, eine Datei löschen, oder eine Einstellung ändern. Das Erlaubnis-System (du musst jede Aktion bestätigen) ist dein Sicherheitsnetz – nutze es bewusst und klicke nicht blind "Ja" bei jeder Aktion.`,
+    },
+
+    // ============================
+    // SEKTION 7: COMPUTER USE VS MCP VS BASH
+    // ============================
+    {
+      type: 'heading',
+      content: '🔀 Sektion 7: Computer Use vs. MCP vs. Bash – Wann was?',
+    },
+    {
+      type: 'text',
+      content: `Eine der häufigsten Fragen ist: "Wann soll ich Computer Use nutzen, wann MCP, und wann reicht ein Bash-Befehl?" Die Antwort folgt immer dem gleichen Prinzip: Nutze die deterministischste und schnellste Methode, die für deine Aufgabe funktioniert.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `VERGLEICH: COMPUTER USE vs. MCP vs. BASH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                 BASH           MCP            COMPUTER USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Geschwindigkeit  Sofort         1-3 Sek.       4-8 Sek./Aktion
+Zuverlässigkeit  99,9%          99%            ~85-95%
+Determinismus    100%           100%           Nicht garantiert
+Setup-Aufwand    Keiner         MCP konfigur.  Berechtigungen
+Anwendungsbereich CLI-fähige    API-basierte   GUI-only Apps
+                 Programme      Services
+Fehler-Handling  Exit-Codes     JSON-Errors    Visuell
+Reproduzierbar   Ja             Ja             Eingeschränkt
+Batch-fähig      Ja (Scripts)   Ja (Loops)     Nein
+
+ENTSCHEIDUNGSHILFE:
+
+  "Kann ich es im Terminal machen?"
+    → JA: Bash nutzen
+    → NEIN ↓
+
+  "Gibt es einen MCP-Server oder eine API?"
+    → JA: MCP nutzen
+    → NEIN ↓
+
+  "Muss ich eine GUI bedienen?"
+    → JA: Computer Use
+    → NEIN: Überdenke die Aufgabe – es gibt fast immer
+            einen CLI- oder API-Weg`,
+    },
+    {
+      type: 'text',
+      content: `Lass uns das an konkreten Beispielen durchspielen, damit du das Muster verinnerlichst. Für jede Aufgabe gibt es oft mehrere Wege – der beste ist fast nie Computer Use, außer es geht um rein visuelle Interaktion.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `PRAXIS-BEISPIELE: DEN RICHTIGEN WEG WÄHLEN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+AUFGABE: "Git-Repo klonen"
+  ❌ Computer Use: Browser öffnen → GitHub → Clone-Button
+  ✅ Bash: git clone https://github.com/user/repo.git
+
+AUFGABE: "Supabase-Tabelle erstellen"
+  ❌ Computer Use: Browser → Dashboard → SQL-Editor
+  ✅ MCP: Supabase MCP → apply_migration
+
+AUFGABE: "Slack-Nachricht senden"
+  ❌ Computer Use: Slack-App öffnen → Kanal suchen → Tippen
+  ✅ Connector: Slack-Integration → slack_send_message
+
+AUFGABE: "Screenshot einer Website machen"
+  ❌ Computer Use: Browser öffnen → Navigieren → Cmd+Shift+3
+  ✅ Bash/MCP: Playwright MCP → browser_take_screenshot
+
+AUFGABE: "Figma-Design reviewen"
+  ✅ Computer Use: Figma öffnen → Design anschauen → Feedback
+  (Figma-Inspektion ist inherent visuell – hier passt CU)
+
+AUFGABE: "Desktop-App-Einstellung ändern ohne CLI"
+  ✅ Computer Use: App öffnen → Preferences → Einstellen
+  (Keine API vorhanden – CU ist der einzige Weg)
+
+AUFGABE: "Browser-Formular manuell testen"
+  🟡 Computer Use: Browser → Formular ausfüllen → Submit
+  🟡 MCP: Playwright → browser_fill_form → browser_click
+  → Playwright ist reproduzierbarer, CU ist flexibler
+  → Für einmalige Tests: CU. Für wiederkehrende: Playwright`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Die Faustregel',
+      content: `Wenn du dich fragst "Soll ich Computer Use nutzen?", stell dir zuerst die Gegenfrage: "Gibt es einen nicht-visuellen Weg?" In 90% der Fälle gibt es einen – und der ist besser. Computer Use ist für die restlichen 10%, wo GUI-Interaktion der einzige Weg ist. Denk daran: Computer Use ist ein Fallback, kein primäres Werkzeug. Es glänzt dort, wo nichts anderes funktioniert.`,
+    },
+
+    // ============================
+    // SEKTION 8: BEST PRACTICES & TIPPS
+    // ============================
+    {
+      type: 'heading',
+      content: '✅ Sektion 8: Best Practices & Tipps',
+    },
+    {
+      type: 'text',
+      content: `Hier die wichtigsten Regeln für den effektiven Einsatz von Computer Use. Diese Best Practices helfen dir, bessere Ergebnisse zu erzielen und typische Fehler zu vermeiden.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `BEST PRACTICES FÜR COMPUTER USE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. AUFGERÄUMTER DESKTOP
+   → Schließe unnötige Fenster
+   → Maximiere die Ziel-App
+   → Keine überlappenden Fenster
+   → Weniger auf dem Bildschirm = bessere Erkennung
+
+2. PRÄZISE ANWEISUNGEN
+   ❌ "Ändere was in den Einstellungen"
+   ✅ "Öffne die Systemeinstellungen, gehe zu
+      Allgemein → Erscheinungsbild und wähle 'Dunkel'"
+
+3. SCHRITTWEISE AUFGABEN
+   ❌ "Mache alles auf einmal"
+   ✅ Teile komplexe Workflows in kleinere Schritte
+      → Claude kann nach jedem Schritt verifizieren
+
+4. FEEDBACK GEBEN
+   → Wenn Claude falsch klickt: Sage es
+   → "Das war der falsche Button – der richtige ist
+      der blaue Button rechts daneben"
+   → Claude lernt aus deinem Feedback im Kontext
+
+5. VERIFIZIERE WICHTIGE AKTIONEN
+   → Prüfe nach Computer-Use-Sessions:
+     Wurden die richtigen Dateien gespeichert?
+     Wurden keine unbeabsichtigten Änderungen gemacht?
+
+6. NUTZE BESCHREIBENDE REFERENZEN
+   ❌ "Klicke auf den dritten Button"
+   ✅ "Klicke auf den Button mit der Aufschrift 'Save'"
+   → Text-Labels sind zuverlässiger als Positionen`,
+    },
+    {
+      type: 'text',
+      content: `Ein oft übersehener Tipp: Wenn Claude Schwierigkeiten hat, ein UI-Element zu finden, kannst du helfen, indem du den ungefähren Bereich beschreibst. "Der Button ist in der oberen rechten Ecke des Fensters, blau, mit weißem Text" ist deutlich hilfreicher als "Klick da drauf". Je mehr visuelle Hinweise du gibst, desto besser kann Claude das Element identifizieren.`,
+    },
+    {
+      type: 'list',
+      content: `- Starte mit einfachen Aufgaben, um ein Gefühl für Computer Use zu bekommen
+- Beobachte den Vision-Loop: Sieh dir an, wo Claude Screenshots macht und was es erkennt
+- Nutze Computer Use nicht für sicherheitskritische Aktionen (Deployments, Löschvorgänge)
+- Kombiniere Computer Use mit anderen Tools: z.B. Screenshot per CU, Analyse per Bash
+- Halte deine macOS-Berechtigungen aktuell – nach Updates können sie zurückgesetzt werden
+- Feedback an Anthropic geben: Als Research Preview profitiert das Feature von deinem Input`,
+    },
+    {
+      type: 'highlight',
+      title: '💡 Computer Use und Cowork-Modus',
+      content: `Computer Use entfaltet sein volles Potenzial im Cowork-Modus der Claude Desktop App. Hier kann Claude nicht nur Code schreiben, sondern auch die Ergebnisse visuell überprüfen – es baut eine React-Komponente, öffnet den Browser, prüft das Ergebnis per Screenshot, und passt den Code an, bis es stimmt. Das ist ein vollständiger visueller Feedback-Loop, der bisher nur mit menschlichem Eingreifen möglich war.`,
+    },
+
+    // ============================
+    // SEKTION 9: ÜBUNGEN
+    // ============================
+    {
+      type: 'heading',
+      content: '📝 Sektion 9: Übungen',
+    },
+    {
+      type: 'text',
+      content: `Diese Übungen helfen dir, Computer Use praktisch zu erleben und ein Gefühl für den Vision-Loop, die Geschwindigkeit und die Grenzen zu entwickeln. Beginne mit den einfachen Übungen und arbeite dich vor.`,
+    },
+    {
+      type: 'code',
+      language: 'text',
+      content: `ÜBUNG 1: Erste Schritte mit Computer Use (5 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Aktiviere Computer Use (Settings → Computer Use → Enable)
+2. Erteile die macOS-Berechtigungen (Bildschirmaufnahme + Bedienungshilfen)
+3. Starte die Claude Desktop App neu
+4. Gib Claude die Aufgabe:
+   "Öffne die Systemeinstellungen und sage mir,
+    welche macOS-Version ich nutze."
+5. Beobachte den Vision-Loop:
+   → Wie viele Screenshots nimmt Claude?
+   → Wie lange dauert es?
+   → Ist das Ergebnis korrekt?
+→ Ziel: Computer Use aktivieren und erste Interaktion erleben
+
+ÜBUNG 2: Prioritäten-System verstehen (10 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Gib Claude diese 4 Aufgaben nacheinander:
+   a) "Erstelle eine neue Datei namens test.txt im aktuellen Verzeichnis"
+      → Beobachte: Nutzt Claude Bash oder Computer Use?
+   b) "Zeige mir den Inhalt der Datei test.txt"
+      → Beobachte: Welches Tool wird verwendet?
+   c) "Öffne den Finder und navigiere zum Desktop"
+      → Beobachte: Jetzt sollte Computer Use kommen
+   d) "Lösche die Datei test.txt"
+      → Beobachte: Bash oder Computer Use?
+2. Notiere für jede Aufgabe, welchen Weg Claude gewählt hat
+→ Ziel: Das Prioritäten-System in Aktion sehen
+
+ÜBUNG 3: Browser-Testing mit Computer Use (15 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Voraussetzung: Eine lokale Web-App auf localhost
+1. Starte deine App (npm run dev)
+2. Bitte Claude:
+   "Öffne Chrome, navigiere zu localhost:3000,
+    mache einen Screenshot und beschreibe, was du siehst."
+3. Dann:
+   "Klicke auf den ersten Link/Button den du siehst
+    und beschreibe die nächste Seite."
+4. Dann:
+   "Gibt es visuell etwas, das verbessert werden könnte?"
+→ Ziel: Computer Use für visuelles Feedback nutzen
+
+ÜBUNG 4: Vergleich CU vs. Playwright (15 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Aufgabe: "Navigiere zu example.com und mache einen Screenshot"
+2. Erst per Computer Use:
+   "Öffne Chrome, navigiere zu example.com,
+    und beschreibe was du siehst"
+   → Notiere die Dauer
+3. Dann per Playwright MCP:
+   "Nutze den Playwright MCP um zu example.com zu
+    navigieren und einen Screenshot zu machen"
+   → Notiere die Dauer
+4. Vergleiche: Geschwindigkeit, Zuverlässigkeit, Detailgrad
+→ Ziel: Wann CU, wann Playwright – praktisch erleben
+
+ÜBUNG 5: Desktop-Automatisierung (10 Minuten)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+1. Bitte Claude:
+   "Öffne TextEdit, erstelle ein neues Dokument,
+    schreibe 'Hello from Computer Use!' hinein,
+    und speichere es als 'cu-test.txt' auf dem Desktop."
+2. Prüfe: Wurde die Datei korrekt erstellt?
+3. Dann:
+   "Öffne die Datei cu-test.txt auf dem Desktop
+    und ändere den Text zu 'Computer Use funktioniert!'"
+4. Prüfe erneut
+→ Ziel: Dateierstellung und -bearbeitung per GUI erleben`,
+    },
+    {
+      type: 'text',
+      content: `Wichtig bei den Übungen: Gib Claude Zeit. Der Vision-Loop braucht mehrere Sekunden pro Aktion, und bei den ersten Versuchen kann es länger dauern, wenn Claude die UI deines Systems noch nicht "kennt". Sei geduldig und gib Feedback, wenn etwas nicht klappt. Genau dafür ist das Research Preview da – zum Lernen und Feedback-Geben.`,
+    },
+
+    // ============================
+    // SEKTION 10: ZUSAMMENFASSUNG
+    // ============================
+    {
+      type: 'heading',
+      content: '🎓 Sektion 10: Zusammenfassung',
+    },
+    {
+      type: 'text',
+      content: `Computer Use ist ein faszinierendes neues Feature, das Claude vom reinen Text- und Code-Assistenten zum visuellen Desktop-Automator erweitert. Es überbrückt die "letzte Meile" zwischen Claude und Apps, die keine API haben. Aber es ist kein Ersatz für die bewährten, schnelleren Methoden – es ist eine Ergänzung.`,
+    },
+    {
+      type: 'highlight',
+      title: '🎓 Die wichtigsten Takeaways',
+      content: `✅ Computer Use: Claude steuert deinen Mac per Screenshot → Analyse → Aktion → Verifizierung
+✅ Aktivierung: Claude Desktop App → Settings → Computer Use → Enable (macOS, Pro/Max)
+✅ Vision-Loop: Screenshot-basiert, 4-8 Sekunden pro Aktion, selbst-korrigierend
+✅ Prioritäten: Connectors > MCP > Bash > Computer Use (CU ist immer Fallback)
+✅ Beste Use Cases: GUI-only Apps, visuelles Debugging, Browser-Testing, Desktop-Automatisierung
+✅ Grenzen: Research Preview, fehleranfällig bei kleinen UI-Elementen, langsamer als API/CLI
+✅ Sicherheit: Sensible Daten vom Bildschirm entfernen, jede Aktion bewusst bestätigen
+✅ Faustregel: "Gibt es einen nicht-visuellen Weg?" → Wenn ja, nutze den. Wenn nein → Computer Use
+✅ Kombination: CU für visuelle Inspektion + Bash/MCP für die eigentliche Arbeit = Power-Workflow
+✅ Zukunft: Computer Use wird mit jeder Version besser – jetzt einarbeiten lohnt sich`,
+    },
+    {
+      type: 'text',
+      content: `Computer Use ist heute das, was Claude Code vor einem Jahr war – ein vielversprechender Anfang, der schnell besser wird. Wenn du jetzt lernst, wie du effektive Computer-Use-Anweisungen formulierst und das Feature strategisch einsetzt, bist du bestens vorbereitet, wenn es aus dem Research Preview in die allgemeine Verfügbarkeit wechselt. Die Übungen in dieser Lektion geben dir eine solide Grundlage dafür.`,
+    },
+  ],
+  },
+
+  // ========================================
+  // LEKTION 34: /powerup & Interaktives Tutorial-System
+  // ========================================
+  {
+    id: 34,
+    level: 2,
+    title: '/powerup — Das offizielle Claude Code Tutorial-System',
+    description: 'Lerne das erste offizielle Claude Code Lernsystem kennen: 18 interaktive Lektionen direkt im Terminal, animierte Demos, und wie du tiefer gehst als /powerup',
+    duration: '25 Minuten',
+    objectives: [
+      '/powerup starten und durch alle 3 Levels navigieren',
+      'Die 18 Lektionen und ihre Inhalte kennen',
+      'Unterschied zwischen /powerup und dem Masterkurs verstehen',
+      'Features entdecken die /powerup nicht abdeckt',
+      'Den Kurs-Vorteil: Tieferes Verständnis, Enterprise-Patterns, Praxis',
+    ],
+    content: [
+      {
+        type: 'video',
+        provider: 'local',
+        videoId: '/videos/lektion-34.mp4',
+        title: '🎬 Lektion 34: /powerup — Das offizielle Tutorial-System',
+        content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+      },
+      {
+        type: 'heading',
+        content: '🎮 Was ist /powerup?',
+      },
+      {
+        type: 'text',
+        content: `Am 1. April 2026 hat Anthropic mit Claude Code v2.1.90 ein völlig neues Feature eingeführt: **/powerup** — das erste offizielle, first-party Lernsystem für Claude Code, direkt im Terminal.
+
+Statt die Dokumentation im Browser zu öffnen und Beispiele dort zu lesen, lernst du mit /powerup genau in dem Tool mit dem du arbeitest: Das Terminal zeigt animierte Feature-Demos live in deiner Session. Du siehst nicht nur Code — du siehst Claude in Aktion.
+
+Das ist eine strategische Antwort auf ein echtes Problem: Claude Code ist reich an Features, aber viele davon sind kaum bekannt. Hooks, /loop, headless Mode, Subagents — die meisten Nutzer kennen nur 20% der Möglichkeiten. /powerup macht den Rest sichtbar.
+
+Für den Masterkurs ist das eine Chance: /powerup gibt einen guten Überblick, aber geht nicht in die Tiefe. Es zeigt was möglich ist — wir zeigen wie es in echten Projekten eingesetzt wird, warum es funktioniert, und welche Enterprise-Patterns es ermöglicht.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# /powerup starten (verfügbar ab Claude Code v2.1.90)
+/powerup
+
+# Verfügbare Levels:
+# Level 1 (Beginner)  → 6 Lektionen: Basics, Context, CLAUDE.md
+# Level 2 (Advanced)  → 6 Lektionen: Hooks, MCP, Sub-Agents
+# Level 3 (Expert)    → 6 Lektionen: /loop, headless, agentic
+# Gesamt: 18 Lektionen, ~30-60 Minuten
+
+# Navigation im Tutorial:
+# Enter     → Nächster Schritt
+# b         → Zurück
+# q         → Verlassen (kehrt zur normalen Session zurück)
+# ?         → Hilfe/Shortcuts`,
+      },
+      {
+        type: 'heading',
+        content: '📚 Die 18 Lektionen im Überblick',
+      },
+      {
+        type: 'list',
+        content: `**Level 1 — Beginner:**
+- Lektion 1: Context Management — wie Claude Code Kontext aufbaut und nutzt
+- Lektion 2: CLAUDE.md — das Herzstück der Projekt-Konfiguration
+- Lektion 3: /clear — wann und warum du den Kontext resetten solltest
+- Lektion 4: Session-Management — Sessions starten, fortsetzen, organisieren
+- Lektion 5: Prompt-Optimierung — von vagen zu präzisen Anweisungen
+- Lektion 6: Fehler-Debugging — wie du Claude effektiv mit Fehlern briefst
+
+**Level 2 — Advanced:**
+- Lektion 7: Hooks Grundlagen — PreToolUse, PostToolUse, Stop Events
+- Lektion 8: MCP Server Setup — Installation und Konfiguration
+- Lektion 9: Sub-Agents — Aufgaben an spezialisierte Agents delegieren
+- Lektion 10: CLAUDE.md Fortgeschritten — Multi-Level, Templates, Team-Sharing
+- Lektion 11: Permissions — Tool-Zugriff kontrollieren und absichern
+- Lektion 12: Git Integration — Branches, Commits, PRs mit Claude
+
+**Level 3 — Expert:**
+- Lektion 13: /loop — Wiederkehrende Tasks automatisieren
+- Lektion 14: Headless Mode — Claude in Scripts und CI/CD
+- Lektion 15: Agentic Workflows — Langzeit-Automation ohne Eingriff
+- Lektion 16: Multi-Agent Patterns — Agent Teams koordinieren
+- Lektion 17: MCP fortgeschritten — Custom MCP Server bauen
+- Lektion 18: Production Patterns — Enterprise-grade Agents deployen`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 /powerup vs. Masterkurs — Was ist der Unterschied?',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `/powerup vs. MASTERKURS — Ein ehrlicher Vergleich
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+/powerup (Anthropic official):
+├── 18 Lektionen, ~30-60 Min
+├── Alle Features im Überblick
+├── Animierte Demos live im Terminal
+├── Feature-Discovery: Was existiert?
+└── Von Anthropic gepflegt, immer aktuell
+
+MASTERKURS:
+├── 36 Lektionen, 10+ Stunden
+├── Tiefes Verständnis + Enterprise-Patterns
+├── Real-World Code-Beispiele
+├── Challenges + Quizzes + Zertifikat
+└── Wöchentlich mit neuen Features aktualisiert
+
+EMPFEHLUNG:
+→ /powerup für den schnellen Überblick (30-60 Min)
+→ Masterkurs für tiefes Verständnis und Produktion
+→ Beide ergänzen sich perfekt`,
+      },
+      {
+        type: 'heading',
+        content: '🔍 Was /powerup nicht zeigt — Masterkurs exklusiv',
+      },
+      {
+        type: 'text',
+        content: `Es gibt 5 Bereiche die /powerup bewusst überspringt oder nur oberflächlich behandelt — und genau das ist wo der Masterkurs den Unterschied macht:
+
+**1. Enterprise-Hooks und Defer-Pattern (Exit 3)**
+/powerup zeigt Hooks. Der Masterkurs zeigt wie du Hooks für Production-Automation baust: Security-Hooks, Auto-Formatter, und das neue Defer-Pattern das headless Agents bei kritischen Operationen pausiert und auf Human-in-the-Loop wartet.
+
+**2. MCP Server selbst bauen**
+/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht.
+
+**3. Claude Managed Agents (Enterprise)**
+/powerup erwähnt keine Managed Agents. Der Masterkurs erklärt die $0.08/Stunde Enterprise-Plattform, wann du sie brauchst, und wie du deinen ersten Managed Agent deployest.
+
+**4. Verification-First Prompting**
+Die Methode die laut Boris Cherny (dem Creator von Claude Code) einen 2-3x Qualitäts-Boost liefert. /powerup geht darauf nicht ein — der Masterkurs macht es zum Kern-Pattern.
+
+**5. Kosten-Optimierung in echten Projekten**
+Wie du den Wechsel zwischen Haiku, Sonnet und Opus strategisch einsetzt. /powerup thematisiert Kosten nicht.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Feature 1: Hooks Defer-Pattern (Exit 3) — nur im Masterkurs (Lektion 12)
+# Pausiert headless Agent bei kritischen Befehlen
+if [[ "$COMMAND" == *"rm -rf"* ]]; then
+  exit 3  # Defer: Session pausiert, wartet auf --resume
+fi
+
+# Feature 2: MCP Server bauen — nur im Masterkurs (Lektion 6)
+# Eigene Tools für Claude via MCP Protocol definieren
+# → Deine proprietäre API zugänglich machen
+
+# Feature 3: Claude Managed Agents — nur im Masterkurs (Lektion 35)
+claude agents deploy --config agent.json --managed
+# $0.08/Stunde, Sandboxed, Persistent Sessions
+
+# Feature 4: Verification-First Prompting — nur im Masterkurs (Patterns)
+# "Implement user auth.
+# Verification: npm test green, login works with test@example.com"
+
+# Feature 5: Strategische Modell-Auswahl — nur im Masterkurs (Lektion 23)
+# Haiku für einfache Tasks, Sonnet Standard, Opus für Architektur
+# → Bis zu 50% Kosten-Reduktion ohne Qualitätsverlust`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Praxis-Tipp: So nutzt du /powerup am effektivsten',
+        content: `**Empfohlene Reihenfolge:**
+
+1. Starte /powerup und arbeite dich durch alle 3 Levels (~60 Min)
+2. Notiere dir Features die dich interessieren oder überraschen
+3. Suche diese Features im Masterkurs für tieferes Verständnis
+4. Nutze die Masterkurs-Challenges um das Gelernte zu festigen
+
+/powerup und Masterkurs sind komplementär — nicht konkurrierend. Zusammen geben sie dir den vollständigen Überblick UND das tiefe Verständnis.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ /powerup: Offizielles Anthropic Tutorial, 18 Lektionen, 3 Levels, direkt im Terminal
+✅ Verfügbar ab Claude Code v2.1.90 (April 2026) — einfach /powerup eingeben
+✅ Level 1: Basics (Context, CLAUDE.md, /clear)
+✅ Level 2: Advanced (Hooks, MCP, Sub-Agents)
+✅ Level 3: Expert (/loop, headless, agentic Workflows)
+✅ /powerup = Feature-Discovery; Masterkurs = Tiefes Verständnis + Enterprise-Patterns
+✅ Beide ergänzen sich — starte mit /powerup, vertiefe mit dem Masterkurs`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 35: Claude Managed Agents
+  // ========================================
+  {
+    id: 35,
+    level: 3,
+    title: 'Claude Managed Agents — Enterprise Agents für Freelancer',
+    description: 'Anthropics Enterprise-Plattform für produktionsreife Agenten: Sandboxed Execution, Checkpointing, $0.08/Stunde — und was das für Freelancer und Entwickler bedeutet',
+    duration: '35 Minuten',
+    objectives: [
+      'Verstehen was Claude Managed Agents sind und wie sie sich von lokalen Agent Teams unterscheiden',
+      'Die Architektur: Sandboxed Execution, Checkpointing, Scoped Permissions',
+      'Ersten Managed Agent konfigurieren und deployen',
+      'Kosten-Kalkulation: Wann lohnt sich Managed Agents vs. selbst hosten?',
+      'Praxis-Use-Cases: PR-Review-Agent, Batch-Processor, CI/CD-Agent',
+    ],
+    content: [
+      {
+        type: 'video',
+        provider: 'local',
+        videoId: '/videos/lektion-35.mp4',
+        title: '🎬 Lektion 35: Claude Managed Agents',
+        content: 'Schau dir das Video an um einen Überblick über diese Lektion zu bekommen.',
+      },
+      {
+        type: 'heading',
+        content: '🚀 Claude Managed Agents — Das größte Anthropic-Release Q2 2026',
+      },
+      {
+        type: 'text',
+        content: `Am 8. April 2026 hat Anthropic **Claude Managed Agents** gelauncht — und das Announcement-Tweet bekam in 2 Stunden 2 Millionen Views. Das ist der wichtigste Anthropic-Release dieses Quartals, und er verändert fundamental wie Enterprise-Teams Agenten einsetzen.
+
+Was sind Managed Agents? Stell dir vor: Du hast einen Claude-Agenten der 24/7 läuft, alle neuen Pull Requests in deinem GitHub-Repo reviewt, Kommentare schreibt, und täglich einen Summary-Report erstellt. Bisher musstest du dafür eigene Server aufsetzen, Monitoring konfigurieren, und den Agenten selbst am Laufen halten. Mit Managed Agents macht das Anthropic für dich.
+
+Du konfigurierst den Agenten (Modell, Tools, Permissions), deployest ihn auf Anthropics Plattform, und er läuft — mit automatischem Checkpointing, isolierten Sandbox-Umgebungen und Built-in Monitoring. Du zahlst $0.08 pro Stunde Laufzeit plus die normalen Claude API-Kosten.
+
+Das ist der Shift von "Claude als Tool" zu "Claude als Service" — ein fundamentaler Paradigmenwechsel für die Software-Industrie.`,
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `CLAUDE MANAGED AGENTS — ARCHITEKTUR ÜBERBLICK
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+DEINE SEITE:
+├── agent.json — Konfiguration (Modell, Tools, Schedule)
+├── claude agents deploy → Deployment zur Plattform
+└── Monitoring via Console / API / CLI
+
+ANTHROPIC-SEITE (komplett verwaltete Infrastruktur):
+├── Sandboxed Execution (jede Agent-Run ist isoliert)
+├── Checkpointing (State wird automatisch gespeichert)
+├── Scoped Permissions (fine-grained Tool-Access)
+├── Persistent Sessions (kein Timeout, läuft 24/7)
+└── Built-in Observability (Logs, Metrics, Alerts)
+
+PREIS:
+├── $0.08/Stunde Infrastruktur-Kosten
+└── + Claude API Token-Kosten (je nach Modell)`,
+      },
+      {
+        type: 'heading',
+        content: '⚙️ Die Kernfeatures im Detail',
+      },
+      {
+        type: 'text',
+        content: `**Sandboxed Code Execution**
+Jeder Agent-Run läuft in einer vollständig isolierten Umgebung. Das bedeutet: Ein Agent der Code ausführt kann nicht auf andere Agents oder deine persönlichen Daten zugreifen. Die Sandbox wird nach dem Run aufgeräumt. Das macht Managed Agents sicher genug für Production-Einsatz mit sensiblen Daten.
+
+**Checkpointing**
+Der Agent kann pausieren — entweder weil er auf Human-in-the-Loop wartet (mit dem Defer-Hook-Pattern), oder weil die Aufgabe in mehreren Phasen abgearbeitet wird. Der State wird gespeichert und der Agent kann von exakt dem Punkt weitermachen wo er aufgehört hat. Keine verlorene Arbeit bei Unterbrechungen.
+
+**Scoped Permissions**
+Du definierst exakt welche Tools der Agent nutzen darf. Ein PR-Review-Agent braucht Read-Access auf GitHub-PRs und Write-Access für Kommentare — aber keinen Zugriff auf deine Datenbank oder produktiven Code. Principle of Least Privilege ist hier zum Standard geworden.
+
+**Persistent Sessions**
+Kein Timeout. Der Agent läuft so lang wie er soll — Stunden, Tage, Wochen. Das ist fundamental anders als lokale Sessions die enden wenn du das Terminal schließt.
+
+**Built-in Monitoring**
+Jede Aktion des Agents wird geloggt — mit Timestamp, Input, Output und Tool-Call. Du siehst jederzeit was der Agent getan hat, welche Fehler aufgetreten sind, und wie viel es gekostet hat.`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// agent.json — Vollständige Konfiguration für einen PR-Review-Agent
+{
+  "name": "pr-review-agent",
+  "description": "Reviewt automatisch alle neuen Pull Requests",
+  "model": "claude-sonnet-4-6",
+  "tools": [
+    "github:pulls:read",
+    "github:code:read",
+    "github:comments:write"
+  ],
+  "schedule": {
+    "trigger": "on-pr-open",
+    "repository": "dein-username/dein-repo"
+  },
+  "permissions": {
+    "read": ["github:pulls", "github:code"],
+    "write": ["github:comments"],
+    "deny": ["github:pushes", "github:merges"]
+  },
+  "context": {
+    "system": "Du bist ein erfahrener Code-Reviewer. Fokus auf: Sicherheit, Performance, Code-Qualität. Sei konstruktiv und konkret. Antworte auf Deutsch.",
+    "claudemd": "./CLAUDE.md"
+  },
+  "monitoring": {
+    "alerts": {
+      "onError": "slack:webhook-url",
+      "onCostThreshold": 5.00
+    }
+  }
+}`,
+      },
+      {
+        type: 'heading',
+        content: '💻 Deployment — Drei Wege',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Weg 1: CLI (empfohlen für Entwickler)
+claude agents deploy --config agent.json --managed
+
+# Laufende Agents verwalten:
+claude agents list                    # Alle Agents anzeigen
+claude agents logs pr-review-agent   # Logs abrufen
+claude agents pause pr-review-agent  # Agent pausieren
+claude agents resume pr-review-agent # Agent fortsetzen
+claude agents delete pr-review-agent # Agent löschen
+
+# Manuell triggern (außerhalb des Schedules):
+claude agents run pr-review-agent
+
+# Weg 2: Claude Code Slash Commands (in der Session)
+# /agents deploy    → Deploy-Dialog
+# /agents list      → Alle Managed Agents
+# /agents logs      → Log-Viewer
+
+# Weg 3: Claude Console (GUI)
+# → console.anthropic.com → Agents → New Agent
+# → Konfiguration per Formular, Deploy mit einem Klick`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Kosten-Kalkulation — Wann lohnt sich Managed Agents?',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `KOSTEN-RECHNER — Beispiel-Szenarien
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SZENARIO 1: PR-Review-Agent (On-Demand)
+├── Trigger: Jeder neue PR (~5 Min Laufzeit)
+├── PRs pro Monat: 50
+├── Infra: 50 × (5/60)h × $0.08 = $0.33/Monat
+├── Token (Sonnet): 50 × $0.03 = $1.50/Monat
+└── GESAMT: ~$1.83/Monat ✅ Sehr günstig
+
+SZENARIO 2: 24/7 Monitoring-Agent (Permanent)
+├── Läuft: Permanent (720h/Monat)
+├── Infra: 720h × $0.08 = $57.60/Monat
+├── Token: ~$20-50/Monat (variabel)
+└── GESAMT: ~$77-107/Monat
+   → Hier ggf. eigener VPS günstiger ($10-20/Monat)
+
+SZENARIO 3: Täglich laufender Batch-Agent
+├── Läuft: 1h täglich (cron 09:00)
+├── Laufzeit: 30h/Monat
+├── Infra: 30h × $0.08 = $2.40/Monat
+├── Token: ~$10-30/Monat
+└── GESAMT: ~$12-32/Monat ✅ Attraktiv
+
+EMPFEHLUNG:
+├── On-Demand (Trigger) → Managed Agents ✅
+├── Täglich 1-4h → Managed Agents ✅
+└── 24/7 → Eigener VPS günstiger (ab >12h/Tag)`,
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Praxis-Use-Cases für Freelancer',
+      },
+      {
+        type: 'text',
+        content: `Managed Agents öffnen neue Möglichkeiten für Freelancer die Kunden-Workflows automatisieren wollen. Hier sind 5 konkrete Use-Cases die sich heute umsetzen lassen:
+
+**1. PR-Review-Agent** — Automatisches Code-Review für alle neuen Pull Requests. Der Agent kommentiert Sicherheitsprobleme, Performance-Issues und Code-Qualität — konsistent, rund um die Uhr. Besonders wertvoll für Kunden mit kleinen Teams ohne dedizierte Code-Reviewer.
+
+**2. Daily Standup Summarizer** — Jeden Morgen um 9 Uhr fasst der Agent alle gestrigen GitHub-Commits, offenen PRs und Slack-Updates zusammen und schickt eine Zusammenfassung. Spart 15-30 Minuten pro Standup.
+
+**3. Issue-Triage-Agent** — Neue GitHub Issues werden automatisch kategorisiert, priorisiert und an die richtige Person assigniert. Basiert auf Beschreibung, Labels und historischen Patterns.
+
+**4. API-Dokumentations-Generator** — Immer wenn Code committed wird, generiert der Agent automatisch aktualisierte API-Dokumentation aus dem Code. Docs sind nie mehr veraltet.
+
+**5. Security-Scan-Agent** — Bei jedem Merge in main führt der Agent einen Security-Scan durch, prüft auf OWASP-Top-10-Vulnerabilities, und erstellt einen Report.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Praxis: Daily Standup Summarizer deployen
+
+# 1. Konfiguration erstellen
+cat > standup-agent.json << 'EOF'
+{
+  "name": "daily-standup-summarizer",
+  "model": "claude-sonnet-4-6",
+  "tools": ["github:commits:read", "github:pulls:read", "slack:messages:write"],
+  "schedule": {
+    "cron": "0 9 * * 1-5",
+    "timezone": "Europe/Berlin"
+  },
+  "context": {
+    "system": "Erstelle einen Daily Standup-Report. Format: Gestern (Commits), Heute (offene PRs), Blocker (failed CI). Auf Deutsch, max 5 Punkte pro Sektion.",
+    "lookback": "24h"
+  }
+}
+EOF
+
+# 2. Deployen
+claude agents deploy --config standup-agent.json --managed
+
+# 3. Status prüfen
+claude agents list
+# NAME                        STATUS   TRIGGER        COST/DAY
+# daily-standup-summarizer    active   cron:09:00 MF  ~$0.05
+
+# 4. Manuell testen
+claude agents run daily-standup-summarizer`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Wichtige Einschränkungen (Stand April 2026)',
+        content: `**Was Managed Agents noch nicht können:**
+
+• Keine vollständige IDE-Integration — noch nicht direkt aus VS Code/IntelliJ
+• Rate Limits: Max. 10 parallele Agent-Runs pro Account (Standard)
+• Kein Self-Hosted — du hast keine Kontrolle über die Infrastruktur
+• Data Residency: Anthropic-Infrastruktur (US) — DSGVO-Assessment für EU nötig
+• Kein Marketplace: Keine öffentlichen/verkäuflichen Managed Agents (geplant Q3 2026)
+
+**Für wen noch nicht geeignet:**
+→ Fintech/Healthcare mit strikten EU Data-Residency-Anforderungen
+→ On-Premises-only Enterprise-Umgebungen
+→ 24/7-Workloads bei denen ein VPS günstiger wäre`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Claude Managed Agents: Enterprise-Plattform für produktionsreife autonome Agenten
+✅ Launch: 08.04.2026 — 2M Views in 2 Stunden (größtes Release Q1 2026)
+✅ Features: Sandboxed Execution, Checkpointing, Scoped Permissions, Persistent Sessions
+✅ Preis: $0.08/Stunde Infrastruktur + Claude API Token-Kosten
+✅ Deployment: CLI (claude agents deploy), Claude Code (/agents), Console (GUI)
+✅ Ideal für: On-Demand-Trigger-Agents (PR-Review), tägliche Batch-Jobs, CI/CD-Automation
+✅ Weniger ideal für: 24/7 Workloads (VPS günstiger), DSGVO-sensitive EU-Daten
+✅ Security: Scoped Permissions + Audit Logging + Sandboxing + Defer-Hooks
+✅ Early Adopter: Notion, Rakuten, Asana — alle für wiederkehrende datenintensive Aufgaben`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 36: Ultraplan — Cloud Planning
+  // ========================================
+  {
+    id: 36,
+    level: 3,
+    title: 'Ultraplan — Cloud-Planning für komplexe Refactors',
+    description:
+      'Lagere lange Plan-Phasen in einen Anthropic-Cloud-Container aus, reviewe im Browser-Editor mit Inline-Comments und teleportiere zurück ins Terminal — der wichtigste Workflow-Shift seit Subagents.',
+    duration: '30 Minuten',
+    objectives: [
+      'Verstehen warum lokales /plan bei großen Tasks an Grenzen stößt',
+      'Den Ultraplan-Workflow in 3 Varianten anwenden',
+      'Cloud-Editor produktiv nutzen: Inline-Comments, Outline, Reaktionen',
+      'Decision-Tree: Wann lokales /plan, wann /ultraplan?',
+      'Teleport-back-to-terminal vs Cloud-Execution korrekt einsetzen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🚀 Was ist Ultraplan?',
+      },
+      {
+        type: 'text',
+        content: `Ultraplan ist eine neue Slash-Command in Claude Code (verfügbar ab Version 2.1.101+, GitHub-hosted Repo, Pro/Max-Plan), die die Plan-Phase in einen Anthropic-Cloud-Container auslagert. Der Container läuft bis zu 30 Minuten, der entstehende Plan landet in einem dedizierten Web-Editor auf claude.ai/code mit Highlighting, Inline-Kommentaren, Reaktionen und einer Outline-Sidebar.
+
+Der entscheidende Vorteil: Dein lokales Terminal bleibt frei. Während der Plan in der Cloud generiert wird, kannst du an anderen Tasks arbeiten. Und der Plan selbst ist kein Wall-of-Text mehr, sondern ein strukturiertes Review-Dokument — ähnlich wie ein Pull-Request für Pläne.
+
+Die konzeptionelle Trennung von Planung und Ausführung ist der wichtigste Schritt seit Subagents. Sie passt perfekt zum etablierten Pattern "Plan-First-Coding": Erst den Plan in Ruhe diskutieren und verfeinern, dann mit hoher Sicherheit ausführen.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Warum Cloud statt lokal?',
+        content: `Lokale /plan-Sessions verbrennen Tokens im Hauptchat und blockieren das Terminal — bei einem 15-Minuten-Plan für ein Auth-Refactor sind das schnell 30-50K Tokens, die danach in jedem Folge-Prompt mitgeschleppt werden. Ultraplan verlagert das in einen separaten Container und liefert nur den finalen Plan zurück.`,
+      },
+      {
+        type: 'heading',
+        content: '📐 Die 3 Wege Ultraplan zu starten',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Variante 1: Direkter Slash-Command
+/ultraplan migrate the auth service from sessions to JWTs
+
+# Variante 2: Das Wort "ultraplan" irgendwo im normalen Prompt
+"Use ultraplan to design the Stripe webhook handler refactor"
+
+# Variante 3: Aus lokalem /plan-Dialog refinen
+/plan implement Stripe webhook signature verification
+# Im Plan-Dialog erscheint die Option:
+# "No, refine with Ultraplan"
+# → Plan wandert in die Cloud, du bekommst Web-Editor`,
+      },
+      {
+        type: 'text',
+        content: `Variante 1 ist die direkteste Form für komplexe, von vornherein klar als groß erkennbare Tasks. Variante 2 ist nützlich wenn du bereits in einem Konversationsfluss bist und merkst, dass der nächste Schritt einen ausführlichen Plan braucht. Variante 3 ist der "Eskalations-Pfad" — du startest mit lokalem /plan, merkst dass der Plan unterspezifiziert ist und schiebst ihn in die Cloud zur Tiefe-Bearbeitung.`,
+      },
+      {
+        type: 'heading',
+        content: '🌐 Der Web-Editor: Inline-Comments wie ein PR-Review',
+      },
+      {
+        type: 'text',
+        content: `Sobald der Cloud-Container fertig ist (typisch 5-15 Min für mittelgroße Tasks), öffnet sich claude.ai/code mit dem Plan-Dokument. Die wichtigsten Elemente:
+
+**Outline-Sidebar (links):** Hierarchische Navigation durch alle Plan-Sektionen. Bei einem 10-Step-Plan kannst du gezielt zu Step 7 springen statt zu scrollen.
+
+**Inline-Comments:** Markiere einen Absatz und füge einen Comment hinzu — genau wie bei einem GitHub PR-Review. Beispiel: "Step 4 ignoriert Refresh-Tokens. Bitte ergänzen."
+
+**Reaktionen:** Quick-Approval einzelner Steps mit ✅/❌/❓ Reactions. Schneller als Comments für simple Zustimmung.
+
+**Refinement-Prompts:** Unten im Editor kannst du dem Cloud-Agent neue Anweisungen geben. Der Agent überarbeitet den Plan und committed eine neue Version — du siehst das Diff.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Mehrere Stakeholder',
+        content: `Wenn du im Team arbeitest: Der Web-Editor erlaubt mehreren Personen gleichzeitig Comments zu hinterlassen. Damit wird Plan-Review zum kollaborativen Prozess — Architekt, Tech-Lead und Security-Reviewer können parallel kommentieren.`,
+      },
+      {
+        type: 'heading',
+        content: '✅ Approval — Cloud oder Teleport?',
+      },
+      {
+        type: 'text',
+        content: `Wenn der Plan steht, hast du zwei Wege:
+
+**Cloud-Execution:** Der Cloud-Agent führt den Plan komplett in der Cloud aus. Dein Terminal bleibt frei für anderes. Vorteil: Maximale Parallelität. Nachteil: Du siehst die Ausführung nur über das Web-Interface, lokale Tools (Editor-Integrationen, Custom-Hooks) sind nicht aktiv.
+
+**Teleport back to terminal:** Der Plan wird zurück ans lokale Terminal übergeben und du führst ihn mit normalem \`claude\` aus. Vorteil: Volle lokale Kontrolle, alle Hooks und Skills greifen, du siehst jeden Tool-Call. Nachteil: Terminal ist während Ausführung blockiert.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Nach Approval im Web-Editor: Klick "Teleport back"
+# Im lokalen Terminal erscheint:
+
+> Ultraplan approved. Plan loaded into local session.
+> Run with: claude --resume-plan ultraplan-7c3a-9f2b
+> Or refine further: claude "refine plan: add e2e tests for OAuth flow"
+
+# Plan ausführen
+claude --resume-plan ultraplan-7c3a-9f2b
+
+# Plan zuerst lokal weiter verfeinern, dann ausführen
+claude "Add a step for migrating existing session cookies to JWT"`,
+      },
+      {
+        type: 'heading',
+        content: '🌳 Decision-Tree: Wann welcher Ansatz?',
+      },
+      {
+        type: 'code',
+        language: 'text',
+        content: `┌─ Plan benötigt voraussichtlich < 5 Min Schreibzeit?
+│   └─ JA  → Lokales /plan (Overhead-frei)
+│   └─ NEIN → ↓
+│
+├─ Plan betrifft mehrere Module / Architektur-Ebene?
+│   └─ JA  → /ultraplan
+│   └─ NEIN → ↓
+│
+├─ Mehrere Stakeholder müssen reviewen?
+│   └─ JA  → /ultraplan (Web-Editor mit Comments)
+│   └─ NEIN → ↓
+│
+├─ Ich brauche das Terminal parallel für anderes?
+│   └─ JA  → /ultraplan + Cloud-Execution
+│   └─ NEIN → Lokales /plan
+│
+└─ Ich nutze Remote Control aktiv?
+    └─ JA  → Wähle: Remote Control ODER Ultraplan
+              (beide konkurrieren um claude.ai/code)`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Praxis-Beispiel: Auth-Service-Migration',
+      },
+      {
+        type: 'text',
+        content: `Stell dir vor, du musst einen monolithischen Auth-Service von Session-Cookies auf JWTs migrieren. Das betrifft Backend, Frontend, Mobile-App und Drittanbieter-Integrationen. Lokales /plan würde 20+ Minuten Token-teure Generierung erzeugen, die danach in jedem Folge-Prompt mitgeschleppt wird. Mit Ultraplan:`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Schritt 1: Plan starten
+/ultraplan migrate auth-service from session cookies to JWTs.
+Affected: backend (Express), frontend (Next.js), mobile (React Native),
+3rd-party (Stripe webhook signature, Sentry user context).
+
+# Output:
+> Ultraplan started. Container ID: ultraplan-7c3a-9f2b
+> Estimated time: 8-12 minutes
+> Open in browser: https://claude.ai/code/ultraplan-7c3a-9f2b
+> Terminal is free for other work.
+
+# Schritt 2: In der Zwischenzeit andere Tasks bearbeiten
+claude "Add a Sentry breadcrumb to the checkout flow"
+
+# Schritt 3: Browser-Tab wird aktiv (Notification)
+# → Plan ist fertig, du wechselst zum Web-Editor`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Inline-Comment Beispiele',
+        content: `**Step 3 (Refresh-Token-Rotation):** "Bitte explizit erwähnen: Refresh-Token-Rotation muss atomar sein, sonst Race-Condition bei parallel-Requests."
+
+**Step 7 (Mobile-Migration):** "Mobile-Refresh-Logik fehlt komplett. Bitte ergänzen: Background-Refresh + Re-Login-Fallback."
+
+**Step 9 (Stripe-Webhook):** "Stripe nutzt eigene Signaturen — JWT-Migration betrifft das nicht. Step kann entfernt werden."`,
+      },
+      {
+        type: 'text',
+        content: `Nach 2-3 Refinement-Runden (jeweils 1-2 Min) ist der Plan reviewt. Du klickst "Teleport back" und führst lokal mit allen deinen Hooks und Skills aus. Vergleich: Lokales /plan hätte 30-50K Tokens im Hauptchat verbrannt, mit Ultraplan bleibt der Hauptchat frei und der finale Plan ist deutlich besser strukturiert.`,
+      },
+      {
+        type: 'heading',
+        content: '⚠️ Häufige Stolperfallen',
+      },
+      {
+        type: 'list',
+        content: `- **Remote Control vs Ultraplan:** Beide nutzen claude.ai/code — du musst dich für eines entscheiden. Wer Remote Control aktiv nutzt, verliert Ultraplan-Zugang.
+- **GitHub-hosted Repo Pflicht:** Lokale Repos ohne GitHub-Origin werden nicht unterstützt. Workaround: Repo zumindest als Privates GitHub-Repo verbinden.
+- **30-Min Container-Limit:** Sehr große Migrationen müssen evtl. in mehrere Ultraplan-Sessions zerlegt werden.
+- **Cloud-Execution = keine lokalen Hooks:** Wenn dein Workflow auf PreToolUse-Hooks angewiesen ist (z.B. defer-critical), nutze IMMER Teleport-back-to-terminal statt Cloud-Execution.
+- **Pro/Max nötig:** Ultraplan ist nicht im Free-Plan verfügbar.`,
+      },
+      {
+        type: 'heading',
+        content: '🔗 Kombination mit anderen Patterns',
+      },
+      {
+        type: 'text',
+        content: `Ultraplan glänzt besonders in Kombination mit etablierten Patterns:
+
+**Mit Subagents:** Der Cloud-Agent in Ultraplan kann selbst Subagents spawnen für parallele Recherche (z.B. "Subagent 1: analyze backend, Subagent 2: analyze frontend, Subagent 3: analyze mobile"). Das beschleunigt Plan-Generierung dramatisch.
+
+**Mit Task-Budgets:** Bei Cloud-Execution unbedingt --task-budget setzen — sonst verbrennt eine entgleiste Cloud-Session unkontrolliert Tokens.
+
+**Mit Skills:** Custom-Skills die im Cloud-Container verfügbar sein sollen, müssen vorher im Repo committed sein. Lokale Skills im ~/.claude/skills/ greifen in der Cloud nicht.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Ultraplan: Cloud-Container für Plan-Phase, Browser-Review-Editor
+✅ 3 Wege: /ultraplan direkt, "ultraplan" im Prompt, Refine-from-/plan
+✅ Web-Editor: Outline, Inline-Comments, Reaktionen, Refinement-Prompts
+✅ Approval: Cloud-Execution ODER Teleport-back-to-terminal
+✅ Decision-Tree: Plan > 5 Min, mehrere Module, Stakeholder → Ultraplan
+✅ Requirements: Claude Code v2.1.101+, GitHub-Repo, Pro/Max
+✅ Killer-Use-Case: Komplexe Architektur-Migrationen mit Review
+✅ Vorsicht: Remote Control und Ultraplan konkurrieren um claude.ai/code`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 37: Opus 4.7 Migration
+  // ========================================
+  {
+    id: 37,
+    level: 2,
+    title: 'Opus 4.7 — Migration, xhigh-Effort und Task-Budgets',
+    description:
+      'Anthropics neues Flaggschiff seit 16. April 2026: Drop-in Migration, der neue xhigh-Effort-Level für tiefstes Reasoning, Task-Budgets als Sicherheitsnetz und 3x höhere Vision-Auflösung.',
+    duration: '25 Minuten',
+    objectives: [
+      'Was Opus 4.7 von 4.6 unterscheidet (Coding +13%, Vision 3x, Pricing günstiger)',
+      'Den richtigen Effort-Level wählen: low/medium/high/xhigh-Decision-Tree',
+      'Task-Budgets als Sicherheitsnetz für autonome Loops einsetzen',
+      'Vision-Use-Cases: UI-Bug-Reproduction aus Screenshots',
+      'Cybersecurity-Safeguards verstehen — was 4.7 automatisch blockt',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🚀 Opus 4.7 — Was ist neu?',
+      },
+      {
+        type: 'text',
+        content: `Am 16. April 2026 hat Anthropic Claude Opus 4.7 veröffentlicht. Das ist die erste Iteration, die laut Anthropic schwerste Software-Engineering-Tasks ohne enge Aufsicht übernehmen kann. In Zahlen: +13% auf Coding-Benchmarks gegenüber Opus 4.6, 3x mehr Production-Tasks gelöst, 3x höhere Vision-Auflösung (bis 3.75 Megapixel), neuer Tokenizer und verbesserte Instruction-Following.
+
+Wichtig: Pricing ist sogar günstiger geworden — $5/M Input und $25/M Output (Opus 4.6 lag bei $15/$75). Das macht Opus 4.7 zum klaren Default-Modell für komplexe Tasks. Die Migration ist trivial: gleicher Tarif-Mechanismus, drop-in Replacement, einfach \`--model claude-opus-4-7\` setzen oder den Default in deiner Konfiguration ändern.
+
+Anthropic räumt offen ein: Intern existiert ein noch stärkeres Modell ("Mythos"), das aus Safety-Concerns zurückgehalten wird. Erste öffentliche Andeutung dieser Stufung — und ein Indiz dass die nächste Generation bereits einsatzbereit ist.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Drop-in Migration',
+        content: `Wenn du bisher \`--model claude-opus-4-6\` genutzt hast, ersetze es einfach durch \`--model claude-opus-4-7\`. Alle Scripts, CI-Pipelines und Hooks funktionieren ohne Änderung weiter. Der einzige spürbare Unterschied: bessere Outputs zum niedrigeren Preis.`,
+      },
+      {
+        type: 'heading',
+        content: '⚡ Der neue xhigh-Effort-Level',
+      },
+      {
+        type: 'text',
+        content: `Bisher hatte Claude Code drei Effort-Level: low, medium und high. Mit Opus 4.7 kommt ein vierter dazu: **xhigh**. Dieser geht über high hinaus und erlaubt noch tieferes Reasoning bei komplexen Architektur-Tasks und Multi-File-Refactorings.
+
+Der Trade-off ist klar: xhigh kostet 2-3x mehr Tokens als high und braucht spürbar länger für die Antwort. Reserviere ihn für die schwersten 5-10% deiner Tasks. **Hinweis (07.04.2026):** Anthropic hat den Default-Effort von medium zurück auf **high** gesetzt — die zwischenzeitliche Reduktion auf medium war ein Quality-Bug und wurde revertiert. Prüfe mit \`/effort\` welcher Wert aktiv ist.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Decision-Tree für Effort-Level
+
+# low — isolierte Bugfixes, Boilerplate, Doku-Updates
+claude --effort low "Fix the typo in the navbar component"
+
+# medium — Standard-Features, Bug-Fixing, Tests
+claude "Add pagination to the orders endpoint"
+
+# high — komplexe Refactors, Multi-File-Änderungen
+claude --effort high "Migrate the user model to soft-delete pattern"
+
+# xhigh — Architektur-Entscheidungen, Algorithmen-Design,
+#         schwer reproduzierbare Bugs (Opus 4.7 only)
+claude --model claude-opus-4-7 --effort xhigh \\
+  "Design a CRDT-based offline sync engine for the mobile app"`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Task-Budgets — Sicherheitsnetz für Agent-Loops',
+      },
+      {
+        type: 'text',
+        content: `Task-Budgets sind ein neues Feature von Opus 4.7, mit dem du pro Task ein hartes Token-Limit setzen kannst. Wenn der Agent das Budget überschreitet, bricht die Ausführung kontrolliert ab.
+
+Das ist ein wichtiges Sicherheitsnetz für lange Agent-Loops, autonome Workflows und CI-Setups. Ohne Task-Budget kann ein Agent in einer Endlosschleife durchaus mehrere Dollar verbrennen, bevor jemand eingreift. Mit \`--task-budget 50000\` bleibt der maximale Schaden bei ~$1.25 (Output) bzw. ~$0.25 (Input).`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Task-Budget für autonomes Refactoring
+claude --model claude-opus-4-7 \\
+  --task-budget 100000 \\
+  --effort high \\
+  -p "Migrate all class components to hooks. Stop at first 5, commit, continue."
+
+# Berechnung des Maximum-Damage:
+# 100K Output Tokens × $25/M = $2.50 max
+# 100K Input Tokens × $5/M = $0.50 max
+# → Garantierter Cap: ~$3 pro Run
+
+# Faustregeln für Budget-Größen:
+# Quick Fix:                5,000 Tokens
+# Single-File Refactor:    20,000 Tokens
+# Multi-File Refactor:     50,000-100,000 Tokens
+# Architecture Design:    150,000-200,000 Tokens (mit xhigh)`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ CI/CD Pflicht',
+        content: `In CI-Pipelines IMMER Task-Budgets setzen. Es gibt nichts Schlimmeres als nachts entgleiste Loops, die bis morgens Hunderte Dollar verbrennen. Setze --task-budget als Default in deiner Pipeline-Definition.`,
+      },
+      {
+        type: 'heading',
+        content: '👁️ 3x höhere Vision-Auflösung',
+      },
+      {
+        type: 'text',
+        content: `Opus 4.7 verarbeitet Bilder mit bis zu 3.75 Megapixeln — drei Mal mehr als 4.6. Das macht Screenshot-basiertes Debugging deutlich präziser: Du kannst kleine UI-Bugs (falsch ausgerichtete Buttons, abgeschnittene Texte, off-by-1px Spacing) jetzt direkt aus Designs oder Bug-Reports reproduzieren lassen.
+
+Praktische Use-Cases: UI-Regression-Reports per Screenshot statt Bug-Description, Design-zu-Code-Pipelines mit hochauflösenden Figma-Exports, Visual-Diff-Analysen aus Storybook-Snapshots.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Bug-Report mit Screenshot
+claude --model claude-opus-4-7 \\
+  "Hier ist ein Screenshot des Bugs: bug-report-2026-04.png.
+   Das Submit-Button-Layout ist im mobilen Viewport zerschossen.
+   Finde die Ursache im src/components/CheckoutForm.tsx
+   und schlage einen Fix vor."
+
+# Design-zu-Code aus Figma-Export
+claude --model claude-opus-4-7 --effort high \\
+  "Implement the dashboard layout from figma-dashboard-v2.png.
+   Use existing shadcn/ui components and follow the
+   spacing-tokens defined in tailwind.config.ts."`,
+      },
+      {
+        type: 'heading',
+        content: '🛡️ Cybersecurity-Safeguards',
+      },
+      {
+        type: 'text',
+        content: `Opus 4.7 hat eingebaute Cybersecurity-Safeguards: Prompts die als prohibited oder high-risk Cybersecurity-Use erkannt werden, blockt das Modell automatisch. Beispiele: Generierung von funktionalen Exploits, Bypass-Techniken für aktive Sicherheitsmaßnahmen, Reverse-Engineering von DRM.
+
+Was weiterhin funktioniert: Defensive Security (Code-Reviews, Pentest-Notes für eigene Systeme), CTF-Challenges, Lehre und Forschung. Wenn du legitim mit Security arbeitest und blockiert wirst: explizit den Kontext im Prompt benennen (z.B. "I'm reviewing my own production code for vulnerabilities").`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Was bleibt erlaubt',
+        content: `Defensive Security, CTF-Challenges, Code-Reviews für eigene Systeme, Lehre, Sicherheitsforschung mit klarem Kontext. Was geblockt wird: Mass-Targeting, funktionale Exploits ohne Authorization-Kontext, Detection-Evasion für offensichtlich böse Zwecke.`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Migration-Checkliste',
+      },
+      {
+        type: 'list',
+        content: `- **CLAUDE.md** updaten: Falls dort \`claude-opus-4-6\` als Default steht, auf \`claude-opus-4-7\` ändern
+- **CI/CD-Pipelines:** \`--model\` Flags auf claude-opus-4-7 umstellen
+- **Hooks/Scripts:** Hardcoded Model-IDs in \`.claude/hooks/*\` aktualisieren
+- **Skills:** Skill-Definitionen prüfen — manche definieren ein bevorzugtes Modell
+- **Cost-Monitoring:** /cost erwartet jetzt Opus 4.7 in Breakdown
+- **Task-Budgets:** Für alle autonomen Runs --task-budget einführen
+- **xhigh-Whitelist:** Welche Tasks rechtfertigen xhigh-Kosten? Liste in CLAUDE.md führen`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Opus 4.7 ist seit 16.04.2026 das neue Flaggschiff (Default in Claude Code)
+✅ +13% Coding-Benchmarks, 3x mehr Production-Tasks, 3x Vision-Auflösung
+✅ Pricing günstiger: $5/M Input, $25/M Output (vs $15/$75 bei 4.6)
+✅ Drop-in Migration: --model claude-opus-4-7
+✅ Neuer xhigh-Effort: für die schwersten 5-10% der Tasks
+✅ Task-Budgets: Pflicht für autonome Loops und CI-Pipelines
+✅ Cybersecurity-Safeguards: prohibited Use-Cases werden automatisch geblockt
+✅ Anthropic deutet öffentlich an: noch stärkeres internes Modell ("Mythos") existiert`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 38: Monitor Tool & Event-Driven Patterns
+  // ========================================
+  {
+    id: 38,
+    level: 3,
+    title: 'Monitor Tool & Event-Driven Agent-Patterns',
+    description:
+      'Schluss mit Polling: Das Monitor Tool macht stdout zum Event-Stream. Claude reagiert nur auf echte Events (Errors, Test-Failures, Status-Changes) und spart massiv Tokens bei langen Background-Prozessen.',
+    duration: '30 Minuten',
+    objectives: [
+      'Den Unterschied zwischen Polling- und Event-Driven-Workflows verstehen',
+      'Das Monitor Tool für Dev-Server, Tests und CI-Pipelines einsetzen',
+      'Multi-Stream-Patterns für parallele Background-Prozesse',
+      'Hooks mit Monitor kombinieren für vollautomatische Reaktionen',
+      'Token-Ersparnis quantifizieren: Wann lohnt sich Monitor wirklich?',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🔁 Das Polling-Problem',
+      },
+      {
+        type: 'text',
+        content: `Bisheriger Standard-Workflow: Du startest \`npm run dev\` oder \`pytest\` im Background mit BashOutput und pollst regelmäßig den Output. Bei jedem Poll wird der gesamte bisherige Output als Tool-Result zurückgegeben — und wandert in den Context. Bei einer 30-minütigen Test-Suite mit 10K Output-Lines, alle 30 Sekunden gepollt, sind das schnell 50K+ Tokens nur fürs Warten.
+
+Schlimmer noch: Die meiste Zeit ist nichts Relevantes passiert. Du verbrennst Tokens für "noch nichts neues" — eine reine Token-Verschwendung. Bei autonomen Agent-Loops kann das pro Run mehrere Dollar kosten, ohne dass irgendetwas Produktives geschieht.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Die Inversion',
+        content: `Statt aktiv zu fragen "ist schon was passiert?", lässt du dich passiv informieren wenn etwas Relevantes passiert. Das ist der fundamentale Shift von Polling zu Event-Driven.`,
+      },
+      {
+        type: 'heading',
+        content: '⚡ Wie Monitor funktioniert',
+      },
+      {
+        type: 'text',
+        content: `Das Monitor Tool spawnt einen Background-Prozess (z.B. \`npm run dev\`), und jede Zeile des stdout wird zu einer Notification, die Claude weckt. Du gibst optional ein \`until\`-Pattern an — eine Regex die festlegt, wann das Monitoring beendet werden soll. Das \`reason\`-Feld dokumentiert, was beobachtet wird (wichtig für Telemetry und Debugging).
+
+stdout-Lines innerhalb 200ms werden gebündelt, sodass Multi-Line-Output (z.B. Stack-Traces) natürlich gruppiert wird. Claude bekommt also nicht jeden einzelnen \`console.log\` als separaten Wake-up, sondern logisch zusammengehörige Blöcke.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Basis-Pattern: Dev-Server beobachten bis Error
+Monitor("npm run dev",
+  reason: "Watch dev server for compile errors during refactor",
+  until: "Error|FAIL|compiled successfully")
+
+# Test-Suite mit Early-Exit bei erstem Fail
+Monitor("pytest tests/ -v --tb=short",
+  reason: "Catch first failing test during migration",
+  until: "FAILED|ERROR|passed")
+
+# Long-running ML-Training mit Status-Reaktion
+Monitor("python train.py --epochs 100",
+  reason: "Watch training progress, alert on NaN loss",
+  until: "loss=nan|completed|checkpoint saved")
+
+# Deploy-Logs streamen bis Done
+Monitor("vercel deploy --prod",
+  reason: "Watch deployment, react to errors",
+  until: "Deployment ready|Error:|Build failed")`,
+      },
+      {
+        type: 'heading',
+        content: '📊 Token-Ersparnis quantifiziert',
+      },
+      {
+        type: 'text',
+        content: `Lass uns das konkret rechnen. Szenario: 30-Minuten Test-Suite mit insgesamt 8000 Output-Zeilen (durchschnittlich 80 Token/Zeile = 640K Token gesamter Output).
+
+**Polling-Ansatz (alle 30 Sek):** Bei 60 Polls wird im Mittel 50% des bisherigen Outputs jedes Mal zurückgegeben. Geschätzte Token-Kosten: ~5M Token in den Context (multipliziert für jeden Poll). Mit Sonnet 4.6 ($3/M Input): ~$15.
+
+**Monitor-Ansatz:** Nur die ~50 Zeilen mit FAIL/ERROR werden zu Wake-ups. Token-Kosten: 50 × 80 = 4K Token. Mit Sonnet 4.6: ~$0.012.
+
+Faktor: ~1000x günstiger. Bei 5 Test-Suite-Runs pro Tag im Team mit 3 Entwicklern: $225 vs $0.18 pro Tag.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚡ Wann lohnt sich Monitor?',
+        content: `Faustregel: Sobald ein Background-Prozess länger als 30 Sekunden läuft UND nicht jede Output-Zeile relevant ist, ist Monitor günstiger als BashOutput-Polling. Bei < 30 Sek einfach blocking laufen lassen.`,
+      },
+      {
+        type: 'heading',
+        content: '🔀 Multi-Stream-Pattern',
+      },
+      {
+        type: 'text',
+        content: `Du kannst mehrere Monitor-Instanzen parallel laufen lassen. Beispiel: Während einer Migration willst du gleichzeitig Backend-Tests, Frontend-Build und Lint-Watch beobachten. Jeder Monitor ist ein eigener Background-Prozess, jeder feuert eigene Wake-ups.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Multi-Stream während Refactor
+Monitor("pnpm test:watch backend",
+  reason: "Backend test failures during refactor",
+  until: "FAIL|0 failed")
+
+Monitor("pnpm dev:web",
+  reason: "Frontend compile errors",
+  until: "Error|Compiled")
+
+Monitor("pnpm lint:watch",
+  reason: "Lint violations from new code",
+  until: "✖|0 problems")
+
+# Claude reagiert auf jeden Stream separat:
+# - Backend-FAIL → fix in service-layer
+# - Frontend-Error → fix in component
+# - Lint-Violation → format & fix`,
+      },
+      {
+        type: 'heading',
+        content: '🪝 Kombination mit Hooks',
+      },
+      {
+        type: 'text',
+        content: `Monitor-Events lösen normale Tool-Result-Verarbeitung aus — d.h. PostToolUse-Hooks feuern. Das ergibt vollautomatische Reaktionsketten: Monitor erkennt Build-Failure → PostToolUse-Hook schickt Slack-Notification → Claude analysiert Fehler und schlägt Fix vor.`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// settings.json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Monitor",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/notify-on-fail.sh"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/bin/bash
+# .claude/hooks/notify-on-fail.sh
+
+# Stdin enthält das Tool-Result als JSON
+TOOL_RESULT=$(cat)
+OUTPUT=$(echo "$TOOL_RESULT" | jq -r '.output // ""')
+
+# Nur reagieren wenn Fail/Error erkannt
+if echo "$OUTPUT" | grep -qE "FAIL|ERROR|panic"; then
+  # Slack-Notification mit Auszug
+  curl -X POST "$SLACK_WEBHOOK" -d "{
+    \\"text\\": \\"Monitor detected failure:\\n\\\\\`\\\\\`\\\\\`$(echo "$OUTPUT" | tail -20)\\\\\`\\\\\`\\\\\`\\"
+  }"
+fi
+exit 0`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Real-World-Patterns',
+      },
+      {
+        type: 'text',
+        content: `**Pattern 1 — Watch-Mode während Refactor:** Du startest \`tsc --watch\` als Monitor und refaktorierst parallel. Sobald ein Type-Error auftaucht, weckt dich Monitor und du fixst sofort. Zero-Polling, zero-Tokens während alles grün ist.
+
+**Pattern 2 — CI-Pipeline live mitlesen:** \`gh run watch\` als Monitor während du auf CI wartest. Bei Failure sofortige Reaktion, bei Success automatisches Deploy.
+
+**Pattern 3 — Long-Running Migration mit Checkpoints:** Datenbank-Migration die 4 Stunden läuft. Monitor mit \`until: "ERROR|migration complete"\` weckt dich nur bei kritischen Events.
+
+**Pattern 4 — ML-Training mit Anomaly-Detection:** Training mit Metrik-Output. Monitor mit \`until: "loss=nan|val_loss > 0.5|early_stopping"\` interveniert nur bei Anomalien.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Wann NICHT Monitor',
+        content: `Wenn du jeden einzelnen Output-Line wirklich brauchst (z.B. Live-Debugging eines spezifischen Issues): bleib bei BashOutput. Monitor ist für "wecke mich bei was Relevantem" — nicht für "lass mich alles sehen".`,
+      },
+      {
+        type: 'heading',
+        content: '🧠 Event-Driven Mindset',
+      },
+      {
+        type: 'text',
+        content: `Der Wechsel zu Event-Driven Patterns verändert wie du Workflows designst. Statt "ich starte X und prüfe alle Y Sekunden" denkst du in "ich starte X und definiere die Wake-up-Bedingungen". Das passt perfekt zur Realität: 95% der Background-Prozess-Zeit ist nichts relevantes los.
+
+Kombiniert mit Hooks und Subagents entsteht ein vollständig event-driven Agent-System: Subagents arbeiten parallel im Hintergrund, Monitor wartet auf Wake-up-Signale, Hooks reagieren deterministisch auf bestimmte Events. Das ist Agent-Engineering auf Senior-Level.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Monitor Tool: Background-Prozess wird zu Event-Stream (statt Polling)
+✅ stdout-Lines innerhalb 200ms gebündelt → natürliche Multi-Line-Gruppierung
+✅ until-Pattern definiert wann Monitoring endet
+✅ reason-Feld dokumentiert was beobachtet wird (wichtig für Debugging)
+✅ Token-Ersparnis: oft 100-1000x günstiger als BashOutput-Polling
+✅ Multi-Stream: parallele Monitor-Instanzen für komplexe Workflows
+✅ Hook-Kombi: PostToolUse-Hooks reagieren deterministisch auf Events
+✅ Faustregel: Lohnt sich ab > 30 Sek Background-Prozess-Laufzeit
+✅ NICHT verwenden wenn jede Output-Line relevant ist`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 39: Quality-Postmortem April 2026
+  // ========================================
+  {
+    id: 39,
+    level: 2,
+    title: 'Quality-Postmortem — Was die April-2026-Bugs uns lehren',
+    description:
+      'Anthropic hat am 24.04.2026 öffentlich drei Quality-Regressionen eingeräumt und gefixt. Diese Lektion zeigt dir, was passiert ist, welche Workflow-Annahmen jetzt obsolet sind und wie du mit /effort, /usage und 1h-Caching die wieder volle Qualität nutzt.',
+    duration: '30 Minuten',
+    objectives: [
+      'Die drei April-Bugs (Effort-Downgrade, Caching-Bug, 25-Wörter-Cap) im Detail verstehen',
+      'Erkennen welche alten Workflow-Heuristiken jetzt veraltet sind',
+      'Mit /effort und /usage den aktuellen Zustand prüfen',
+      '1h-Prompt-Caching für lange Sessions aktivieren und Token sparen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '📰 Was ist passiert',
+      },
+      {
+        type: 'text',
+        content: `Am 24. April 2026 hat Anthropic ein öffentliches Postmortem veröffentlicht, in dem drei aufeinanderfolgende Quality-Regressionen in Claude Code beschrieben werden. Wenn du im März und April 2026 das Gefühl hattest, Claude wirke vergesslicher, gebe kürzere Antworten oder denke weniger tief — das war kein Wahrnehmungsfehler. Es waren drei reale Bugs, die jetzt alle behoben sind.
+
+Diese Lektion ist mehr als ein Changelog: Viele "Best Practices", die in dieser Zeit in Reddit, DEV.to und Discord-Communitys entstanden sind, basieren auf dem Bug-Verhalten. Wenn du diese Praktiken weiterführst, optimierst du gegen Probleme, die nicht mehr existieren. Zeit zum Aufräumen.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Warum das wichtig ist',
+        content: `Anthropic hat die Usage-Limits zurückgesetzt — und zwar global, nicht nur für betroffene User. Das ist ein Branding-Statement: transparente Postmortems statt schweigsamer Releases. Aber die praktische Konsequenz für dich ist: prüfe deine eigenen CLAUDE.md-Regeln und Workflows auf veraltete Annahmen.`,
+      },
+      {
+        type: 'heading',
+        content: '🐛 Bug 1 — Effort-Default von high auf medium (04.03.→07.04.)',
+      },
+      {
+        type: 'text',
+        content: `Am 4. März 2026 wurde der Default-Reasoning-Effort von **high** auf **medium** reduziert. Das war intern als Latenz-Tradeoff motiviert: schnellere Antworten für schnellere Iteration. In der Praxis hieß das: Claude dachte spürbar weniger tief nach, machte häufiger oberflächliche Empfehlungen, übersah Edge-Cases.
+
+Am 7. April wurde der Default revertiert — **high** ist wieder der Standard, sowohl in Claude Code als auch in der Claude.ai-Web-App. Wenn du in dieser Zeit eine CLAUDE.md-Regel wie "immer --effort high explizit setzen" aufgenommen hast: kannst du behalten (schadet nicht), aber sie ist nicht mehr nötig.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Aktuellen Effort-Level prüfen
+/effort
+
+# Output (seit 07.04.2026):
+# Current effort: high (●)
+# Available: low (○) | medium (◐) | high (●) | xhigh (Opus 4.7 only)
+
+# Explizit setzen (nicht mehr nötig, aber unschädlich):
+claude --effort high "Refactor the auth middleware"
+
+# Für die schwersten Tasks: xhigh
+claude --model claude-opus-4-7 --effort xhigh "Design a CRDT sync engine"`,
+      },
+      {
+        type: 'heading',
+        content: '🐛 Bug 2 — Caching-Bug verwarf Thinking-History (26.03.→10.04.)',
+      },
+      {
+        type: 'text',
+        content: `Zwischen 26.03. und 10.04.2026 hat ein Caching-Bug die Thinking-History mid-session verworfen. Der Effekt war subtil aber gravierend: Claude konnte sich an Entscheidungen aus früheren Tool-Calls erinnern, aber nicht an die *Begründung* dahinter. Das fühlte sich wie "Claude vergisst plötzlich" an.
+
+Konkretes Symptom: Du hattest auf Seite 1 erklärt "wir nutzen Postgres mit RLS, kein Supabase Service-Role-Key im Client". Auf Seite 12 fragt Claude plötzlich "soll ich den Service-Role-Key im Frontend hardcoden?". Das war kein Context-Window-Problem — es war dieser Bug.
+
+Seit 10.04.2026 ist der Bug gefixt. Wenn dir Claude jetzt vergesslich vorkommt, ist es wieder das normale Context-Window-Problem (Lektion 11), nicht dieser Bug.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Veraltete Heuristik',
+        content: `Wenn du dir angewöhnt hast, kritische Entscheidungen alle 5-10 Nachrichten zu wiederholen ("erinnere dich, wir nutzen Postgres mit RLS"), kannst du das jetzt zurückfahren. Die Wiederholung war ein Workaround für den Bug — sie kostet jetzt nur unnötig Tokens.`,
+      },
+      {
+        type: 'heading',
+        content: '🐛 Bug 3 — 25-Wörter-Cap zwischen Tool-Calls (16.04., 4 Tage)',
+      },
+      {
+        type: 'text',
+        content: `Vom 16. bis 20. April 2026 lief ein interner System-Prompt-Cap auf 25 Wörter zwischen Tool-Calls. Das hieß: Claude durfte zwischen zwei Tool-Aufrufen nur sehr kurz erklären, was er als Nächstes tut. Das Ergebnis: Antworten wirkten "abgehackt", Pläne wurden nicht ausformuliert, Claude wirkte verwirrt.
+
+Dieser Bug war besonders ärgerlich, weil er die Lernkurve in Claude Code aktiv beschädigt: Anfänger, die in dieser Zeit eingestiegen sind, hatten den Eindruck, Claude erkläre nichts mehr. Auch dieser Cap ist revertiert.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Test: Lass Claude einen mehrstufigen Plan erklären
+claude "Plane den Refactor des auth-Moduls von Sessions auf JWT.
+        Erkläre jeden Schritt ausführlich, bevor du Code schreibst."
+
+# Erwartetes Verhalten (post-Fix):
+# Claude beschreibt 3-7 Schritte mit jeweils mehreren Sätzen Begründung,
+# ruft dann erst Tools auf.
+#
+# Während des Bugs (16.-20.04.):
+# Claude schrieb nur kurze Stichworte zwischen Tool-Calls.`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Usage-Limits zurückgesetzt',
+      },
+      {
+        type: 'text',
+        content: `Als Geste an betroffene User hat Anthropic die monatlichen Usage-Limits für alle Pro- und Team-User zurückgesetzt. Das ist nicht permanent — die Limits gelten weiter, aber der bisherige Verbrauch wurde auf null gestellt.
+
+Praktisch heißt das: prüfe mit /usage wo du jetzt stehst. Wenn du im April aggressiv "geknausert" hast (kürzere Prompts, weniger Subagents, kein xhigh), kannst du jetzt wieder aufdrehen.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Aktuelle Plan-Nutzung prüfen
+/usage
+
+# Beispiel-Output:
+# Plan: Pro
+# Used this period: 12% (reset 24.04.2026)
+# Resets in: 27 days
+# Active rate-limits: none
+
+# Falls Pro-Plan zu eng wird: ENABLE_PROMPT_CACHING_1H aktivieren
+ENABLE_PROMPT_CACHING_1H=1 claude
+# → Cache-TTL 1h statt 5 Min — spart bei langen Sessions massiv`,
+      },
+      {
+        type: 'heading',
+        content: '🧹 Workflow-Aufräumen — Checkliste',
+      },
+      {
+        type: 'list',
+        content: `- **CLAUDE.md prüfen:** Stehen dort Regeln wie "immer --effort high"? Können bleiben, sind aber redundant.
+- **Wiederhol-Pattern entfernen:** "Erinnere dich, wir nutzen X" alle 10 Msgs ist nicht mehr nötig.
+- **Skills aktualisieren:** Falls Skills für den 25-Wörter-Cap optimiert waren (extrem knappe Erklärungen), kannst du sie wieder ausführlicher gestalten.
+- **xhigh wieder einsetzen:** Wer xhigh wegen Latenz vermieden hat, kann gezielt zurückkehren — Latenz ist auf Pre-Bug-Niveau.
+- **/usage prüfen:** Reset hat dir Budget zurückgegeben — nutze es.
+- **1h-Caching aktivieren:** Für Sessions > 30 Min jetzt der Default-Workflow.`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Branding-Lektion',
+      },
+      {
+        type: 'text',
+        content: `Anthropics öffentliche Kommunikation des Postmortems steht in starkem Kontrast zu OpenAIs und GitHubs Schweigen bei vergleichbaren Quality-Regressionen. Das ist nicht nur PR — es ist eine bewusste Positionierung als "transparenter Anbieter".
+
+Für dich als Entwickler heißt das: Du kannst dich darauf verlassen, dass größere Bugs öffentlich gemacht werden. Wenn dir etwas seltsam vorkommt, lohnt sich ein Blick auf https://www.anthropic.com/news bevor du Stunden mit Workarounds verbringst.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Schnell-Check ob aktuelle Bugs bekannt sind
+# (kann auch in einen Status-Hook eingebaut werden)
+curl -s https://www.anthropic.com/news | \\
+  grep -iE "outage|incident|regression|postmortem" | head -5
+
+# Oder direkt in Claude:
+claude /release-notes
+# → interaktiver Picker mit allen Versionen seit deiner letzten Nutzung`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Drei Bugs zwischen 04.03.2026 und 20.04.2026 — alle gefixt
+✅ Effort-Default: medium → wieder high (07.04.)
+✅ Caching-Bug: Thinking-History wird wieder korrekt persistiert (10.04.)
+✅ 25-Wörter-Cap: revertiert nach 4 Tagen (20.04.)
+✅ Usage-Limits zurückgesetzt
+✅ Veraltete Heuristiken aufräumen — sie kosten jetzt nur Tokens
+✅ /effort und /usage als regelmäßige Diagnose-Commands nutzen
+✅ ENABLE_PROMPT_CACHING_1H für lange Sessions aktivieren
+✅ Anthropic-News als Quelle für Quality-Updates`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 40: Managed Agents API in der Praxis
+  // ========================================
+  {
+    id: 40,
+    level: 3,
+    title: 'Managed Agents API in der Praxis',
+    description:
+      'Cloud-gehostete Agents mit Sandboxing, Tools und persistenter Memory-Beta — die Brücke vom lokalen Pair-Programmer zum Background-Worker. Hands-On in Python und TypeScript.',
+    duration: '45 Minuten',
+    objectives: [
+      'Wann Managed Agents besser sind als lokale Agent-Loops',
+      'Eine erste Session mit Memory-Beta in Python erstellen',
+      'TypeScript-Äquivalent und Streaming via Server-Sent-Events',
+      'Memory-Namespaces sinnvoll strukturieren (pro Projekt/User)',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '☁️ Warum Managed Agents',
+      },
+      {
+        type: 'text',
+        content: `Bisher hattest du zwei Optionen, um Agents jenseits des Terminals laufen zu lassen: a) selbst hosten (Vercel-Cron, Railway-Worker, Server-Scripts), b) den lokalen Claude-Code-Prozess via launchd/systemd persistent halten. Beide Ansätze haben harte Limits: Sandboxing musst du selbst bauen, Crash-Recovery ist deine Sache, State-Persistence über Sessions hinweg gibt es nicht ohne eigene DB.
+
+Managed Agents (Public Beta seit 09.04.2026) lösen genau diese Reibung. Anthropic hostet eine sandboxed Agent-Runtime, gibt dir eine Session-ID, und du kannst über Tage hinweg Inputs reinschicken. Mit der Memory-Beta merkt sich der Agent zusätzlich Fakten ("User X bevorzugt TypeScript strict-mode") über Sessions hinweg.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Decision-Tree',
+        content: `**Lokal (claude im Terminal):** Pair-Programming, Refactors, alles wo du dabei bist.
+**Lokaler Subagent (Task-Tool):** Parallele Recherche/Tests innerhalb einer Session.
+**Managed Agent:** Background-Tasks, die ohne dich laufen — Triage, Daily-Recap, autonome Recherche, Inbox-Sortierung. Wenn du "set it and forget it" willst, ist das der richtige Ort.`,
+      },
+      {
+        type: 'heading',
+        content: '🐍 Hands-On — Python',
+      },
+      {
+        type: 'text',
+        content: `Wir bauen einen wöchentlichen Content-Recherche-Agent. Er soll: a) jeden Montag 09:00 die Top-Claude-Code-Updates der Woche zusammenfassen, b) sich an meine Themen-Präferenzen erinnern (Memory), c) den Output als Markdown-Datei speichern.
+
+Setup: Lege ANTHROPIC_API_KEY in deine Shell, installiere mit \`pip install anthropic\`. Die Memory-Beta erfordert Beta-Header — das SDK kümmert sich darum, wenn du \`memory={...}\` mitgibst.`,
+      },
+      {
+        type: 'code',
+        language: 'python',
+        content: `# weekly_research_agent.py
+import anthropic
+import os
+from pathlib import Path
+
+client = anthropic.Anthropic(
+    api_key=os.environ["ANTHROPIC_API_KEY"],
+)
+
+# Schritt 1: Session einmalig erstellen (Session-ID persistieren!)
+def create_session() -> str:
+    session = client.agents.sessions.create(
+        name="weekly-content-research",
+        model="claude-opus-4-7",
+        tools=[
+            {"type": "code_execution"},
+            {"type": "web_search"},
+        ],
+        memory={
+            "enabled": True,
+            "namespace": "masterkurs-weekly",
+        },
+        # System-Prompt definiert die Agent-Identität
+        system=(
+            "Du bist ein Recherche-Agent fuer den Claude Code Masterkurs. "
+            "Du findest jede Woche die wichtigsten Updates und merkst dir, "
+            "welche Themen den User besonders interessieren."
+        ),
+    )
+    return session.id
+
+# Beim ersten Aufruf erstellen, danach aus Datei laden
+SESSION_FILE = Path(".agent-session-id")
+if SESSION_FILE.exists():
+    session_id = SESSION_FILE.read_text().strip()
+else:
+    session_id = create_session()
+    SESSION_FILE.write_text(session_id)
+
+# Schritt 2: Wöchentlicher Run
+result = client.agents.sessions.run(
+    session_id,
+    input=(
+        "Recherchiere die Top-3 Claude-Code-Updates dieser Woche. "
+        "Schreibe einen Markdown-Report mit Quellen-Links. "
+        "Erinnere dich an meine Praeferenzen aus vorherigen Wochen."
+    ),
+)
+
+# Output sichern
+output_path = Path("research/weekly-report.md")
+output_path.parent.mkdir(exist_ok=True)
+output_path.write_text(result.output)
+print(f"Report saved: {output_path}")`,
+      },
+      {
+        type: 'text',
+        content: `Wichtig ist die Trennung: \`sessions.create()\` läuft einmal, \`sessions.run()\` läuft wöchentlich mit derselben ID. Nur so baut sich Memory auf. Wenn du jede Woche eine neue Session erstellst, verlierst du den Memory-Vorteil.
+
+Die Session-ID solltest du in einem persistenten Speicher ablegen: Datei, Datenbank, oder im Secrets-Manager. Im Beispiel oben nutzen wir eine simple Datei (.agent-session-id, in .gitignore!).`,
+      },
+      {
+        type: 'heading',
+        content: '🔷 TypeScript-Äquivalent',
+      },
+      {
+        type: 'code',
+        language: 'typescript',
+        content: `// weeklyResearchAgent.ts
+import Anthropic from "@anthropic-ai/sdk";
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
+import { dirname } from "node:path";
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+const SESSION_FILE = ".agent-session-id";
+
+async function getOrCreateSessionId(): Promise<string> {
+  if (existsSync(SESSION_FILE)) {
+    return readFileSync(SESSION_FILE, "utf-8").trim();
+  }
+  const session = await client.agents.sessions.create({
+    name: "weekly-content-research",
+    model: "claude-opus-4-7",
+    tools: [
+      { type: "code_execution" },
+      { type: "web_search" },
+    ],
+    memory: { enabled: true, namespace: "masterkurs-weekly" },
+    system:
+      "Du bist ein Recherche-Agent fuer den Claude Code Masterkurs. " +
+      "Du merkst dir die Praeferenzen des Users.",
+  });
+  writeFileSync(SESSION_FILE, session.id);
+  return session.id;
+}
+
+async function main() {
+  const sessionId = await getOrCreateSessionId();
+
+  const result = await client.agents.sessions.run(sessionId, {
+    input:
+      "Recherchiere die Top-3 Claude-Code-Updates dieser Woche. " +
+      "Schreibe einen Markdown-Report mit Quellen-Links.",
+  });
+
+  const path = "research/weekly-report.md";
+  mkdirSync(dirname(path), { recursive: true });
+  writeFileSync(path, result.output);
+  console.log(\`Report saved: \${path}\`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});`,
+      },
+      {
+        type: 'heading',
+        content: '🌊 Streaming via Server-Sent-Events',
+      },
+      {
+        type: 'text',
+        content: `Lange Recherchen können Minuten dauern — du willst nicht warten, bis das Ergebnis komplett ist. Managed Agents unterstützen Server-Sent-Events (SSE), sodass du Token für Token oder Tool-Call für Tool-Call live mitlesen kannst.
+
+Das ist besonders nützlich, wenn du den Agent in eine Web-UI oder in dein Terminal als Live-Stream integrieren willst.`,
+      },
+      {
+        type: 'code',
+        language: 'python',
+        content: `# Streaming-Variante
+with client.agents.sessions.run_stream(
+    session_id,
+    input="Bau einen Multi-Step-Recherche-Plan und fuehre ihn aus."
+) as stream:
+    for event in stream:
+        if event.type == "text_delta":
+            print(event.delta, end="", flush=True)
+        elif event.type == "tool_use":
+            print(f"\\n[Tool: {event.tool_name}]", flush=True)
+        elif event.type == "tool_result":
+            print(f"[Result: {len(event.output)} chars]", flush=True)
+        elif event.type == "session_done":
+            print("\\n\\n=== Done ===")
+            break`,
+      },
+      {
+        type: 'heading',
+        content: '🧠 Memory-Namespaces strukturieren',
+      },
+      {
+        type: 'text',
+        content: `Memory-Namespaces sind die wichtigste Architektur-Entscheidung bei Managed Agents. Ein Namespace ist wie ein Bucket für Erinnerungen — alles in einem Namespace ist in jeder Session, die diesen Namespace nutzt, sichtbar.
+
+Faustregel: Pro logischer Aufgabe + User ein Namespace. Beispiele: \`masterkurs-weekly-cosmo\`, \`crm-triage-cosmo\`, \`pr-review-team-cittasana\`.
+
+Was du vermeiden solltest: ein "global"-Namespace, der alles vermischt. Das verwässert die Erinnerungen und macht Debugging schwer ("warum erinnert sich der CRM-Agent an Masterkurs-Themen?").`,
+      },
+      {
+        type: 'list',
+        content: `- **Pro Projekt:** \`projekt-A\`, \`projekt-B\` — strikte Trennung
+- **Pro User:** Falls Multi-User, immer den User-Identifier mit reinmachen: \`projekt-A-cosmo\`, \`projekt-A-anna\`
+- **Pro Aufgabe:** Bei sehr unterschiedlichen Tasks: \`projekt-A-triage\`, \`projekt-A-daily-recap\`
+- **Versionierung:** Wenn du das System-Prompt grundlegend änderst, neuen Namespace nehmen (\`projekt-A-v2\`) — alte Memories könnten widersprechen`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Beta-Risiken',
+        content: `Memory ist Public Beta — die API kann sich ändern, und Anthropic warnt explizit, dass produktionskritische Workflows noch zurückhaltend integriert werden sollten. Sandboxing und Permission-System sind robust, aber das Memory-Schema selbst kann sich vor GA noch wandeln.`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Kosten-Modell',
+      },
+      {
+        type: 'text',
+        content: `Managed Agents kosten $0.08/Stunde Runtime + die normalen Claude-API-Token-Kosten. Wichtig: Die Stunden zählen nur, während der Agent aktiv arbeitet — eine idle Session ohne Run kostet nichts.
+
+Für unseren Weekly-Recherche-Agent (1x pro Woche, ~5 Min Run): 4 Runs × 5 Min/60 = 0.33h × $0.08 = ~$0.03 pro Monat Runtime. Plus Token-Kosten (Opus 4.7 mit Web-Search): ~$0.50-$1 pro Run. Insgesamt also <$5/Monat — ein Bruchteil dessen, was eigene Vercel/Railway-Hostung kostet.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Session-Management via CLI
+# Liste aller deiner Sessions
+claude agents sessions list
+
+# Details einer Session
+claude agents sessions get <session-id>
+
+# Memory-Inhalt inspizieren
+claude agents memory list --namespace masterkurs-weekly
+
+# Session pausieren (Runtime-Kosten stoppen)
+claude agents sessions pause <session-id>
+
+# Session löschen (wichtig: Memory wird mit gelöscht!)
+claude agents sessions delete <session-id>`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Real-World-Pattern',
+      },
+      {
+        type: 'text',
+        content: `**Pattern 1 — Daily-Standup-Recap:** Cron läuft 08:30, schickt Slack-Channel-History und Calendar-Events an den Agent, bekommt Standup-Notes zurück. Memory speichert: laufende Projekte, Blocker-Patterns.
+
+**Pattern 2 — PR-Review-Pipeline:** GitHub-Action triggered Managed-Agent bei jedem PR. Memory speichert: Team-Konventionen, häufige Anti-Patterns. Über Wochen lernt der Agent den Code-Style des Teams.
+
+**Pattern 3 — Customer-Support-Triage:** Inbox-Webhook → Agent klassifiziert Tickets. Memory speichert: häufige Issue-Patterns, Eskalations-Regeln. Wird über Monate immer präziser.
+
+**Pattern 4 — Wöchentliche Marktrecherche** (das ist diese Lektion): Cron-Trigger, Web-Search-Tool, Markdown-Output. Memory: Themen-Präferenzen, Quellen-Quality-Score.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Managed Agents: Cloud-gehostete Agent-Runtime mit Sandboxing
+✅ Memory-Beta (seit 09.04.2026): persistente Fakten über Sessions
+✅ sessions.create() einmal — sessions.run() repeat: nur so wächst Memory
+✅ Session-ID persistieren (Datei, DB, Secret-Manager)
+✅ TypeScript & Python SDK gleichwertig
+✅ Streaming via SSE für Live-Updates lange Tasks
+✅ Memory-Namespaces pro Projekt+User strukturieren
+✅ Kosten: $0.08/h Runtime + Token-Kosten
+✅ Beta-Risiko: API kann sich vor GA noch ändern`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 41: Ultrareview in CI/CD
+  // ========================================
+  {
+    id: 41,
+    level: 3,
+    title: 'Ultrareview in CI/CD',
+    description:
+      'Seit 2.1.120 läuft `claude ultrareview` headless als Standalone-Command — perfekt als PR-Gate in GitHub Actions. Diese Lektion zeigt dir Setup, Skill-Kombination und Cost-Control.',
+    duration: '30 Minuten',
+    objectives: [
+      'Den Unterschied zwischen interaktivem /ultrareview und headless ultrareview verstehen',
+      'Eine GitHub-Action aufsetzen, die jeden PR mit Multi-Agent-Review prüft',
+      'Skills wie security-review und code-review kombinieren',
+      'Mit --task-budget Runaway-Kosten in CI verhindern',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🚀 Was ist neu in 2.1.120',
+      },
+      {
+        type: 'text',
+        content: `Bis Version 2.1.111 war /ultrareview ein interaktiver Slash-Command — du musstest im Claude-REPL sitzen und manuell triggern. Das war für lokale Reviews großartig, aber CI-untauglich. Mit 2.1.120 ist \`claude ultrareview\` ein Top-Level-CLI-Command, der einen Branch oder PR-Link entgegennimmt und einen parallelen Multi-Agent-Review startet.
+
+"Multi-Agent" heißt: Claude spawnt intern mehrere Reviewer-Subagents, jeder mit anderem Fokus (Security, Performance, Style, Tests). Die Reviews laufen parallel, das aggregierte Ergebnis kommt als strukturierter Markdown-Output. Genau das, was du als PR-Kommentar haben willst.`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Headless vs. interaktiv',
+        content: `**Interaktiv (/ultrareview):** Du sitzt dabei, kannst Reviewer-Output kommentieren, manuell drilldown machen. Best für lokale Pre-Push-Reviews.
+**Headless (claude ultrareview):** Läuft ohne Mensch, gibt strukturierten Output zurück. Best für CI-Pipelines.`,
+      },
+      {
+        type: 'heading',
+        content: '🔧 Erste GitHub-Action',
+      },
+      {
+        type: 'text',
+        content: `Wir bauen eine minimale Action, die bei jedem PR-Open und PR-Update läuft. Sie installiert Claude Code, ruft \`ultrareview\` auf und kommentiert das Ergebnis am PR.
+
+Voraussetzung: Lege ANTHROPIC_API_KEY als Repo-Secret an (Settings → Secrets → Actions → New repository secret).`,
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        content: `# .github/workflows/claude-review.yml
+name: Claude Ultrareview
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Für Diff brauchen wir Full History
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run Ultrareview
+        env:
+          ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+          AI_AGENT: claude-code-ci
+        run: |
+          claude ultrareview \${{ github.event.pull_request.html_url }} \\
+            --task-budget 80000 \\
+            --output review.md
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: review.md
+          header: claude-review`,
+      },
+      {
+        type: 'text',
+        content: `Mit \`sticky-pull-request-comment\` aktualisiert sich der Kommentar bei jedem Push, statt einen neuen anzulegen. Der \`header\` macht den Kommentar identifizierbar, sodass nur dieser eine Kommentar überschrieben wird — du kannst mehrere Sticky-Kommentare mit unterschiedlichen Headern haben.`,
+      },
+      {
+        type: 'heading',
+        content: '🛡️ Skill-Kombination',
+      },
+      {
+        type: 'text',
+        content: `Ultrareview wird mächtiger, wenn du es mit fokussierten Skills kombinierst. Anthropic liefert mehrere Out-of-the-Box: \`code-review\`, \`security-review\`, \`react-best-practices\`, \`api-best-practices\`. Jeder Skill bringt eigene Reviewer-Logik mit.
+
+Du aktivierst Skills via \`--skill\` Flag (mehrfach erlaubt). Jeder Skill wird zu einem zusätzlichen Reviewer-Subagent.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Mehrere Skills gleichzeitig aktivieren
+claude ultrareview \${PR_URL} \\
+  --skill security-review \\
+  --skill code-review \\
+  --skill react-best-practices \\
+  --task-budget 120000 \\
+  --output review.md
+
+# Output-Struktur (review.md):
+# ## Security Review (security-review skill)
+# - [HIGH] Hardcoded API key in src/api.ts:42
+# - [LOW] Missing CSRF token in form submission
+#
+# ## Code Review (code-review skill)
+# - Function complexity > 30 lines in utils.ts:78
+# - Inconsistent naming (camelCase vs snake_case)
+#
+# ## React Best Practices (react-best-practices skill)
+# - Missing useMemo for expensive computation in Dashboard.tsx
+# - Effect missing dependency: useEffect line 23`,
+      },
+      {
+        type: 'heading',
+        content: '💰 Cost-Control mit --task-budget',
+      },
+      {
+        type: 'text',
+        content: `In CI bist du nicht dabei — wenn ein Reviewer-Agent in eine Schleife gerät oder sich verheddert, kann eine Pipeline-Run mehrere Dollar kosten. \`--task-budget\` ist deine Versicherung: hartes Token-Limit, bei Überschreitung kontrollierter Abbruch.
+
+Faustregeln für Budget-Größen:
+- Kleiner PR (< 200 LoC): 30,000 Tokens
+- Mittlerer PR (200-1000 LoC): 80,000 Tokens
+- Großer PR (1000+ LoC) mit 3+ Skills: 150,000 Tokens
+
+Mit Sonnet 4.6 ($3/M Input, $15/M Output) bedeutet 80K Tokens-Cap maximal ~$1.20 pro Review. Bei 50 PRs/Monat: ~$60 — günstiger als ein Senior-Engineer-Review-Stunde.`,
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        content: `# Adaptives Budget basierend auf PR-Größe
+- name: Calculate review budget
+  id: budget
+  run: |
+    LOC=$(git diff origin/main...HEAD --stat | tail -1 | awk '{print $4+$6}')
+    if [ "$LOC" -lt 200 ]; then
+      echo "budget=30000" >> $GITHUB_OUTPUT
+    elif [ "$LOC" -lt 1000 ]; then
+      echo "budget=80000" >> $GITHUB_OUTPUT
+    else
+      echo "budget=150000" >> $GITHUB_OUTPUT
+    fi
+
+- name: Run Ultrareview
+  env:
+    ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+  run: |
+    claude ultrareview \${{ github.event.pull_request.html_url }} \\
+      --skill security-review \\
+      --skill code-review \\
+      --task-budget \${{ steps.budget.outputs.budget }} \\
+      --output review.md`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Review als Quality-Gate',
+      },
+      {
+        type: 'text',
+        content: `Wenn du Ultrareview-Findings als harte Gates nutzen willst (kein Merge bei HIGH-Severity), kannst du das Output-Format parsen und das Job-Result entsprechend setzen.`,
+      },
+      {
+        type: 'code',
+        language: 'yaml',
+        content: `- name: Run Ultrareview
+  id: review
+  env:
+    ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+  run: |
+    claude ultrareview \${{ github.event.pull_request.html_url }} \\
+      --skill security-review \\
+      --task-budget 80000 \\
+      --output review.md \\
+      --json findings.json
+
+- name: Block on HIGH severity
+  run: |
+    HIGH_COUNT=$(jq '[.findings[] | select(.severity=="HIGH")] | length' findings.json)
+    echo "High-severity findings: $HIGH_COUNT"
+    if [ "$HIGH_COUNT" -gt 0 ]; then
+      echo "::error::PR has $HIGH_COUNT HIGH-severity findings — review required"
+      exit 1
+    fi`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Wichtig',
+        content: `Stelle sicher, dass das Gate konfigurierbar ist (z.B. via Label "skip-claude-review"). Es wird Fälle geben, wo ein HIGH-Finding ein False-Positive ist und du trotzdem mergen willst — verhindere, dass das Tool zum Blocker wird.`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Pre-Push-Hook (Lokale Variante)',
+      },
+      {
+        type: 'text',
+        content: `Falls du Ultrareview lokal vor dem Push laufen lassen willst (schnelles Feedback ohne CI-Wartezeit), eignet sich ein git-Hook.`,
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/bin/bash
+# .git/hooks/pre-push (chmod +x machen!)
+
+CURRENT_BRANCH=$(git branch --show-current)
+if [[ "$CURRENT_BRANCH" == "main" || "$CURRENT_BRANCH" == "master" ]]; then
+  echo "Skipping ultrareview on main/master"
+  exit 0
+fi
+
+echo "Running Claude Ultrareview before push..."
+claude ultrareview "$CURRENT_BRANCH" \\
+  --task-budget 50000 \\
+  --skill code-review
+
+if [ $? -ne 0 ]; then
+  echo "Review failed — push abort. Use --no-verify to bypass."
+  exit 1
+fi
+exit 0`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Real-World-Setup',
+      },
+      {
+        type: 'text',
+        content: `Empfohlene Konfiguration für ein durchschnittliches Team:
+1. **CI-Job auf jedem PR**: \`code-review\` + \`security-review\` Skills, Budget 80K, Sticky-Comment.
+2. **Pre-Push-Hook lokal**: nur \`code-review\` Skill, Budget 50K, schnelles Feedback.
+3. **Daily-Job auf main-branch**: voller Lauf mit allen Skills, Budget 200K, Slack-Notification bei HIGH-Findings.
+
+Das deckt drei Reibungs-Stufen ab: lokal vor Push, in PR-Review, kontinuierlich auf main.`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ \`claude ultrareview\` ist seit 2.1.120 ein Standalone-Command (CI-tauglich)
+✅ Multi-Agent-Review intern: parallele Reviewer-Subagents
+✅ GitHub-Action mit Sticky-Comment für aktualisierende PR-Reviews
+✅ Skills kombinieren: security-review, code-review, react-best-practices
+✅ --task-budget verhindert Runaway-Kosten in CI
+✅ Adaptives Budget basierend auf PR-Größe
+✅ JSON-Output für harte Quality-Gates
+✅ Pre-Push-Hook für lokales Feedback
+✅ Empfohlenes Setup: lokal + PR + daily-on-main`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 42: Plugin-Distribution mit --plugin-url & skillOverrides
+  // ========================================
+  {
+    id: 42,
+    level: 3,
+    title: 'Plugin-Distribution mit --plugin-url & skillOverrides',
+    description:
+      'Seit 2.1.129 kannst du Plugin-ZIP-Archive direkt aus einer URL laden — perfekt für Workshops und Kurs-eigene Toolkits. Gleichzeitig räumt `skillOverrides` mit Skill-Bloat auf.',
+    duration: '25 Minuten',
+    objectives: [
+      'Plugins als GitHub-Release-ZIP veröffentlichen und mit `--plugin-url` aktivieren',
+      'Den Unterschied zwischen Session-Plugin (`--plugin-url`) und globalem Install verstehen',
+      '`skillOverrides` mit den drei Modi (`off`, `user-invocable-only`, `name-only`) konfigurieren',
+      'Token-Footprint einer Skill-Bibliothek messen und reduzieren',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum diese Lektion?',
+      },
+      {
+        type: 'text',
+        content:
+          'Mit Claude Code 2.1.129 haben sich zwei Dinge gleichzeitig verändert, die zusammen eine kleine Revolution für die Plugin-Welt bedeuten:\n\n1. **`--plugin-url`** macht aus Claude Code ein echtes Plugin-Distributionssystem ausserhalb von npm. Du kannst Plugins als GitHub-Release-Asset, Notion-Anhang oder Slack-Snippet teilen — Teilnehmer aktivieren sie mit einem einzigen Befehl, ohne globale Installation.\n2. **`skillOverrides`** funktioniert jetzt korrekt und gibt dir drei Modi, um Skill-Bloat zu reduzieren, ohne Skills zu deinstallieren. Wer 80+ Skills installiert hat, kann den Token-Footprint deutlich reduzieren.\n\nFür Kursbetrieb, Workshops und eigene Toolkits ist beides extrem relevant — und dieser Workflow ist seit Mai 2026 produktionsreif.',
+      },
+      {
+        type: 'heading',
+        content: '📦 Teil 1: Plugin-Distribution mit --plugin-url',
+      },
+      {
+        type: 'text',
+        content:
+          'Bisher gab es zwei Wege, ein Plugin zu teilen: Entweder als npm-Package (mit Publish-Pipeline und Vertrauenskette zu npm) oder als lokales Verzeichnis via `--plugin-dir` (jeder Teilnehmer muss das Verzeichnis selbst klonen). `--plugin-url` ist der dritte Weg: Plugin als ZIP, URL teilen, fertig.\n\nDer entscheidende Unterschied: Das Plugin ist nur für die aktuelle Session aktiv. Nach `Ctrl+D` ist es weg. Das ist kein Bug, sondern Feature — du kannst experimentelle Plugins ausprobieren, ohne deinen globalen Plugin-Stand zu verschmutzen.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Plugin direkt aus GitHub-Release laden (nur fuer diese Session)
+claude --plugin-url https://github.com/cittasana/cc-plugins/releases/download/v0.3.1/masterkurs-toolkit.zip
+
+# Mehrere Plugins gleichzeitig (eines aus URL, eines lokal)
+claude \\
+  --plugin-url https://example.com/plugin-a.zip \\
+  --plugin-dir ~/code/my-local-plugin`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Vertrauenskette — wichtig!',
+        content:
+          'Plugins können Hooks, Bash-Scripts und MCP-Server-Konfigurationen enthalten. `--plugin-url` umgeht die npm-Vertrauenskette komplett. Verwende nur URLs, denen du auch vertraust — das ist im Prinzip wie `curl ... | bash`.',
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Plugin als GitHub-Release veröffentlichen',
+      },
+      {
+        type: 'text',
+        content:
+          'Der einfachste Distributionsweg ist ein GitHub-Release. Vorteile: Stabile, versionierte URLs, kostenlos, reproduzierbar. Hier der vollständige Workflow von Plugin-Verzeichnis bis URL-Teilen:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. Plugin-Verzeichnis als ZIP packen
+cd ~/code/cc-plugins/masterkurs-toolkit
+zip -r ../masterkurs-toolkit-v0.3.1.zip .
+
+# 2. Als GitHub-Release veroeffentlichen (gh CLI)
+gh release create v0.3.1 ../masterkurs-toolkit-v0.3.1.zip \\
+  --title "Masterkurs Toolkit v0.3.1" \\
+  --notes "Enthaelt: lesson-runner, quiz-validator, slide-builder"
+
+# 3. Asset-URL kopieren (oder per gh CLI)
+gh release view v0.3.1 --json assets --jq '.assets[0].url'
+
+# 4. URL in Slack/Notion/Email teilen
+# https://github.com/cittasana/cc-plugins/releases/download/v0.3.1/masterkurs-toolkit-v0.3.1.zip`,
+      },
+      {
+        type: 'text',
+        content:
+          'Das ZIP enthält das gesamte Plugin-Verzeichnis: `plugin.json` (Manifest), Skills, Slash-Commands, Hook-Scripts. Wichtig: Seit 2.1.129 müssen `themes` und `monitors` im Manifest unter `"experimental": { ... }` stehen — sonst lädt das Plugin nicht. Wer sein Plugin schon vor 2.1.129 geschrieben hat, sollte das Manifest entsprechend anpassen.',
+      },
+      {
+        type: 'heading',
+        content: '🎓 Workshop-Pattern: Pre-Install-Script + Plugin-URL',
+      },
+      {
+        type: 'text',
+        content:
+          'Für Live-Workshops kombiniere `CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE=1` (alle Teilnehmer auf gleicher Version) mit einem Pre-Workshop-Pre-Install-Script:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/usr/bin/env bash
+# pre-workshop.sh — von allen Teilnehmern ausfuehren
+
+# 1. Auto-Update aktivieren
+echo 'export CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE=1' >> ~/.zshrc
+echo 'export CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE=1' >> ~/.bashrc
+
+# 2. Workshop-Plugin-URL als Env-Variable speichern
+export WORKSHOP_PLUGIN_URL="https://github.com/cittasana/cc-plugins/releases/download/v0.3.1/masterkurs-toolkit.zip"
+echo "export WORKSHOP_PLUGIN_URL=\\"$WORKSHOP_PLUGIN_URL\\"" >> ~/.zshrc
+
+# 3. Alias fuer schnellen Workshop-Start
+echo 'alias workshop="claude --plugin-url \\$WORKSHOP_PLUGIN_URL"' >> ~/.zshrc
+
+echo "✅ Setup fertig. Starte mit: workshop"`,
+      },
+      {
+        type: 'text',
+        content:
+          'Vorteile: Du kannst zwischen den Modulen ein neues Plugin-ZIP veröffentlichen, einfach die URL aktualisieren — Teilnehmer bekommen das Update mit dem nächsten `workshop`-Aufruf, ohne `npm install` oder Marketplace-Abo.',
+      },
+      {
+        type: 'heading',
+        content: '🧹 Teil 2: Skill-Bloat mit skillOverrides bekämpfen',
+      },
+      {
+        type: 'text',
+        content:
+          'Wer den Marketplace exploriert, hat schnell 50-100+ Skills installiert. Problem: Jeder Skill ist mit seiner Description Teil des Modell-Kontexts. Bei 80 Skills à ~150 Tokens sind das ~12.000 Tokens nur für Skill-Headers. Das Modell trifft auch öfter falsche Trigger-Entscheidungen, weil viele Skills ähnlich klingen.\n\n`skillOverrides` löst das mit drei Modi pro Skill:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// ~/.claude/settings.json
+{
+  "skillOverrides": {
+    "industrial-brutalist-ui": "off",
+    "ads-tiktok": "user-invocable-only",
+    "seo-page": "name-only"
+  }
+}`,
+      },
+      {
+        type: 'list',
+        content: `- **off**: Skill ist komplett versteckt — auch von \`/\`. Wie deinstalliert, aber wiederherstellbar.
+- **user-invocable-only**: Modell sieht den Skill nicht, du kannst ihn aber explizit per \`/skill-name\` triggern.
+- **name-only**: Description versteckt — Trigger nur über exakten Namen, ~10 statt ~150 Tokens pro Skill.`,
+      },
+      {
+        type: 'heading',
+        content: '📏 Token-Footprint vorher/nachher messen',
+      },
+      {
+        type: 'text',
+        content:
+          'Bevor du `skillOverrides` blind anwendest, lohnt eine Messung. `/context` zeigt dir den aktuellen Token-Verbrauch — vergleiche vor und nach den Overrides:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. Aktueller Token-Verbrauch (mit allen Skills)
+claude
+> /context
+# Output: System: 12.3K | Tools+Skills: 18.7K | ...
+
+# 2. Beenden, settings.json mit skillOverrides anpassen
+# (off fuer 30 Skills, name-only fuer 20 Skills)
+
+# 3. Neue Session
+claude
+> /context
+# Output: System: 12.3K | Tools+Skills: 4.2K | ...
+
+# Ersparnis: ~14.5K Tokens System-Overhead pro Session.`,
+      },
+      {
+        type: 'heading',
+        content: '🎯 Welcher Modus für welchen Skill?',
+      },
+      {
+        type: 'list',
+        content: `- **off**: Skills, die du nur als Referenz installiert hast und nicht mehr nutzt.
+- **user-invocable-only**: Spezialwissen-Skills, die das Modell nicht selbstständig triggern soll (z.B. \`ads-tiktok\` wenn du nicht regelmäßig TikTok-Ads schaltest).
+- **name-only**: Skills, die du selten brauchst, deren Trigger-Phrase du aber kennst — \`seo-page\` ist ein guter Kandidat.
+- **(kein Override)**: Skills, die du täglich nutzt und vom Modell automatisch triggern lassen willst.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Häufiger Fehler',
+        content:
+          '`off` versteckt den Skill auch von `/`. Wenn du den Skill nur unsichtbar fürs Modell willst, aber per Slash-Command triggern können möchtest, nutze `user-invocable-only` statt `off`.',
+      },
+      {
+        type: 'heading',
+        content: '🧰 Praxis-Setup: Drei Profile für unterschiedliche Tasks',
+      },
+      {
+        type: 'text',
+        content:
+          'Ein fortgeschrittenes Pattern: Mehrere Settings-Profile, je nach Task-Typ. Das geht aktuell nicht über Claude Code direkt, aber über Symlinks oder ein kleines Wrapper-Script:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/usr/bin/env bash
+# claude-profile.sh — Wechsel zwischen Skill-Profilen
+
+PROFILE="\${1:-default}"
+SETTINGS_DIR="$HOME/.claude/profiles"
+
+case "$PROFILE" in
+  coding)   ln -sf "$SETTINGS_DIR/coding.json" ~/.claude/settings.json ;;
+  marketing) ln -sf "$SETTINGS_DIR/marketing.json" ~/.claude/settings.json ;;
+  default)  ln -sf "$SETTINGS_DIR/default.json" ~/.claude/settings.json ;;
+  *) echo "Profile nicht gefunden: $PROFILE"; exit 1 ;;
+esac
+
+claude "\${@:2}"`,
+      },
+      {
+        type: 'text',
+        content:
+          'Dann startest du mit `./claude-profile.sh coding` (alle Marketing-Skills auf `off`) oder `./claude-profile.sh marketing` (alle Coding-Skills auf `name-only`). Das spart pro Session viel Kontext und macht das Modell zuverlässiger.',
+      },
+      {
+        type: 'heading',
+        content: '🎓 Zusammenfassung',
+      },
+      {
+        type: 'highlight',
+        title: '✅ Was du gelernt hast',
+        content: `✅ \`--plugin-url\` lädt Plugin-ZIPs aus URLs (nur Session-aktiv)
+✅ GitHub-Release ist der einfachste Distributionsweg für Workshops
+✅ Manifest seit 2.1.129: \`themes\`/\`monitors\` unter \`experimental\`
+✅ Vertrauenskette beachten — Plugins können Hooks und Bash ausführen
+✅ \`skillOverrides\` hat drei Modi: \`off\`, \`user-invocable-only\`, \`name-only\`
+✅ Token-Footprint vorher/nachher mit \`/context\` messen
+✅ Profil-Pattern für Task-spezifische Skill-Bibliotheken
+✅ Auto-Update (\`CLAUDE_CODE_PACKAGE_MANAGER_AUTO_UPDATE\`) als Workshop-Backbone`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 43: Compaction-Hygiene — 60%-Regel & Pre-Compact-Brief
+  // ========================================
+  {
+    id: 43,
+    level: 2,
+    title: 'Compaction-Hygiene — 60%-Regel & Pre-Compact-Brief',
+    description:
+      'Erfahrene Nutzer rufen `/compact` proaktiv bei ~60% Context-Fülle, nicht erst bei 95%. Mit explizitem Pre-Compact-Brief bleibt der Debug-Kontext erhalten.',
+    duration: '20 Minuten',
+    objectives: [
+      'Die 60%-Regel verstehen und proaktiv anwenden',
+      'Den Pre-Compact-Brief als Schutz vor Kontextverlust formulieren',
+      'Den Unterschied zwischen `/compact` und `/clear` situationsgerecht einsetzen',
+      'Die 2-Correction-Regel zur Vermeidung von Context-Pollution anwenden',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum 60% statt 95%?',
+      },
+      {
+        type: 'text',
+        content:
+          'Bisher hieß die Faustregel: `/compact` ausführen, wenn der Context warnt — meist bei 80-95%. Die Community-Best-Practice 2026 hat sich verschoben: **Erfahrene Nutzer kompaktieren bei ~60%**.\n\nDer Grund: Compaction ist verlustbehaftet. Bei 95% Auslastung versucht der Compactor, einen riesigen Konversationsverlauf in eine kleine Zusammenfassung zu pressen — Details fallen weg, Nuancen gehen verloren. Bei 60% gibt es weniger zu komprimieren, die Zusammenfassung wird präziser, und das Modell behält mehr nutzbaren Kontext.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Die neue Faustregel',
+        content:
+          '**Bei ~60% Context-Auslastung proaktiv `/compact` ausführen** — nicht warten, bis das System warnt. Der Verlust an Genauigkeit ist deutlich kleiner als bei 90%+.',
+      },
+      {
+        type: 'heading',
+        content: '📋 Der Pre-Compact-Brief',
+      },
+      {
+        type: 'text',
+        content:
+          'Compaction klingt nach magischem Komprimieren — ist es aber nicht. Der Compactor liest den Verlauf und entscheidet, was wichtig ist. Bei langen Debug-Sessions trifft er oft die falsche Entscheidung: Er behält die Code-Snippets und vergisst, **welcher Bug überhaupt offen war**.\n\nDie Lösung: Vor jedem `/compact` einen expliziten Brief schreiben, der den aktuellen Stand zusammenfasst. So weiß das Modell nach Compaction sofort, wo es war.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. /context regelmaessig pruefen
+> /context
+# Output: 58% (~117K / 200K Tokens)
+
+# 2. JETZT vor /compact einen Brief schreiben
+> Wir debuggen 500-Error auf POST /api/orders.
+> Vermutung: Stripe-Webhook-Race zwischen payment_intent.succeeded
+> und unsere idempotency_key-Pruefung. Bisherige Versuche:
+> - Webhook-Logs gepruefty (timing inconsistent)
+> - DB-Locks ausgeschlossen
+> - Naechster Schritt: Idempotency-Key-Reuse-Window pruefen.
+
+# 3. Erst JETZT /compact
+> /compact
+
+# Nach Compaction: Modell weiss sofort, wo der Debug stand`,
+      },
+      {
+        type: 'text',
+        content:
+          'Der Brief enthält drei Dinge: **Was machen wir** (Debug 500-Error), **Was wissen wir** (bisherige Versuche, Vermutungen), **Was kommt als nächstes** (Idempotency-Key-Reuse-Window). Diese drei Anker übersteht jede Compaction — sie sind Teil der zu komprimierenden Conversation und werden vom Compactor als wichtig erkannt.',
+      },
+      {
+        type: 'heading',
+        content: '🆚 /compact vs. /clear — wann was?',
+      },
+      {
+        type: 'text',
+        content:
+          'Eine häufige Verwechslung: `/compact` und `/clear` haben unterschiedliche Use-Cases. Falsch eingesetzt, verbrennt jeder Tokens.',
+      },
+      {
+        type: 'list',
+        content: `- **\`/compact\`** behält die Essenz der Conversation, komprimiert Details. Nutze es **innerhalb desselben Tasks**, wenn der Kontext zu wachsen droht.
+- **\`/clear\`** wirft alles weg, startet frisch. Nutze es **bei Topic-Wechsel** — neuer Bug, neues Feature, neuer Branch.
+- **Faustregel**: Wenn das, was im Kontext steht, für den nächsten Schritt nicht mehr relevant ist → \`/clear\`. Wenn es noch relevant ist, aber zu viel → \`/compact\`.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Anti-Pattern: Kitchen-Sink-Sessions',
+        content:
+          'Stundenlang in einer Session arbeiten, drei Bugs debuggen, zwei Features implementieren, alles im selben Kontext — und dann wundern, warum Claude sich nicht mehr an Detail X aus Bug 1 erinnert. `/clear` zwischen unrelated Tasks ist günstiger als ständiges Compacten.',
+      },
+      {
+        type: 'heading',
+        content: '🔁 Die 2-Correction-Regel',
+      },
+      {
+        type: 'text',
+        content:
+          'Eine zweite Hygiene-Regel, die selten explizit ausgesprochen wird: **Wenn du dasselbe Detail zum 3. Mal korrigierst, lösche den Kontext.**\n\nWarum: Jede Korrektur, die du schreibst, wird Teil des Kontexts. Wenn das Modell denselben Fehler dreimal macht, hat es den Kontext mit Failed-Approaches überschwemmt — der Fehler wird durch noch mehr "bitte mach es richtig"-Nachrichten nicht besser, sondern verfestigt sich. Lösung: `/clear`, neuer Prompt mit dem gelernten Detail als explizite Regel im ersten Satz.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Anti-Pattern (verstaerkt den Fehler):
+> Bau Pagination fuer /orders.
+< [verwendet Cursor-Pagination]
+> Nein, Offset-basiert!
+< [verwendet wieder Cursor]
+> Ich sagte OFFSET, nicht Cursor!
+< [Mischform]
+> WARUM IGNORIERST DU MICH?  ← Context-Pollution
+
+# Pattern (sauberer Reset):
+> Bau Pagination fuer /orders.
+< [verwendet Cursor]
+> Nein, Offset-basiert!
+< [verwendet wieder Cursor]
+> /clear
+> Bau Offset-basierte Pagination fuer GET /orders.
+> Query-Params: page (default 1), pageSize (default 20, max 100).
+> KEINE Cursor-Pagination — wir nutzen offset/limit in PostgreSQL.
+< [korrekter Code beim ersten Versuch]`,
+      },
+      {
+        type: 'heading',
+        content: '🛠️ /context als Daily Driver',
+      },
+      {
+        type: 'text',
+        content:
+          '`/context` zeigt dir den aktuellen Token-Verbrauch und ist seit 2.1.129 schlanker — die ASCII-Visualisierung wird nicht mehr in die Conversation gehängt (~1.6K Tokens gespart). Die Info bekommst du nur in der UI, nicht im Kontext. Das ist ein wichtiger Stealth-Fix: Frühere Versionen haben bei jedem `/context`-Aufruf den Kontext um 1.6K erhöht — der Befehl, den du nutzt, um Kontext zu sparen, hat ihn vergrößert. Jetzt ist `/context` "kostenlos".',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Daily Driver Workflow
+> /context
+# 32% — alles entspannt, weiterarbeiten
+
+> /context
+# 58% — JETZT Pre-Compact-Brief schreiben
+> Wir bauen User-Profile-Edit. Bisher: Form-Komponente
+> mit react-hook-form fertig, Validation mit zod. Naechstes:
+> API-Endpoint POST /users/:id mit RLS-Check.
+> /compact
+# Compaction laeuft, Conversation reduziert auf ~25%
+
+> /context
+# 45% nach 10 weiteren Nachrichten — alles im Plan`,
+      },
+      {
+        type: 'heading',
+        content: '📐 Cheatsheet: Compaction-Hygiene',
+      },
+      {
+        type: 'list',
+        content: `- **Bei ~60%**: Pre-Compact-Brief schreiben, dann \`/compact\`
+- **Bei Topic-Wechsel**: \`/clear\` (nicht \`/compact\`)
+- **Nach 2x Korrektur**: \`/clear\` + neuer Prompt mit gelerntem Detail
+- **1M-Sessions**: Auto-Compact-Window kleiner — proaktiv kompaktieren reicht
+- **\`/context\` regelmäßig**: alle 10-15 Nachrichten, kostenfrei seit 2.1.129
+- **Long Debug**: Brief vorher = Modell vergisst nicht, was offen war
+- **Kitchen-Sink vermeiden**: separate Sessions für separate Tasks`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ 60%-Regel statt 95% — proaktive Compaction = mehr nutzbarer Kontext
+✅ Pre-Compact-Brief mit "Was/Was wissen/Was kommt als nächstes"
+✅ \`/compact\` für Detail-Reduktion, \`/clear\` für Topic-Wechsel
+✅ 2-Correction-Regel: nach 2x Korrektur → \`/clear\`
+✅ \`/context\` ist seit 2.1.129 token-frei (keine ASCII-Vis mehr in Conversation)
+✅ Kitchen-Sink-Sessions sind teurer als saubere \`/clear\`-Resets
+✅ Daily Workflow: alle 10-15 Nachrichten \`/context\`-Check`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 44: Advisor Tool — Cost-Aware Multi-Model in Production
+  // ========================================
+  {
+    id: 44,
+    level: 3,
+    title: 'Advisor Tool — Cost-Aware Multi-Model in Production',
+    description:
+      'Das Advisor Tool (Beta seit März 2026) ist die neue Modell-Auswahl-Strategie: ein günstiger Executor (Haiku) konsultiert nur bei schwerem Reasoning einen teuren Berater (Opus). Anthropic-Benchmarks zeigen +21pp BrowseComp für Haiku, -11.9% Kosten für Sonnet — bei gleicher Qualität.',
+    duration: '45 Minuten',
+    objectives: [
+      'Verstehen, warum Cost-Aware Multi-Model das dominante Pattern 2026 wird',
+      'Die offiziellen Anthropic-Benchmarks für Advisor Tool kennen und interpretieren',
+      'Eine Production-Konfiguration mit Haiku-Executor + Opus-Advisor + Budget-Cap aufsetzen',
+      'Erkennen, wann das Pattern NICHT passt (Streaming-UI, harte Latenz-SLOs)',
+      'Den Unterschied zu Cursors `/multitask` und Copilots Rubber-Duck-Critic einordnen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum Advisor Tool jetzt?',
+      },
+      {
+        type: 'text',
+        content:
+          'Bis Anfang 2026 war die Modell-Auswahl eindimensional: Wähle das **eine** Modell für deine Conversation. Haiku wenn es trivial ist, Sonnet wenn Standard, Opus wenn schwer. Das Problem: Selten ist eine Conversation durchgehend trivial oder durchgehend schwer. Ein Refactor-Task hat 90% einfache Edits und 10% schwere Architektur-Entscheidungen. Solo-Sonnet bezahlt für die 90% Overkill, Solo-Haiku scheitert an den 10%.\n\nDas **Advisor Tool** (Beta-Header `advisor-tool-2026-03-01`) bricht diese Eindimensionalität auf. Ein günstiger Executor fährt die Conversation, eskaliert nur die schweren Reasoning-Blocks an einen Advisor. Anthropics Mai-2026-Benchmarks bestätigen das Pattern brutal: **Haiku + Opus-Advisor verdoppelt seinen BrowseComp-Score von 19.7% auf 41.2% — bei 85% niedrigeren Kosten als Solo-Sonnet.** Die Solo-Modell-Tabelle in der globalen CLAUDE.md ist damit faktisch obsolet.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Die neue Modell-Frage',
+        content:
+          'Nicht mehr "welches Modell?" sondern **"welche Modell-Hierarchie und welches Budget?"** — Cost-Aware Multi-Model ist das dominante Architektur-Pattern für 2026.',
+      },
+      {
+        type: 'heading',
+        content: '📊 Die offiziellen Anthropic-Benchmarks',
+      },
+      {
+        type: 'text',
+        content:
+          'Anthropic hat im Mai 2026 die ersten harten Zahlen veröffentlicht. Drei Konstellationen wurden gemessen — Solo, mit Opus-Advisor, und gegen Solo-Sonnet als Baseline. Die Ergebnisse erklären, warum jeder Pay-per-Token-User das Pattern jetzt evaluieren sollte:',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Setup                       | Benchmark              | Score          | Kosten pro Task     |
+|-----------------------------|------------------------|----------------|---------------------|
+| Sonnet 4.6 Solo             | SWE-bench Multilingual | Baseline       | Baseline            |
+| Sonnet 4.6 + Opus-Advisor   | SWE-bench Multilingual | **+2.7 pp**    | **-11.9% Kosten**   |
+| Haiku 4.5 Solo              | BrowseComp             | 19.7%          | Baseline (Haiku)    |
+| Haiku 4.5 + Opus-Advisor    | BrowseComp             | **41.2%**      | -                   |
+| Haiku 4.5 + Opus-Advisor    | vs. Sonnet 4.6 Solo    | nur -29% Score | **-85% Kosten**     |`,
+      },
+      {
+        type: 'text',
+        content:
+          'Die wichtigste Erkenntnis: **Haiku mit Advisor schlägt Solo-Haiku um den Faktor 2.** Das verändert die Antwort auf "wann nehme ich Haiku?" radikal. Bisher: "nur für trivialen Boilerplate". Jetzt: "**immer mit Advisor, wenn Latenz nicht kritisch ist**". Die zweite wichtige Erkenntnis: Sonnet mit Advisor ist **billiger** als Sonnet solo — der Advisor-Roundtrip ist günstiger als die Token, die Sonnet sonst für die schweren Blocks selbst verbraten würde.',
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Production-Konfiguration',
+      },
+      {
+        type: 'text',
+        content:
+          'Die Konfiguration ist erstaunlich schlank. Du brauchst nur den Beta-Header und die Advisor-Tool-Deklaration. Das Server-side Tool entscheidet selbst, wann es eskaliert — du gibst nur das Budget vor. Hier eine Production-taugliche Variante mit hartem Spend-Cap:',
+      },
+      {
+        type: 'code',
+        language: 'python',
+        content: `import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-haiku-4-5",          # guenstiger Executor
+    max_tokens=8192,
+    extra_headers={"anthropic-beta": "advisor-tool-2026-03-01"},
+    tools=[
+        {
+            "type": "advisor_20260301",
+            "name": "advisor",
+            "advisor_model": "claude-opus-4-7",   # teurer Berater
+            "max_advisor_spend_usd": 0.50         # harter Budget-Cap pro Request
+        }
+        # weitere normale Tools moeglich (Bash, Files, MCP)
+    ],
+    messages=[{
+        "role": "user",
+        "content": "Refactor auth/middleware.ts. Plan Migration zu OAuth2."
+    }]
+)
+
+# Was hier passiert:
+# 1. Haiku startet die Conversation, plant erste Schritte
+# 2. Bei schwierigen Reasoning-Blocks (Architektur, Edge-Cases) ruft Haiku
+#    intern den Advisor (Opus 4.7) auf
+# 3. Opus antwortet mit seinem Analyse-Output
+# 4. Haiku integriert die Antwort in seine Response
+# 5. Bei Budget-Erschoepfung laeuft Haiku still ohne Advisor weiter`,
+      },
+      {
+        type: 'text',
+        content:
+          'Wichtig: `max_advisor_spend_usd` ist ein **harter** Cap pro Request. Bei Erschöpfung fehlt der Advisor still — die Conversation läuft weiter, du bekommst keinen Error. Das macht das Pattern produktionstauglich: dein Worst-Case-Cost ist garantiert begrenzt. Ohne Cap kann ein Edge-Case-Loop sehr schnell teuer werden, also **immer setzen**.',
+      },
+      {
+        type: 'heading',
+        content: '🔧 Web-Search und Code-Execution im selben Loop',
+      },
+      {
+        type: 'text',
+        content:
+          'Das Advisor Tool ist server-side und integriert sich in den gleichen Loop wie Web-Search und Code-Execution. Das heißt: Haiku kann während eines einzigen `messages.create`-Calls den Web-Search aufrufen, das Ergebnis bekommen, dann den Advisor konsultieren, ob das Ergebnis vertrauenswürdig ist, dann mit Code-Execution validieren — alles ohne Client-seitiges Tool-Loop-Management. Das ist ein massiver UX-Vorteil gegenüber selbstgebauten Multi-Model-Routern, in denen du die Tool-Loops manuell orchestrieren musst.',
+      },
+      {
+        type: 'code',
+        language: 'python',
+        content: `# Advisor Tool + Web-Search + Code-Execution kombiniert
+response = client.messages.create(
+    model="claude-haiku-4-5",
+    max_tokens=8192,
+    extra_headers={"anthropic-beta": "advisor-tool-2026-03-01"},
+    tools=[
+        {
+            "type": "advisor_20260301",
+            "name": "advisor",
+            "advisor_model": "claude-opus-4-7",
+            "max_advisor_spend_usd": 1.00
+        },
+        {"type": "web_search_20250603", "name": "web_search"},
+        {"type": "code_execution_20250625", "name": "code_exec"}
+    ],
+    messages=[{
+        "role": "user",
+        "content": "Recherchiere die aktuellen FastAPI-Performance-Benchmarks "
+                   "und implementiere eine optimierte Route fuer /users/search."
+    }]
+)
+# Haiku orchestriert: Web-Search → Advisor (Architektur) → Code-Exec (Validierung)`,
+      },
+      {
+        type: 'heading',
+        content: '🚫 Wann KEIN Advisor Tool',
+      },
+      {
+        type: 'text',
+        content:
+          'Das Pattern ist nicht universell. Es gibt zwei klare Antipatterns, in denen du Solo-Modell bevorzugen solltest:',
+      },
+      {
+        type: 'list',
+        content: `- **Streaming-UI mit harten Latenz-SLOs**: Der Advisor-Roundtrip kostet 1-3 Sekunden zusätzliche Latenz. Wenn deine UI < 500ms time-to-first-token verlangt, ist Solo-Sonnet besser.
+- **Triviale Conversations**: Bei reinem Boilerplate-Generieren ohne komplexe Reasoning-Blocks gibt es nichts zu eskalieren — der Advisor wird nie aufgerufen, aber du zahlst den Beta-Tool-Overhead.
+- **Realtime-Tool-Use**: Wenn du Tool-Outputs in einer UI streamen willst, kommt der Advisor in die Quere. Lieber Solo + selbstgebauter Plan-Schritt.`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Pro/Max-Note',
+        content:
+          'Im Claude-Code-CLI selbst ist das Advisor Tool noch nicht aktiviert — es ist ein API-Feature. Wer Pro/Max nutzt, profitiert indirekt: die verdoppelten Rate-Limits machen aggressive Mischsetups erst praktikabel.',
+      },
+      {
+        type: 'heading',
+        content: '🆚 Vergleich: Anthropic Advisor vs. Cursor `/multitask` vs. Copilot Rubber-Duck',
+      },
+      {
+        type: 'text',
+        content:
+          'Drei Vendor, drei Multi-Model-Patterns — die Architekturen sind grundlegend unterschiedlich. Es lohnt, sie nebeneinander zu sehen, weil die Wahl des Tools die Wahl des Patterns bedingt:',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Pattern                     | Anthropic Advisor Tool         | Cursor /multitask              | Copilot Rubber-Duck             |
+|-----------------------------|--------------------------------|--------------------------------|----------------------------------|
+| Wie funktioniert es?        | Executor konsultiert Advisor   | Plan in parallele Chunks       | Cross-Family Critic kommentiert  |
+| Wer entscheidet?            | Executor (Modell)              | User druckt Button             | Modell ruft Critic auf           |
+| Granularitaet               | Pro Reasoning-Block            | Pro Sub-Task                   | Pro Konversations-Schluss        |
+| Architektur                 | Single-Loop, Server-side       | Async Subagent-Fleet           | Cross-Provider                  |
+| Best fuer                   | Cost-Optimization              | Parallele Feature-Builds       | Quality-Check vor Commit         |
+| Verfuegbar in CLI/IDE?      | API-only (Beta)                | Cursor 3.3 IDE                 | Copilot CLI 1.0.44               |`,
+      },
+      {
+        type: 'text',
+        content:
+          'Wichtig: Die Patterns sind **komplementär**, nicht konkurrierend. Du kannst Anthropic Advisor in deinem Backend nutzen UND Cursor `/multitask` für IDE-Workflows UND Copilot Rubber-Duck als Pre-Commit-Critic. Welches Tool wann — daran scheitern oft Teams: Sie versuchen, **eine** Strategie für alle Cases zu finden. Realität: jedes Pattern hat seine optimale Domäne.',
+      },
+      {
+        type: 'heading',
+        content: '🧪 Mini-Hands-On: Erstes Advisor-Setup',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. Anthropic SDK installieren
+pip install anthropic
+
+# 2. API-Key setzen
+export ANTHROPIC_API_KEY=sk-ant-...
+
+# 3. Test-Script mit Advisor Tool
+cat > test_advisor.py <<'PY'
+import anthropic
+
+client = anthropic.Anthropic()
+resp = client.messages.create(
+    model="claude-haiku-4-5",
+    max_tokens=4096,
+    extra_headers={"anthropic-beta": "advisor-tool-2026-03-01"},
+    tools=[{
+        "type": "advisor_20260301",
+        "name": "advisor",
+        "advisor_model": "claude-opus-4-7",
+        "max_advisor_spend_usd": 0.20
+    }],
+    messages=[{
+        "role": "user",
+        "content": "Erklaere die Trade-offs zwischen Optimistic Locking "
+                   "und Pessimistic Locking in einer Multi-Tenant-Postgres-DB."
+    }]
+)
+print(resp.content[0].text)
+PY
+
+# 4. Ausfuehren — beim ersten Lauf sollte der Advisor angerufen werden
+python test_advisor.py`,
+      },
+      {
+        type: 'text',
+        content:
+          'Wenn du das ausführst, siehst du in der Response-Metadata, wie oft der Advisor aufgerufen wurde und welche Kosten angefallen sind. Bei einer komplexen Frage wie der oben sollte mindestens ein Advisor-Call passieren — Haiku merkt, dass es eine architektonische Frage ist, und delegiert.',
+      },
+      {
+        type: 'heading',
+        content: '💰 Cost-Math im Detail',
+      },
+      {
+        type: 'text',
+        content:
+          'Schauen wir uns die Math an. Annahme: Eine typische Agent-Conversation mit 50K Input-Tokens, 20K Output-Tokens, davon 5K Tokens schweres Reasoning. Hier die drei Setups im Vergleich:',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Setup                          | Input-Kosten | Output-Kosten | Advisor-Anteil  | Total      |
+|--------------------------------|--------------|---------------|-----------------|------------|
+| Sonnet 4.6 Solo                | $0.15        | $0.30         | -               | **$0.45**  |
+| Sonnet 4.6 + Opus-Advisor      | $0.15        | $0.27         | $0.04           | **$0.46**  |
+| Haiku 4.5 Solo                 | $0.04        | $0.08         | -               | **$0.12**  |
+| Haiku 4.5 + Opus-Advisor       | $0.04        | $0.06         | $0.04           | **$0.14**  |
+| Opus 4.7 Solo                  | $0.25        | $0.50         | -               | **$0.75**  |`,
+      },
+      {
+        type: 'text',
+        content:
+          'Auf den ersten Blick scheint Sonnet + Advisor **teurer** als Solo-Sonnet — aber die Anthropic-Benchmarks messen das Gegenteil. Erklärung: Die Real-Welt-Conversations sind nicht so glatt wie diese Modellrechnung. Solo-Sonnet brennt deutlich mehr Reasoning-Tokens auf schweren Blocks, weil es nicht weiß, wo es eskalieren kann. Mit Advisor wird der Reasoning-Anteil kürzer (Sonnet hört auf, im Reasoning-Loop zu rotieren, sobald Opus die Antwort gibt). Das spart durchschnittlich 11.9%.',
+      },
+      {
+        type: 'heading',
+        content: '🎯 Wann ist welches Setup richtig?',
+      },
+      {
+        type: 'list',
+        content: `- **Latenz-sensitive UIs** (Chat-Frontend mit Streaming): Solo-Sonnet bevorzugen, Advisor lohnt nicht
+- **Backend-Agents / Cron-Jobs / Batch-Verarbeitung**: Haiku + Opus-Advisor — die 85%-Kostenersparnis ist real
+- **Coding-Agents (Refactor, Migration, Multi-Step)**: Sonnet + Opus-Advisor — leichter +2.7pp Score
+- **Research-Agents mit Web-Search**: Sonnet + Opus-Advisor + Web-Search im selben Loop
+- **Trivialer Boilerplate-Generator**: Solo-Haiku bleibt billigster Weg, kein Advisor nötig
+- **Mission-critical Decision-Support**: Solo-Opus für maximale Qualität, kein Compromise`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ Advisor Tool ist Beta seit März 2026, Benchmarks im Mai veröffentlicht
+✅ Haiku + Opus-Advisor: +21pp BrowseComp, -85% Kosten vs. Solo-Sonnet
+✅ Sonnet + Opus-Advisor: +2.7pp SWE-bench, -11.9% Kosten vs. Solo-Sonnet
+✅ Production-Setup braucht nur Beta-Header + Tool-Deklaration + Budget-Cap
+✅ Kombinierbar mit Web-Search und Code-Execution im selben Loop
+✅ Nicht für Streaming-UI mit harten Latenz-SLOs
+✅ Cost-Aware Multi-Model ist das dominante Pattern 2026 — Solo-Tabellen sind obsolet`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 45: worktree.baseRef — Multi-Agent ohne Daten-Risiko
+  // ========================================
+  {
+    id: 45,
+    level: 2,
+    title: 'worktree.baseRef — Multi-Agent-Worktrees richtig konfigurieren',
+    description:
+      'Der `worktree.baseRef`-Default ist seit Claude Code 2.1.133 von `head` zurück auf `fresh` gewechselt. Diese Lektion zeigt, was das für deinen Workflow bedeutet, wann welcher Mode richtig ist und wie du sicher migrierst.',
+    duration: '15 Minuten',
+    objectives: [
+      'Die Worktree-Base-Frage und ihre Default-Geschichte verstehen',
+      '`worktree.baseRef: "fresh"` vs. `"head"` situationsgerecht einsetzen',
+      'Den Pre-Update-Check ausführen, um Daten-Risiko zu erkennen',
+      'Eine sichere Migration aus 2.1.128–2.1.132 nach 2.1.133+ durchführen',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum das wichtig ist',
+      },
+      {
+        type: 'text',
+        content:
+          'Multi-Agent-Workflows mit `git worktree` sind seit Anfang 2026 das dominante Multi-Agent-Primitive in Claude Code — und in Cursor, Codex CLI und Copilot CLI. Wer mehrere Agents parallel auf demselben Repository laufen lässt, isoliert sie über Worktrees. Aber die Frage **"von welchem Branch wird der neue Worktree erstellt?"** hat in den letzten Monaten eine bewegte Geschichte gehabt, die zu echten Daten-Risiken geführt hat.',
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Default-Wechsel-Timeline',
+        content: `- **Bis 2.1.127**: Default = \`origin/<default-branch>\` (= fresh)
+- **2.1.128 – 2.1.132**: Default = lokaler HEAD (still gewechselt!)
+- **Seit 2.1.133**: Default wieder = \`origin/<default-branch>\` (= fresh), aber explizit via \`worktree.baseRef\`-Setting`,
+      },
+      {
+        type: 'heading',
+        content: '🔄 Die zwei Modi: fresh vs. head',
+      },
+      {
+        type: 'text',
+        content:
+          'Es gibt zwei Modi, und beide haben legitime Use-Cases. Die Frage ist: **Auf welchem Code soll der neue Sub-Agent arbeiten?**',
+      },
+      {
+        type: 'list',
+        content: `- **\`fresh\`** (Default seit 2.1.133): Neuer Worktree branched aus \`origin/<default-branch>\`. **Use-Case**: Workshop-Setups, reproduzierbare CI-Runs, Sub-Agents auf sauberem Stand
+- **\`head\`**: Neuer Worktree branched aus deinem aktuellen lokalen HEAD. **Use-Case**: Multi-Agent auf laufender Feature-Arbeit, Sub-Agent baut auf deinem unpushed-Commit auf`,
+      },
+      {
+        type: 'text',
+        content:
+          'Beide Modi sind valide — sie haben unterschiedliche Implikationen. Mit `fresh` bekommen alle Sub-Agents denselben sauberen Startpunkt, was reproduzierbare Multi-Agent-Tests ermöglicht. Mit `head` können Sub-Agents auf deiner aktuellen Arbeit aufbauen, was natürlicher ist, wenn du mitten in einem Feature steckst und einen Sub-Agent für eine Nebenaufgabe brauchst.',
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Die Konfiguration',
+      },
+      {
+        type: 'text',
+        content:
+          'Die Konfiguration ist schlank — eine Zeile in deiner globalen `~/.claude/settings.json` oder pro Projekt in `.claude/settings.json`. Wichtig: Auch wenn `fresh` Default ist, **setze ihn explizit** — sonst hängst du an einem zukünftigen Default-Wechsel.',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// ~/.claude/settings.json — Workshop / CI / saubere Sub-Agents
+{
+  "worktree": {
+    "baseRef": "fresh"
+  }
+}
+
+// ~/.claude/settings.json — Multi-Agent auf laufender Arbeit
+{
+  "worktree": {
+    "baseRef": "head"
+  }
+}`,
+      },
+      {
+        type: 'highlight',
+        title: '💡 Best Practice',
+        content:
+          'Setze `worktree.baseRef` **explizit**, auch wenn der Default deine Wahl ist. So bist du unabhängig von zukünftigen Default-Wechseln und dokumentierst deine Intent in der Settings-Datei.',
+      },
+      {
+        type: 'heading',
+        content: '🔍 Der Pre-Update-Check',
+      },
+      {
+        type: 'text',
+        content:
+          'Wenn du seit 2.1.128 mit dem still gewechselten `head`-Default gearbeitet hast, hattest du potentiell Daten-Diskrepanzen — z.B. wenn dein Sub-Agent auf deinem unpushed Commit aufgesetzt hat, aber du das nicht wusstest. Bevor du auf 2.1.133+ updatest, prüfe deinen aktuellen Stand:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. Auf welchem Branch bin ich?
+git branch --show-current
+
+# 2. Habe ich unpushed Commits?
+git log origin/main..HEAD
+
+# Wenn Output: deine Sub-Agents seit 2.1.128 haben auf diesen
+# unpushed Commits aufgesetzt — pruefe, ob das gewollt war
+
+# 3. Was sind meine offenen Worktrees?
+git worktree list
+
+# 4. Welche Base hat jeder Worktree?
+for dir in $(git worktree list --porcelain | grep "^worktree" | cut -d' ' -f2); do
+  cd "$dir"
+  echo "$dir: $(git log --oneline -1 --pretty=format:'%h %s')"
+  cd - > /dev/null
+done
+
+# 5. Falls du auf 2.1.133+ updatest und "fresh" zurueck willst:
+#    Setze worktree.baseRef explizit in settings.json
+#    OR: setze "head" um den 2.1.128-Pattern zu behalten`,
+      },
+      {
+        type: 'heading',
+        content: '🧪 Konkrete Migrations-Szenarien',
+      },
+      {
+        type: 'text',
+        content:
+          'Drei typische Szenarien, wie der Migrations-Pfad aussieht:',
+      },
+      {
+        type: 'list',
+        content: `- **Szenario 1: Workshop-Teilnehmer** — Du hattest 2.1.127, dann auf 2.1.128 upgegradet, nichts gemerkt, weil du nie unpushed Arbeit hattest. **Migration**: Update auf 2.1.133+, setze \`baseRef: "fresh"\` — nichts ändert sich.
+- **Szenario 2: Daily Driver mit lokalen Branches** — Du arbeitest typischerweise an Feature-Branches mit unpushed Commits und hast seit 2.1.128 Sub-Agents auf diesen Commits laufen lassen. **Migration**: Update auf 2.1.133+, setze \`baseRef: "head"\` explizit — dein Pattern bleibt erhalten.
+- **Szenario 3: Mixed Use-Case** — Du brauchst manchmal \`fresh\` (CI-Tests), manchmal \`head\` (Feature-Sub-Agents). **Migration**: Setze einen Default in der globalen Settings.json, und überschreibe per Projekt in \`.claude/settings.json\`.`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// Global: ~/.claude/settings.json
+{
+  "worktree": { "baseRef": "fresh" }
+}
+
+// Projekt-spezifisch: <projekt>/.claude/settings.json
+// Ueberschreibt den globalen Default fuer dieses Projekt
+{
+  "worktree": { "baseRef": "head" }
+}`,
+      },
+      {
+        type: 'heading',
+        content: '🤝 Zusammenspiel mit Sub-Agent-Patterns',
+      },
+      {
+        type: 'text',
+        content:
+          'Der Worktree-Base-Mode hat direkte Implikationen für deine Sub-Agent-Patterns. Wenn du in einem Karimo-Workflow einen Sub-Agent für eine Nebenaufgabe spawnst, willst du normalerweise `head` — der Sub-Agent soll auf deiner aktuellen Feature-Arbeit aufbauen. Wenn du Multi-Agent-Tests fährst, willst du `fresh` — alle Agents müssen reproduzierbar starten.',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# Pattern 1: Sub-Agent auf laufender Arbeit (baseRef = head)
+# In .claude/settings.json: { "worktree": { "baseRef": "head" }}
+
+git checkout feature/orders-refactor   # lokale Commits, noch nicht gepusht
+# Im Claude Code:
+> /worktree feature/orders-refactor-subagent
+# Sub-Agent landet auf deinem aktuellen HEAD inkl. unpushed Commits
+
+# Pattern 2: Reproduzierbare Multi-Agent-Tests (baseRef = fresh)
+# In .claude/settings.json: { "worktree": { "baseRef": "fresh" }}
+
+git checkout feature/wip               # egal welcher Branch
+# Im Claude Code:
+> /worktree experiment-agent-a
+> /worktree experiment-agent-b
+# Beide Sub-Agents starten von origin/main — reproduzierbarer Startpunkt`,
+      },
+      {
+        type: 'heading',
+        content: '🛡️ Häufige Fehler vermeiden',
+      },
+      {
+        type: 'list',
+        content: `- **Falsche Annahme**: "Default ist immer fresh" — falsch zwischen 2.1.128 und 2.1.132
+- **Daten-Verlust-Risiko**: Mit \`fresh\` startet der Sub-Agent ohne deine unpushed Commits — wenn du das nicht weißt, fehlt dem Sub-Agent Kontext
+- **Implicit-Default-Vertrauen**: Setz ihn immer explizit, dann gibt's keine Überraschungen bei zukünftigen Updates
+- **Mixing in einer Session**: Wenn du beide Modi in einer Session brauchst, neue Session aufmachen — Settings werden beim Start gelesen
+- **Workshops mit Teilnehmer-Settings**: Distributiere ein \`.claude/settings.json\` ins Workshop-Repo, damit alle Teilnehmer den gleichen Mode haben`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ \`worktree.baseRef\` ist seit Claude Code 2.1.133 explizit konfigurierbar
+✅ Default-Wechsel: 2.1.127 fresh → 2.1.128 head (still) → 2.1.133 fresh
+✅ \`fresh\` = aus \`origin/<default>\`, gut für Workshops und reproduzierbare Setups
+✅ \`head\` = aus lokalem HEAD, gut für Sub-Agents auf laufender Arbeit
+✅ Setze den Wert **immer explizit** in \`settings.json\`
+✅ Pre-Update-Check mit \`git log origin/main..HEAD\` zeigt potentielle Diskrepanz
+✅ Projekt-Settings überschreiben globale Settings — Mixed Use-Cases sauber abbildbar`,
+      },
+    ],
+  },
+
+  // ========================================
+  // LEKTION 46: Effort-aware Hooks — $CLAUDE_EFFORT in der Praxis
+  // ========================================
+  {
+    id: 46,
+    level: 3,
+    title: 'Effort-aware Hooks — $CLAUDE_EFFORT in der Praxis',
+    description:
+      'Mit 2.1.133 bekommt der Effort-Level Hook- und Bash-Sichtbarkeit über `$CLAUDE_EFFORT`. Diese Lektion zeigt, wie du Quality-Gates dynamisch skalierst — Lint bei `low`, voller E2E-Suite bei `xhigh`.',
+    duration: '30 Minuten',
+    objectives: [
+      'Den neuen `$CLAUDE_EFFORT`-Env-Var verstehen und in Hooks nutzen',
+      'Quality-Gates über die vier Stufen `low`, `medium`, `high`, `xhigh` skalieren',
+      'Das Antipattern "Effort als Boolean" vermeiden',
+      'JSON-Hook-Definitionen mit `${effort.level}` als Template-Variable schreiben',
+      'Das Pattern mit MCP-Tool-Hooks und `hard_deny` kombinieren',
+    ],
+    content: [
+      {
+        type: 'heading',
+        content: '🎯 Warum Effort-aware Hooks?',
+      },
+      {
+        type: 'text',
+        content:
+          'Hooks sind in Claude Code das primäre Mittel für Determinismus: was zu 100% passieren muss, kommt in einen Hook, nicht in den Prompt. Bisher waren Hooks aber **statisch** — du konntest deinen PreToolUse-Hook nicht unterscheiden zwischen "User experimentiert mit `effort: low`" und "User fährt eine kritische Migration mit `effort: high`". Das hat dazu geführt, dass viele Hooks entweder zu schwer waren (jeder Edit triggert Full-Test-Suite) oder zu leicht (kein echter Quality-Gate).\n\nMit Claude Code 2.1.133 bekommen Hooks **Effort-Sichtbarkeit**: Der Env-Var `$CLAUDE_EFFORT` enthält den aktuellen Level (`low`, `medium`, `high`, `xhigh`), und der JSON-Hook-Input enthält `effort.level` als Feld. Damit kannst du dieselbe Codebase mit **unterschiedlichen Quality-Gates pro Effort-Level** fahren, ohne separate Hook-Configs zu pflegen.',
+      },
+      {
+        type: 'highlight',
+        title: '💡 Die neue Hook-Frage',
+        content:
+          'Nicht mehr "soll dieser Hook laufen?" sondern **"wie aufwendig soll dieser Hook bei diesem Effort laufen?"**',
+      },
+      {
+        type: 'heading',
+        content: '🪜 Die vier Effort-Levels',
+      },
+      {
+        type: 'text',
+        content:
+          'Es gibt nicht zwei (off/on) sondern **vier** Effort-Levels in Claude Code, und Effort-aware Hooks sollten alle vier respektieren — sonst missbrauchst du das Feature als Boolean. Hier die Mapping-Empfehlung für eine typische TypeScript-Codebase:',
+      },
+      {
+        type: 'code',
+        language: 'markdown',
+        content: `| Effort-Level | Use-Case                              | Quality-Gates                        |
+|--------------|---------------------------------------|--------------------------------------|
+| \`low\`        | Experimentieren, Prototyping          | Nur Lint                             |
+| \`medium\`     | Standard-Entwicklung                  | Lint + Type-Check                    |
+| \`high\`       | Pre-Commit, Pre-Push, wichtige Edits  | Lint + Type-Check + Unit-Tests       |
+| \`xhigh\`      | Mission-critical, vor Production-Push | Lint + Type-Check + Tests + E2E      |`,
+      },
+      {
+        type: 'text',
+        content:
+          '`xhigh` ist neu mit Opus 4.7 (April 2026) und repräsentiert das tiefste Reasoning-Level. Sinnvoll ist es, dass auch deine Hooks die volle Quality-Suite bei `xhigh` fahren — das Modell investiert maximal in die Architektur, deine Hooks sollten entsprechend prüfen.',
+      },
+      {
+        type: 'heading',
+        content: '🛠️ Bash-Hook mit case-Statement',
+      },
+      {
+        type: 'text',
+        content:
+          'Der einfachste Weg ist ein Bash-Hook mit `case`-Statement. Das ist deterministisch, leicht zu lesen, und funktioniert mit allen Shells:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// ~/.claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \\"$CLAUDE_EFFORT\\" in low) npm run lint --silent ;; medium) npm run lint && npm run typecheck ;; high) npm run lint && npm run typecheck && npm test --silent ;; xhigh) npm run lint && npm run typecheck && npm test && npm run e2e ;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'text',
+        content:
+          'Das `case`-Statement ist mehrzeiliger besser lesbar. Wenn du den Hook auslagerst (was sich für solche Größen lohnt), wird es noch übersichtlicher:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `#!/bin/bash
+# ~/.claude/scripts/effort-aware-pretooluse.sh
+
+set -euo pipefail
+
+case "\${CLAUDE_EFFORT:-medium}" in
+  low)
+    echo "⚡ Effort=low — nur Lint"
+    npm run lint --silent
+    ;;
+  medium)
+    echo "🔍 Effort=medium — Lint + Type-Check"
+    npm run lint
+    npm run typecheck
+    ;;
+  high)
+    echo "🛡️ Effort=high — Lint + Type-Check + Tests"
+    npm run lint
+    npm run typecheck
+    npm test --silent
+    ;;
+  xhigh)
+    echo "🚨 Effort=xhigh — Full Quality-Suite"
+    npm run lint
+    npm run typecheck
+    npm test
+    npm run e2e
+    ;;
+  *)
+    echo "Unknown effort: \${CLAUDE_EFFORT}" >&2
+    exit 1
+    ;;
+esac`,
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// ~/.claude/settings.json — Hook ruft das ausgelagerte Skript
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/effort-aware-pretooluse.sh"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'heading',
+        content: '📦 JSON-Input mit `${effort.level}`',
+      },
+      {
+        type: 'text',
+        content:
+          'Wenn du strukturierten Zugriff brauchst (z.B. weil dein Hook ein Python/Node-Skript ist, das JSON parst), nutze `${effort.level}` als Template-Variable in der Hook-Definition. Das ist deklarativer als die Env-Var:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// ~/.claude/settings.json — JSON-Input mit Template-Variable
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python ~/.claude/scripts/quality_gate.py --effort \${effort.level} --file \${file_path}"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'code',
+        language: 'python',
+        content: `#!/usr/bin/env python3
+# ~/.claude/scripts/quality_gate.py
+import argparse
+import subprocess
+import sys
+
+GATES = {
+    "low":    ["npm run lint --silent"],
+    "medium": ["npm run lint", "npm run typecheck"],
+    "high":   ["npm run lint", "npm run typecheck", "npm test --silent"],
+    "xhigh":  ["npm run lint", "npm run typecheck", "npm test", "npm run e2e"],
+}
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--effort", default="medium")
+    parser.add_argument("--file", default=None)
+    args = parser.parse_args()
+
+    gates = GATES.get(args.effort, GATES["medium"])
+    print(f"🔍 Effort={args.effort} — running {len(gates)} gate(s)")
+    for cmd in gates:
+        result = subprocess.run(cmd, shell=True)
+        if result.returncode != 0:
+            sys.exit(result.returncode)
+
+if __name__ == "__main__":
+    main()`,
+      },
+      {
+        type: 'heading',
+        content: '🚫 Antipattern: Effort als Boolean',
+      },
+      {
+        type: 'text',
+        content:
+          'Das häufigste Antipattern bei Effort-aware Hooks ist, alle Levels in zwei zu kollabieren: "low/medium → leicht, high/xhigh → schwer". Das wirft die feine Granularität weg, die Effort-Levels bieten. Wenn du nur zwei Verhalten hast, brauchst du keine vier Levels — dann nutze einen anderen Trigger. Hier das Antipattern:',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# ❌ ANTIPATTERN: Effort als Boolean
+if [ "$CLAUDE_EFFORT" = "high" ] || [ "$CLAUDE_EFFORT" = "xhigh" ]; then
+  npm run lint && npm run typecheck && npm test
+else
+  npm run lint
+fi
+
+# Problem: medium ist genau wie low, xhigh genau wie high.
+# Du hast die Granularitaet von 4 Stufen weggeworfen.
+
+# ✅ KORREKT: Vier Stufen, vier Gates
+case "$CLAUDE_EFFORT" in
+  low)    npm run lint --silent ;;
+  medium) npm run lint && npm run typecheck ;;
+  high)   npm run lint && npm run typecheck && npm test ;;
+  xhigh)  npm run lint && npm run typecheck && npm test && npm run e2e ;;
+esac`,
+      },
+      {
+        type: 'highlight',
+        title: '⚠️ Antipattern erkennen',
+        content:
+          'Wenn dein Effort-Hook nur eine `if`-Bedingung hat, ist es kein effort-aware Hook — es ist ein effort-binäres. Refaktoriere zu `case` mit vier Branches.',
+      },
+      {
+        type: 'heading',
+        content: '🤝 Kombination mit MCP-Tool-Hooks',
+      },
+      {
+        type: 'text',
+        content:
+          'Effort-aware Hooks kombinieren sich gut mit den MCP-Tool-Hooks aus 2.1.137. Du kannst z.B. bei `high`/`xhigh` zusätzlich eine Slack-Notification senden — der Hook-Array unterstützt mehrere Hooks, jeder mit eigenem Type:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// PostToolUse — Effort-aware Quality + Slack-Notification
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/effort-aware-posttool.sh"
+          },
+          {
+            "type": "mcp_tool",
+            "server": "slack",
+            "tool": "post_message",
+            "args": {
+              "channel": "#claude-diffs",
+              "text": "Effort=\${effort.level} | Edit done in \${file_path}"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'heading',
+        content: '🛡️ Kombination mit hard_deny',
+      },
+      {
+        type: 'text',
+        content:
+          'Wenn du Effort-aware Hooks in einer Multi-User-Umgebung deployst (Workshop, Team), denk an `autoMode.hard_deny`. Effort-aware Hooks **erlauben** Operations dynamisch — `hard_deny` **blockiert** sie unbedingt. Beides zusammen gibt dir Determinismus von zwei Richtungen:',
+      },
+      {
+        type: 'code',
+        language: 'json',
+        content: `// Vollstaendige effort-aware Settings mit Sicherheits-Notbremse
+{
+  "autoMode": {
+    "hard_deny": [
+      "Bash(rm -rf *)",
+      "Bash(git push --force *)",
+      "Bash(git reset --hard *)",
+      "Bash(sudo *)"
+    ],
+    "allow": [
+      "$defaults",
+      "Bash(npm run lint*)",
+      "Bash(npm run typecheck*)",
+      "Bash(npm test*)",
+      "Bash(npm run e2e*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/scripts/effort-aware-pretooluse.sh"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+      },
+      {
+        type: 'text',
+        content:
+          'Das ist das Production-Setup, das die Mai-2026-Best-Practices empfehlen: Effort-aware Quality-Gates + `hard_deny` als Notbremse + `$defaults` für minimale Config-Overhead. Damit hast du einen Auto-Mode, der sicher genug ist für Multi-User-Setups, und flexibel genug für unterschiedliche Aufgaben.',
+      },
+      {
+        type: 'heading',
+        content: '🧪 Mini-Hands-On: Effort-aware Hook bauen',
+      },
+      {
+        type: 'code',
+        language: 'bash',
+        content: `# 1. Skript-Verzeichnis anlegen
+mkdir -p ~/.claude/scripts
+
+# 2. Effort-aware Hook-Skript erstellen
+cat > ~/.claude/scripts/effort-quality-gate.sh <<'BASH'
+#!/bin/bash
+set -euo pipefail
+case "\${CLAUDE_EFFORT:-medium}" in
+  low)    echo "[low] Lint only" && npm run lint --silent ;;
+  medium) echo "[medium] Lint + Type-Check" && npm run lint && npm run typecheck ;;
+  high)   echo "[high] Lint + Type-Check + Tests" && npm run lint && npm run typecheck && npm test --silent ;;
+  xhigh)  echo "[xhigh] Full Suite" && npm run lint && npm run typecheck && npm test && npm run e2e ;;
+esac
+BASH
+chmod +x ~/.claude/scripts/effort-quality-gate.sh
+
+# 3. Hook in Settings registrieren
+cat > ~/.claude/settings.json <<'JSON'
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          { "type": "command", "command": "bash ~/.claude/scripts/effort-quality-gate.sh" }
+        ]
+      }
+    ]
+  }
+}
+JSON
+
+# 4. Im Claude Code: Effort auf high setzen
+> /effort high
+
+# 5. Edit triggern — sollte Lint + Type-Check + Tests laufen lassen
+> Bearbeite src/utils/helpers.ts und fuege eine debug-Funktion hinzu`,
+      },
+      {
+        type: 'heading',
+        content: '📐 Cheatsheet: Effort-aware Hook-Patterns',
+      },
+      {
+        type: 'list',
+        content: `- **PreToolUse Lint/Type-Check**: Skaliere über alle 4 Levels, default = medium
+- **PostToolUse Notifications**: nur bei \`high\`/\`xhigh\` Slack-Posts triggern
+- **SessionStart Banner**: gib zu Beginn der Session den aktuellen Effort aus
+- **Stop-Hook Final-Check**: bei \`xhigh\` zusätzlich ein \`git diff --check\` triggern
+- **Allow-Liste mit \`$defaults\` + Effort-Conditioning**: kombiniere Auto-Mode und Effort
+- **Anti-Pattern-Check**: wenn dein Hook nur if/else hat → refactor zu case/switch`,
+      },
+      {
+        type: 'highlight',
+        title: '🎓 Zusammenfassung',
+        content: `✅ \`$CLAUDE_EFFORT\` ist seit Claude Code 2.1.133 in Hooks verfügbar
+✅ Vier Levels: \`low\`, \`medium\`, \`high\`, \`xhigh\` (xhigh seit Opus 4.7)
+✅ Mappe Levels auf gestaffelte Quality-Gates: Lint → Type-Check → Tests → E2E
+✅ Antipattern: Effort als Boolean missbrauchen
+✅ JSON-Input erlaubt \`\${effort.level}\` als strukturierte Template-Variable
+✅ Kombinierbar mit MCP-Tool-Hooks (2.1.137) für Effort-getriggerte Notifications
+✅ Production-Setup: \`hard_deny\` + \`$defaults\` + Effort-aware Hooks zusammen`,
+      },
+    ],
+  },
 ];

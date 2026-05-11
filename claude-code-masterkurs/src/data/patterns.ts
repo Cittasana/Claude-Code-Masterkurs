@@ -475,6 +475,744 @@ ci(github): add lint job
     lastUpdate: true,
     bannerLabel: 'Offizielle Docs',
   },
+  // ========== Neue Best Practices (KW12/2026) ==========
+  {
+    id: 'p-plan-first',
+    title: 'Plan-First Development (4-Schritt-Prozess)',
+    description: 'Community #1 Best Practice: Erst planen lassen, dann reviewen, dann implementieren. Reduziert Iterations-Schleifen um 40-60%.',
+    category: 'Workflows',
+    author: 'Claude Code Community',
+    snippet: `# Plan-First Development (Community Best Practice #1)
+
+# Schritt 1: Plan anfordern — KEIN Code
+"Analysiere die Anforderung und erstelle einen Plan.
+ Schreibe KEINEN Code."
+
+# Schritt 2: Plan reviewen und verfeinern
+"Aendere Schritt 3: Statt eines Monolithen,
+ nutze drei separate Funktionen."
+
+# Schritt 3: Gruenes Licht geben
+"Plan sieht gut aus. Implementiere jetzt."
+
+# Schritt 4: Review mit /plan oder Shift+Tab 2x
+/plan  # Startet Plan Mode
+# Oder: Shift+Tab, Shift+Tab (Toggle Plan Mode)
+
+# Warum? Reduziert Fehler um 40-60%, weil das richtige
+# Problem in der richtigen Reihenfolge geloest wird.`,
+    language: 'bash',
+    tags: ['plan-first', 'best-practice', 'workflow', '2026'],
+    useCase: 'Jede nicht-triviale Aufgabe — besonders Refactorings und neue Features',
+    lastUpdate: true,
+    bannerLabel: 'Plan-First Development',
+  },
+  {
+    id: 'p-error-reporting',
+    title: 'Vollständige Fehlermeldungen liefern',
+    description: 'Komplette Stack-Traces und Reproduzier-Schritte verbessern die diagnostische Genauigkeit um ~75%.',
+    category: 'Prompts',
+    author: 'Claude Code Community',
+    snippet: `# FALSCH ❌
+"Der Login funktioniert nicht"
+
+# RICHTIG ✅
+"Hier ist der komplette Error:
+TypeError: Cannot read properties of undefined (reading 'token')
+    at AuthService.validateSession (src/auth/service.ts:47:23)
+    at async LoginHandler.handle (src/handlers/login.ts:12:5)
+
+Reproduzier-Schritte:
+1. User klickt Login
+2. Email/Passwort eingeben
+3. Submit → Fehler"
+
+# Warum? Vollstaendige Stack-Traces verbessern die
+# diagnostische Genauigkeit um ~75%. Ein Summary reicht nicht.`,
+    language: 'bash',
+    tags: ['debugging', 'fehler', 'stack-trace', 'best-practice', '2026'],
+    useCase: 'Jeden Bug-Report an Claude — immer den kompletten Error mitgeben',
+    lastUpdate: true,
+    bannerLabel: 'Error Reporting',
+  },
+  {
+    id: 'p-session-organisation',
+    title: 'Session-Organisation mit /color + /name',
+    description: 'Nutze /color und /name zusammen um parallele Sessions visuell zu unterscheiden.',
+    category: 'Workflows',
+    author: 'Claude Code Community',
+    snippet: `# Session 1: Frontend
+/name "Frontend Auth"
+/color blue
+
+# Session 2: Backend
+/name "Backend API"
+/color green
+
+# Session 3: Tests
+/name "E2E Tests"
+/color red
+
+# Sessions auflisten und fortsetzen:
+claude --resume
+# → Zeigt benannte Sessions mit Farben
+
+# Tipp: Kombiniere mit /resume fuer nahtloses
+# Wechseln zwischen Aufgaben`,
+    language: 'bash',
+    tags: ['session', 'color', 'name', 'organisation', '2026'],
+    useCase: 'Bei paralleler Arbeit an mehreren Features oder Projekten',
+    lastUpdate: true,
+    bannerLabel: 'Session-Organisation',
+  },
+  // ========== Neue Best Practices (KW13/2026 — Boris Cherny) ==========
+  {
+    id: 'p-boris-cherny-claudemd',
+    title: 'Boris Chernys 100-Zeilen CLAUDE.md',
+    description: 'Der Creator von Claude Code hält seine CLAUDE.md auf ~2.500 Tokens (~100 Zeilen). Weniger ist mehr — Qualität schlägt Quantität.',
+    category: 'CLAUDE.md',
+    author: 'Boris Cherny (Claude Code Creator)',
+    snippet: `# Boris Chernys CLAUDE.md Philosophie (Quelle: mindwiredai.com, 25.03.2026)
+# Sein Kernprinzip: ~100 Zeilen, ~2.500 Tokens — nicht mehr.
+
+# WARUM weniger besser ist:
+# 1. CLAUDE.md wird bei JEDER Nachricht geladen
+# 2. Je laenger → desto mehr Token-Overhead
+# 3. Je laenger → desto unschaerfer der Fokus
+
+# WAS reingehoert (Boris' Top 5):
+# ✅ Projekt-Typ und Tech-Stack (5-10 Zeilen)
+# ✅ Kern-Konventionen — max 10 Regeln (20-30 Zeilen)
+# ✅ Haeufige Fehler die Claude macht (10-15 Zeilen)
+# ✅ Links zu Detail-Docs (nicht die Docs selbst!)
+# ✅ Build/Test/Lint Befehle (5-10 Zeilen)
+
+# WAS NICHT reingehoert:
+# ❌ Jede API-Route und jedes Schema
+# ❌ Ausfuehrliche Architektur-Beschreibungen
+# ❌ Copy-Paste aus README oder Docs
+# ❌ Alles was >3x pro Woche aendert`,
+    language: 'bash',
+    tags: ['claude-md', 'best-practice', 'boris-cherny', 'creator', '2026'],
+    useCase: 'Jedes Projekt — halte deine CLAUDE.md schlank und fokussiert',
+    lastUpdate: true,
+    bannerLabel: 'Creator Best Practice',
+  },
+  {
+    id: 'p-zwei-claude-methode',
+    title: 'Zwei-Claude-Methode (Creator Workflow)',
+    description: 'Boris Chernys Profi-Workflow: Ein Claude plant, ein zweiter reviewt als Staff Engineer. Reduziert Fehler signifikant.',
+    category: 'Workflows',
+    author: 'Boris Cherny (Claude Code Creator)',
+    snippet: `# Die Zwei-Claude-Methode (Boris Cherny, 25.03.2026)
+# Der Creator von Claude Code nutzt diesen Workflow taeglich.
+
+# SESSION 1: Der Planer
+# Aufgabe: "Erstelle einen Plan fuer [Feature]. Kein Code."
+# → Claude erstellt detaillierten Implementierungs-Plan
+# → Du reviewst und verfeinerst den Plan
+# → Erst nach Freigabe: "Implementiere jetzt."
+
+# SESSION 2: Der Staff Engineer (parallel)
+# Aufgabe: "Reviewe diesen Code als Staff Engineer.
+#           Fokus: Architektur, Edge Cases, Sicherheit."
+# → Claude reviewt den Output von Session 1
+# → Findet Fehler die Session 1 uebersehen hat
+
+# WARUM das funktioniert:
+# - Planer und Reviewer haben verschiedene "Perspektiven"
+# - Der Reviewer hat frischen Kontext (kein Bias vom Planen)
+# - Simuliert echtes Pair-Programming mit Code Review
+
+# Boris' Setup: 10-15 parallele Sessions gleichzeitig
+# Tipp: Nutze /name und /color fuer Organisation`,
+    language: 'bash',
+    tags: ['zwei-claude', 'pair-programming', 'workflow', 'boris-cherny', '2026'],
+    useCase: 'Komplexe Features und Refactorings — wenn Qualität wichtiger als Geschwindigkeit ist',
+    lastUpdate: true,
+    bannerLabel: 'Creator Workflow',
+  },
+  {
+    id: 'p-verification-first',
+    title: 'Verification-First Prompting (Boris Cherny Method)',
+    description: 'Gib Claude Verifikationskriterien mit — laut Boris Cherny (Claude Code Creator) der grösste einzelne Qualitäts-Hebel. Liefert 2-3x bessere Ergebnisse.',
+    category: 'Prompts',
+    author: 'Boris Cherny (Claude Code Creator)',
+    snippet: `# Verification-First Prompting
+# Laut Boris Cherny (Creator of Claude Code):
+# "Giving Claude verification criteria is the single
+#  highest-leverage practice. 2-3x quality improvement."
+
+# SCHLECHT (kein Verifikationskriterium):
+"Implement user authentication"
+
+# GUT (mit Verifikationskriterien):
+"Implement user authentication.
+
+Verification:
+- npm test passes (all 42 tests green)
+- Login with test@example.com + password123 works
+- Invalid credentials return 401 with error JSON
+- /dashboard route redirects to /login when unauthenticated
+- Password reset email is sent within 5 seconds"
+
+# Warum das funktioniert:
+# - Claude hat ein konkretes Ziel statt einer vagen Aufgabe
+# - Verifikation zwingt Claude zur Vollstaendigkeit
+# - Testbare Kriterien verhindern "fast fertig"-Outputs
+# - Kombinierbar mit Hooks fuer automatische Validation
+
+# Faustregel: Wenn du es selbst nicht testen kannst,
+# kann Claude es auch nicht korrekt implementieren.`,
+    language: 'bash',
+    tags: ['verification', 'prompting', 'qualitaet', 'boris-cherny', '2026'],
+    useCase: 'Alle komplexen Implementierungsaufgaben — besonders wenn Korrektheit wichtig ist',
+    lastUpdate: true,
+    bannerLabel: '2-3x Qualität',
+  },
+  {
+    id: 'p-multi-level-claudemd',
+    title: 'Multi-Level CLAUDE.md (Subfolder-Strategie)',
+    description: 'CLAUDE.md nicht nur im Root, sondern in jedem Subfolder — Claude merged diese automatisch. Community-Konsens 2026: "Genauso wichtig wie .gitignore".',
+    category: 'CLAUDE.md',
+    author: 'Claude Code Masterkurs',
+    snippet: `# Multi-Level CLAUDE.md (Community Best Practice 2026)
+# CLAUDE.md ist genauso wichtig wie .gitignore.
+# Claude Code merged Root + Subfolder-CLAUDE.md automatisch.
+
+projekt/
+├── CLAUDE.md           # Root: Projekt-Overview, Tech-Stack, globale Regeln
+├── frontend/
+│   └── CLAUDE.md       # Frontend-spezifisch: React-Patterns, Tailwind-Conventions
+├── backend/
+│   └── CLAUDE.md       # Backend-spezifisch: API-Design, DB-Conventions, Auth-Patterns
+└── .github/
+    └── CLAUDE.md       # CI/CD-spezifische Anweisungen, Deploy-Checklisten
+
+# Root CLAUDE.md (kurz halten, max 100 Zeilen):
+## Tech Stack
+- Frontend: React 19, TypeScript, Tailwind
+- Backend: Node.js, Prisma, PostgreSQL
+- Deploy: Vercel (Frontend), Railway (Backend)
+
+# frontend/CLAUDE.md (spezifisch):
+## React Conventions
+- Immer React.memo fuer Listen-Items
+- State mit Zustand (nicht Redux)
+- Komponenten in features/ nicht components/
+
+# Warum Sub-CLAUDE.md?
+# - Claude bekommt kontext-relevante Regeln je nach Arbeitsbereich
+# - Weniger Kontext-Noise als alles in Root
+# - Team kann Sub-CLAUDEs separat reviewen`,
+    language: 'bash',
+    tags: ['claudemd', 'subfolder', 'kontext', 'team', '2026'],
+    useCase: 'Alle Projekte mit mehr als einem Verzeichnis — besonders Monorepos und Full-Stack-Projekte',
+    lastUpdate: true,
+    bannerLabel: 'Community Best Practice 2026',
+  },
+  {
+    id: 'p-hooks-defer',
+    title: 'Hooks Defer Pattern (Human-in-the-Loop)',
+    description: 'Exit 3 pausiert headless Agents bei kritischen Operationen und wartet auf manuelle Freigabe via --resume. Das sicherste Pattern für autonome Agents.',
+    category: 'Workflows',
+    author: 'Claude Code Masterkurs',
+    snippet: `#!/bin/bash
+# PreToolUse Hook: Defer-Pattern fuer headless Agents
+# Pausiert Session bei gefaehrlichen Operationen (Exit 3)
+# und wartet auf manuelle Freigabe via --resume
+
+# Exit-Codes im Ueberblick:
+# Exit 0 = Aktion erlauben
+# Exit 2 = Aktion blockieren (Claude bekommt Fehlermeldung)
+# Exit 3 = Defer: Session pausiert, wartet auf --resume (NEU)
+
+INPUT=$(cat)
+COMMAND=$(echo "$INPUT" | jq -r '.tool_input.command // empty')
+
+# Kritische Operationen → defer statt block
+CRITICAL_OPS=("rm -rf" "DROP TABLE" "kubectl delete" "terraform destroy" "git push --force")
+
+for op in "\${CRITICAL_OPS[@]}"; do
+  if [[ "$COMMAND" == *"$op"* ]]; then
+    # Optional: Benachrichtigung an Operator senden
+    # curl -s -X POST "$SLACK_WEBHOOK" -d '{"text":"Agent wartet auf Freigabe"}'
+    echo "DEFER: Kritische Operation erkannt: $op — wartet auf --resume"
+    exit 3  # Session pausiert
+  fi
+done
+
+exit 0
+
+# ─────────────────────────────────
+# SESSION FORTSETZEN nach Pruefung:
+# claude -p --resume SESSION_ID
+# ─────────────────────────────────
+
+# In settings.json registrieren:
+# { "hooks": { "PreToolUse": [{ "matcher": "Bash",
+#   "hooks": [{"type": "command", "command": ".claude/hooks/defer-critical.sh"}]}]}}`,
+    language: 'bash',
+    tags: ['hooks', 'defer', 'sicherheit', 'headless', 'human-in-the-loop', '2026'],
+    useCase: 'Autonome headless Agents die kritische Operationen (Deploy, DB-Änderungen) durchführen',
+    lastUpdate: false,
+    bannerLabel: 'Safety Pattern',
+  },
+  {
+    id: 'p-monitor-event-driven',
+    title: 'Event-Driven Background Monitoring (statt Polling)',
+    description: 'Nutzt das Monitor Tool um Build-, Test- oder Dev-Server-Output als Event-Stream zu konsumieren — Claude reagiert nur auf echte Events statt teurer Polling-Loops.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Anti-Pattern: Polling mit BashOutput
+# while true; do BashOutput; sleep 5; done
+# → Verbrennt Tokens bei jedem Roundtrip
+
+# Pattern: Event-Driven mit Monitor
+Monitor("npm run dev",
+  reason: "Watch dev server for compile errors during refactor",
+  until: "Error|FAIL|compiled successfully")
+
+# Multi-Stream Pattern für CI-Pipeline
+Monitor("pytest tests/ -v --tb=short",
+  reason: "Catch first failing test during migration",
+  until: "FAILED|ERROR|passed")
+
+# Hook-Kombination für auto-Reaktion:
+# In settings.json:
+# {
+#   "hooks": {
+#     "PostToolUse": [{
+#       "matcher": "Monitor",
+#       "hooks": [{"type": "command",
+#         "command": ".claude/hooks/notify-on-fail.sh"}]
+#     }]
+#   }
+# }`,
+    language: 'bash',
+    tags: ['monitor', 'event-driven', 'background', 'polling', 'token-saving', '2026'],
+    useCase: 'Lange Build/Test/Dev-Server-Prozesse beobachten ohne Token-teures Polling',
+    lastUpdate: true,
+    bannerLabel: 'Neu: April 2026',
+  },
+  {
+    id: 'p-ultraplan-flow',
+    title: 'Ultraplan-First für komplexe Refactors',
+    description: 'Nutzt /ultraplan um Plan-Phase in Cloud-Container auszulagern, reviewt im Browser-Editor und teleportiert dann zurück ins Terminal für Ausführung.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Schritt 1: Ultraplan starten — Hauptkontext bleibt frei
+/ultraplan migrate the auth service from session-based to JWT-based authentication
+
+# Schritt 2: Im Browser-Editor (claude.ai/code)
+# - Outline-Sidebar nutzen für Navigation
+# - Inline-Comments wie bei PR-Review
+# - Reaktionen für quick-Approval einzelner Steps
+# - Bei Bedarf: Refinement-Prompt im Editor
+
+# Schritt 3: Approval — zwei Optionen
+# A) Cloud-Execution: Claude führt Plan komplett in der Cloud aus
+# B) "Teleport back to terminal": Plan landet lokal,
+#    Ausführung mit normalem claude im Terminal
+
+# Pattern für Plan-Refinement aus lokalem /plan:
+/plan implement Stripe webhook signature verification
+# Im Plan-Dialog: "No, refine with Ultraplan"
+# → Plan wandert in die Cloud, du bekommst Web-Editor
+
+# Decision-Tree:
+# Plan < 5 Min Schreibzeit? → lokales /plan
+# Plan > 10 Min oder mehrere Stakeholder? → /ultraplan
+# Architektur-Entscheidung mit Review-Bedarf? → /ultraplan`,
+    language: 'bash',
+    tags: ['ultraplan', 'planning', 'cloud', 'review', 'workflow', '2026'],
+    useCase: 'Komplexe Refactors oder Architektur-Migrationen mit Review-Bedarf',
+    lastUpdate: true,
+    bannerLabel: 'Neu: April 2026',
+  },
+  {
+    id: 'p-task-budget-loop',
+    title: 'Task-Budget für autonome Agent-Loops',
+    description: 'Setzt mit Opus 4.7 Token-Budgets pro Task — verhindert Runaway-Kosten in headless Pipelines und nächtlichen Agent-Jobs.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `#!/bin/bash
+# Nightly autonomous refactor — mit Sicherheitsnetz
+
+# Anti-Pattern: kein Budget — Agent kann mehrere $$ verbrennen
+# claude -p "Migrate all class components to hooks"
+
+# Pattern: Task-Budget setzt harte Token-Grenze
+claude --model claude-opus-4-7 \\
+  --task-budget 100000 \\
+  --effort high \\
+  -p "Migrate all class components to hooks. Stop at first 5 components, commit, then continue."
+
+# Maximum-Damage-Berechnung:
+# 100K Output Tokens × $25/M = $2.50 max
+# 100K Input Tokens × $5/M = $0.50 max
+# → Garantierter Cap: ~$3 pro Run
+
+# Für CI/CD-Pipelines: IMMER Budget setzen
+# .github/workflows/nightly-refactor.yml:
+# - run: |
+#     claude --task-budget 50000 \\
+#       --model claude-opus-4-7 \\
+#       -p "Run weekly cleanup tasks per CLAUDE.md"
+
+# Budget-Faustregeln:
+# Quick Fix:           5,000 Tokens
+# Single-File Refactor: 20,000 Tokens
+# Multi-File Refactor:  50,000-100,000 Tokens
+# Architecture Design:  150,000-200,000 Tokens (mit xhigh)`,
+    language: 'bash',
+    tags: ['task-budget', 'opus-4-7', 'cost-control', 'autonomous', 'ci-cd', '2026'],
+    useCase: 'Headless/nächtliche Agent-Jobs mit garantierter Kosten-Obergrenze',
+    lastUpdate: true,
+    bannerLabel: 'Neu: April 2026',
+  },
+  {
+    id: 'p-ultrareview-ci-gate',
+    title: 'Ultrareview als CI-Gate',
+    description: 'GitHub-Action-Template, das `claude ultrareview` als PR-Gate einsetzt — paralleler Multi-Agent-Review mit Skill-Kombination.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# .github/workflows/claude-review.yml
+name: Claude Ultrareview
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Claude Code
+        run: npm install -g @anthropic-ai/claude-code
+
+      - name: Run Ultrareview
+        env:
+          ANTHROPIC_API_KEY: \${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          claude ultrareview \${{ github.event.pull_request.html_url }} \\
+            --task-budget 80000 \\
+            --skill security-review \\
+            --skill code-review > review.md
+
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: review.md
+
+# Tipp: Mit --task-budget verhinderst du Runaway-Kosten,
+# wenn ein Agent in einer Schleife haengt.`,
+    language: 'yaml',
+    tags: ['ultrareview', 'ci-cd', 'github-actions', 'review', '2026'],
+    useCase: 'Automatische PR-Reviews mit Multi-Agent-Perspektive',
+    lastUpdate: true,
+    bannerLabel: 'Neu: April 2026',
+  },
+  {
+    id: 'p-managed-agents-bg',
+    title: 'Managed Agents für Background-Tasks',
+    description: 'Cloud-gehosteter Agent mit Memory-Beta — laeuft Tage durch, persistiert Fakten ueber Sessions, kein eigenes Hosting.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Python — Background-Agent fuer Inbox-Triage
+import anthropic
+import os
+
+client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
+
+# Session einmalig erstellen — Memory-Namespace persistiert
+session = client.agents.sessions.create(
+    name="inbox-triage",
+    model="claude-opus-4-7",
+    tools=[
+        {"type": "code_execution"},
+        {"type": "web_search"},
+    ],
+    memory={"enabled": True, "namespace": "user-cosmo-inbox"},
+)
+print(f"Session: {session.id}")
+
+# Daily-Run — Agent erinnert sich an Praeferenzen
+result = client.agents.sessions.run(
+    session.id,
+    input=(
+        "Pruefe meine Gmail-Inbox. Markiere wichtige "
+        "Mails (Kunden, Auftraege) als 'urgent'. "
+        "Beruecksichtige meine Triage-Praeferenzen aus "
+        "vorherigen Sessions."
+    ),
+)
+print(result.output)
+
+# TypeScript-Aequivalent:
+# const session = await client.agents.sessions.create({
+#   name: 'inbox-triage',
+#   model: 'claude-opus-4-7',
+#   memory: { enabled: true, namespace: 'user-cosmo-inbox' }
+# });`,
+    language: 'python',
+    tags: ['managed-agents', 'memory', 'background', 'python', '2026'],
+    useCase: 'Wiederkehrende Tasks (Triage, Recap, Recherche) ohne eigenes Hosting',
+    lastUpdate: true,
+    bannerLabel: 'Beta: April 2026',
+  },
+  {
+    id: 'p-rewind-vs-correct',
+    title: 'Kontext-Pollution vermeiden mit /rewind',
+    description: 'Wenn Claude in falsche Richtung laeuft, /rewind statt weiter zu prompten — Korrektur-Prompts machen den Context-Window-Schaden schlimmer.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Anti-Pattern (haeufig in Reddit-Postmortems):
+# Du: "Bau eine Pagination fuer /orders"
+# Claude: <baut etwas Falsches mit Cursor-Pagination>
+# Du: "Nein, ich wollte Offset-Pagination"
+# Claude: <baut Hybrid, der noch schlechter ist>
+# Du: "Nein, KEIN Cursor, NUR Offset"
+# Claude: <verwirrt, mischt beides>
+#
+# Problem: Jeder Korrektur-Prompt fuegt dem Context Window
+# widerspruechliche Anweisungen hinzu. Claude versucht, alles
+# zu reconcilen — Ergebnis: Pollution.
+
+# Pattern (seit 2.1.108 mit Alias /undo):
+/rewind            # Springt zum letzten User-Prompt vor dem Fehler
+# Dann sauber neu formulieren:
+"Bau Offset-basierte Pagination fuer /orders.
+ KEINE Cursor-Pagination.
+ page + pageSize Query-Params, max 100 Items."
+
+# Decision-Tree:
+# - Claude geht falschen Weg ueber 1-2 Schritte? → /rewind
+# - Claude hat 80% richtig, nur Detail falsch? → korrigieren
+# - Claude versteht den Kontext grundsaetzlich falsch? → /rewind
+# - Mehrere Topics in einer Session vermischt? → /clear
+#
+# Faustregel: /rewind ist guenstiger als die Token, die fuer
+# das Aufraeumen verschmutzten Kontextes draufgehen.`,
+    language: 'bash',
+    tags: ['rewind', 'undo', 'context-management', 'antipattern', '2026'],
+    useCase: 'Wenn Claude in falsche Richtung laeuft — sauberer Reset statt Korrektur-Spirale',
+    lastUpdate: true,
+    bannerLabel: 'Neu: April 2026',
+  },
+  {
+    id: 'p-compaction-60-rule',
+    title: 'Compaction-Hygiene: 60%-Regel + Pre-Compact-Brief',
+    description: 'Erfahrene Nutzer rufen /compact bei ~60% Context-Fuelle, nicht erst bei 95%. Vor jedem /compact ein expliziter Status-Brief.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Compaction-Hygiene 2026 — proaktiv statt reaktiv
+
+# 1. /context regelmaessig pruefen (alle 10-15 Nachrichten)
+/context
+
+# 2. Bei ~60% Auslastung: vor /compact einen expliziten Brief schreiben:
+"Wir debuggen 500-Error auf POST /api/orders.
+ Vermutung: Stripe-Webhook-Race zwischen payment_intent.succeeded und
+ unsere idempotency_key-Pruefung. Bisherige Versuche:
+ - Webhook-Logs gepruefty (timing inconsistent)
+ - DB-Locks ausgeschlossen
+ - Naechster Schritt: Idempotency-Key-Reuse-Window pruefen."
+
+# 3. JETZT erst /compact ausfuehren
+/compact
+
+# Warum: Ohne Brief vergisst der Modell-State nach Compaction
+# den offenen Fehler. Mit Brief bleibt der Debug-Kontext erhalten.
+
+# Anti-Patterns:
+# - Warten bis 95%: Auto-Compact loescht zu aggressiv
+# - Kein Brief: Modell weiss nach Compact nicht mehr, was offen ist
+# - Kitchen-Sink-Sessions: /clear ist guenstiger als Compact bei Topic-Wechsel
+# - 2-Correction-Regel: Nach 2x Korrektur fuer denselben Fehler → /clear`,
+    language: 'bash',
+    tags: ['compact', 'context-management', 'hygiene', '2026'],
+    useCase: 'Lange Debug-Sessions, Multi-Step-Implementierungen, alle Daily-Workflows',
+    lastUpdate: true,
+    bannerLabel: 'Neu: Mai 2026',
+  },
+  {
+    id: 'p-plugin-url-distribution',
+    title: 'Skill-Distribution via --plugin-url',
+    description: 'Plugins als GitHub-Release-ZIP veroeffentlichen — Teilnehmer aktivieren mit einem Befehl, ohne npm-Install.',
+    category: 'Skills',
+    author: 'CCM Community',
+    snippet: `# Plugin-Distribution ohne npm/Marketplace
+# Voraussetzung: Claude Code 2.1.129+
+
+# 1. Plugin-Verzeichnis als ZIP packen
+cd ~/code/cc-plugins/masterkurs-toolkit
+zip -r ../masterkurs-toolkit-v0.3.1.zip .
+
+# 2. Als GitHub-Release veroeffentlichen
+gh release create v0.3.1 ../masterkurs-toolkit-v0.3.1.zip \\
+  --title "Masterkurs Toolkit v0.3.1" \\
+  --notes "Enthaelt: lesson-runner, quiz-validator, slide-builder"
+
+# 3. URL teilen (Slack/Notion/Email)
+# https://github.com/cittasana/cc-plugins/releases/download/v0.3.1/masterkurs-toolkit-v0.3.1.zip
+
+# 4. Teilnehmer aktivieren mit einem Befehl (nur fuer diese Session!)
+claude --plugin-url https://github.com/cittasana/cc-plugins/releases/download/v0.3.1/masterkurs-toolkit-v0.3.1.zip
+
+# Warum stark: kein npm-Publish, keine Vertrauenskette,
+# keine globale Installation — perfekt fuer Workshops und experimentelle Plugins.
+
+# Sicherheits-Hinweis: nur URLs verwenden, denen du auch vertraust.
+# Plugin-ZIPs koennen Hooks und Bash-Scripts enthalten.`,
+    language: 'bash',
+    tags: ['plugins', 'distribution', 'workshop', 'plugin-url', '2026'],
+    useCase: 'Workshop-Setups, Kurs-eigene Toolkits, experimentelle Plugins ohne npm-Publish',
+    lastUpdate: true,
+    bannerLabel: 'Neu: Mai 2026',
+  },
+  {
+    id: 'p-session-id-audit',
+    title: 'Audit-Trail mit CLAUDE_CODE_SESSION_ID',
+    description: 'Hook + Bash-Tool teilen sich die Session-ID — Compliance-fertige SQLite-Audit-DB in 20 Zeilen.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `# Vollstaendiger Audit-Trail fuer Compliance-bewusste Teams
+# Voraussetzung: Claude Code 2.1.127+
+
+# 1. SQLite-DB einmalig anlegen
+sqlite3 ~/.claude/events.db <<SQL
+CREATE TABLE IF NOT EXISTS events (
+  session_id TEXT NOT NULL,
+  tool TEXT NOT NULL,
+  details TEXT,
+  ts DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_session ON events(session_id);
+SQL
+
+# 2. PostToolUse-Hook in ~/.claude/settings.json
+# Hook nutzt $CLAUDE_CODE_SESSION_ID (seit 2.1.127 in Bash-Subprozessen)
+# {
+#   "hooks": {
+#     "PostToolUse": [{
+#       "matcher": "Bash",
+#       "hooks": [{
+#         "type": "command",
+#         "command": "sqlite3 ~/.claude/events.db \\"INSERT INTO events(session_id, tool, details) VALUES('$CLAUDE_CODE_SESSION_ID', 'Bash', 'tool_call')\\""
+#       }]
+#     }]
+#   }
+# }
+
+# 3. Audit-Query fuer Compliance-Reports
+sqlite3 ~/.claude/events.db \\
+  "SELECT session_id, COUNT(*) FROM events GROUP BY session_id ORDER BY MIN(ts) DESC LIMIT 10;"`,
+    language: 'bash',
+    tags: ['hooks', 'audit', 'compliance', 'session-id', 'sqlite', '2026'],
+    useCase: 'Compliance-bewusste Teams, regulierte Branchen (Finanz/Health), interne Audit-Logs',
+    lastUpdate: true,
+    bannerLabel: 'Neu: Mai 2026',
+  },
+  {
+    id: 'p-effort-aware-hooks',
+    title: 'Effort-aware PreToolUse-Hook',
+    description: 'Skaliert Lint/Type-Check/Tests basierend auf $CLAUDE_EFFORT — leichte Sessions bleiben schnell, schwere Sessions bekommen volle Qualitäts-Gates.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `// ~/.claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "case \\"$CLAUDE_EFFORT\\" in low) npm run lint --silent ;; medium) npm run lint && npm run typecheck ;; high|xhigh) npm run lint && npm run typecheck && npm test ;; esac"
+          }
+        ]
+      }
+    ]
+  }
+}`,
+    language: 'json',
+    tags: ['hooks', 'effort', 'pre-tool-use', 'quality-gates', '2026'],
+    useCase: 'Multi-Effort-Workflows: schnelle Iteration bei low, harte Quality-Gates bei high/xhigh',
+    lastUpdate: true,
+    bannerLabel: 'Neu: 2.1.133',
+  },
+  {
+    id: 'p-mcp-tool-hook-slack',
+    title: 'PostToolUse → Slack via MCP-Tool-Hook',
+    description: 'Sendet bei jedem Edit/Write eine Diff-Notification in Slack — komplett ohne LLM-Roundtrip, deterministisch über MCP-Tool-Hook (2.1.137+).',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `// ~/.claude/settings.json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "mcp_tool",
+            "server": "slack",
+            "tool": "post_message",
+            "args": {
+              "channel": "#claude-diffs",
+              "text": "Claude bearbeitete \${file_path} (session \${session_id})"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}`,
+    language: 'json',
+    tags: ['hooks', 'mcp', 'slack', 'integration', 'audit', '2026'],
+    useCase: 'Teams, die Edit-Aktivität in Slack mitlesen wollen, ohne dass Claude im Prompt darüber nachdenken muss',
+    lastUpdate: true,
+    bannerLabel: 'Neu: 2.1.137',
+  },
+  {
+    id: 'p-advisor-haiku-opus',
+    title: 'Haiku-Executor + Opus-Advisor mit Budget-Cap',
+    description: 'Production-Pattern für Cost-Aware Multi-Model: Haiku 4.5 fährt die Conversation, Opus 4.7 wird nur bei schweren Reasoning-Blocks konsultiert — bis zu 85% Kostenersparnis.',
+    category: 'Workflows',
+    author: 'CCM Community',
+    snippet: `import anthropic
+
+client = anthropic.Anthropic()
+response = client.messages.create(
+    model="claude-haiku-4-5",   # guenstiger Executor
+    max_tokens=8192,
+    extra_headers={"anthropic-beta": "advisor-tool-2026-03-01"},
+    tools=[
+        {
+            "type": "advisor_20260301",
+            "name": "advisor",
+            "advisor_model": "claude-opus-4-7",   # teurer Berater
+            "max_advisor_spend_usd": 0.50         # harter Budget-Cap
+        }
+    ],
+    messages=[{
+        "role": "user",
+        "content": "Refactor auth/middleware.ts und plane Migration"
+    }]
+)
+# Haiku faehrt 80%+ der Conversation
+# Opus wird nur bei Architektur/Security/Edge-Cases konsultiert
+# Bei Budget-Erschoepfung laeuft Haiku solo weiter`,
+    language: 'python',
+    tags: ['api', 'advisor', 'multi-model', 'cost-optimization', 'agent-sdk', '2026'],
+    useCase: 'Pay-per-Token-Agents, in denen Latenz nicht kritisch ist, aber Qualität+Kosten optimiert werden müssen',
+    lastUpdate: true,
+    bannerLabel: 'Neu: 2026-05',
+  },
 ];
 
 /** Kategorien in fester Reihenfolge; nur solche, die mindestens ein Pattern haben. Bei neuem Update: neue Patterns in bestehende Kategorien mit lastUpdate: true. */

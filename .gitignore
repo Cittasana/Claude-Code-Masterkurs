@@ -1,0 +1,59 @@
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+**/.env.*.local
+!**/.env.example
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+dist/
+**/dist/
+.next/
+**/.next/
+build/
+**/build/
+*.tsbuildinfo
+
+# Vercel / Netlify
+.vercel/
+**/.vercel/
+.netlify/
+
+# OS junk
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.sw?
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Reports
+lighthouse-report.html
+stats.html
+
+# Large media — host externally (Vercel Blob / Mux / Bunny)
+claude-code-masterkurs/public/videos/
+
+# Prisma generated
+**/prisma/migrations/dev.db*
+
+# Caches
+.cache/
+.turbo/

@@ -342,6 +342,57 @@ const ContentBlock = ({
         );
       }
 
+      // Local MP4 — videoId is the path e.g. "/videos/lektion-01.mp4"
+      if (provider === 'local') {
+        return (
+          <div className="lesson-video-block my-4">
+            <div className="rounded-apple-lg overflow-hidden border border-apple-border/50 bg-apple-surface/30">
+              {block.title && (
+                <div className="px-4 py-3 bg-apple-bg/60 border-b border-apple-border/30 flex items-center gap-2">
+                  <Play size={16} className="text-apple-accent flex-shrink-0" />
+                  <span className="text-apple-text font-medium text-sm">{block.title}</span>
+                </div>
+              )}
+              <div className="relative aspect-video w-full bg-black">
+                <video
+                  src={videoId}
+                  controls
+                  className="absolute inset-0 h-full w-full"
+                  title={block.title ?? `Video ${blockIndex + 1}`}
+                  onEnded={() => lessonId !== undefined && markVideoWatched(lessonId, blockIndex)}
+                />
+              </div>
+              {block.content && (
+                <div className="px-4 py-3 border-t border-apple-border/30">
+                  <p className="text-apple-textSecondary text-sm leading-relaxed">
+                    {renderInlineText(block.content)}
+                  </p>
+                </div>
+              )}
+              {lessonId !== undefined && (
+                <div className="px-4 py-2.5 border-t border-apple-border/20 flex items-center justify-end">
+                  {watched ? (
+                    <span className="inline-flex items-center gap-1.5 text-apple-success text-xs">
+                      <CheckCircle2 size={14} />
+                      Als angesehen markiert
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => markVideoWatched(lessonId, blockIndex)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-apple-accent/10 text-apple-accent hover:bg-apple-accent/20 transition-colors"
+                    >
+                      <CheckCircle2 size={14} />
+                      Als angesehen markieren
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      }
+
       const embedUrl =
         provider === 'vimeo'
           ? `https://player.vimeo.com/video/${videoId}?badge=0`

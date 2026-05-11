@@ -6,7 +6,7 @@
 export const FREE_LESSON_LIMIT = 5;
 
 /** Total number of lessons in the course (updated dynamically via seed) */
-export const TOTAL_LESSONS = 32;
+export const TOTAL_LESSONS = 47;
 
 /** Subscription tiers and their accessible lesson ranges */
 export const LESSONS_CONFIG: Record<string, number[]> = {

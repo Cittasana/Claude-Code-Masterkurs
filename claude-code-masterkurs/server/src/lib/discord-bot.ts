@@ -311,7 +311,7 @@ async function handleProgressCommand(interaction: ChatInputCommandInteraction): 
 
   const progress = user.progress;
   const completedCount = progress?.lessonsCompleted?.length || 0;
-  const totalLessons = 32;
+  const totalLessons = 47;
   const percentage = Math.round((completedCount / totalLessons) * 100);
   const tier = user.subscription?.isLifetime
     ? 'Lifetime'

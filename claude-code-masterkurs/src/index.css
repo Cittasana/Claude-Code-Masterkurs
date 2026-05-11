@@ -563,5 +563,263 @@ code[class*="language-"] {
   .skeleton { animation: none; background: rgba(255, 255, 255, 0.06); }
 }
 
+/* ============================================================
+   SCROLL-MOTION-CRAFT primitives — Sources → Hub composition
+   (parallax-*, marquee, hub diagram, dataflow stripe, ticker-dot)
+   Zero JS animation libs. Pure CSS + SVG SMIL.
+   ============================================================ */
+
+/* Scroll-driven entry (modern browsers) */
+@supports (animation-timeline: view()) {
+  .smc-section-heading {
+    animation: parallax-float linear both;
+    animation-timeline: view();
+    animation-range: entry;
+  }
+  .smc-section-divider {
+    animation: parallax-divider-draw linear both;
+    animation-timeline: view();
+    animation-range: entry entry 60%;
+    transform-origin: center;
+  }
+  .smc-hub {
+    animation: parallax-scale-up linear both;
+    animation-timeline: view();
+    animation-range: entry entry 70%;
+  }
+  .smc-inline-quote {
+    animation: parallax-quote-rise linear both;
+    animation-timeline: view();
+    animation-range: entry entry 70%;
+  }
+  .smc-stat-value {
+    animation: parallax-scale-up linear both;
+    animation-timeline: view();
+    animation-range: entry 10% entry 80%;
+  }
+}
+@keyframes parallax-float        { 0% { transform: translateY(20px); opacity: 0 } to { transform: translateY(0); opacity: 1 } }
+@keyframes parallax-divider-draw { 0% { transform: scaleX(0) }                    to { transform: scaleX(1) } }
+@keyframes parallax-quote-rise   { 0% { opacity: .2; transform: translateY(16px) } to { opacity: 1; transform: translateY(0) } }
+@keyframes parallax-scale-up     { 0% { opacity: .2; transform: scale(.92) }      to { opacity: 1; transform: scale(1) } }
+
+/* SECTION HEADING (gradient text fill, white → muted) */
+.smc-section-heading {
+  background: linear-gradient(180deg, #ffffff 30%, #b8c0cf 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* SECTION DIVIDER (1 px gradient line, draws-in on scroll) */
+.smc-section-divider {
+  width: min(560px, 80%);
+  height: 1px;
+  margin: 28px auto 56px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 107, 26, 0.7),
+    transparent
+  );
+}
+
+/* HUB DIAGRAM — wires + animated dots + nodes */
+.smc-hub {
+  position: relative;
+  height: 360px;
+  margin: 0 auto 56px;
+  max-width: 920px;
+}
+.smc-hub svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.smc-dataflow-line {
+  fill: none;
+  stroke: rgba(255, 107, 26, 0.35);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 3;
+  animation: dataflow-flow 2s linear infinite;
+}
+@keyframes dataflow-flow { to { stroke-dashoffset: -14px } }
+
+.smc-dataflow-dot {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 6px rgba(255, 107, 26, 0.8));
+}
+
+.smc-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: var(--inner);
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  font-family: 'Geist Mono', monospace;
+  letter-spacing: 0.02em;
+}
+.smc-node.center {
+  padding: 16px 22px;
+  font-size: 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 107, 26, 0.18),
+    var(--inner)
+  );
+  border-color: rgba(255, 107, 26, 0.4);
+  box-shadow:
+    0 0 0 4px rgba(255, 107, 26, 0.12),
+    0 16px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  animation: hub-float 4s ease-in-out infinite;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+@keyframes hub-float {
+  0%, 100% { transform: translate(-50%, -50%) }
+  50%      { transform: translate(-50%, calc(-50% - 6px)) }
+}
+
+/* Node positions — 6 outer nodes around the central hub */
+.smc-n1 { left: 10%;  top: 14% }
+.smc-n2 { left: 90%;  top: 14% }
+.smc-n3 { left: 4%;   top: 50% }
+.smc-n4 { left: 96%;  top: 50% }
+.smc-n5 { left: 18%;  top: 86% }
+.smc-n6 { left: 82%;  top: 86% }
+.smc-nc { left: 50%;  top: 50% }
+
+/* MARQUEE — seamless infinite logo strip with side fade */
+.smc-marquee {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.smc-marquee-track {
+  display: flex;
+  gap: 40px;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+.smc-marquee:hover .smc-marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  0%  { transform: translate(0) }
+  to  { transform: translate(-50%) }
+}
+
+.smc-logo-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 1px solid var(--hairline);
+  background: var(--inner);
+  border-radius: 999px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  font-size: 14px;
+  font-family: 'Geist Mono', monospace;
+}
+.smc-logo-pill .smc-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+/* INLINE QUOTE with smart quotes */
+.smc-inline-quote {
+  margin: 56px auto 0;
+  max-width: 580px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.smc-inline-quote::before {
+  content: "\201C";
+  color: var(--accent);
+  margin-right: 4px;
+}
+.smc-inline-quote::after {
+  content: "\201D";
+  color: var(--accent);
+  margin-left: 4px;
+}
+
+/* STAT counters */
+.smc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 720px;
+  margin: 56px auto 0;
+}
+.smc-stat {
+  text-align: center;
+}
+.smc-stat-value {
+  display: block;
+  font-size: clamp(34px, 4.4vw, 48px);
+  font-weight: 600;
+  background: linear-gradient(180deg, #ffffff, #aab2c2);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  letter-spacing: -0.02em;
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+}
+.smc-stat-label {
+  color: var(--muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: 'Geist Mono', monospace;
+}
+
+/* Mobile shrink for hub diagram */
+@media (max-width: 640px) {
+  .smc-hub {
+    height: 300px;
+  }
+  .smc-node {
+    font-size: 11px;
+    padding: 8px 11px;
+  }
+  .smc-node.center {
+    font-size: 12px;
+    padding: 12px 16px;
+  }
+}
+
+/* Reduced-motion guard — covers all SMC primitives */
+@media (prefers-reduced-motion: reduce) {
+  .smc-dataflow-line,
+  .smc-node.center,
+  .smc-marquee-track {
+    animation: none !important;
+  }
+  .smc-dataflow-dot {
+    display: none;
+  }
+}
+
 /* === Defensive overflow (Ethereal mandate) === */
 main > *, main > * > * { min-width: 0; max-width: 100%; }

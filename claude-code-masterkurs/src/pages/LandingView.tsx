@@ -6,6 +6,7 @@ import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Sparkles } fr
 import { useAuthStore } from '../store/authStore';
 import VideoHero from '../components/Landing/VideoHero';
 import FounderSection from '../components/Landing/FounderSection';
+import SourcesHubSection from '../components/Landing/SourcesHubSection';
 import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
 import { contentApi } from '../lib/api';
 import type { AdminLessonConfig } from '../lib/api';
@@ -189,6 +190,9 @@ const LandingView = () => {
           </div>
         </div>
       </section>
+
+      {/* Sources → Hub: scroll-driven curriculum overview */}
+      <SourcesHubSection />
 
       {/* Founder Section */}
       <div className="reveal">

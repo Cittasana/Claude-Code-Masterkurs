@@ -68,10 +68,6 @@ const TestimonialSection = () => {
             <TestimonialCard key={item.id} testimonial={item} />
           ))}
         </div>
-
-        <p className="text-center text-apple-muted text-xs mt-8 font-mono">
-          {t('testimonials.disclaimer')}
-        </p>
       </div>
     </section>
   );

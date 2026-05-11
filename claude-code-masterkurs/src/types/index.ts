@@ -402,7 +402,7 @@ export const LEADERBOARD_BADGES: LeaderboardBadge[] = [
   { id: 'streak-7', name: '7-Tage-Streak', icon: '🔥', description: '7 Tage in Folge gelernt' },
   { id: 'streak-30', name: '30-Tage-Streak', icon: '💎', description: '30 Tage in Folge gelernt' },
   { id: 'project-pro', name: 'Projekt-Profi', icon: '🛠️', description: '3+ Projekte abgeschlossen' },
-  { id: 'all-lessons', name: 'Alle Lektionen', icon: '🎓', description: 'Alle 27 Lektionen abgeschlossen' },
+  { id: 'all-lessons', name: 'Alle Lektionen', icon: '🎓', description: 'Alle Lektionen abgeschlossen' },
   { id: 'level-3', name: 'Expert', icon: '⭐', description: 'Level 3 erreicht' },
   { id: 'top-scorer', name: 'Top Scorer', icon: '🏆', description: 'Top 3 im Leaderboard' },
   { id: 'early-bird', name: 'Early Bird', icon: '🌅', description: 'Unter den ersten 10 Nutzern' },

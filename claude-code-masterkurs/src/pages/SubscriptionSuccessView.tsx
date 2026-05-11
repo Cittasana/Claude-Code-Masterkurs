@@ -107,7 +107,7 @@ const SubscriptionSuccessView = () => {
             <ul className="space-y-2 text-sm text-apple-muted">
               <li className="flex items-start gap-2">
                 <span className="text-apple-success mt-0.5">✓</span>
-                <span>Alle 27 Lektionen mit interaktiven Übungen</span>
+                <span>Alle Lektionen mit interaktiven Übungen</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-apple-success mt-0.5">✓</span>

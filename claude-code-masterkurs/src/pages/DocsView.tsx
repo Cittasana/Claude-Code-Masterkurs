@@ -350,7 +350,7 @@ const DocsView = () => {
             Der Lehrplan
           </h2>
           <p className="text-apple-muted max-w-lg mx-auto">
-            30 Lektionen in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
+            49 Lektionen in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
           </p>
         </div>
 

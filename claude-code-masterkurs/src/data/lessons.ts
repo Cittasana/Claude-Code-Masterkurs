@@ -12966,7 +12966,7 @@ In deiner CLAUDE.md kannst du referenzieren: \`Offizielle Docs: https://code.cla
       {
         type: 'highlight',
         title: '🎓 Kurs-Abschluss und nächste Schritte',
-        content: `Gratulation! Du hast alle 30 Lektionen dieses Kurses durchgearbeitet – von den Grundlagen (Installation, CLAUDE.md, erste Befehle) über fortgeschrittene Workflows (Plan Mode, Skills, MCP, Hooks, Subagents) bis zu den neuesten Features (Fast Mode, Opus 4.6, Agent Teams, Checkpointing).
+        content: `Gratulation! Du hast einen großen Teil des Kurses durchgearbeitet – von den Grundlagen (Installation, CLAUDE.md, erste Befehle) über fortgeschrittene Workflows (Plan Mode, Skills, MCP, Hooks, Subagents) bis zu den neuesten Features (Fast Mode, Opus 4.7, Agent Teams, Advisor Tool, Effort-aware Hooks).
 
 Dieser Kurs vermittelt Konzepte, Workflows und Best Practices. Für exakte CLI-Syntax, aktuelle Flags und offizielle Empfehlungen ist code.claude.com die maßgebliche Quelle. Nutze beide: Kurs für Struktur und Verständnis; Docs für Referenz, Vertiefung und neueste Updates.
 

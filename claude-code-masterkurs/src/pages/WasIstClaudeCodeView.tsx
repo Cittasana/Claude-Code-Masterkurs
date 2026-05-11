@@ -517,9 +517,10 @@ const WasIstClaudeCodeView = () => {
 
           <p className="text-apple-textSecondary leading-relaxed max-w-2xl mx-auto mb-8">
             Der Claude Code Masterkurs ist der umfassendste deutschsprachige Online-Kurs fuer KI-gestuetzte
-            Softwareentwicklung mit Claude Code. In ueber 70 Lektionen lernst du alle 43 Tools und Erweiterungen
-            kennen, arbeitest an praxisnahen Projekten und meisterst drei Schwierigkeitsstufen vom Anfaenger bis
-            zum Experten. Der Kurs wird kontinuierlich aktualisiert und um neue Inhalte ergaenzt.
+            Softwareentwicklung mit Claude Code. In 49 strukturierten Lektionen plus 43 Tools- und
+            Extensions-Lektionen lernst du alles Wichtige kennen, arbeitest an praxisnahen Projekten und
+            meisterst drei Schwierigkeitsstufen vom Anfaenger bis zum Experten. Der Kurs wird kontinuierlich
+            aktualisiert und um neue Inhalte ergaenzt.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-8">

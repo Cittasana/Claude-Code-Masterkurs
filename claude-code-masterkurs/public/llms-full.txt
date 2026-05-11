@@ -1,6 +1,6 @@
 # Claude Code Masterkurs – Vollständige Kursübersicht
 
-> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 70 Lektionen (27 Haupt-Lektionen + 43 Tools & Extensions), interaktiver Playground, Quizzes, Community-Features und Zertifikat. Kostenlos starten, Premium-Abo für erweiterten Zugang.
+> Der umfassendste deutschsprachige Kurs für Claude Code – Anthropics KI-gestützten Coding-Agent. 92 Lektionen (49 Haupt-Lektionen + 43 Tools & Extensions), interaktiver Playground, Quizzes, Community-Features und Zertifikat. Kostenlos starten, Premium-Abo für erweiterten Zugang.
 
 ## Über diesen Kurs
 
@@ -9,7 +9,7 @@ Der **Claude Code Masterkurs** (https://claude-code-masterkurs.de/) ist der einz
 **Eckdaten:**
 - Sprache: Deutsch (auch auf Englisch, Französisch, Spanisch verfügbar)
 - Preis: Kostenloser Einstieg; Premium-Abo Monatlich 24 EUR, Jährlich 229 EUR (spare 20%), Lifetime 499 EUR (einmalig)
-- Umfang: 70 Lektionen in 4 Levels (27 Haupt-Lektionen + 43 Tools & Extensions), ca. 40 Stunden Lernzeit
+- Umfang: 92 Lektionen in 4 Levels (49 Haupt-Lektionen + 43 Tools & Extensions), ca. 40 Stunden Lernzeit
 - Zielgruppe: Softwareentwickler, Freelancer und Tech-Teams, von Anfängern bis Experten
 - Technologie: React 19, TypeScript, Tailwind CSS, Vite 7
 - Features: Live-Playground, Quizzes, Spaced Repetition, Challenges, Forum, Leaderboard, Zertifikat
@@ -337,7 +337,7 @@ Claude Code selbst ist kostenlos installierbar, erfordert aber einen Anthropic A
 Für die Nutzung von Claude Code werden folgende Systemvoraussetzungen benötigt: Node.js in Version 18 oder höher (empfohlen ist die aktuelle LTS-Version), ein modernes Betriebssystem (macOS, Linux oder Windows mit WSL2 – reines Windows ohne WSL wird nicht offiziell unterstützt), eine stabile Internetverbindung für die API-Kommunikation mit Anthropic, und eine Terminal-Anwendung (bash, zsh, fish oder eine andere POSIX-kompatible Shell). Für optimale Performance empfiehlt sich eine SSD und mindestens 8 GB RAM, wobei Claude Code selbst nur minimale lokale Ressourcen verbraucht, da die KI-Verarbeitung in der Cloud stattfindet. Für die Arbeit mit MCP-Servern können zusätzliche Abhängigkeiten erforderlich sein, zum Beispiel Docker für Container-basierte MCP-Server oder spezifische Datenbank-Clients für Datenbank-MCP-Server.
 
 ### Welche Abo-Modelle gibt es für den Masterkurs?
-Der Claude Code Masterkurs bietet einen kostenlosen Einstieg mit Zugang zu den Grundlagen-Lektionen, damit sich Interessierte selbst ein Bild vom Kursformat und der Qualität machen können. Für den vollständigen Zugang zu allen 70 Lektionen, den 43 Tools & Extensions, Premium-Features und Community-Funktionen stehen drei Abo-Modelle zur Verfügung: Das monatliche Abo kostet 24 EUR pro Monat und ist flexibel kündbar – ideal zum Ausprobieren. Das jährliche Abo kostet 229 EUR pro Jahr (entspricht 19,08 EUR/Monat) und bietet eine Ersparnis von 20% gegenüber der monatlichen Zahlung. Das Lifetime-Abo kostet einmalig 499 EUR und gewährt dauerhaften Zugang zu allen aktuellen und zukünftigen Kursinhalten – ohne weitere Zahlungen. Alle Abo-Modelle beinhalten den vollen Zugang zu Lektionen, Quizzes, dem Live-Playground, Challenges, Community-Features, Spaced Repetition und dem Abschlusszertifikat.
+Der Claude Code Masterkurs bietet einen kostenlosen Einstieg mit Zugang zu den Grundlagen-Lektionen, damit sich Interessierte selbst ein Bild vom Kursformat und der Qualität machen können. Für den vollständigen Zugang zu allen 49 Haupt-Lektionen, den 43 Tools & Extensions, Premium-Features und Community-Funktionen stehen drei Abo-Modelle zur Verfügung: Das monatliche Abo kostet 24 EUR pro Monat und ist flexibel kündbar – ideal zum Ausprobieren. Das jährliche Abo kostet 229 EUR pro Jahr (entspricht 19,08 EUR/Monat) und bietet eine Ersparnis von 20% gegenüber der monatlichen Zahlung. Das Lifetime-Abo kostet einmalig 499 EUR und gewährt dauerhaften Zugang zu allen aktuellen und zukünftigen Kursinhalten – ohne weitere Zahlungen. Alle Abo-Modelle beinhalten den vollen Zugang zu Lektionen, Quizzes, dem Live-Playground, Challenges, Community-Features, Spaced Repetition und dem Abschlusszertifikat.
 
 ### In welchen Sprachen ist der Kurs verfügbar?
 Der Kurs ist primär auf Deutsch verfasst und optimiert, da er speziell für den deutschsprachigen Markt entwickelt wurde. Über die integrierte Internationalisierung (i18next) ist die Benutzeroberfläche zusätzlich auf Englisch, Französisch und Spanisch verfügbar. Die Kurs-Inhalte selbst sind auf Deutsch, wobei Code-Beispiele und Terminal-Befehle naturgemäß in Englisch sind, da dies die Standardsprache in der Softwareentwicklung ist. Der Claude Code Masterkurs ist damit der einzige umfassende Claude Code Kurs auf Deutsch und richtet sich gezielt an deutschsprachige Entwickler, die KI-gestütztes Programmieren mit Claude Code erlernen möchten.

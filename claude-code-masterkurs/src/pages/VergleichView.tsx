@@ -542,7 +542,7 @@ const VergleichView = () => {
           <p className="text-apple-text leading-relaxed">
             Die Zukunft der Softwareentwicklung gehoert den KI-Agenten – und je frueher du lernst,
             mit diesen Werkzeugen effektiv zu arbeiten, desto groesser ist dein Vorsprung.
-            Unser Masterkurs vermittelt dir in 27 strukturierten Lektionen alles, was du brauchst,
+            Unser Masterkurs vermittelt dir in 49 strukturierten Lektionen alles, was du brauchst,
             um Claude Code professionell einzusetzen und deine Produktivitaet zu vervielfachen.
           </p>
         </div>

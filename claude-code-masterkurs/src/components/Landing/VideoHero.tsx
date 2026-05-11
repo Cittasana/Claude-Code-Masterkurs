@@ -18,7 +18,10 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
   const tileRef = useRef<HTMLDivElement>(null);
 
   const resolvedVideoUrl =
-    videoUrl || import.meta.env.VITE_HERO_VIDEO_URL || '';
+    videoUrl || import.meta.env.VITE_HERO_VIDEO_URL || '/hero.mp4';
+
+  /** Decide whether to render a native <video> (local mp4/webm) or an <iframe> embed (YouTube/Vimeo). */
+  const isLocalVideoFile = /\.(mp4|webm|mov)(\?.*)?$/i.test(resolvedVideoUrl);
 
   /** Scrubbing scale + opacity on the video tile + staggered intro for hero text */
   useGSAP(
@@ -158,18 +161,44 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
             </p>
           </div>
 
-          {/* Right: Video embed — scale-on-view via GSAP ScrollTrigger */}
+          {/* Right: Video tile — scale-on-view via GSAP ScrollTrigger.
+              Local mp4/webm → native <video> autoplay loop; YouTube/Vimeo URL → iframe. */}
           <div ref={tileRef} className="w-full will-change-transform">
             {resolvedVideoUrl ? (
               <div className="relative rounded-apple-lg overflow-hidden border border-apple-border shadow-apple aspect-video bg-apple-surface">
-                <iframe
-                  src={resolvedVideoUrl}
-                  className="absolute inset-0 w-full h-full"
-                  allow="autoplay; fullscreen; picture-in-picture"
-                  allowFullScreen
-                  title={t('landing.videoTitle')}
-                  loading="lazy"
-                />
+                {isLocalVideoFile ? (
+                  <>
+                    <video
+                      className="absolute inset-0 w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                      aria-label={t('landing.videoTitle')}
+                    >
+                      <source src={resolvedVideoUrl} type="video/mp4" />
+                    </video>
+                    {/* Subtle dim overlay so any text bleeding through stays legible */}
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background:
+                          'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.15) 70%, rgba(0,0,0,0.35) 100%)',
+                      }}
+                    />
+                  </>
+                ) : (
+                  <iframe
+                    src={resolvedVideoUrl}
+                    className="absolute inset-0 w-full h-full"
+                    allow="autoplay; fullscreen; picture-in-picture"
+                    allowFullScreen
+                    title={t('landing.videoTitle')}
+                    loading="lazy"
+                  />
+                )}
               </div>
             ) : (
               /* Video placeholder when no URL is configured */

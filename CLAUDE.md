@@ -7,269 +7,260 @@
 **Owner**: Cosmo (office@cittasana.de)
 **Ziel**: Online-Kurs-Plattform für KI-gestütztes Programmieren mit Claude Code
 
-## 📊 Aktueller Status
-
-### Bestehendes Produkt:
-- ✅ 27 strukturierte Lektionen (Anfänger → Fortgeschrittene)
-- ✅ **43 Tools & Extensions Lektionen** (NEU - Feb 2026)
-  - Anfänger-Tools (01-08): grep, sed, awk, find, xargs, jq, yq, curl
-  - Fortgeschrittene Tools (09-28): fzf, ripgrep, fd, bat, exa, delta, tldr, htop, ncdu, dust, hyperfine, tokei, procs, bottom, gping, httpie, fx, mdbook, starship, zoxide
-  - Experten-Tools (30-35): zellij, screen, fish, ranger, nnn, bandwhich
-  - MCP Servers (36-43): filesystem, git, brave-search, postgres, sqlite, github, puppeteer, slack
-- ✅ Live-Playground für interaktives Experimentieren
-- ✅ Challenge-Bereich für praktische Aufgaben
-- ✅ Quiz-Komponenten zur Wissensüberprüfung
-- ✅ Suchfunktion
-- ✅ 3 Abo-Modelle:
-  - Monatlich: €24
-  - Jährlich: €229 (20% Ersparnis)
-  - Lifetime: €499
-
-## 🛠️ Tools & Extensions Sektion (NEU - Feb 2026)
-
-### Struktur & Organisation
-
-**Gesamtumfang**: 43 umfassende Lektionen zu CLI-Tools und MCP Servern
-
-#### Anfänger-Tools (01-08):
-1. **grep** - Pattern Matching & Textsuche
-2. **sed** - Stream Editor für Text-Transformationen
-3. **awk** - Text Processing & Reporting
-4. **find** - Datei- und Verzeichnis-Suche
-5. **xargs** - Command Chaining & Parallelisierung
-6. **jq** - JSON Processing
-7. **yq** - YAML/XML Processing
-8. **curl** - HTTP Client & API Testing
-
-#### Fortgeschrittene Tools (09-28):
-Moderne CLI-Tools mit 20 Lektionen: fzf (Fuzzy Finder), ripgrep (schnelle Suche), fd (moderne find-Alternative), bat (cat mit Syntax-Highlighting), exa/eza (ls-Alternative), delta (Git Diff), tldr (simplified man pages), htop/bottom (System Monitoring), ncdu/dust (Disk Usage), hyperfine (Benchmarking), tokei (Code Statistics), procs (ps-Alternative), gping (Ping mit Graph), httpie (User-friendly HTTP), fx (JSON Viewer), mdbook (Documentation), starship (Shell Prompt), zoxide (Smart cd)
-
-#### Experten-Tools (30-35):
-Terminal Multiplexer & File Manager: zellij, screen, fish shell, ranger, nnn, bandwhich (Bandwidth Monitoring)
-
-#### MCP Servers (36-43):
-Model Context Protocol Integration:
-1. **Filesystem MCP** - Strukturierte Dateisystem-Operationen
-2. **Git MCP** - Git Operations mit JSON-Response
-3. **Brave Search MCP** - Web-Suche Integration
-4. **PostgreSQL MCP** - Datenbank-Zugriff
-5. **SQLite MCP** - Lokale Datenbanken
-6. **GitHub MCP** - GitHub API Integration
-7. **Puppeteer MCP** - Browser Automation
-8. **Slack MCP** - Team Communication
-
-### Content-Format
-
-Jede Lektion folgt einem strukturierten Format (~600-1000 Zeilen):
-- **Berechtigung**: Warum dieses Tool wichtig ist
-- **Verwendung**: Installation, Konfiguration, Basics
-- **Best Practices**: Production-ready Patterns
-- **12+ Beispiele**: Real-world Use Cases
-- **Integration mit Claude Code**: Workflow-Automation
-- **Troubleshooting**: Häufige Probleme & Lösungen
-- **Vergleich**: Tool vs. Alternativen
-- **Pro-Tipps**: Advanced Techniques
-
-### Nächste Schritte für Tools-Sektion
-
-1. **Integration in Haupt-Kurs**: Tools als separate Section oder Teil der Haupt-Lektionen?
-2. **Video-Content**: Screencasts für jedes Tool erstellen
-3. **Challenges**: Praktische Übungen mit Tools
-4. **Cheat Sheets**: Quick Reference Guides
-5. **Tool Combinations**: Workflow-Guides (z.B. "Git + GitHub + Slack MCP für CI/CD")
+**Repo-Layout** (in `/Users/cosmograef/Desktop/Claude Code ausbildung/`):
+- `claude-code-masterkurs/` — Vite + React 19 + TS Hauptapp (vercel-deployed)
+- `admin-cms/` — Next.js Admin-CMS für Lektionen/Tools/Research-Verwaltung
+- `masterkurs-agent/` — Wöchentlicher Research-Auto-Pipeline (Cron-getriggert)
+- `tools/` — 45+ Tool-Stub-Verzeichnisse
+- `dist/`, `node_modules/` — Build-Artefakte
 
 ---
 
-### Identifizierte Lücken (vs. Pirate Skills Benchmark):
-- ❌ Keine Community-Chat-Features
-- ❌ Keine kostenlosen Entry-Points (Lead-Magnete)
-- ❌ Founder-Persönlichkeit nicht sichtbar
-- ❌ Wenig projekt-basiertes Lernen
-- ❌ Keine Offline/Hybrid-Events
-- ❌ Nur Tech, kein Business/Marketing-Framework
-- ❌ Schwaches Branding/Storytelling
+## 📊 Aktueller Stand (Stand: 2026-05-11)
 
-## 🎯 Strategische Ziele (Q1 2026)
+### Content-Bestand:
+- **47 Lektionen** (Level 1-3) in `src/data/lessons.ts` (~18.7k Zeilen)
+- **43 Tools & Extensions Lektionen** in `src/data/tools/` (CLI-Anfänger, Fortgeschritten, Experten, MCP)
+- **Quizzes, Live-Coding-Challenges, Capstone-Projekte, Patterns, Forum-Categories** als statische TS-Module
+- **i18n**: DE / EN / FR / ES (`src/locales/`)
+- **Local Video Provider**: `/videos/lektion-XX.mp4` als Standard-Quelle (YouTube/Vimeo optional)
 
-### Quick Wins (1-2 Wochen):
-1. **Community-Integration**: Discord/Slack aufsetzen
-2. **Founder-Story**: Video + erweiterte About-Page
-3. **Free Tier**: Erste 5 Lektionen kostenlos
+### Lektionen aus aktuellem Sprint (Feb-Mai 2026 Highlights):
+- L42: Plugin-Distribution mit `--plugin-url` & `skillOverrides` (Level 3)
+- L43: Compaction-Hygiene — 60%-Regel & Pre-Compact-Brief (Level 2)
+- L44: Advisor Tool — Cost-Aware Multi-Model in Production (Level 3, Mai-2026-Benchmarks)
+- L45: `worktree.baseRef` — Multi-Agent-Worktrees richtig konfigurieren (Level 2)
+- L46: Effort-aware Hooks — `$CLAUDE_EFFORT` in der Praxis (Level 3)
 
-### Mittel-fristig (1-3 Monate):
-4. **Projekt-Hub**: Capstone-Projekte + Showcase-Galerie
-5. **Business-Module**: "Claude Code für Freelancer" Track
+### Plattform-Features:
+- ✅ Live-Playground (Editor + Terminal-Simulation)
+- ✅ Live-Coding-Challenges + Quiz-Komponenten
+- ✅ Suchfunktion, Leaderboard, Forum-Categories
+- ✅ Discord-Login (OAuth Redirect-Handler in `App.tsx`)
+- ✅ Support-Tickets + Webhook-Notifications (Discord)
+- ✅ DiscordWidget + FounderSection (Landing-Page-CTA)
+- ✅ Free-Tier-Mechanik (`FREE_LESSON_LIMIT = 5` in `src/lib/lessons-config.ts`)
+- ✅ Spaced Repetition System (SRS) für Lektionen-Review
+- ✅ Stripe-Integration (3 Abo-Modelle)
+- ✅ Cittasana Ethereal Glass Design System (Mai 2026 ausgerollt)
+- ✅ Admin-CMS migriert (alle 11 Content-Types verwaltbar)
+- ✅ Auto-Agent-Pipeline: weekly-research-v2.md → automatische Lektions-Generierung
 
-### Lang-fristig (3-6 Monate):
-6. **Offline-Events**: Meetups in Berlin/München/Hamburg
-7. **Rebranding**: Unique Identity + Storytelling
+### Abo-Modelle (Stripe):
+- Monatlich: €24
+- Jährlich: €229 (20% Ersparnis)
+- Lifetime: €499
 
-## 🏆 Wettbewerbs-Analyse: Pirate Skills
+---
 
-### Stärken von Pirate Skills:
-- **Community**: Integrierter Chat, "Crew"-Features
-- **Hybrid**: Online-Kurse + Offline-Events (Cologne)
-- **Branding**: Starkes Piraten-Theme, "Vibe Coding" Terminologie
-- **Kostenlos → Bezahlt**: Labs (gratis) → Forge (€€)
-- **Founder-Story**: Ben Sufiani als Gesicht, 15 Jahre Erfahrung
-- **Ganzheitlich**: Build + Grow (Tech + Marketing)
-- **Praxis**: Hackathons, Real-world Projekte
+## 🤖 Auto-Agent-Pipeline (`masterkurs-agent/`)
 
-### Differenzierungspotenzial:
-- **Fokus**: Wir sind 100% Claude Code spezialisiert (vs. generische AI-Tools)
-- **Deutsch**: Deutscher Markt, deutsche Community
-- **Lifetime-Option**: €499 Lifetime (Pirate Skills hat das nicht)
-- **Struktur**: 27 Lektionen sehr detailliert (vs. 6-Wochen-Bootcamp)
+**Wöchentlicher Research-Run** (`research/YYYY-MM-DD-weekly-research-v2.md`):
+- Recherchiert Claude Code Updates, Anthropic Releases, Wettbewerber (Cursor, Copilot CLI, Codex CLI)
+- Synthetisiert Community Best Practices und Antipatterns
+- Liefert Content-Empfehlungen mit Prio (Hoch / Mittel / Niedrig)
+- Letzter Run: **2026-05-11** (deckt Anthropic Advisor Tool Benchmarks, Claude Code 2.1.133-137, Claude Security Beta, Cursor 3.3, Copilot CLI 1.0.44, Codex CLI 0.130)
 
-## 💡 Feature-Priorisierung
+**Pipeline-Output landet in:**
+- `masterkurs-agent/lessons/` (Lektions-Drafts)
+- → integriert in `claude-code-masterkurs/src/data/lessons.ts`
 
-### SOFORT (Impact: HOCH, Effort: NIEDRIG):
-1. **Discord-Community** → 1 Tag Setup
-2. **Kostenlose 5 Lektionen** → 1 Tag Config
-3. **Founder-Video** → 1-2 Tage Produktion
+**Trigger:**
+- Skill: `masterkurs-research` (WebSearch)
+- Manuell: `masterkurs-weekly-agent` Skill
+- Lesson-Creator: `masterkurs-lesson-creator` Skill (Multi-MCP)
 
-### NÄCHSTE WOCHE (Impact: HOCH, Effort: MITTEL):
-4. **Email-Newsletter** → Lead-Magnet aufsetzen
-5. **Projekt-Templates** → 3-5 Starter-Projekte
-6. **Testimonial-Sektion** → Social Proof sammeln
+---
 
-### DIESEN MONAT (Impact: MITTEL, Effort: HOCH):
-7. **Live-Workshops** → Monatliche Office Hours
-8. **Freelancer-Track** → Business-Modul entwickeln
-9. **Code-Review-Feature** → Community-Feedback-System
+## 🛠️ Tech Stack (Hauptapp)
 
-## 🛠️ Tech Stack & Tools
+**Frontend:**
+- React 19.2 + Vite 7 + TypeScript (strict)
+- React Router 7, Zustand 5, react-helmet-async
+- Tailwind via PostCSS + Autoprefixer
+- Tiptap 3 (Rich-Text in Admin)
+- Chart.js 4 / react-chartjs-2 5
+- Prism + Lowlight (Code-Highlighting)
+- i18next 25 + react-i18next 16
 
-### Aktuell im Einsatz:
-- Frontend: (zu ermitteln - wahrscheinlich React/Next.js)
-- Backend: (zu ermitteln)
-- Zahlungen: Stripe (angenommen basierend auf Standard-Setup)
+**Backend / Services:**
+- Stripe (`@stripe/stripe-js`)
+- Discord OAuth (Custom Backend-Endpunkt, JWT-basiert)
+- Vercel (Hosting + Edge Functions)
+- Lighthouse-Audit-Pipeline (`npm run lighthouse`)
 
-### Zu integrieren:
-- **Community**: Discord API oder Slack
-- **Email**: ConvertKit/Mailchimp für Newsletter
-- **Analytics**: Posthog/Mixpanel für User-Tracking
-- **Video**: Vimeo/Wistia für Kurs-Content
+**Build:**
+- `vite build` + `tsc -b` + Prerender via `scripts/prerender.ts`
+- SEO-Asset-Generator (`scripts/generate-seo-assets.mjs`)
+- Image-Optimization (`scripts/optimize-images.mjs`)
 
-## 📝 Content-Strategie
+**Tools-Section nutzt:** modulare `src/data/tools/{toolsAnfaenger,toolsFortgeschritten,toolsExpert,toolsMcp}.ts`
 
-### Kostenlose Inhalte (Lead-Gen):
-- **Mini-Kurs**: "Claude Code Basics" (5 Lektionen)
-- **YouTube**: Wöchentliche 10-min Tutorials
-- **Newsletter**: "Claude Code Weekly Tips"
-- **Blog**: SEO-optimierte Artikel
+---
 
-### Premium-Inhalte:
-- **Haupt-Kurs**: 27 Lektionen (bestehend)
-- **Business-Track**: Freelancing, SaaS, Agency
-- **Projekte**: 10+ Real-World Capstone-Projekte
-- **Live-Sessions**: Monatliche Q&A + Workshops
+## 🎯 Strategische Prioritäten (offene Items)
 
-## 👥 Zielgruppen-Segmente
+### Quick Wins
+- ✅ **Free Tier**: 5 Lektionen frei (`FREE_LESSON_LIMIT`)
+- ✅ **Discord-Login**: OAuth-Flow implementiert
+- 🟡 **Discord-Server**: URL `discord.gg/claude-code-masterkurs` hard-coded — Server-Setup verifizieren
+- ❌ **Founder-Video**: Drehbuch + Aufnahme + Schnitt offen
+- ❌ **About-Page**: Erweiterte Founder-Story
 
-### Primär:
-- **Anfänger**: Wollen programmieren lernen mit AI
-- **Junior-Devs**: Wollen produktiver werden
-- **Freelancer**: Wollen AI für Kunden nutzen
+### Mittel-fristig (Backlog aus Research 2026-05-11)
+- L47-Vorschlag: "Multi-Agent Showdown — Claude Code vs. Cursor vs. Codex CLI" (Level 3, ~45 Min)
+- L48-Vorschlag: "Skill-Antipatterns — Mega-Skill, Kitchen-Sink-Session, Day-One-Hoarding" (Level 1, ~15 Min)
+- Erwähnung in bestehender Security-Lektion: Claude Security Public Beta
 
-### Sekundär:
-- **Founder**: Wollen eigene SaaS bauen
-- **Agencies**: Wollen AI-Services anbieten
-- **Corporates**: Wollen Teams schulen
+### Lang-fristig (3-6 Monate)
+- Live-Workshops (monatliche Office Hours)
+- Freelancer-Track (separates Business-Modul)
+- Offline-Events (Berlin/München/Hamburg)
+- Code-Review-Feature (Community-Feedback)
 
-## 💰 Revenue-Optimierung
+---
 
-### Aktuell:
-- €24/Monat × 12 = €288/Jahr
-- €229/Jahr direkt = **€59 Discount**
-- €499 Lifetime = **17,1 Monate Break-Even**
+## 🏗️ Architektur-Richtlinien (lokal überschreibt global wenn anders)
 
-### Optimierungs-Ideen:
-1. **Upsells**: Business-Track als Add-on (€99)
-2. **Team-Lizenzen**: 5er-Pack für €99/Monat
-3. **Coaching**: 1:1 Sessions für €150/Stunde
-4. **Zertifizierung**: Certificate of Completion (€49)
+### Datenmodell (`src/types/index.ts`)
+- `Lesson` mit `id: number, level: 1|2|3, content: LessonContent[]`
+- `LessonContent` Block-Typen: `text | code | highlight | list | yaml | heading | video`
+- Quiz/Project/Challenge/Pattern/Forum-Types alle in einem Datei-Modul
+
+### Extensibility-Pattern
+- Neue Lektion = neuen Entry in `lessons.ts`-Array anhängen — keine bestehenden IDs ändern
+- Neues Tool = neue Datei in `src/data/tools/` + Export in `tools/index.ts`
+- Neues Quiz = neuer Entry in `quizzes.ts` mit `lessonId`-Referenz
+- Free-Tier-Gate: `isFreeTierLesson(id)` zentral in `lib/lessons-config.ts`
+
+### Convention
+- **UUIDs** für User-/Result-Records, **numerische IDs** für statisches Content (Lessons 0-N)
+- Lektions-Reihenfolge = `id`-Reihenfolge (keine separate `order`-Spalte)
+- Video-Provider-Reihenfolge: `local` (Standard) > `youtube` > `vimeo`
+- TypeScript strict-mode aktiv
+
+---
+
+## 🚀 Build & Run
+
+**Hauptapp Dev-Server starten:**
+```bash
+cd "/Users/cosmograef/Desktop/Claude Code ausbildung/claude-code-masterkurs"
+npm run dev
+```
+
+**Build + Prerender:**
+```bash
+npm run build
+```
+
+**Preview Production-Build:**
+```bash
+npm run preview  # läuft auf :4173
+```
+
+**Bundle-Analyse:**
+```bash
+npm run analyze
+```
+
+**Admin-CMS Dev-Server:**
+```bash
+cd "/Users/cosmograef/Desktop/Claude Code ausbildung/admin-cms"
+npm run dev
+```
+
+**Masterkurs-Agent (Research-Run):**
+```bash
+cd "/Users/cosmograef/Desktop/Claude Code ausbildung/masterkurs-agent"
+# Trigger über Skill: masterkurs-research
+```
+
+---
+
+## 🌿 Git-Workflow
+
+**Branches:**
+- `main` — Live-Branch (Vercel deploy-target)
+- `develop` — **STALE** (steht auf Feb 5, 2026; verwendet `add agent tracking file`). Aktuell nicht aktiv genutzt. → Entweder löschen oder mit main synchronisieren.
+
+**Commit-Style:** `typ(scope): kurze beschreibung`
+- Beispiele aus History: `feat(content): add 14 lessons + local video provider`, `feat(ui): apply Cittasana Ethereal Glass design`, `fix(challenges): null-safety for optional ChallengeValidation/solution fields`
+
+**Worktrees:** Multi-Agent-Pattern via `git worktree add` (siehe Lesson 45 für Konfiguration)
+
+---
+
+## 🏆 Wettbewerber-Positionierung
+
+**vs. Pirate Skills:**
+- Wir sind **100% Claude Code spezialisiert** (vs. generische AI-Tools)
+- Deutscher Markt + deutsche Community
+- Lifetime-Option (€499) — Pirate Skills hat das nicht
+- **27 → 47 Lektionen** (deutlich tiefer)
+- Hybrid-Konkurrenz: Cursor 3.3 (Build in Parallel UX), Copilot CLI 1.0.44 (Enterprise), Codex CLI (Multi-Agent-Trees) — adressiert in Lektion 47-Vorschlag
+
+**Pirate-Skills-Lücken bei uns** (aus früherem Audit):
+- ❌ Community-Chat-Features → ✅ Discord-Integration läuft
+- ❌ Kostenlose Entry-Points → ✅ 5 freie Lektionen aktiv
+- ❌ Founder-Persönlichkeit → 🟡 FounderSection vorhanden, Video offen
+- ❌ Offline/Hybrid-Events → ❌ noch offen
+- ❌ Business/Marketing-Framework → ❌ Freelancer-Track noch offen
+- ❌ Schwaches Branding/Storytelling → ✅ Cittasana Ethereal Glass ausgerollt
+
+---
 
 ## 📈 Metriken & KPIs
 
-### Zu tracken:
-- **Akquisition**: Free → Paid Conversion Rate
-- **Aktivierung**: % die Lektion 1 abschließen
-- **Retention**: Monatliche Churn Rate
-- **Revenue**: MRR, ARR, LTV
-- **Referral**: NPS, Weiterempfehlungsrate
+**Zu tracken:**
+- Free → Paid Conversion Rate (jetzt messbar dank FREE_LESSON_LIMIT)
+- Lektions-Completion-Rate pro Level
+- Discord-Mitglieder ↔ Plattform-User
+- Monatliche Churn Rate, MRR, ARR, LTV
+- NPS / Weiterempfehlungsrate
 
-### Ziele Q1 2026:
+**Ziele Q2 2026:**
 - 100 Free-Tier Users
 - 20% Conversion zu Paid
 - <5% Churn
 - €5k MRR
 
-## 🎨 Branding-Richtlinien
+---
 
-### Tonalität:
-- Freundlich, zugänglich, nicht einschüchternd
-- "Du" statt "Sie"
-- Technisch akkurat, aber verständlich
-- Praxis-orientiert, nicht theoretisch
+## 🎨 Branding
 
-### Visuals:
-- (Zu definieren basierend auf aktuellem Design)
-- Empfehlung: Modernes, cleanes Design
-- Call-to-Actions: Klar und prominent
-
-## 🔧 Interne Prozesse
-
-### Content-Erstellung:
-1. Lektion konzipieren
-2. Video aufnehmen
-3. Code-Beispiele testen
-4. Quiz/Challenges hinzufügen
-5. Peer-Review
-6. Veröffentlichen
-
-### Community-Management:
-1. Täglich: Discord monitoren
-2. Wöchentlich: Newsletter versenden
-3. Monatlich: Live-Workshop durchführen
-4. Quarterly: Meetup organisieren
-
-## 📚 Ressourcen & Links
-
-### Wettbewerber:
-- Pirate Skills: https://pirateskills.com
-- (Weitere zu recherchieren)
-
-### Inspiration:
-- Wes Bos Kurse (wes.bos)
-- Level Up Tutorials
-- Frontend Masters
-
-### Tools:
-- Teachable/Thinkific (Kurs-Plattformen)
-- Discord (Community)
-- ConvertKit (Email)
-
-## 🎯 Nächste Schritte (Action Items)
-
-### Diese Woche:
-- [ ] Discord-Server aufsetzen + in Website integrieren
-- [ ] Founder-Video aufnehmen (2-3 Min)
-- [ ] About-Page erweitern mit persönlicher Story
-- [ ] Erste 5 Lektionen auf "Free" schalten
-
-### Nächste Woche:
-- [ ] Newsletter-Funnel aufsetzen (ConvertKit)
-- [ ] 3 Projekt-Templates erstellen
-- [ ] Testimonials von bestehenden Students sammeln
-
-### Dieser Monat:
-- [ ] Ersten Live-Workshop planen (Zoom/YouTube)
-- [ ] "Freelancer-Track" Curriculum entwickeln
-- [ ] SEO-Audit durchführen + Content-Plan erstellen
+**Tonalität:** Du-Anrede, freundlich, technisch akkurat, praxis-orientiert
+**Design:** Cittasana Ethereal Glass (Dark, Glassmorphism, Geist + Instrument Serif, Orange-Akzent) — Implementation siehe Commit `ace7d83`
+**Skill für Glas-Komponenten:** `cittasana-ethereal-glass` (extrahiert aus webinar.cittasana.de)
 
 ---
 
-**Letzte Aktualisierung**: 12. Februar 2026
-**Nächstes Review**: 19. Februar 2026
-**Major Update**: Tools & Extensions Sektion komplett (43 Lektionen)
+## 📝 Nächste konkrete Action-Items
+
+### Diese Woche:
+- [ ] `develop`-Branch entscheiden: löschen (`git branch -d develop` ist safe — keine Commits ahead) oder mit main syncen
+- [ ] Discord-Server-Existenz unter `discord.gg/claude-code-masterkurs` verifizieren / korrigieren
+- [ ] Founder-Video aufnehmen (2-3 Min, Drehbuch + Setup-Tag)
+- [ ] About-Page mit Founder-Story füllen (FounderSection-Komponente bereits vorhanden)
+
+### Nächste Woche:
+- [ ] L47 "Multi-Agent Showdown" Draft (Backlog aus Research-Mai-11)
+- [ ] L48 "Skill-Antipatterns" Draft
+- [ ] Newsletter-Funnel evaluieren (ConvertKit / SubscribeForm)
+- [ ] Testimonial-Sektion aktivieren
+
+### Dieser Monat:
+- [ ] Live-Workshop planen (Zoom/YouTube)
+- [ ] Freelancer-Track-Curriculum (Business-Modul)
+- [ ] SEO-Audit + Content-Plan für Blog
+
+---
+
+**Letzte Aktualisierung:** 2026-05-11 (Mai-Sprint synchronisiert: 47 Lektionen, Ethereal Glass, Admin-CMS, Discord-Login, Auto-Research-Pipeline, Free-Tier aktiv)
+**Major Updates seit Feb:**
+- Cittasana Ethereal Glass Design (ace7d83)
+- 14 neue Lektionen + Local Video Provider (15e9828)
+- Admin-CMS Migration für 11 Content-Types (aa04ada)
+- Discord-Login + Support-Tickets (80c589a)
+- Auto-Agent-Pipeline mit weekly-research-v2 (b898c91)
+- Challenge-System Null-Safety-Fix (419987f, heute)

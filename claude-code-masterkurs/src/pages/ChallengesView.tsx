@@ -427,8 +427,8 @@ function ChallengeWorkspace({
         passed = code.includes(v.pattern);
       }
       return {
-        id: v.id,
-        name: v.name,
+        id: v.id ?? '',
+        name: v.name ?? v.testName ?? '',
         passed,
         error: passed ? undefined : v.errorMessage,
         points: passed ? v.points : 0,
@@ -474,7 +474,7 @@ function ChallengeWorkspace({
 
   // Copy solution
   const handleCopySolution = async () => {
-    await navigator.clipboard.writeText(challenge.solution);
+    await navigator.clipboard.writeText(challenge.solution ?? '');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -741,9 +741,9 @@ function ChallengeWorkspace({
                 </button>
               </div>
               <div className="relative">
-                <LineNumbers code={challenge.solution} />
+                <LineNumbers code={challenge.solution ?? ''} />
                 <pre className="p-4 pl-14 text-sm font-mono text-apple-text leading-relaxed overflow-x-auto bg-apple-bg">
-                  {challenge.solution}
+                  {challenge.solution ?? ''}
                 </pre>
               </div>
             </div>

@@ -6,26 +6,18 @@ import { useGSAP } from '@gsap/react';
 import { useAuthStore } from '../../store/authStore';
 import { gsap } from '../../lib/gsap';
 
-interface VideoHeroProps {
-  /**
-   * Local MP4/WebM path or YouTube/Vimeo URL.
-   * Local files render as <video autoplay muted loop>; remote URLs as <iframe>.
-   * Defaults to the bundled Cittasana ambient background loop.
-   */
-  videoUrl?: string;
-}
-
-const VideoHero = ({ videoUrl }: VideoHeroProps) => {
+/**
+ * Hero content section.
+ * The background video now lives at the LandingView root and spans the entire
+ * page (top-to-bottom, edge-to-edge, fixed). This component only renders the
+ * eyebrow + headline + bullets + CTA stack that sits on top of it.
+ */
+const VideoHero = () => {
   const { t } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const heroRef = useRef<HTMLElement>(null);
 
-  const resolvedVideoUrl =
-    videoUrl || import.meta.env.VITE_HERO_VIDEO_URL || '/hero-bg.mp4';
-
-  const isLocalVideoFile = /\.(mp4|webm|mov)(\?.*)?$/i.test(resolvedVideoUrl);
-
-  /** One-time stagger entry on the hero text blocks. */
+  /** One-time staggered entry on hero text blocks. */
   useGSAP(
     () => {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -52,63 +44,18 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
   return (
     <section
       ref={heroRef}
-      className="relative -mx-4 sm:-mx-6 lg:-mx-8 -mt-8 overflow-hidden isolate"
+      className="relative -mx-4 sm:-mx-6 lg:-mx-8 -mt-8"
       style={{
         minHeight: 'min(90vh, 880px)',
       }}
     >
-      {/* ── Background video (full-bleed) ───────────────────────── */}
-      {isLocalVideoFile ? (
-        <video
-          className="absolute inset-0 w-full h-full object-cover -z-10"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          aria-hidden="true"
-        >
-          <source src={resolvedVideoUrl} type="video/mp4" />
-        </video>
-      ) : (
-        <iframe
-          src={resolvedVideoUrl}
-          className="absolute inset-0 w-full h-full -z-10 pointer-events-none"
-          allow="autoplay; fullscreen; picture-in-picture"
-          title={t('landing.videoTitle')}
-          loading="lazy"
-        />
-      )}
-
-      {/* ── Multi-layer overlay for text legibility ─────────────── */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 -z-10 pointer-events-none"
-        style={{
-          background: [
-            // Top-down dark vignette so nav stays readable
-            'linear-gradient(180deg, rgba(5,5,5,0.65) 0%, rgba(5,5,5,0.20) 25%, rgba(5,5,5,0.55) 75%, rgba(5,5,5,0.92) 100%)',
-            // Left side gradient pulling focus to text
-            'linear-gradient(90deg, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.20) 45%, rgba(5,5,5,0) 100%)',
-            // Subtle warm accent breath at the very top edge
-            'radial-gradient(ellipse 70% 35% at 50% 0%, rgba(255,107,26,0.10) 0%, transparent 65%)',
-          ].join(', '),
-        }}
-      />
-
-      {/* ── Content (bottom-left aligned, mirrors webinar pattern) ─ */}
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-32 sm:pb-28 flex flex-col justify-end min-h-inherit">
         <div className="max-w-2xl">
-          {/* Eyebrow */}
-          <div
-            data-hero-intro
-            className="eyebrow mb-7"
-          >
+          <div data-hero-intro className="eyebrow mb-7">
             <span className="pulse" />
             Claude Code · Masterkurs · 2026
           </div>
 
-          {/* H1 — italic-serif emphasis like the webinar pattern */}
           <h1
             data-hero-intro
             className="text-[clamp(40px,6vw,80px)] font-semibold text-white leading-[1.02] mb-6"
@@ -120,7 +67,6 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
             {t('landing.videoHeroTitle')}
           </h1>
 
-          {/* Subtitle */}
           <p
             data-hero-intro
             className="text-lg sm:text-xl text-white/80 max-w-xl mb-7 leading-relaxed"
@@ -128,7 +74,6 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
             {t('landing.videoHeroSubtitle')}
           </p>
 
-          {/* Benefit bullets */}
           <ul
             data-hero-intro
             className="flex flex-col gap-3 mb-9 max-w-md"
@@ -144,7 +89,6 @@ const VideoHero = ({ videoUrl }: VideoHeroProps) => {
             ))}
           </ul>
 
-          {/* CTA row */}
           <div
             data-hero-intro
             className="flex flex-col sm:flex-row items-start gap-3"

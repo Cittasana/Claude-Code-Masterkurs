@@ -138,7 +138,35 @@ const LandingView = () => {
         <link rel="canonical" href="https://claude-code-masterkurs.de/" />
       </Helmet>
 
-      {/* Hero (existing VideoHero component) */}
+      {/* ── Full-page background video: top-to-bottom, edge-to-edge, fixed.
+            Sits between the project .page-bg (z:-10) and main content (z:10).
+            pointer-events-none so it never intercepts clicks. ───────── */}
+      <video
+        className="fixed inset-0 w-screen h-screen object-cover pointer-events-none"
+        style={{ zIndex: -5 }}
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+      >
+        <source src="/hero-bg.mp4" type="video/mp4" />
+      </video>
+      {/* Dimming overlay so all content stays legible across the whole page */}
+      <div
+        aria-hidden="true"
+        className="fixed inset-0 pointer-events-none"
+        style={{
+          zIndex: -4,
+          background: [
+            'linear-gradient(180deg, rgba(5,5,5,0.55) 0%, rgba(5,5,5,0.30) 20%, rgba(5,5,5,0.55) 55%, rgba(5,5,5,0.85) 100%)',
+            'radial-gradient(ellipse 60% 30% at 50% 0%, rgba(255,107,26,0.08) 0%, transparent 70%)',
+          ].join(', '),
+        }}
+      />
+
+      {/* Hero content (VideoHero is now content-only — no background video) */}
       <div className="reveal">
         <VideoHero />
       </div>

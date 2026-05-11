@@ -73,13 +73,14 @@ const LoginView = () => {
   return (
     <div className="flex items-center justify-center min-h-[70vh] px-2 sm:px-0 py-6">
       <div className="w-full max-w-md">
-        {/* Claude Code Masterkurs Logo */}
-        <div className="text-center mb-8">
-          <ClaudeCodeLogo size="md" showSubtitle className="mb-6" />
-          <h1 className="text-2xl font-bold text-apple-text mb-2">
-            {t('auth.loginTitle', 'Willkommen zurück')}
+        {/* Header — Ethereal */}
+        <div className="text-center mb-10">
+          <ClaudeCodeLogo size="md" showSubtitle className="mb-8" />
+          <div className="eyebrow center mb-5"><span className="pulse" />Account</div>
+          <h1 className="text-[clamp(28px,3.6vw,40px)] font-semibold text-apple-text mb-3 tracking-[-0.032em] leading-[1.04]">
+            <em className="italic-serif">{t('auth.loginTitle', 'Willkommen zurück')}</em>
           </h1>
-          <p className="text-apple-muted text-sm">
+          <p className="text-apple-textSecondary text-sm leading-relaxed">
             {t('auth.loginSubtitle', 'Melde dich an, um deinen Fortschritt zu synchronisieren')}
           </p>
         </div>

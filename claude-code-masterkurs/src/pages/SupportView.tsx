@@ -103,13 +103,15 @@ const SupportView = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="text-center py-20">
+      <div className="text-center py-32">
         <Helmet>
           <title>Support - Claude Code Masterkurs</title>
         </Helmet>
-        <LifeBuoy size={48} className="mx-auto text-apple-muted mb-4" />
-        <h1 className="text-2xl font-bold text-apple-text mb-2">Support</h1>
-        <p className="text-apple-muted mb-6">
+        <div className="eyebrow center mb-6"><LifeBuoy size={12} /><span>Support</span></div>
+        <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text mb-4 tracking-[-0.038em] leading-[1.04]">
+          <em className="italic-serif">Support</em>
+        </h1>
+        <p className="text-apple-textSecondary mb-6 max-w-md mx-auto">
           Bitte melde dich an, um ein Support-Ticket zu erstellen.
         </p>
       </div>
@@ -122,22 +124,19 @@ const SupportView = () => {
         <title>Support - Claude Code Masterkurs</title>
       </Helmet>
 
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      {/* Header — Ethereal */}
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-6 mb-10">
         <div>
-          <h1 className="text-2xl font-bold text-apple-text flex items-center gap-2">
-            <LifeBuoy size={24} className="text-apple-accent" />
-            {t('support.title', 'Support')}
+          <div className="eyebrow mb-4"><LifeBuoy size={12} /><span>Support-Center</span></div>
+          <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            <em className="italic-serif">{t('support.title', 'Support')}</em>
           </h1>
-          <p className="text-sm text-apple-muted mt-1">
+          <p className="text-apple-textSecondary mt-3 leading-relaxed">
             {t('support.subtitle', 'Erstelle ein Ticket und wir helfen dir weiter.')}
           </p>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="btn-primary flex items-center gap-2 text-sm"
-        >
-          {showForm ? <X size={16} /> : <Plus size={16} />}
+        <button onClick={() => setShowForm(!showForm)} className="btn-primary shrink-0">
+          {showForm ? <X size={14} /> : <Plus size={14} />}
           {showForm ? 'Abbrechen' : 'Neues Ticket'}
         </button>
       </div>

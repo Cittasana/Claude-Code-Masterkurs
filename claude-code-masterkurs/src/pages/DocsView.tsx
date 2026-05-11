@@ -209,7 +209,7 @@ const DocsView = () => {
   const officialDocsExtend = allDocs.filter(d => d.category === 'extend');
   const officialDocsOutsideTerminal = allDocs.filter(d => d.category === 'outsideTerminal');
 
-  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-apple-accent border-t-transparent" /></div>;
 
   return (
     <div className="min-h-screen animate-fade-in-up">
@@ -218,24 +218,24 @@ const DocsView = () => {
         <meta name="description" content="Umfassende Dokumentation zum Claude Code Masterkurs. Lehrplan, Features, Lernpfad und offizielle Claude Code Referenzen." />
         <link rel="canonical" href="https://claude-code-masterkurs.de/docs" />
       </Helmet>
-      {/* ── Hero Section ────────────────────────────────── */}
-      <section className="text-center pt-8 pb-16 relative overflow-hidden">
-        {/* Subtle background glow */}
+      {/* ── Hero Section — Ethereal ──────────────────── */}
+      <section className="text-center pt-16 pb-20 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,149,0,0.06) 0%, transparent 70%)',
+              'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,107,26,0.10) 0%, transparent 70%)',
           }}
         />
 
         <div className="relative">
+          <div className="eyebrow center mb-8"><span className="pulse" />Dokumentation</div>
           <ClaudeCodeLogo size="lg" showSubtitle className="mb-8" />
 
           <p className="text-xl sm:text-2xl text-apple-textSecondary max-w-2xl mx-auto mb-4 leading-relaxed">
             Die umfassende Lernplattform für{' '}
-            <span className="text-apple-accent font-semibold">KI-gestützte Softwareentwicklung</span>{' '}
-            mit Claude Code
+            <em className="italic-serif text-apple-accent">KI-gestützte</em>{' '}
+            Softwareentwicklung mit Claude Code
           </p>
           <p className="text-apple-muted max-w-xl mx-auto mb-10">
             Von den Grundlagen bis zur Multi-Agent-Orchestration — werde zum Claude Code Profi.
@@ -269,9 +269,9 @@ const DocsView = () => {
                 key={stat.label}
                 className="apple-card text-center py-6"
               >
-                <Icon size={24} className="mx-auto mb-3 text-apple-accent" />
-                <p className="text-3xl font-bold text-apple-text font-mono">{stat.value}</p>
-                <p className="text-sm text-apple-muted mt-1">{stat.label}</p>
+                <Icon size={22} className="mx-auto mb-3 text-apple-accent" />
+                <p className="num-serif text-[clamp(28px,3vw,40px)] leading-none">{stat.value}</p>
+                <p className="text-[11px] text-apple-muted mt-2 font-mono uppercase tracking-[0.06em]">{stat.label}</p>
               </div>
             );
           })}

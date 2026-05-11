@@ -17,12 +17,10 @@ const DatenschutzView = () => {
           <ChevronLeft className="w-4 h-4" />
           {t('common.backToDashboard')}
         </Link>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-apple-accent/10">
-            <Shield className="w-6 h-6 text-apple-accent" />
-          </div>
-          <h1 className="text-3xl font-bold text-apple-text">Datenschutzerklärung</h1>
-        </div>
+        <div className="eyebrow mb-4"><Shield size={12} /><span>Rechtliches</span></div>
+        <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+          <em className="italic-serif">Datenschutz</em>erklärung
+        </h1>
       </div>
 
       {/* Content */}

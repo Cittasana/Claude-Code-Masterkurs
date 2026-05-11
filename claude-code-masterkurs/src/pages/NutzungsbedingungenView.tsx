@@ -16,13 +16,11 @@ const NutzungsbedingungenView = () => {
           <ChevronLeft className="w-4 h-4" />
           {t('common.backToDashboard')}
         </Link>
-        <div className="flex items-center gap-3">
-          <div className="p-2 rounded-xl bg-apple-accent/10">
-            <FileText className="w-6 h-6 text-apple-accent" />
-          </div>
-          <h1 className="text-3xl font-bold text-apple-text">Nutzungsbedingungen</h1>
-        </div>
-        <p className="text-apple-muted mt-2 text-sm">
+        <div className="eyebrow mb-4"><FileText size={12} /><span>Rechtliches</span></div>
+        <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+          <em className="italic-serif">Nutzungs</em>bedingungen
+        </h1>
+        <p className="text-apple-muted mt-3 text-[12px] font-mono uppercase tracking-[0.06em]">
           Zuletzt aktualisiert: {new Date().toLocaleDateString('de-DE', { year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>

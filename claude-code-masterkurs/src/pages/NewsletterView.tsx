@@ -9,12 +9,13 @@ const NewsletterView = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen flex flex-col bg-apple-bg">
-      {/* Hero */}
-      <section className="py-12 sm:py-20 px-4">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero — Ethereal */}
+      <section className="py-20 sm:py-28 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-apple-text mb-5 tracking-tight leading-tight">
-            {t('newsletter.pageTitle')}
+          <div className="eyebrow center mb-8"><span className="pulse" />Newsletter</div>
+          <h1 className="text-[clamp(36px,5.4vw,72px)] font-semibold text-apple-text mb-6 tracking-[-0.038em] leading-[1.04] text-wrap-balance">
+            <em className="italic-serif">{t('newsletter.pageTitle')}</em>
           </h1>
           <p className="text-lg sm:text-xl text-apple-textSecondary leading-relaxed max-w-2xl mx-auto">
             {t('newsletter.pageSubtitle')}

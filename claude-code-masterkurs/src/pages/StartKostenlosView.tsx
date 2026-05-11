@@ -87,17 +87,18 @@ const StartKostenlosView = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-apple-bg">
-      {/* Hero Section */}
-      <section className="py-12 sm:py-20 px-4">
+    <div className="min-h-screen flex flex-col">
+      {/* Hero Section — Ethereal */}
+      <section className="py-20 sm:py-28 px-4">
         <div className="max-w-3xl mx-auto text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-apple-accent/10 text-apple-accent text-sm font-medium mb-6">
-            <BookOpen size={16} />
-            {t('freeTier.badge5Free')}
-          </span>
+          <div className="eyebrow center mb-8">
+            <span className="pulse" />
+            <BookOpen size={12} />
+            <span>{t('freeTier.badge5Free')}</span>
+          </div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-apple-text mb-5 tracking-tight leading-tight">
-            {t('freeTier.heroTitle')}
+          <h1 className="text-[clamp(36px,5.2vw,68px)] font-semibold text-apple-text mb-6 tracking-[-0.038em] leading-[1.04] text-wrap-balance">
+            <em className="italic-serif">{t('freeTier.heroTitle')}</em>
           </h1>
 
           <p className="text-lg sm:text-xl text-apple-textSecondary leading-relaxed max-w-2xl mx-auto">
@@ -266,24 +267,21 @@ const StartKostenlosView = () => {
             </Link>
           </div>
 
-          {/* Feature comparison mini-grid */}
-          <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-xl mx-auto">
-            <div className="rounded-apple bg-apple-surface border border-apple-border py-4 px-3 text-center">
-              <span className="block text-2xl font-bold text-apple-accent font-mono">27</span>
-              <span className="text-xs text-apple-muted">Lektionen</span>
-            </div>
-            <div className="rounded-apple bg-apple-surface border border-apple-border py-4 px-3 text-center">
-              <span className="block text-2xl font-bold text-apple-accent font-mono">6+</span>
-              <span className="text-xs text-apple-muted">Projekte</span>
-            </div>
-            <div className="rounded-apple bg-apple-surface border border-apple-border py-4 px-3 text-center">
-              <span className="block text-2xl font-bold text-apple-accent font-mono">24+</span>
-              <span className="text-xs text-apple-muted">Challenges</span>
-            </div>
-            <div className="rounded-apple bg-apple-surface border border-apple-border py-4 px-3 text-center">
-              <span className="block text-2xl font-bold text-apple-accent font-mono">1</span>
-              <span className="text-xs text-apple-muted">Zertifikat</span>
-            </div>
+          {/* Feature comparison mini-grid — italic-serif numerals */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+            {[
+              { val: '27', label: 'Lektionen' },
+              { val: '6+', label: 'Projekte' },
+              { val: '24+', label: 'Challenges' },
+              { val: '1', label: 'Zertifikat' },
+            ].map((s) => (
+              <div key={s.label} className="shell">
+                <div className="inner py-6 px-3 text-center">
+                  <span className="num-serif block text-[clamp(32px,3.6vw,46px)] mb-2">{s.val}</span>
+                  <span className="text-[11px] text-apple-textSecondary font-mono uppercase tracking-[0.06em]">{s.label}</span>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -302,9 +300,9 @@ interface LessonCardContentProps {
 function LessonCardContent({ lesson, index, t }: LessonCardContentProps) {
   return (
     <>
-      {/* Lesson Number */}
-      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-apple-accent/10 border border-apple-accent/20 flex items-center justify-center">
-        <span className="text-lg font-bold text-apple-accent font-mono">
+      {/* Lesson Number — italic-serif */}
+      <div className="flex-shrink-0 w-14 h-14 flex items-center justify-center">
+        <span className="num-serif text-[36px] leading-none">
           {String(index + 1).padStart(2, '0')}
         </span>
       </div>

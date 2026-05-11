@@ -139,9 +139,12 @@ const ProfileView = () => {
         <span className="text-apple-text">{t('auth.profile', 'Profil')}</span>
       </nav>
 
-      <h1 className="text-2xl font-bold text-apple-text mb-8">
-        {t('auth.profileTitle', 'Profil bearbeiten')}
-      </h1>
+      <div className="mb-10">
+        <div className="eyebrow mb-4"><span className="pulse" />Account</div>
+        <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+          <em className="italic-serif">{t('auth.profileTitle', 'Profil bearbeiten')}</em>
+        </h1>
+      </div>
 
       {/* Profil-Karte */}
       <div className="apple-card mb-6">

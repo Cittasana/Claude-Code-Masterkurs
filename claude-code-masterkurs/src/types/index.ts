@@ -257,10 +257,21 @@ export type ChallengeDifficulty = 'Anfänger' | 'Fortgeschritten' | 'Expert';
 export type ChallengeCategory =
   | 'CLAUDE.md'
   | 'Prompt Engineering'
+  | 'Prompts & Patterns'
   | 'MCP Konfiguration'
+  | 'MCP'
   | 'Hooks & Automation'
+  | 'Hooks'
   | 'CLI Befehle'
   | 'Agent Design'
+  | 'Agents'
+  | 'Slash Commands'
+  | 'Plugins'
+  | 'Skills'
+  | 'Konfiguration'
+  | 'Context Management'
+  | 'CI/CD'
+  | 'Grundlagen'
   // Live Coding (Algorithmen & Code) – separat von Projekten
   | 'Algorithmen'
   | 'Datenstrukturen'
@@ -293,20 +304,22 @@ export interface CodingChallenge {
   /** Validation checks against user code */
   validations: ChallengeValidation[];
   /** Model solution shown after completion */
-  solution: string;
+  solution?: string;
   /** Related lesson ids */
   relatedLessons?: number[];
 }
 
 export interface ChallengeValidation {
-  id: string;
-  name: string;
+  id?: string;
+  name?: string;
+  /** Alternative label used by newer entries (interchangeable with `name`) */
+  testName?: string;
   /** Regex or string that must be present in the user code */
   pattern: string;
   /** Whether the pattern is a regex (true) or plain includes check (false) */
-  isRegex: boolean;
+  isRegex?: boolean;
   /** Error message shown when validation fails */
-  errorMessage: string;
+  errorMessage?: string;
   points: number;
 }
 

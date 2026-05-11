@@ -39,7 +39,7 @@ const ProgressReportView = () => {
   } = useUserProgress();
 
   if (dataLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-blue-600" /></div>;
+    return <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-apple-accent" /></div>;
   }
 
   const totalLessons = lessons.length;
@@ -201,21 +201,22 @@ const ProgressReportView = () => {
         <span className="text-apple-textSecondary">{t('report.breadcrumb')}</span>
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center justify-between mb-8 print:hidden">
+      {/* Actions — Ethereal */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 mb-10 print:hidden">
         <div>
-          <h1 className="text-3xl font-bold text-apple-text tracking-tight">
-            {t('report.title')}
+          <div className="eyebrow mb-4"><span className="pulse" />Progress Report</div>
+          <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            <em className="italic-serif">{t('report.title')}</em>
           </h1>
-          <p className="text-apple-textSecondary mt-1">{date}</p>
+          <p className="text-apple-textSecondary mt-3 font-mono text-[12px] tracking-[0.06em]">{date}</p>
         </div>
-        <div className="flex items-center space-x-3">
-          <button onClick={handlePrint} className="btn-secondary flex items-center space-x-2">
-            <Printer size={16} />
+        <div className="flex items-center gap-3">
+          <button onClick={handlePrint} className="btn-secondary">
+            <Printer size={14} />
             <span>{t('report.print')}</span>
           </button>
-          <button onClick={handleExport} className="btn-primary flex items-center space-x-2">
-            <Download size={16} />
+          <button onClick={handleExport} className="btn-primary">
+            <Download size={14} />
             <span>{t('report.exportMarkdown')}</span>
           </button>
         </div>
@@ -224,14 +225,14 @@ const ProgressReportView = () => {
       {/* Report Content */}
       <div ref={reportRef} className="space-y-6">
         {/* Overview Card */}
-        <div className="apple-card accent-glow">
+        <div className="apple-card">
           <div className="flex items-center justify-between mb-5">
-            <h2 className="text-xl font-bold text-apple-text flex items-center space-x-2">
-              <TrendingUp className="text-apple-accent" size={22} />
+            <h2 className="text-xl font-medium text-apple-text tracking-tight flex items-center gap-2">
+              <TrendingUp className="text-apple-accent" size={20} />
               <span>{t('report.overview')}</span>
             </h2>
-            <span className="text-3xl font-bold text-apple-accent font-mono">
-              {overallProgress}%
+            <span className="num-serif text-[clamp(34px,4vw,52px)] leading-none">
+              {overallProgress}<small>%</small>
             </span>
           </div>
           <div className="progress-bar h-3 mb-6">

@@ -99,7 +99,7 @@ const ForumThreadView = () => {
                 </Link>
               )}
             </div>
-            <h1 className="text-2xl font-bold text-apple-text mt-2 mb-3">
+            <h1 className="text-[clamp(26px,3.2vw,40px)] font-semibold text-apple-text tracking-[-0.032em] leading-[1.06] mt-3 mb-4">
               {thread.title}
             </h1>
             <div className="prose prose-invert prose-sm max-w-none text-apple-textSecondary whitespace-pre-wrap">

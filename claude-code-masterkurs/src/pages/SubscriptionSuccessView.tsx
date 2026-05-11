@@ -72,8 +72,8 @@ const SubscriptionSuccessView = () => {
             )}
           </div>
 
-          <h1 className="text-3xl font-bold text-apple-text mb-3">
-            {isLifetime ? '🌟 Lifetime Access aktiviert!' : '🎉 Willkommen im Kurs!'}
+          <h1 className="text-[clamp(28px,3.6vw,44px)] font-semibold text-apple-text mb-4 tracking-[-0.032em] leading-[1.04]">
+            {isLifetime ? <><em className="italic-serif">Lifetime</em> aktiviert</> : <><em className="italic-serif">Willkommen</em> im Kurs</>}
           </h1>
 
           <p className="text-apple-muted mb-6 leading-relaxed">

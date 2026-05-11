@@ -45,13 +45,10 @@ const VergleichView = () => {
       {/* ── Section 1: H1 + Intro ──────────────────────────────────────── */}
       <header className="max-w-5xl mx-auto px-4 pb-10">
         <div className="text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-apple-accent/10 text-apple-accent text-sm font-medium mb-6">
-            <Layers size={16} />
-            AI Coding Tools Vergleich 2026
-          </span>
+          <div className="eyebrow center mb-6"><Layers size={12} /><span>AI Coding Tools &middot; 2026</span></div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-apple-text tracking-tight leading-tight mb-6">
-            Claude Code vs GitHub Copilot vs Cursor vs Windsurf – Der grosse Vergleich 2026
+          <h1 className="text-[clamp(36px,5.4vw,72px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04] mb-6 text-wrap-balance">
+            Claude Code vs Copilot vs Cursor vs Windsurf &mdash; der <em className="italic-serif">grosse</em> Vergleich
           </h1>
 
           <p className="text-lg text-apple-muted leading-relaxed max-w-3xl mx-auto">

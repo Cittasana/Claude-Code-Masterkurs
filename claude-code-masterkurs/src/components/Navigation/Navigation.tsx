@@ -171,7 +171,7 @@ const Navigation = () => {
 
         {isOpen && (
           <div
-            className="absolute left-0 top-full pt-1 min-w-[200px] py-2 rounded-apple-lg bg-apple-surface border border-apple-border shadow-apple z-50 animate-fade-in-up"
+            className="absolute left-0 top-full pt-1 min-w-[210px] py-2 rounded-2xl glass shadow-2xl z-50 animate-fade-in-up"
           >
             {items.map((item) => {
               const Icon = item.icon;
@@ -230,7 +230,7 @@ const Navigation = () => {
         aria-hidden
       />
       <div
-        className={`fixed top-0 right-0 bottom-0 w-full max-w-sm bg-apple-surface border-l border-apple-border shadow-2xl z-50 lg:hidden flex flex-col transition-transform duration-300 ease-out ${
+        className={`fixed top-0 right-0 bottom-0 w-full max-w-sm glass border-l border-apple-border shadow-2xl z-50 lg:hidden flex flex-col transition-transform duration-300 ease-out ${
           mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
@@ -349,82 +349,81 @@ const Navigation = () => {
     </>
   );
 
-  // Landing-Page-Header: Logo, DOCS, Dashboard/Login (+ Hamburger auf kleinen Screens)
+  // Landing-Page-Header: Floating-island Ethereal nav
   if (isLandingPage) {
     return (
-      <>
-        <nav
-          aria-label={t('nav.ariaLabel')}
-          className="glass sticky top-0 z-50 border-b border-apple-border/50"
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-14 sm:h-16">
-              <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0">
-                <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
-                  CCM
-                </span>
-                <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
-                  {t('nav.tagline')}
+      <div
+        className="sticky top-0 z-50 flex justify-center pointer-events-none"
+        style={{ paddingTop: 'max(18px, env(safe-area-inset-top))' }}
+        aria-label={t('nav.ariaLabel')}
+      >
+        <div className="ethereal-nav pointer-events-auto max-w-[calc(100%-1rem)]">
+          <Link to="/" className="flex items-center gap-2.5 text-sm font-medium tracking-tight text-white shrink-0">
+            <span className="nav-brand-dot" />
+            <span>Claude Code Masterkurs</span>
+          </Link>
+          <span className="hidden sm:inline-block w-px h-3.5 bg-apple-border" />
+          <span className="hidden sm:inline text-[11px] text-apple-textSecondary font-mono tracking-[0.06em]">
+            {t('nav.tagline')}
+          </span>
+          <div className="flex items-center gap-1.5 sm:gap-2 ml-2">
+            <Link
+              to="/docs"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium text-apple-textSecondary hover:text-apple-text hover:bg-white/[0.04] transition-colors"
+            >
+              <FileText size={13} className="shrink-0" />
+              Docs
+            </Link>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-white text-[#050505] text-[12.5px] font-medium tracking-tight hover:scale-[1.02] transition-transform"
+              >
+                <span>Dashboard</span>
+                <span className="w-6 h-6 rounded-full bg-[#050505] inline-flex items-center justify-center">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
                 </span>
               </Link>
-
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Link
-                  to="/docs"
-                  className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2.5 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors min-h-[44px] min-w-[44px] sm:min-w-0"
-                >
-                  <FileText size={17} className="shrink-0" />
-                  <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
-                </Link>
-                {isAuthenticated ? (
-                  <Link to="/dashboard" className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm min-h-[44px]">
-                    <span className="hidden sm:inline">{t('nav.openDashboard', 'Dashboard öffnen')}</span>
-                    <span className="sm:hidden">{t('nav.dashboard')}</span>
-                  </Link>
-                ) : (
-                  <Link to="/login" className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm min-h-[44px]">
-                    <LogIn size={16} />
-                    <span className="hidden lg:inline">{t('auth.loginButton', 'Anmelden')}</span>
-                  </Link>
-                )}
-              </div>
-            </div>
+            ) : (
+              <Link
+                to="/login"
+                className="inline-flex items-center gap-2 pl-4 pr-1.5 py-1.5 rounded-full bg-white text-[#050505] text-[12.5px] font-medium tracking-tight hover:scale-[1.02] transition-transform"
+              >
+                <span>Anmelden</span>
+                <span className="w-6 h-6 rounded-full bg-[#050505] inline-flex items-center justify-center">
+                  <LogIn size={11} className="text-white" />
+                </span>
+              </Link>
+            )}
           </div>
-        </nav>
-      </>
+        </div>
+      </div>
     );
   }
 
-  // Vereinfachter Header für Auth-Seiten (Login, Register, Docs, etc.)
+  // Vereinfachter Header für Auth-Seiten
   if (isAuthPage) {
     return (
-      <nav
+      <div
+        className="sticky top-0 z-50 flex justify-center pointer-events-none"
+        style={{ paddingTop: 'max(18px, env(safe-area-inset-top))' }}
         aria-label={t('nav.ariaLabel')}
-        className="glass sticky top-0 z-50 border-b border-apple-border/50"
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16">
-            <Link to="/" className="flex items-center gap-3 group shrink-0 min-w-0">
-              <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors">
-                CCM
-              </span>
-              <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
-                {t('nav.tagline')}
-              </span>
-            </Link>
-
-            <div className="flex items-center gap-2 sm:gap-3">
-              <Link
-                to="/docs"
-                className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2.5 rounded-apple text-sm font-medium text-apple-textSecondary hover:text-apple-text hover:bg-apple-hover transition-colors min-h-[44px] min-w-[44px] sm:min-w-0"
-              >
-                <FileText size={17} className="shrink-0" />
-                <span className="hidden sm:inline">{t('nav.documentation', 'Dokumentation')}</span>
-              </Link>
-            </div>
-          </div>
+        <div className="ethereal-nav pointer-events-auto">
+          <Link to="/" className="flex items-center gap-2.5 text-sm font-medium tracking-tight text-white">
+            <span className="nav-brand-dot" />
+            <span>Claude Code Masterkurs</span>
+          </Link>
+          <span className="hidden sm:inline-block w-px h-3.5 bg-apple-border" />
+          <Link
+            to="/docs"
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-medium text-apple-textSecondary hover:text-apple-text hover:bg-white/[0.04] transition-colors"
+          >
+            <FileText size={13} />
+            Docs
+          </Link>
         </div>
-      </nav>
+      </div>
     );
   }
 
@@ -433,20 +432,21 @@ const Navigation = () => {
       {mobileDrawer}
       <nav
         aria-label={t('nav.ariaLabel')}
-        className="glass sticky top-0 z-50 border-b border-apple-border/50"
+        className="glass sticky top-0 z-50 border-b border-apple-border"
       >
         <div ref={navRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
           <div className="flex items-center justify-between h-14 sm:h-16 overflow-visible">
-            {/* Logo – CCM + Tagline einzeilig */}
+            {/* Logo: brand dot + Claude Code Masterkurs + Tagline */}
             <Link
               to="/"
               className="flex items-center gap-3 group shrink-0 min-w-0"
               style={{ maxWidth: '100%' }}
             >
-              <span className="text-apple-text font-bold text-xl sm:text-2xl tracking-tight font-mono group-hover:text-apple-accent transition-colors shrink-0">
+              <span className="nav-brand-dot shrink-0" />
+              <span className="text-apple-text font-medium text-base sm:text-lg tracking-tight group-hover:text-apple-accent transition-colors shrink-0">
                 CCM
               </span>
-              <span className="hidden sm:inline text-apple-muted font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
+              <span className="hidden sm:inline text-apple-textSecondary font-mono text-[10px] uppercase tracking-widest border-l border-apple-border pl-3 whitespace-nowrap">
                 {t('nav.tagline')}
               </span>
             </Link>
@@ -517,7 +517,7 @@ const Navigation = () => {
               </button>
               {langOpen && (
                 <div
-                  className="absolute right-0 top-full mt-1 min-w-[4rem] py-2 rounded-apple-lg bg-apple-surface border border-apple-border shadow-apple z-50 animate-fade-in-up"
+                  className="absolute right-0 top-full mt-1 min-w-[4.5rem] py-2 rounded-2xl glass shadow-2xl z-50 animate-fade-in-up"
                   role="menu"
                   aria-label={t('nav.language')}
                 >
@@ -546,19 +546,19 @@ const Navigation = () => {
           </div>
 
           {/* Stats + Auth (nur Desktop) */}
-          <div className="hidden lg:flex items-center space-x-4 shrink-0">
-            <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-apple bg-apple-surface/60 border border-apple-border/50">
-              <span className="text-lg">🔥</span>
+          <div className="hidden lg:flex items-center space-x-3 shrink-0">
+            <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-apple-border">
+              <span className="text-base leading-none">🔥</span>
               <div>
-                <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">{t('nav.streak')}</p>
-                <p className="text-sm font-semibold text-apple-text leading-tight">{streak} {t('nav.days')}</p>
+                <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">{t('nav.streak')}</p>
+                <p className="text-[13px] font-medium text-apple-text leading-tight">{streak} {t('nav.days')}</p>
               </div>
             </div>
-            <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-apple bg-apple-surface/60 border border-apple-border/50">
-              <BarChart3 size={18} className="text-apple-accent" />
+            <div className="flex items-center space-x-2.5 px-3 py-1.5 rounded-full bg-white/[0.04] border border-apple-border">
+              <BarChart3 size={16} className="text-apple-accent" />
               <div>
-                <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">{t('nav.points')}</p>
-                <p className="text-sm font-semibold text-apple-text leading-tight">{totalPoints}</p>
+                <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">{t('nav.points')}</p>
+                <p className="text-[13px] font-medium text-apple-text leading-tight">{totalPoints}</p>
               </div>
             </div>
 
@@ -587,7 +587,7 @@ const Navigation = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className="absolute right-0 top-full mt-1 min-w-[200px] py-2 rounded-apple-lg bg-apple-surface border border-apple-border shadow-apple z-50 animate-fade-in-up">
+                  <div className="absolute right-0 top-full mt-1 min-w-[210px] py-2 rounded-2xl glass shadow-2xl z-50 animate-fade-in-up">
                     {/* User Info */}
                     <div className="px-4 py-2.5 border-b border-apple-border">
                       <p className="text-sm font-medium text-apple-text truncate">{user.displayName}</p>

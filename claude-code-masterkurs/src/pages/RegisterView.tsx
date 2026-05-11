@@ -176,13 +176,14 @@ const RegisterView = () => {
   return (
     <div className="flex items-center justify-center min-h-[70vh] px-2 sm:px-0 py-6">
       <div className="w-full max-w-md">
-        {/* Claude Code Masterkurs Logo */}
-        <div className="text-center mb-8">
-          <ClaudeCodeLogo size="md" showSubtitle className="mb-6" />
-          <h1 className="text-2xl font-bold text-apple-text mb-2">
-            {t('auth.registerTitle', 'Account erstellen')}
+        {/* Header — Ethereal */}
+        <div className="text-center mb-10">
+          <ClaudeCodeLogo size="md" showSubtitle className="mb-8" />
+          <div className="eyebrow center mb-5"><span className="pulse" />Registrierung</div>
+          <h1 className="text-[clamp(28px,3.6vw,40px)] font-semibold text-apple-text mb-3 tracking-[-0.032em] leading-[1.04]">
+            Dein <em className="italic-serif">eigener</em> Account
           </h1>
-          <p className="text-apple-muted text-sm">
+          <p className="text-apple-textSecondary text-sm leading-relaxed">
             {t('auth.registerSubtitle', 'Erstelle einen Account, um deinen Fortschritt zu sichern')}
           </p>
         </div>
@@ -203,7 +204,7 @@ const RegisterView = () => {
               <label className="block text-sm font-medium text-apple-textSecondary mb-3">
                 {t('register.planLabel', 'Wähle dein Abo-Modell')}
               </label>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {plans.map((plan) => {
                   const isSelected = selectedPlan === plan.id;
                   return (
@@ -211,15 +212,14 @@ const RegisterView = () => {
                       key={plan.id}
                       type="button"
                       onClick={() => setSelectedPlan(plan.id)}
-                      className={`relative p-5 rounded-apple-lg border text-left transition-all duration-200 ${
+                      className={`relative p-5 rounded-2xl border text-left transition-all duration-200 ${
                         isSelected
-                          ? 'border-apple-accent/70 bg-apple-surface ring-2 ring-apple-accent/20'
-                          : 'border-apple-border bg-apple-surface hover:border-apple-borderLight hover:bg-apple-hover/50'
+                          ? 'border-apple-accent/70 bg-white/[0.04] ring-2 ring-apple-accent/20'
+                          : 'border-apple-border bg-white/[0.025] hover:border-apple-borderLight hover:bg-white/[0.04]'
                       }`}
                     >
-                      {/* Badge dezent im Karteninneren */}
                       {plan.badge && (
-                        <span className="inline-block text-[11px] font-medium text-apple-accent bg-apple-accent/15 px-2 py-0.5 rounded-full mb-3">
+                        <span className="inline-block text-[10px] font-medium text-apple-accent bg-apple-accent/15 border border-apple-accent/25 px-2 py-0.5 rounded-full mb-3 font-mono uppercase tracking-[0.06em]">
                           {plan.badge}
                         </span>
                       )}
@@ -232,19 +232,18 @@ const RegisterView = () => {
                           }`}
                         >
                           {isSelected && (
-                            <Check size={12} className="text-white" strokeWidth={3} />
+                            <Check size={12} className="text-[#050505]" strokeWidth={3} />
                           )}
                         </div>
-                        <h3 className="font-semibold text-apple-text text-sm">
+                        <h3 className="font-medium text-apple-text text-sm tracking-tight">
                           {plan.name}
                         </h3>
                       </div>
-                      <p className={`text-xl font-bold tabular-nums ${
-                        isSelected ? 'text-apple-accent' : 'text-apple-text'
-                      }`}>
-                        {plan.price}
+                      <p className="num-serif text-[clamp(26px,3vw,36px)] leading-none">
+                        {plan.price.replace(/\s?EUR/, '')}
+                        <small>{plan.price.includes('EUR') ? 'EUR' : ''}</small>
                       </p>
-                      <p className="text-xs text-apple-muted mt-0.5">{plan.period}</p>
+                      <p className="text-[10px] text-apple-muted mt-1 font-mono uppercase tracking-[0.06em]">{plan.period}</p>
                       <p className="text-xs text-apple-textSecondary mt-3 leading-snug">
                         {plan.description}
                       </p>

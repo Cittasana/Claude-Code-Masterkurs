@@ -296,7 +296,7 @@ const ToolsLessonView = () => {
                     </span>
                   </div>
 
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-apple-text mb-3 tracking-tight leading-tight">
+                  <h1 className="text-[clamp(28px,3.6vw,44px)] font-semibold text-apple-text mb-3 tracking-[-0.032em] leading-[1.04]">
                     {tool.title}
                   </h1>
 
@@ -306,16 +306,16 @@ const ToolsLessonView = () => {
 
                   <div className="flex flex-wrap items-center gap-5 mt-6 pt-5 border-t border-apple-border/40">
                     <div className="flex items-center space-x-2 text-apple-muted">
-                      <Clock size={15} />
-                      <span className="text-sm font-mono">{tool.duration}</span>
+                      <Clock size={14} />
+                      <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{tool.duration}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-apple-muted">
-                      <Target size={15} />
-                      <span className="text-sm">{tool.objectives.length} {t('lesson.objectives')}</span>
+                      <Target size={14} />
+                      <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{tool.objectives.length} {t('lesson.objectives')}</span>
                     </div>
                     <div className="flex items-center space-x-2 text-apple-muted">
-                      <BookOpen size={15} />
-                      <span className="text-sm">{headings.length} {t('lesson.sections')}</span>
+                      <BookOpen size={14} />
+                      <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{headings.length} {t('lesson.sections')}</span>
                     </div>
                   </div>
                 </div>

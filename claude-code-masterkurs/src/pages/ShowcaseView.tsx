@@ -70,28 +70,21 @@ const ShowcaseView = () => {
         <span className="text-apple-textSecondary">{t('showcase.breadcrumb')}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      {/* Header — Ethereal */}
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-6 mb-10">
         <div>
-          <div className="flex items-center space-x-3 mb-2">
-            <Image className="text-apple-accent" size={28} />
-            <h1 className="text-3xl font-bold text-apple-text tracking-tight">
-              {t('showcase.title')}
-            </h1>
-          </div>
-          <p className="text-apple-textSecondary max-w-2xl">
+          <div className="eyebrow mb-4"><Image size={12} /><span>Community</span></div>
+          <h1 className="text-[clamp(36px,5vw,60px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            <em className="italic-serif">{t('showcase.title')}</em>
+          </h1>
+          <p className="text-apple-textSecondary max-w-2xl mt-3 leading-relaxed">
             {t('showcase.subtitle')}
           </p>
         </div>
         {isAuthenticated && (
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="flex items-center space-x-2 px-4 py-2 text-sm font-bold rounded-apple bg-apple-accent text-white hover:bg-apple-accentHover shadow-sm hover:shadow-apple-glow transition-all duration-200"
-          >
-            {showForm ? <X size={16} /> : <Plus size={16} />}
-            <span>
-              {showForm ? t('showcase.cancel') : t('showcase.submit')}
-            </span>
+          <button onClick={() => setShowForm(!showForm)} className="btn-primary shrink-0">
+            {showForm ? <X size={14} /> : <Plus size={14} />}
+            <span>{showForm ? t('showcase.cancel') : t('showcase.submit')}</span>
           </button>
         )}
       </div>

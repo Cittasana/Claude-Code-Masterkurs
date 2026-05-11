@@ -64,31 +64,26 @@ const TemplatesView = () => {
         <span className="text-apple-textSecondary">{t('templates.breadcrumb')}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-8">
+      {/* Header — Ethereal */}
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-6 mb-10">
         <div>
-          <div className="flex items-center space-x-3 mb-2">
-            <FolderGit2 className="text-apple-accent" size={28} />
-            <h1 className="text-3xl font-bold text-apple-text tracking-tight">
-              {t('templates.title')}
-            </h1>
-          </div>
-          <p className="text-apple-textSecondary max-w-2xl">
+          <div className="eyebrow mb-4"><FolderGit2 size={12} /><span>Templates</span></div>
+          <h1 className="text-[clamp(36px,5vw,60px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            Projekt-<em className="italic-serif">Templates</em>
+          </h1>
+          <p className="text-apple-textSecondary max-w-2xl mt-3 leading-relaxed">
             {t('templates.subtitle')}
           </p>
         </div>
-        {/* Stats */}
-        <div className="hidden md:flex items-center space-x-4">
-          <div className="flex items-center space-x-2 px-3 py-2 rounded-apple bg-apple-surface border border-apple-border">
-            <FolderGit2 size={16} className="text-apple-accent" />
-            <div>
-              <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
-                {t('templates.totalTemplates')}
-              </p>
-              <p className="text-sm font-semibold text-apple-text">
-                {projectTemplates.length}
-              </p>
-            </div>
+        <div className="hidden md:flex items-center gap-3 px-4 py-3 rounded-2xl bg-white/[0.025] border border-apple-border shrink-0">
+          <FolderGit2 size={16} className="text-apple-accent" />
+          <div>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">
+              {t('templates.totalTemplates')}
+            </p>
+            <p className="num-serif text-[22px] leading-none mt-1">
+              {projectTemplates.length}
+            </p>
           </div>
         </div>
       </div>

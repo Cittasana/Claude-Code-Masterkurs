@@ -91,15 +91,13 @@ const SpacedRepetitionView = () => {
 
   return (
     <div className="space-y-8 animate-fade-in-up">
-      <div className="text-center py-6 sm:py-8">
-        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-4">
-          {t('review.title')}
-        </p>
-        <div className="flex items-center justify-center gap-3 mb-4">
-          <Repeat className="text-apple-accent" size={32} />
+      <div className="text-center py-10 sm:py-14">
+        <div className="eyebrow center mb-6"><span className="pulse" />{t('review.title')}</div>
+        <div className="flex items-center justify-center gap-4 mb-5">
+          <Repeat className="text-apple-accent" size={28} />
           <ClaudeCodeLogo size="md" showSubtitle={false} />
         </div>
-        <p className="text-apple-textSecondary text-lg max-w-lg mx-auto">
+        <p className="text-apple-textSecondary text-lg max-w-lg mx-auto leading-relaxed">
           {t('review.subtitle')}
         </p>
       </div>

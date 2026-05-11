@@ -103,67 +103,55 @@ const FreelancerTrackView = () => {
         <span className="text-apple-textSecondary">{t('freelancer.breadcrumb')}</span>
       </div>
 
-      {/* Hero Section */}
+      {/* Hero Section — Ethereal */}
       <header className="relative mb-12">
         <div className="apple-card overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-apple-accent/8 via-transparent to-apple-success/5 pointer-events-none" />
-          <div className="relative">
-            <div className="flex items-center gap-3 mb-4">
-              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold font-mono bg-apple-success/15 text-apple-success border border-apple-success/20">
-                <Rocket size={13} />
-                {t('freelancer.badge')}
-              </span>
-              {progress > 0 && (
-                <span className="text-xs text-apple-muted font-mono">
-                  {progress}% {t('freelancer.complete')}
-                </span>
-              )}
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-apple-text mb-3 tracking-tight leading-tight">
-              {t('freelancer.heroTitle')}
-            </h1>
-            <p className="text-apple-textSecondary text-lg leading-relaxed max-w-2xl mb-8">
-              {t('freelancer.heroSubtitle')}
-            </p>
-
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
-              {stats.map((stat, i) => {
-                const Icon = stat.icon;
-                return (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 px-4 py-3 rounded-apple bg-apple-surface/50 border border-apple-border/30"
-                  >
-                    <Icon size={18} className="text-apple-accent flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-bold text-apple-text">{stat.value}</p>
-                      <p className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
-                        {t(stat.labelKey)}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Progress Bar */}
+          <div className="eyebrow mb-5">
+            <Rocket size={12} />
+            <span>{t('freelancer.badge')}</span>
             {progress > 0 && (
-              <div className="mt-4">
-                <div className="flex items-center justify-between text-xs text-apple-muted font-mono mb-2">
-                  <span>{t('freelancer.progress')}</span>
-                  <span>{completedModuleIds.length}/{freelancerModules.length}</span>
-                </div>
-                <div className="w-full h-2 bg-apple-border/50 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-apple-accent to-apple-success rounded-full transition-all duration-500"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
+              <span className="text-apple-accent">&middot; {progress}% {t('freelancer.complete')}</span>
             )}
           </div>
+
+          <h1 className="text-[clamp(32px,4.4vw,54px)] font-semibold text-apple-text mb-4 tracking-[-0.032em] leading-[1.04]">
+            <em className="italic-serif">{t('freelancer.heroTitle')}</em>
+          </h1>
+          <p className="text-apple-textSecondary text-lg leading-relaxed max-w-2xl mb-10">
+            {t('freelancer.heroSubtitle')}
+          </p>
+
+          {/* Stats Grid — italic-serif */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
+            {stats.map((stat, i) => {
+              const Icon = stat.icon;
+              return (
+                <div
+                  key={i}
+                  className="flex flex-col gap-2 px-4 py-4 rounded-2xl bg-white/[0.025] border border-apple-border"
+                >
+                  <Icon size={16} className="text-apple-accent" />
+                  <p className="num-serif text-[clamp(24px,2.6vw,34px)] leading-none">{stat.value}</p>
+                  <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">
+                    {t(stat.labelKey)}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Progress Bar */}
+          {progress > 0 && (
+            <div className="mt-6">
+              <div className="flex items-center justify-between text-[11px] text-apple-muted font-mono uppercase tracking-[0.06em] mb-2">
+                <span>{t('freelancer.progress')}</span>
+                <span>{completedModuleIds.length}/{freelancerModules.length}</span>
+              </div>
+              <div className="progress-bar h-1.5">
+                <div className="progress-bar-fill h-1.5" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          )}
         </div>
       </header>
 

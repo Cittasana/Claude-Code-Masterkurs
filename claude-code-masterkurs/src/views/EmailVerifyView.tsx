@@ -47,8 +47,8 @@ export default function EmailVerifyView() {
             <div className="w-16 h-16 bg-apple-accent/15 rounded-full flex items-center justify-center mx-auto mb-6">
               <div className="w-8 h-8 border-3 border-apple-border border-t-apple-accent rounded-full animate-spin" />
             </div>
-            <h2 className="text-2xl font-bold text-apple-text mb-4">
-              E-Mail wird verifiziert...
+            <h2 className="text-[clamp(22px,2.8vw,32px)] font-semibold text-apple-text mb-4 tracking-[-0.032em] leading-[1.04]">
+              E-Mail wird <em className="italic-serif">verifiziert</em>...
             </h2>
             <p className="text-apple-muted text-sm">
               Bitte warte einen Moment.
@@ -61,8 +61,8 @@ export default function EmailVerifyView() {
             <div className="w-16 h-16 bg-apple-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={32} className="text-apple-success" />
             </div>
-            <h2 className="text-2xl font-bold text-apple-text mb-4">
-              E-Mail bestätigt!
+            <h2 className="text-[clamp(26px,3.2vw,38px)] font-semibold text-apple-text mb-4 tracking-[-0.032em] leading-[1.04]">
+              <em className="italic-serif">E-Mail bestätigt</em>
             </h2>
             <p className="text-apple-textSecondary mb-6 text-sm">
               {message}

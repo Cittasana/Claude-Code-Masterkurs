@@ -75,16 +75,14 @@ const FeatureReferenceView = () => {
         <span className="text-apple-textSecondary">Feature Reference</span>
       </div>
 
-      {/* Header */}
-      <div className="text-center py-4 mb-8">
-        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-3">
-          Reference
-        </p>
-        <h1 className="text-4xl font-bold text-apple-text tracking-tight mb-3">
-          Feature Reference
+      {/* Header — Ethereal */}
+      <div className="text-center py-6 mb-10">
+        <div className="eyebrow center mb-6"><span className="pulse" />Reference</div>
+        <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04] mb-4">
+          Feature <em className="italic-serif">Reference</em>
         </h1>
-        <p className="text-apple-textSecondary text-lg">
-          {features.length}+ Features, Commands & Funktionen im Überblick
+        <p className="text-apple-textSecondary text-lg max-w-2xl mx-auto leading-relaxed">
+          <span className="num-serif text-[28px]">{features.length}</span>+ Features, Commands &amp; Funktionen im Überblick
         </p>
         {lastUpdateFeatures.length > 0 && (
           <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">

@@ -344,6 +344,10 @@ const ContentBlock = ({
 
       // Local MP4 — videoId is the path e.g. "/videos/lektion-01.mp4"
       if (provider === 'local') {
+        // Hidden until videos are uploaded. Set VITE_VIDEOS_ENABLED=true in Vercel to enable.
+        if (import.meta.env.VITE_VIDEOS_ENABLED !== 'true') {
+          return null;
+        }
         return (
           <div className="lesson-video-block my-4">
             <div className="rounded-apple-lg overflow-hidden border border-apple-border/50 bg-apple-surface/30">

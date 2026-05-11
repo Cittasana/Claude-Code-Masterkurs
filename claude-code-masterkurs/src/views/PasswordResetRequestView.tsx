@@ -61,15 +61,13 @@ export default function PasswordResetRequestView() {
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="max-w-md w-full">
-        <div className="text-center mb-8">
-          <ClaudeCodeLogo size="md" showSubtitle={false} className="mb-6" />
-          <div className="w-16 h-16 bg-apple-accent/15 rounded-full flex items-center justify-center mx-auto mb-4">
-            <KeyRound size={28} className="text-apple-accent" />
-          </div>
-          <h1 className="text-2xl font-bold text-apple-text mb-2">
-            Passwort vergessen?
+        <div className="text-center mb-10">
+          <ClaudeCodeLogo size="md" showSubtitle={false} className="mb-8" />
+          <div className="eyebrow center mb-5"><KeyRound size={12} /><span>Passwort-Reset</span></div>
+          <h1 className="text-[clamp(28px,3.6vw,44px)] font-semibold text-apple-text mb-3 tracking-[-0.032em] leading-[1.04]">
+            <em className="italic-serif">Passwort</em> vergessen?
           </h1>
-          <p className="text-apple-muted text-sm">
+          <p className="text-apple-textSecondary text-sm leading-relaxed max-w-sm mx-auto">
             Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.
           </p>
         </div>

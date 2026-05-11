@@ -150,10 +150,12 @@ function App() {
 
           {/* Haupt-App mit Navigation & Footer */}
           <Route path="*" element={
-            <div className="min-h-screen bg-apple-bg font-sans">
+            <div className="min-h-screen bg-apple-bg font-sans relative">
+              <div className="page-bg" aria-hidden="true" />
+              <div className="grain" aria-hidden="true" />
               <Navigation />
               <DiscordLoginHandler />
-              <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+              <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
                 <Routes>
                   <Route index element={<LandingView />} />
                   <Route path="/dashboard" element={<DashboardView />} />
@@ -202,23 +204,30 @@ function App() {
                   <Route path="*" element={<NotFoundPage />} />
                 </Routes>
               </main>
-        <footer className="border-t border-apple-border mt-8 sm:mt-12 py-5 sm:py-6" style={{ paddingBottom: 'max(1.25rem, env(safe-area-inset-bottom))' }}>
+        <footer
+          className="relative z-10 border-t border-apple-border mt-16 sm:mt-24 pt-12 sm:pt-16 pb-12"
+          style={{ paddingBottom: 'max(3rem, env(safe-area-inset-bottom))' }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Newsletter in Footer */}
-            <div className="pb-6 mb-6 border-b border-apple-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            {/* Newsletter row */}
+            <div className="pb-8 mb-8 border-b border-apple-border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
               <div className="w-full sm:max-w-sm">
                 <NewsletterSignup source="footer" compact />
               </div>
-              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-4 gap-y-1 text-sm text-apple-muted">
+              <div className="flex flex-wrap items-center justify-center sm:justify-end gap-x-6 gap-y-1 text-[12px] text-apple-textSecondary font-mono uppercase tracking-[0.06em]">
                 <Link to="/impressum" className="hover:text-apple-accent transition-colors py-1">Impressum</Link>
-                <span className="text-apple-border hidden sm:inline">|</span>
                 <Link to="/datenschutz" className="hover:text-apple-accent transition-colors py-1">Datenschutz</Link>
-                <span className="text-apple-border hidden sm:inline">|</span>
                 <Link to="/nutzungsbedingungen" className="hover:text-apple-accent transition-colors py-1">AGB</Link>
               </div>
             </div>
-            <div className="text-sm text-apple-muted text-center">
-              <p>&copy; {new Date().getFullYear()} Claude Code Masterkurs</p>
+            <div className="flex flex-col items-center gap-2 text-center">
+              <div className="flex items-center gap-3 mb-1">
+                <span className="nav-brand-dot" />
+                <span className="text-apple-text text-base font-medium tracking-tight">Claude Code Masterkurs</span>
+              </div>
+              <p className="text-xs text-apple-muted font-mono tracking-[0.06em]">
+                &copy; {new Date().getFullYear()} &middot; Made with <em className="italic-serif text-apple-accent">Sorgfalt</em>
+              </p>
             </div>
           </div>
         </footer>
@@ -265,10 +274,16 @@ function DiscordLoginHandler() {
 function NotFoundPage() {
   const { t } = useTranslation();
   return (
-    <div className="text-center py-20">
-      <h1 className="text-5xl sm:text-6xl font-bold text-apple-accent mb-4 font-mono">404</h1>
-      <p className="text-apple-muted mb-6 text-lg">{t('common.pageNotFound')}</p>
-      <Link to="/dashboard" className="btn-primary inline-block">{t('common.backToDashboard')}</Link>
+    <div className="text-center py-32 sm:py-40">
+      <div className="eyebrow center mb-8"><span className="pulse" />Seite nicht gefunden</div>
+      <h1 className="num-serif text-[clamp(96px,16vw,180px)] mb-6">404</h1>
+      <p className="text-apple-textSecondary mb-10 text-lg max-w-md mx-auto">{t('common.pageNotFound')}</p>
+      <Link to="/dashboard" className="btn-primary inline-flex items-center">
+        {t('common.backToDashboard')}
+        <span className="btn-icon">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+        </span>
+      </Link>
     </div>
   );
 }

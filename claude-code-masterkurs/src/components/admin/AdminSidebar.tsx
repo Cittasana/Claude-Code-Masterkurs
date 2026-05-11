@@ -103,16 +103,14 @@ export function AdminSidebar() {
   const logout = useAuthStore((s) => s.logout);
 
   return (
-    <div className="flex h-full w-72 flex-col border-r bg-gray-50/40">
+    <div className="flex h-full w-72 flex-col border-r border-apple-border bg-[rgba(10,10,12,0.55)] backdrop-blur-2xl relative z-10">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b px-6">
+      <div className="flex h-16 items-center border-b border-apple-border px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-600">
-            <Code2 className="h-6 w-6 text-white" />
-          </div>
+          <span className="nav-brand-dot" />
           <div>
-            <h1 className="text-sm font-bold text-gray-900">Claude Code Masterkurs</h1>
-            <p className="text-xs text-gray-500">Admin CMS</p>
+            <h1 className="text-sm font-medium text-apple-text tracking-tight">Claude Code Masterkurs</h1>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em] mt-0.5">Admin CMS</p>
           </div>
         </div>
       </div>
@@ -120,8 +118,8 @@ export function AdminSidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4">
         {sidebarSections.map((section) => (
-          <div key={section.title} className="mb-4">
-            <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-gray-500">
+          <div key={section.title} className="mb-5">
+            <p className="mb-2 px-3 text-[10px] font-medium uppercase tracking-[0.06em] text-apple-muted font-mono">
               {section.title}
             </p>
             <div className="space-y-0.5">
@@ -132,16 +130,16 @@ export function AdminSidebar() {
                     key={item.name}
                     to={item.href}
                     className={cn(
-                      'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200',
+                      'group flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200',
                       isActive
-                        ? 'bg-blue-50 text-blue-700 shadow-sm'
-                        : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                        ? 'bg-apple-accent/10 text-apple-accent border border-apple-accent/20'
+                        : 'text-apple-textSecondary border border-transparent hover:bg-white/[0.04] hover:text-apple-text'
                     )}
                   >
                     <item.icon
                       className={cn(
-                        'h-5 w-5 flex-shrink-0 transition-colors',
-                        isActive ? 'text-blue-600' : 'text-gray-400 group-hover:text-gray-600'
+                        'h-4.5 w-4.5 flex-shrink-0 transition-colors',
+                        isActive ? 'text-apple-accent' : 'text-apple-muted group-hover:text-apple-textSecondary'
                       )}
                     />
                     {item.name}
@@ -154,18 +152,18 @@ export function AdminSidebar() {
       </nav>
 
       {/* User Profile */}
-      <div className="border-t p-4">
-        <div className="flex items-center gap-3 rounded-lg bg-white p-3 shadow-sm">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-sm font-bold text-white">
+      <div className="border-t border-apple-border p-3">
+        <div className="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-apple-border p-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-apple-accent/15 border border-apple-accent/30 text-sm font-medium text-apple-accent">
             CO
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-900">Cosmo</p>
-            <p className="text-xs text-gray-500">Admin</p>
+            <p className="text-sm font-medium text-apple-text tracking-tight">Cosmo</p>
+            <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">Admin</p>
           </div>
           <button
             onClick={logout}
-            className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
+            className="rounded-full p-2 text-apple-muted transition-colors hover:bg-white/[0.06] hover:text-apple-text"
             title="Abmelden"
           >
             <LogOut className="h-4 w-4" />

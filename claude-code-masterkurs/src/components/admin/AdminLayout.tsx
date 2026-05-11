@@ -29,19 +29,22 @@ export function AdminLayout() {
 
   if (checking) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+      <div className="flex h-screen items-center justify-center bg-apple-bg relative">
+        <div className="page-bg" aria-hidden="true" />
+        <Loader2 className="h-8 w-8 animate-spin text-apple-accent relative z-10" />
       </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center">
-          <h2 className="text-xl font-bold text-red-900">Kein Zugriff</h2>
-          <p className="mt-2 text-sm text-red-700">Du hast keine Admin-Berechtigung.</p>
-          <a href="/dashboard" className="mt-4 inline-block rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+      <div className="flex h-screen items-center justify-center bg-apple-bg relative px-4">
+        <div className="page-bg" aria-hidden="true" />
+        <div className="relative z-10 apple-card text-center max-w-md">
+          <div className="eyebrow center mb-5" style={{ background: 'rgba(255,77,77,0.08)', borderColor: 'rgba(255,77,77,0.3)', color: '#ff7575' }}>Kein Zugriff</div>
+          <h2 className="text-2xl font-semibold text-apple-text tracking-tight">Admin-Berechtigung fehlt</h2>
+          <p className="mt-3 text-sm text-apple-textSecondary">Du hast keinen Zugriff auf den Admin-Bereich.</p>
+          <a href="/dashboard" className="btn-primary mt-6 inline-flex">
             Zurück zum Dashboard
           </a>
         </div>
@@ -50,9 +53,10 @@ export function AdminLayout() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
+    <div className="flex h-screen overflow-hidden bg-apple-bg relative">
+      <div className="page-bg" aria-hidden="true" />
       <AdminSidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-hidden relative z-10">
         <AdminHeader />
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />

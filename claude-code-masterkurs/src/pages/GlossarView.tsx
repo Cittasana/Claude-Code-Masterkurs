@@ -189,23 +189,20 @@ const GlossarView = () => {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,149,0,0.06) 0%, transparent 70%)',
+              'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(255,107,26,0.10) 0%, transparent 70%)',
           }}
         />
-        <div className="relative">
-          <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-3">
-            Glossar
-          </p>
-          <h1 className="text-4xl sm:text-5xl font-bold text-apple-text tracking-tight mb-6">
-            Claude Code Glossar – Alle Begriffe erklaert
+        <div className="relative text-center">
+          <div className="eyebrow center mb-6"><span className="pulse" />Glossar</div>
+          <h1 className="text-[clamp(36px,5.2vw,68px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04] mb-6">
+            Claude Code <em className="italic-serif">Glossar</em>
           </h1>
           <p className="text-apple-textSecondary text-lg max-w-3xl mx-auto leading-relaxed">
             Von Agentic Coding bis Token: Dieses Glossar erklaert alle
             wichtigen Begriffe rund um Claude Code, das Model Context Protocol
             und KI-gestuetzte Softwareentwicklung. Jeder Eintrag ist so
             verfasst, dass er als eigenstaendige, zitierfaehige Definition
-            funktioniert. Nutze das Inhaltsverzeichnis, um direkt zum
-            gewuenschten Begriff zu springen.
+            funktioniert.
           </p>
         </div>
       </section>

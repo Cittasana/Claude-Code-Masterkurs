@@ -84,15 +84,13 @@ const CertificateView = () => {
         <span className="text-apple-textSecondary">{t('certificate.breadcrumb')}</span>
       </div>
 
-      {/* Header */}
-      <div className="text-center mb-10">
-        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-3">
-          {t('certificate.certification')}
-        </p>
-        <h1 className="text-4xl font-bold text-apple-text tracking-tight mb-3">
-          {t('certificate.courseName')}
+      {/* Header — Ethereal */}
+      <div className="text-center mb-12">
+        <div className="eyebrow center mb-6"><span className="pulse" />{t('certificate.certification')}</div>
+        <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04] mb-4">
+          <em className="italic-serif">{t('certificate.courseName')}</em>
         </h1>
-        <p className="text-apple-textSecondary text-lg">
+        <p className="text-apple-textSecondary text-lg leading-relaxed max-w-xl mx-auto">
           {t('certificate.yourPath')}
         </p>
       </div>

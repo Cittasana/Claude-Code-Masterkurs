@@ -162,19 +162,12 @@ const WasIstClaudeCodeView = () => {
       {/* ═══════════════════════════════════════════════════════════
           Section 1: H1 – Definition
           ═══════════════════════════════════════════════════════════ */}
-      <section className="py-12 sm:py-20 px-4">
+      <section className="py-16 sm:py-24 px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2.5 rounded-xl bg-apple-accent/10">
-              <Terminal className="w-7 h-7 text-apple-accent" />
-            </div>
-            <span className="text-sm font-medium text-apple-accent bg-apple-accent/10 px-3 py-1 rounded-full">
-              KI-Coding-Agent
-            </span>
-          </div>
+          <div className="eyebrow mb-6"><Terminal size={12} /><span>KI-Coding-Agent</span></div>
 
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-apple-text mb-6 tracking-tight leading-tight">
-            Was ist Claude Code?
+          <h1 className="text-[clamp(40px,5.6vw,76px)] font-semibold text-apple-text mb-6 tracking-[-0.038em] leading-[1.04]">
+            Was ist <em className="italic-serif">Claude Code</em>?
           </h1>
 
           <p className="text-lg sm:text-xl text-apple-textSecondary leading-relaxed max-w-3xl">

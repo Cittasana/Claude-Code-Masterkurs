@@ -255,10 +255,10 @@ const LessonView = () => {
         <link rel="canonical" href={`https://claude-code-masterkurs.de/lesson/${lessonId}`} />
       </Helmet>
       {/* Reading Progress Bar - Fixed at top */}
-      <div className="fixed top-0 left-0 right-0 z-50 h-[3px] bg-apple-bg/50">
+      <div className="fixed top-0 left-0 right-0 z-[60] h-[2px] bg-white/[0.04]">
         <div
           className="h-full bg-gradient-to-r from-apple-accent via-apple-accentHover to-apple-accent transition-all duration-150 ease-out"
-          style={{ width: `${readingProgress}%` }}
+          style={{ width: `${readingProgress}%`, boxShadow: '0 0 12px rgba(255,107,26,0.5)' }}
         />
       </div>
 
@@ -396,78 +396,77 @@ const LessonView = () => {
               </div>
             )}
 
-            {/* Lesson Header */}
+            {/* Lesson Header — Ethereal */}
             <header className="relative mb-10">
               <div className="apple-card overflow-hidden">
-                {/* Decorative gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-apple-accent/5 via-transparent to-transparent pointer-events-none" />
-
-                <div className="relative">
-                  {/* Level + Status row */}
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center space-x-3">
-                      <span className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold font-mono border ${currentLevel.color}`}>
+                <div className="relative flex items-start justify-between gap-6">
+                  <div className="flex-1 min-w-0">
+                    {/* Level + Status eyebrow row */}
+                    <div className="flex items-center flex-wrap gap-2 mb-5">
+                      <span className={`inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium font-mono border tracking-[0.06em] uppercase ${currentLevel.color}`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${currentLevel.dot}`} />
-                        <span>Level {lesson.level} · {currentLevel.label}</span>
+                        <span>Level {lesson.level} &middot; {currentLevel.label}</span>
                       </span>
                       {isCompleted && (
-                        <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-apple-success/10 text-apple-success border border-apple-success/20">
-                          <CheckCircle2 size={13} />
+                        <span className="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-[11px] font-medium font-mono uppercase tracking-[0.06em] bg-apple-success/10 text-apple-success border border-apple-success/20">
+                          <CheckCircle2 size={12} />
                           <span>{t('lesson.completed')}</span>
                         </span>
                       )}
                     </div>
-                    <span className="text-apple-muted font-mono text-xs hidden sm:block">
-                      #{String(lessonId).padStart(2, '0')}
-                    </span>
+
+                    {/* Title — Geist 600 with italic-serif lesson number above */}
+                    <h1 className="text-[clamp(28px,3.6vw,44px)] font-semibold text-apple-text mb-3 tracking-[-0.032em] leading-[1.04]">
+                      {lesson.title}
+                    </h1>
+
+                    {/* Description */}
+                    <p className="text-apple-textSecondary text-lg leading-relaxed max-w-2xl">
+                      {lesson.description}
+                    </p>
                   </div>
 
-                  {/* Title */}
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-apple-text mb-3 tracking-tight leading-tight">
-                    {lesson.title}
-                  </h1>
+                  {/* Italic-serif lesson number — desktop only */}
+                  <span className="num-serif text-[clamp(56px,6vw,84px)] hidden sm:block shrink-0 leading-none">
+                    {String(lessonId + 1).padStart(2, '0')}
+                  </span>
+                </div>
 
-                  {/* Description */}
-                  <p className="text-apple-textSecondary text-lg leading-relaxed max-w-2xl">
-                    {lesson.description}
-                  </p>
-
-                  {/* Meta info */}
-                  <div className="flex flex-wrap items-center gap-5 mt-6 pt-5 border-t border-apple-border/40">
-                    <div className="flex items-center space-x-2 text-apple-muted">
-                      <Clock size={15} />
-                      <span className="text-sm font-mono">{lesson.duration}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-apple-muted">
-                      <Target size={15} />
-                      <span className="text-sm">{lesson.objectives.length} {t('lesson.objectives')}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-apple-muted">
-                      <BookOpen size={15} />
-                      <span className="text-sm">{headings.length} {t('lesson.sections')}</span>
-                    </div>
+                {/* Meta info */}
+                <div className="flex flex-wrap items-center gap-5 mt-6 pt-5 border-t border-apple-border/40 relative">
+                  <div className="flex items-center space-x-2 text-apple-muted">
+                    <Clock size={14} />
+                    <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{lesson.duration}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-apple-muted">
+                    <Target size={14} />
+                    <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{lesson.objectives.length} {t('lesson.objectives')}</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-apple-muted">
+                    <BookOpen size={14} />
+                    <span className="text-[12px] font-mono uppercase tracking-[0.06em]">{headings.length} {t('lesson.sections')}</span>
                   </div>
                 </div>
               </div>
             </header>
 
-            {/* Learning Objectives - Redesigned as a compact checklist */}
+            {/* Learning Objectives — Ethereal */}
             <div className="mb-10">
-              <div className="rounded-apple-lg bg-gradient-to-br from-apple-accent/[0.06] to-transparent border border-apple-accent/15 p-6">
-                <h2 className="text-base font-bold text-apple-text mb-4 flex items-center space-x-2.5">
-                  <GraduationCap className="text-apple-accent" size={18} />
+              <div className="apple-card">
+                <div className="eyebrow mb-5">
+                  <GraduationCap size={12} />
                   <span>{t('lesson.whatYouLearn')}</span>
-                </h2>
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {lesson.objectives.map((objective, index) => (
                     <div
                       key={index}
-                      className="flex items-start space-x-3 bg-apple-surface/40 rounded-apple px-4 py-3 border border-apple-border/30"
+                      className="flex items-start gap-3 bg-white/[0.025] rounded-2xl px-4 py-3 border border-apple-border"
                     >
-                      <span className="flex-shrink-0 w-6 h-6 rounded-full bg-apple-accent/15 text-apple-accent flex items-center justify-center text-[11px] font-bold font-mono mt-0.5">
-                        {index + 1}
+                      <span className="num-serif text-[22px] leading-none mt-1 shrink-0 w-7 text-center">
+                        {String(index + 1).padStart(2, '0')}
                       </span>
-                      <span className="text-sm text-apple-text/90 leading-relaxed">{objective}</span>
+                      <span className="text-sm text-apple-text leading-relaxed">{objective}</span>
                     </div>
                   ))}
                 </div>

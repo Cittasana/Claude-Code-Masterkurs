@@ -173,28 +173,28 @@ const DashboardView = () => {
         <meta name="description" content="Dein persönliches Dashboard im Claude Code Masterkurs. Verfolge deinen Lernfortschritt, Quizzes, Challenges und Zertifizierung." />
         <link rel="canonical" href="https://claude-code-masterkurs.de/dashboard" />
       </Helmet>
-      {/* Header with pixel-style logo */}
-      <div className="text-center py-6 sm:py-8">
-        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-4">
-          {t('dashboard.title')}
-        </p>
-        <ClaudeCodeLogo size="lg" showSubtitle className="mb-4" />
-        <p className="text-apple-textSecondary text-lg max-w-md mx-auto">
+      {/* Header — Ethereal eyebrow + italic emphasis */}
+      <div className="text-center py-10 sm:py-14">
+        <div className="eyebrow center mb-6">
+          <span className="pulse" />
+          <span>{t('dashboard.title')}</span>
+        </div>
+        <ClaudeCodeLogo size="lg" showSubtitle className="mb-6" />
+        <p className="text-apple-textSecondary text-lg max-w-md mx-auto leading-relaxed">
           {t('dashboard.subtitle')}
         </p>
       </div>
 
-      {/* Overall Progress */}
-      <div className="apple-card accent-glow">
+      {/* Overall Progress — italic-serif numeral */}
+      <div className="apple-card">
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-bold text-apple-text">{t('dashboard.overallProgress')}</h2>
-          <span className="text-3xl font-bold text-apple-accent font-mono">{overallProgress}%</span>
+          <h2 className="text-xl font-medium text-apple-text tracking-tight">
+            {t('dashboard.overallProgress')}
+          </h2>
+          <span className="num-serif text-[clamp(36px,4vw,52px)]">{overallProgress}<small>%</small></span>
         </div>
-        <div className="progress-bar h-3">
-          <div
-            className="progress-bar-fill h-3"
-            style={{ width: `${overallProgress}%` }}
-          />
+        <div className="progress-bar h-2">
+          <div className="progress-bar-fill h-2" style={{ width: `${overallProgress}%` }} />
         </div>
         <p className="text-apple-textSecondary mt-3 text-sm">
           {t('dashboard.lessonsCompleted', { count: lessonsCompleted.length, total: totalLessons })}
@@ -730,35 +730,30 @@ function LevelCard({
   completed,
   total,
   progress,
-  color,
-  barColor,
 }: {
   icon: React.ReactNode;
   title: string;
   completed: number;
   total: number;
   progress: number;
-  color: string;
-  barColor: string;
+  color?: string;
+  barColor?: string;
 }) {
   return (
-    <div className="apple-card relative">
-      <div className={`absolute inset-0 bg-gradient-to-br ${color} rounded-apple-lg opacity-50 pointer-events-none`} />
-      <div className="relative">
-        <div className="flex items-center space-x-3 mb-4">
+    <div className="apple-card">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center space-x-3">
           {icon}
-          <h3 className="text-sm font-semibold text-apple-text">{title}</h3>
+          <h3 className="text-sm font-medium text-apple-text tracking-tight">{title}</h3>
         </div>
-        <div className="w-full bg-apple-border rounded-full h-2 overflow-hidden">
-          <div
-            className={`${barColor} h-full transition-all duration-700 rounded-full`}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-        <p className="text-apple-textSecondary mt-2.5 text-xs font-mono">
-          {completed}/{total} Lektionen ({progress}%)
-        </p>
+        <span className="num-serif text-[28px]">{progress}<small>%</small></span>
       </div>
+      <div className="progress-bar h-1.5">
+        <div className="progress-bar-fill h-1.5" style={{ width: `${progress}%` }} />
+      </div>
+      <p className="text-apple-textSecondary mt-2.5 text-[11px] font-mono uppercase tracking-[0.06em]">
+        {completed}/{total} Lektionen
+      </p>
     </div>
   );
 }
@@ -778,12 +773,12 @@ function StatCard({
     <div className="apple-card">
       <div className="flex items-center space-x-3 mb-3">
         {icon}
-        <h4 className="text-xs font-medium text-apple-muted uppercase tracking-wider font-mono">
+        <h4 className="text-[10px] font-medium text-apple-muted uppercase tracking-[0.06em] font-mono">
           {label}
         </h4>
       </div>
-      <p className="text-2xl font-bold text-apple-text font-mono">{value}</p>
-      <p className="text-sm text-apple-textSecondary mt-1">{detail}</p>
+      <p className="num-serif text-[clamp(28px,3vw,40px)]">{value}</p>
+      <p className="text-sm text-apple-textSecondary mt-1.5">{detail}</p>
     </div>
   );
 }

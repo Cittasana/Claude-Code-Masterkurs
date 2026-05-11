@@ -109,25 +109,23 @@ const LeaderboardView = () => {
         <span className="text-apple-textSecondary">{t('leaderboard.title')}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      {/* Header — Ethereal */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
         <div>
-          <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-2">
-            {t('nav.community')}
-          </p>
-          <h1 className="text-4xl font-bold text-apple-text tracking-tight">
-            {t('leaderboard.title')}
+          <div className="eyebrow mb-4"><span className="pulse" />{t('nav.community')}</div>
+          <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            <em className="italic-serif">{t('leaderboard.title')}</em>
           </h1>
-          <p className="text-apple-textSecondary mt-2">
+          <p className="text-apple-textSecondary mt-3 leading-relaxed">
             {t('leaderboard.subtitle')}
           </p>
         </div>
         <button
           type="button"
           onClick={() => setShowProfileEditor(!showProfileEditor)}
-          className="btn-secondary inline-flex items-center gap-2 shrink-0"
+          className="btn-secondary shrink-0"
         >
-          <Settings size={18} />
+          <Settings size={14} />
           Profil bearbeiten
         </button>
       </div>
@@ -190,22 +188,22 @@ const LeaderboardView = () => {
         </div>
       )}
 
-      {/* Your Position Card */}
-      <div className="apple-card accent-glow mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-full bg-apple-accent/15 border-2 border-apple-accent flex items-center justify-center text-2xl">
+      {/* Your Position Card — Ethereal */}
+      <div className="apple-card mb-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-full bg-apple-accent/15 border-2 border-apple-accent flex items-center justify-center text-3xl">
               {currentUserProfile.avatarEmoji}
             </div>
             <div>
-              <p className="text-xs text-apple-muted font-mono uppercase tracking-wider">Dein Rang</p>
-              <div className="flex items-center gap-3">
-                <span className="text-3xl font-bold text-apple-accent font-mono">#{currentRank}</span>
-                <span className="text-apple-textSecondary">von {sorted.length}</span>
+              <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em] mb-1">Dein Rang</p>
+              <div className="flex items-baseline gap-3">
+                <span className="num-serif text-[clamp(40px,4.6vw,60px)] leading-none">#{currentRank}</span>
+                <span className="text-apple-textSecondary text-sm">von {sorted.length}</span>
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-5 sm:gap-7">
             <MiniStat label={t('leaderboard.points')} value={totalPoints} />
             <MiniStat label={t('leaderboard.lessons')} value={lessonsCompleted.length} />
             <MiniStat label={t('leaderboard.quizzes')} value={quizzesCompleted.filter(q => q.completed).length} />
@@ -307,9 +305,9 @@ const LeaderboardView = () => {
 
 function MiniStat({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="text-center">
-      <p className="text-xs text-apple-muted font-mono uppercase tracking-wider">{label}</p>
-      <p className="text-lg font-bold text-apple-text font-mono">{value}</p>
+    <div className="text-center sm:text-left">
+      <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">{label}</p>
+      <p className="num-serif text-[clamp(22px,2.4vw,30px)] leading-none mt-1.5">{value}</p>
     </div>
   );
 }
@@ -369,10 +367,10 @@ function PodiumCard({
           <p className="text-xs text-apple-muted font-mono mt-1">
             Level {entry.level}
           </p>
-          <p className="text-lg font-bold text-apple-accent font-mono mt-2">
+          <p className="num-serif text-[clamp(24px,2.8vw,34px)] leading-none mt-3">
             {pointsValue.toLocaleString('de-DE')}
           </p>
-          <p className="text-[10px] text-apple-muted font-mono uppercase">
+          <p className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em] mt-1">
             {pointsLabel}
           </p>
           {entry.badges.length > 0 && (

@@ -73,16 +73,14 @@ const CommunityPatternsView = () => {
         <span className="text-apple-textSecondary">Community Patterns</span>
       </div>
 
-      {/* Header */}
-      <div className="text-center py-4 mb-8">
-        <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-3">
-          Phase 3 · Advanced
-        </p>
-        <h1 className="text-4xl font-bold text-apple-text tracking-tight mb-3">
-          Community Patterns Library
+      {/* Header — Ethereal */}
+      <div className="text-center py-6 mb-10">
+        <div className="eyebrow center mb-6"><span className="pulse" />Phase 3 &middot; Advanced</div>
+        <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04] mb-4">
+          Community <em className="italic-serif">Patterns</em>
         </h1>
-        <p className="text-apple-textSecondary text-lg max-w-2xl mx-auto">
-          Bewährte Prompts, CLAUDE.md-Snippets, Workflows und Skills – durchsuchbar, kopierbar, sofort nutzbar.
+        <p className="text-apple-textSecondary text-lg max-w-2xl mx-auto leading-relaxed">
+          Bewährte Prompts, CLAUDE.md-Snippets, Workflows und Skills — durchsuchbar, kopierbar, sofort nutzbar.
         </p>
         {lastUpdatePatterns.length > 0 && (
           <div className="mt-6 mx-auto max-w-2xl rounded-apple-lg border border-apple-accent/25 bg-apple-accent/5 px-4 py-3 text-left">

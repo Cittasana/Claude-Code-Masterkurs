@@ -61,26 +61,27 @@ const ForumView = () => {
         <span className="text-apple-textSecondary">{t('forum.title')}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+      {/* Header — Ethereal */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
         <div>
-          <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-2">
-            Community
-          </p>
-          <h1 className="text-4xl font-bold text-apple-text tracking-tight">
-            Forum
+          <div className="eyebrow mb-4"><span className="pulse" />Community</div>
+          <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+            <em className="italic-serif">Forum</em>
           </h1>
-          <p className="text-apple-textSecondary mt-2">
+          <p className="text-apple-textSecondary mt-3 leading-relaxed">
             Austausch, Fragen und Tipps zum Claude Code Masterkurs
           </p>
         </div>
         <button
           type="button"
           onClick={() => setShowNewThread(!showNewThread)}
-          className="btn-primary inline-flex items-center gap-2 shrink-0"
+          className="btn-primary shrink-0"
         >
-          <Plus size={18} />
+          <Plus size={14} />
           Neues Thema
+          <span className="btn-icon">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
+          </span>
         </button>
       </div>
 

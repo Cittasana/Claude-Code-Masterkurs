@@ -86,7 +86,7 @@ const TemplateDetailView = () => {
     }
   };
 
-  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent" /></div>;
+  if (loading) return <div className="flex justify-center py-20"><div className="h-8 w-8 animate-spin rounded-full border-2 border-apple-accent border-t-transparent" /></div>;
 
   if (!template) {
     return (

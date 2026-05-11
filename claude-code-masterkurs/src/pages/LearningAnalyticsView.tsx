@@ -53,10 +53,10 @@ ChartJS.register(
   Legend
 );
 
-// ── Chart defaults ─────────────────────────────────────────────────
+// ── Chart defaults — Ethereal palette ─────────────────────────────
 const CHART_COLORS = {
-  accent: '#ff9500',
-  accentMuted: 'rgba(255, 149, 0, 0.3)',
+  accent: '#ff6b1a',
+  accentMuted: 'rgba(255, 107, 26, 0.3)',
   success: '#30d158',
   successMuted: 'rgba(48, 209, 88, 0.3)',
   info: '#0a84ff',
@@ -65,11 +65,11 @@ const CHART_COLORS = {
   purpleMuted: 'rgba(191, 90, 242, 0.3)',
   warning: '#ffd60a',
   warningMuted: 'rgba(255, 214, 10, 0.3)',
-  error: '#ff453a',
-  errorMuted: 'rgba(255, 69, 58, 0.3)',
+  error: '#ff4d4d',
+  errorMuted: 'rgba(255, 77, 77, 0.3)',
   grid: 'rgba(255, 255, 255, 0.06)',
-  text: '#a1a1a6',
-  textBright: '#f5f5f7',
+  text: '#c8c8cd',
+  textBright: '#f4f4f5',
 };
 
 const baseChartOptions = {
@@ -464,21 +464,19 @@ const LearningAnalyticsView = () => {
           <ChevronLeft size={16} className="mr-1" />
           {t('common.dashboard')}
         </Link>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mt-2">
           <div>
-            <p className="text-apple-accent font-mono text-sm tracking-widest uppercase mb-2">
-              {t('analytics.title')}
-            </p>
-            <h1 className="text-3xl font-bold text-apple-text">
-              {t('analytics.titleDetail')}
+            <div className="eyebrow mb-4"><span className="pulse" />{t('analytics.title')}</div>
+            <h1 className="text-[clamp(32px,4.4vw,52px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+              <em className="italic-serif">{t('analytics.titleDetail')}</em>
             </h1>
-            <p className="text-apple-textSecondary mt-1">
+            <p className="text-apple-textSecondary mt-3 leading-relaxed">
               {t('analytics.subtitle')}
             </p>
           </div>
-          <div className="hidden md:flex items-center space-x-2 bg-apple-surface border border-apple-border rounded-apple px-4 py-2">
-            <Activity size={18} className="text-apple-accent" />
-            <span className="text-apple-text font-mono text-sm">
+          <div className="hidden md:flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/[0.04] border border-apple-border shrink-0">
+            <Activity size={14} className="text-apple-accent" />
+            <span className="text-apple-text font-mono text-xs tracking-[0.02em]">
               {events.length} {t('analytics.events')}
             </span>
           </div>
@@ -951,17 +949,17 @@ function KPICard({
   highlight?: boolean;
 }) {
   return (
-    <div className={`apple-card ${highlight ? 'border-apple-accent/30 accent-glow' : ''}`}>
-      <div className="flex items-center space-x-2 mb-2">
+    <div className={`apple-card ${highlight ? 'border-apple-accent/40' : ''}`}>
+      <div className="flex items-center space-x-2 mb-3">
         {icon}
-        <span className="text-[10px] text-apple-muted font-mono uppercase tracking-wider">
+        <span className="text-[10px] text-apple-muted font-mono uppercase tracking-[0.06em]">
           {label}
         </span>
       </div>
-      <div className="flex items-baseline space-x-1">
-        <span className="text-2xl font-bold text-apple-text font-mono">{value}</span>
+      <div className="flex items-baseline gap-2">
+        <span className="num-serif text-[clamp(28px,3vw,40px)] leading-none">{value}</span>
         {suffix && (
-          <span className="text-xs text-apple-muted">{suffix}</span>
+          <span className="text-[11px] text-apple-textSecondary font-mono uppercase tracking-[0.06em]">{suffix}</span>
         )}
       </div>
     </div>

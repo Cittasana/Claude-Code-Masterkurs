@@ -160,20 +160,16 @@ const PlaygroundView = () => {
         <span className="text-apple-textSecondary">{t('playground.breadcrumb')}</span>
       </div>
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 sm:mb-8">
-        <div className="min-w-0">
-          <div className="flex items-center space-x-3 mb-2">
-            <Terminal className="text-apple-accent shrink-0" size={28} />
-            <h1 className="text-2xl sm:text-3xl font-bold text-apple-text tracking-tight truncate">
-              Projekt-Playground
-            </h1>
-          </div>
-          <p className="text-apple-textSecondary max-w-2xl text-sm sm:text-base">
-            Trainiere Claude Code Konzepte interaktiv in der CLI-Simulation. Wähle ein Projekt,
-            löse die Aufgaben und erhalte sofortiges Feedback.
-          </p>
-        </div>
+      {/* Header — Ethereal */}
+      <div className="mb-10">
+        <div className="eyebrow mb-4"><Terminal size={12} /><span>Playground</span></div>
+        <h1 className="text-[clamp(32px,4.6vw,56px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
+          Projekt-<em className="italic-serif">Playground</em>
+        </h1>
+        <p className="text-apple-textSecondary max-w-2xl mt-3 leading-relaxed">
+          Trainiere Claude Code Konzepte interaktiv in der CLI-Simulation. Wähle ein Projekt,
+          löse die Aufgaben und erhalte sofortiges Feedback.
+        </p>
       </div>
 
       {/* Main Layout */}

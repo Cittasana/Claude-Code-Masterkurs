@@ -1,0 +1,47 @@
+name: Seed Production Content
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'claude-code-masterkurs/src/data/**'
+      - 'claude-code-masterkurs/server/prisma/seed.ts'
+      - 'claude-code-masterkurs/server/prisma/schema.prisma'
+      - '.github/workflows/seed-content.yml'
+  workflow_dispatch:
+
+jobs:
+  seed:
+    name: Upsert lessons, quizzes, projects to Railway Postgres
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: claude-code-masterkurs/server/package-lock.json
+
+      - name: Install server dependencies
+        working-directory: claude-code-masterkurs/server
+        run: npm ci
+
+      - name: Generate Prisma Client
+        working-directory: claude-code-masterkurs/server
+        run: npx prisma generate
+
+      - name: Run seed against Railway Postgres
+        working-directory: claude-code-masterkurs/server
+        env:
+          DATABASE_URL: ${{ secrets.RAILWAY_DATABASE_URL }}
+        run: npm run db:seed
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "Seed run finished. Check claude-code-masterkurs.de/dashboard for the live lesson count." >> $GITHUB_STEP_SUMMARY

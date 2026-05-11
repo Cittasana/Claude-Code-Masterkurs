@@ -12,6 +12,7 @@ import { useChallengeStore } from '../store/challengeStore';
 import DiscordWidget from '../components/DiscordWidget';
 import { allTools } from '../data/tools';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
+import { DashboardSkeleton } from '../components/UI/Skeleton';
 
 /** Minimal lesson shape for dashboard */
 interface DashLessonItem {
@@ -159,11 +160,7 @@ const DashboardView = () => {
   const minutes = timeInvested % 60;
 
   if (contentLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <div className="w-8 h-8 border-2 border-apple-accent border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

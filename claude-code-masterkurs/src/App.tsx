@@ -151,11 +151,17 @@ function App() {
           {/* Haupt-App mit Navigation & Footer */}
           <Route path="*" element={
             <div className="min-h-screen bg-apple-bg font-sans relative">
+              <a
+                href="#main"
+                className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-full focus:bg-apple-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-black focus:shadow-[0_14px_38px_-10px_rgba(255,107,26,0.55)] focus:outline-none focus:ring-2 focus:ring-apple-accent/40"
+              >
+                Zum Hauptinhalt springen
+              </a>
               <div className="page-bg" aria-hidden="true" />
               <div className="grain" aria-hidden="true" />
               <Navigation />
               <DiscordLoginHandler />
-              <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+              <main id="main" tabIndex={-1} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 focus:outline-none">
                 <Routes>
                   <Route index element={<LandingView />} />
                   <Route path="/dashboard" element={<DashboardView />} />

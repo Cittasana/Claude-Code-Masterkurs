@@ -546,5 +546,22 @@ code[class*="language-"] {
   animation: shimmer 3s ease-in-out infinite;
 }
 
+/* Skeleton placeholder — neutral shimmer over inner-surface */
+.skeleton {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(255, 255, 255, 0.10) 50%,
+      rgba(255, 255, 255, 0.04) 100%
+    );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 0.5rem;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton { animation: none; background: rgba(255, 255, 255, 0.06); }
+}
+
 /* === Defensive overflow (Ethereal mandate) === */
 main > *, main > * > * { min-width: 0; max-width: 100%; }

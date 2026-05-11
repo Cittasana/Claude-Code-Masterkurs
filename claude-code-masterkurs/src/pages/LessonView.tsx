@@ -21,6 +21,7 @@ import { useSRSStore } from '../store/srsStore';
 import LessonContent from '../components/Lessons/LessonContent';
 import QuizComponent from '../components/Quiz/QuizComponent';
 import PaywallOverlay from '../components/Paywall/PaywallOverlay';
+import { LessonSkeleton } from '../components/UI/Skeleton';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
 import { useLearningTimer } from '../hooks/useLearningTimer';
@@ -185,11 +186,7 @@ const LessonView = () => {
   }, []);
 
   if (dataLoading) {
-    return (
-      <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-2 border-apple-accent/30 border-t-apple-accent rounded-full animate-spin" />
-      </div>
-    );
+    return <LessonSkeleton />;
   }
 
   if (!lesson) {

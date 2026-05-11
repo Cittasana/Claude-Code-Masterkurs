@@ -1,27 +1,14 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useEffect, useRef } from 'react';
-import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Layers, Monitor, ExternalLink } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Sparkles } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import VideoHero from '../components/Landing/VideoHero';
 import FounderSection from '../components/Landing/FounderSection';
-import TestimonialSection from '../components/Landing/TestimonialSection';
 import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
-
-const STATS = [
-  { key: 'statsLessons', value: '27' },
-  { key: 'statsLevels', value: '3' },
-  { key: 'statsQuizzes', value: '27' },
-  { key: 'statsProjects', value: '6+' },
-];
-
-const UPDATES = [
-  { icon: Zap, title: 'Fast Mode & Opus 4.6', desc: 'Schnellere Antworten mit /fast' },
-  { icon: Layers, title: 'Agent Teams & Checkpointing', desc: 'Multi-Agent, /rewind' },
-  { icon: Monitor, title: 'Claude Code überall', desc: 'Web, Desktop, IDE, Slack' },
-  { icon: ExternalLink, title: 'Offizielle Docs', desc: 'code.claude.com' },
-];
+import { contentApi } from '../lib/api';
+import type { AdminLessonConfig } from '../lib/api';
 
 const FEATURES = [
   { icon: BookOpen, titleKey: 'landing.featureLessons', descKey: 'landing.featureLessonsDesc' },
@@ -30,9 +17,59 @@ const FEATURES = [
 ];
 
 const LandingView = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  // ── Live content from CMS ─────────────────────────────────
+  const [lessons, setLessons] = useState<AdminLessonConfig[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    contentApi
+      .getLessons({ track: 'main' })
+      .then((res) => {
+        if (!cancelled && Array.isArray(res.data)) setLessons(res.data);
+      })
+      .catch(() => {
+        /* offline / cold start — leave lessons empty, UI falls back gracefully */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const totalLessons = lessons.length;
+
+  /** 4 most recently touched lessons, sorted by updatedAt desc. */
+  const recentLessons = useMemo(
+    () =>
+      [...lessons]
+        .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        .slice(0, 4),
+    [lessons]
+  );
+
+  /** German "Mai 2026" / English "May 2026" — auto-localized. */
+  const currentMonthLabel = useMemo(
+    () =>
+      new Date().toLocaleDateString(i18n.language || 'de-DE', {
+        month: 'long',
+        year: 'numeric',
+      }),
+    [i18n.language]
+  );
+
+  /** Live STATS — totals come from the CMS so we never lie about counts. */
+  const stats = useMemo(
+    () => [
+      { key: 'statsLessons', value: totalLessons > 0 ? `${totalLessons}` : '...' },
+      { key: 'statsLevels', value: '3' },
+      { key: 'statsQuizzes', value: totalLessons > 0 ? `${totalLessons}` : '...' },
+      { key: 'statsProjects', value: '6+' },
+    ],
+    [totalLessons]
+  );
 
   useEffect(() => {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -61,7 +98,10 @@ const LandingView = () => {
     <div ref={rootRef} className="min-h-screen flex flex-col">
       <Helmet>
         <title>Claude Code Masterkurs – Lerne KI-gestütztes Programmieren</title>
-        <meta name="description" content="Der umfassende Online-Kurs für KI-gestützte Softwareentwicklung mit Claude Code. 27 Lektionen, interaktive Challenges und Live-Playground." />
+        <meta
+          name="description"
+          content={`Der umfassende Online-Kurs für KI-gestützte Softwareentwicklung mit Claude Code. ${totalLessons || 'Aktuelle'} Lektionen, interaktive Challenges und Live-Playground.`}
+        />
         <link rel="canonical" href="https://claude-code-masterkurs.de/" />
       </Helmet>
 
@@ -78,7 +118,7 @@ const LandingView = () => {
             <span>Der Kurs in Zahlen</span>
           </div>
           <div className="stagger grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-            {STATS.map(({ key, value }) => (
+            {stats.map(({ key, value }) => (
               <div key={key} className="shell">
                 <div className="inner py-7 px-3 text-center">
                   <span className="num-serif block text-[clamp(38px,4.6vw,56px)] mb-2">{value}</span>
@@ -150,46 +190,59 @@ const LandingView = () => {
         </div>
       </section>
 
-      {/* Founder Section (unchanged component) */}
+      {/* Founder Section */}
       <div className="reveal">
-        <FounderSection
-          discordUrl={`https://discord.gg/${import.meta.env.VITE_DISCORD_SERVER_ID || 'claude-code-masterkurs'}`}
-          contactEmail="office@cittasana.de"
-        />
+        <FounderSection contactEmail="office@cittasana.de" />
       </div>
 
-      {/* Testimonials */}
-      <div className="reveal">
-        <TestimonialSection />
-      </div>
-
-      {/* Neueste Updates */}
-      <section className="py-20 sm:py-28">
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="reveal flex flex-col items-center text-center gap-6 mb-12">
-            <div className="eyebrow"><span className="pulse" />Aktuell &middot; Februar 2026</div>
-            <h2 className="text-[clamp(30px,4vw,48px)] font-semibold tracking-[-0.032em] leading-[1.04] text-apple-text">
-              Neueste <em className="italic-serif">Claude-Code</em>-Updates
-            </h2>
-            <p className="text-apple-textSecondary text-sm max-w-xl">
-              Fast Mode, Agent Teams, Checkpointing und offizielle Docs &mdash; im Kurs abgedeckt.
-            </p>
+      {/* Neueste Updates — live from CMS (top 4 most recently updated lessons) */}
+      {recentLessons.length > 0 && (
+        <section className="py-20 sm:py-28">
+          <div className="max-w-6xl mx-auto px-4">
+            <div className="reveal flex flex-col items-center text-center gap-6 mb-12">
+              <div className="eyebrow">
+                <span className="pulse" />
+                Aktuell &middot; {currentMonthLabel}
+              </div>
+              <h2 className="text-[clamp(30px,4vw,48px)] font-semibold tracking-[-0.032em] leading-[1.04] text-apple-text">
+                Neueste <em className="italic-serif">Claude-Code</em>-Updates
+              </h2>
+              <p className="text-apple-textSecondary text-sm max-w-xl">
+                Die zuletzt überarbeiteten Lektionen &mdash; jede Woche kommen neue dazu, sobald wichtige Claude-Code-Releases erscheinen.
+              </p>
+            </div>
+            <div className="stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {recentLessons.map((lesson) => {
+                const updatedAt = new Date(lesson.updatedAt);
+                const formattedDate = updatedAt.toLocaleDateString(i18n.language || 'de-DE', {
+                  day: '2-digit',
+                  month: 'short',
+                });
+                return (
+                  <Link
+                    key={lesson.id}
+                    to={`/lesson/${lesson.lessonId}`}
+                    className="shell group block"
+                  >
+                    <div className="inner p-6 text-center transition-transform group-hover:translate-y-[-2px] h-full flex flex-col">
+                      <Sparkles size={22} className="mx-auto mb-3 text-apple-accent" />
+                      <h3 className="font-medium text-apple-text text-sm tracking-tight mb-2 group-hover:text-apple-accent transition-colors line-clamp-2">
+                        {lesson.title}
+                      </h3>
+                      <p className="text-xs text-apple-textSecondary leading-relaxed flex-1 line-clamp-3">
+                        {lesson.description}
+                      </p>
+                      <p className="mt-3 text-[10px] text-apple-muted font-mono uppercase tracking-[0.08em]">
+                        {formattedDate} &middot; Level {lesson.level}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
           </div>
-          <div className="stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {UPDATES.map(({ icon: Icon, title, desc }) => (
-              <Link key={title} to="/docs" className="shell group block">
-                <div className="inner p-6 text-center transition-transform group-hover:translate-y-[-2px]">
-                  <Icon size={22} className="mx-auto mb-3 text-apple-accent" />
-                  <h3 className="font-medium text-apple-text text-sm tracking-tight mb-1.5 group-hover:text-apple-accent transition-colors">
-                    {title}
-                  </h3>
-                  <p className="text-xs text-apple-textSecondary font-mono tracking-[0.02em]">{desc}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Was du lernst */}
       <section className="py-20 sm:py-28">

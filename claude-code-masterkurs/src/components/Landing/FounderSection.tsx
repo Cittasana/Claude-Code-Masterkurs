@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { Mail, MessageCircle } from 'lucide-react';
+import { useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import { gsap } from '../../lib/gsap';
 
 interface FounderSectionProps {
   /** Path to founder headshot image. Falls back to placeholder avatar. */
@@ -13,15 +16,42 @@ const FounderSection = ({
   contactEmail = 'office@cittasana.de',
 }: FounderSectionProps) => {
   const { t } = useTranslation();
+  const sectionRef = useRef<HTMLElement>(null);
+  const portraitRef = useRef<HTMLDivElement>(null);
+
+  /** Scrubbing scale + opacity on the round portrait as the section enters view. */
+  useGSAP(
+    () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !portraitRef.current) return;
+
+      gsap.fromTo(
+        portraitRef.current,
+        { scale: 0.88, opacity: 0.5 },
+        {
+          scale: 1,
+          opacity: 1,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: portraitRef.current,
+            start: 'top 85%',
+            end: 'center center',
+            scrub: 0.6,
+          },
+        }
+      );
+    },
+    { scope: sectionRef }
+  );
 
   return (
-    <section className="py-14 sm:py-20 border-t border-apple-border">
+    <section ref={sectionRef} className="py-14 sm:py-20 border-t border-apple-border">
       <div className="max-w-5xl mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-10 md:gap-14 items-center">
-          {/* Left: Founder image (2 cols) — round portrait with accent ring */}
+          {/* Left: Founder image (2 cols) — round portrait with accent ring + GSAP scale-on-view */}
           <div className="md:col-span-2 flex justify-center">
             {founderImageUrl ? (
-              <div className="relative">
+              <div ref={portraitRef} className="relative will-change-transform">
                 <div
                   aria-hidden="true"
                   className="absolute inset-0 rounded-full bg-gradient-to-br from-apple-accent/30 via-transparent to-transparent blur-2xl scale-110"

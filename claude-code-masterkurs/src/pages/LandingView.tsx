@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, FileText, BookOpen, Zap, Award, CheckCircle2, Sparkles } from 'lucide-react';
+import { useGSAP } from '@gsap/react';
 import { useAuthStore } from '../store/authStore';
 import VideoHero from '../components/Landing/VideoHero';
 import FounderSection from '../components/Landing/FounderSection';
@@ -11,6 +12,7 @@ import TestimonialSection from '../components/Landing/TestimonialSection';
 import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
 import { contentApi } from '../lib/api';
 import type { AdminLessonConfig } from '../lib/api';
+import { gsap } from '../lib/gsap';
 
 const FEATURES = [
   { icon: BookOpen, titleKey: 'landing.featureLessons', descKey: 'landing.featureLessonsDesc' },
@@ -22,6 +24,35 @@ const LandingView = () => {
   const { t, i18n } = useTranslation();
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const rootRef = useRef<HTMLDivElement>(null);
+  const ctaParagraphRef = useRef<HTMLParagraphElement>(null);
+
+  /** Final-CTA word-by-word opacity scrub — words rise from 0.1 to 1.0 along scroll progress. */
+  useGSAP(
+    () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (reduce || !ctaParagraphRef.current) return;
+
+      const words = ctaParagraphRef.current.querySelectorAll('[data-scrub-word]');
+      if (words.length === 0) return;
+
+      gsap.fromTo(
+        words,
+        { opacity: 0.12 },
+        {
+          opacity: 1,
+          ease: 'none',
+          stagger: { each: 0.06, from: 'start' },
+          scrollTrigger: {
+            trigger: ctaParagraphRef.current,
+            start: 'top 75%',
+            end: 'top 35%',
+            scrub: 0.6,
+          },
+        }
+      );
+    },
+    { scope: rootRef }
+  );
 
   // ── Live content from CMS ─────────────────────────────────
   const [lessons, setLessons] = useState<AdminLessonConfig[]>([]);
@@ -159,7 +190,7 @@ const LandingView = () => {
         </div>
       </section>
 
-      {/* Feature-Karten (Outcome bento with serif numerals) */}
+      {/* Feature-Karten — asymmetric Bento with grid-flow-dense (no equal-3 antipattern) */}
       <section className="py-20 sm:py-28">
         <div className="max-w-6xl mx-auto px-4">
           <div className="reveal flex flex-col items-center text-center gap-6 mb-12">
@@ -168,20 +199,79 @@ const LandingView = () => {
               Drei <em className="italic-serif">Hebel</em>, die alles ändern
             </h2>
           </div>
-          <div className="stagger grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {/* Bento layout: Card 1 = Master (lg:col-span-2 row-span-2), Card 2 + 3 stacked on the right.
+              grid-flow-dense ensures no empty cells if the gallery shrinks. */}
+          <div
+            className="stagger grid grid-cols-1 lg:grid-cols-3 lg:auto-rows-[minmax(200px,auto)] gap-4"
+            style={{ gridAutoFlow: 'dense' }}
+          >
             {FEATURES.map((f, i) => {
               const Icon = f.icon;
+              const isMaster = i === 0;
               return (
-                <div key={f.titleKey} className="shell">
-                  <div className="inner p-8 h-full flex flex-col">
-                    <div className="num-serif text-[clamp(38px,3.8vw,52px)] mb-5">
+                <div
+                  key={f.titleKey}
+                  className={`shell group transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1 ${
+                    isMaster ? 'lg:col-span-2 lg:row-span-2 relative overflow-hidden' : ''
+                  }`}
+                >
+                  {/* Master-Card decorative background image, behind content */}
+                  {isMaster && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-[6px] rounded-[calc(2rem-6px)] opacity-[0.22] mix-blend-luminosity pointer-events-none transition-opacity duration-700 group-hover:opacity-[0.3]"
+                      style={{
+                        backgroundImage:
+                          'url("https://picsum.photos/seed/claude-code-flow/1200/800")',
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        filter: 'contrast(115%) saturate(0.7)',
+                      }}
+                    />
+                  )}
+                  {/* Master-Card accent glow on hover */}
+                  {isMaster && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0 rounded-[2rem] opacity-0 transition-opacity duration-500 pointer-events-none group-hover:opacity-100"
+                      style={{
+                        background:
+                          'radial-gradient(ellipse 50% 40% at 30% 30%, rgba(255,107,26,0.18), transparent 70%)',
+                      }}
+                    />
+                  )}
+                  <div
+                    className={`inner relative ${
+                      isMaster ? 'p-10 sm:p-12' : 'p-8'
+                    } h-full flex flex-col`}
+                  >
+                    <div
+                      className={`num-serif ${
+                        isMaster
+                          ? 'text-[clamp(64px,7vw,96px)] mb-7'
+                          : 'text-[clamp(38px,3.8vw,52px)] mb-5'
+                      }`}
+                    >
                       <span>{String(i + 1).padStart(2, '0')}</span>
                     </div>
-                    <Icon size={22} className="text-apple-accent mb-3" />
-                    <h3 className="text-[19px] font-medium text-apple-text mb-2 tracking-tight">
+                    <Icon
+                      size={isMaster ? 28 : 22}
+                      className="text-apple-accent mb-3 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+                    />
+                    <h3
+                      className={`font-medium text-apple-text mb-2 tracking-tight transition-colors group-hover:text-apple-accent ${
+                        isMaster
+                          ? 'text-[clamp(24px,2.8vw,32px)] leading-[1.15]'
+                          : 'text-[19px]'
+                      }`}
+                    >
                       {t(f.titleKey)}
                     </h3>
-                    <p className="text-sm text-apple-textSecondary leading-relaxed flex-1">
+                    <p
+                      className={`text-apple-textSecondary leading-relaxed flex-1 ${
+                        isMaster ? 'text-base max-w-[42ch]' : 'text-sm'
+                      }`}
+                    >
                       {t(f.descKey)}
                     </p>
                   </div>
@@ -297,8 +387,18 @@ const LandingView = () => {
           <h2 className="text-[clamp(42px,5.6vw,76px)] font-semibold tracking-[-0.038em] leading-[1.02] text-apple-text mb-6 text-wrap-balance">
             Dein <em className="italic-serif">eigener</em> Claude-Code-Workflow
           </h2>
-          <p className="text-apple-textSecondary mb-10 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-            {t('landing.ctaText')}
+          <p
+            ref={ctaParagraphRef}
+            className="text-apple-textSecondary mb-10 text-base sm:text-lg max-w-xl mx-auto leading-relaxed"
+          >
+            {t('landing.ctaText')
+              .split(/\s+/)
+              .map((word, idx) => (
+                <span key={`${word}-${idx}`} data-scrub-word className="inline-block">
+                  {word}
+                  {idx < t('landing.ctaText').split(/\s+/).length - 1 ? ' ' : ''}
+                </span>
+              ))}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             {isAuthenticated ? (

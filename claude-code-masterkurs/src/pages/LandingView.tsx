@@ -7,6 +7,7 @@ import { useAuthStore } from '../store/authStore';
 import VideoHero from '../components/Landing/VideoHero';
 import FounderSection from '../components/Landing/FounderSection';
 import SourcesHubSection from '../components/Landing/SourcesHubSection';
+import TestimonialSection from '../components/Landing/TestimonialSection';
 import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
 import { contentApi } from '../lib/api';
 import type { AdminLessonConfig } from '../lib/api';
@@ -197,6 +198,11 @@ const LandingView = () => {
       {/* Founder Section */}
       <div className="reveal">
         <FounderSection contactEmail="office@cittasana.de" />
+      </div>
+
+      {/* Testimonials */}
+      <div className="reveal">
+        <TestimonialSection />
       </div>
 
       {/* Neueste Updates — live from CMS (top 4 most recently updated lessons) */}

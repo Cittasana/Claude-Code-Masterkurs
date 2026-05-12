@@ -758,6 +758,15 @@ export interface AdminLessonConfig {
   track: string;
   sortOrder: number;
   status: string;
+  /** Freshness audit fields (maintained by masterkurs-agent weekly pass). */
+  lastVerified: string | null;
+  freshnessWarnings: {
+    reason: string;
+    source: string;
+    severity: 'low' | 'medium' | 'high';
+    addedAt: string;
+  }[];
+  lastUpdatedByAgent: string | null;
   createdAt: string;
   updatedAt: string;
 }

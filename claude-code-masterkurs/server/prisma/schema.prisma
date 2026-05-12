@@ -582,6 +582,14 @@ model LessonConfig {
   track       String   @default("main")
   sortOrder   Int      @default(0) @map("sort_order")
   status      String   @default("published")
+  // ── Freshness metadata (maintained by masterkurs-agent weekly pass) ──
+  /// ISO datetime of the last successful freshness audit that found no issues.
+  lastVerified        DateTime?  @map("last_verified")
+  /// List of currently-open freshness warnings from the agent's audit.
+  /// Shape: [{ reason: string, source: string, severity: 'low'|'medium'|'high', addedAt: string }]
+  freshnessWarnings   Json       @default("[]") @map("freshness_warnings")
+  /// ISO datetime of the most recent auto-patch the agent applied.
+  lastUpdatedByAgent  DateTime?  @map("last_updated_by_agent")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 

@@ -22,6 +22,7 @@ import LessonContent from '../components/Lessons/LessonContent';
 import QuizComponent from '../components/Quiz/QuizComponent';
 import PaywallOverlay from '../components/Paywall/PaywallOverlay';
 import { LessonSkeleton } from '../components/UI/Skeleton';
+import FreshnessBanner from '../components/Lessons/FreshnessBanner';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
 import { useLearningTimer } from '../hooks/useLearningTimer';
@@ -63,6 +64,9 @@ const LessonView = () => {
           duration: l.duration,
           objectives: l.objectives,
           content: l.content as LessonContentType[],
+          lastVerified: l.lastVerified,
+          freshnessWarnings: l.freshnessWarnings,
+          lastUpdatedByAgent: l.lastUpdatedByAgent,
         }));
         const mappedQuizzes: Quiz[] = quizzesRes.data.map((q) => ({
           id: q.quizId,
@@ -446,6 +450,13 @@ const LessonView = () => {
                 </div>
               </div>
             </header>
+
+            {/* Freshness banner — surfaces stale-content warnings from the weekly agent audit. */}
+            <FreshnessBanner
+              warnings={lesson.freshnessWarnings}
+              lastVerified={lesson.lastVerified}
+              lastUpdatedByAgent={lesson.lastUpdatedByAgent}
+            />
 
             {/* Learning Objectives — Ethereal */}
             <div className="mb-10">

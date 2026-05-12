@@ -7,6 +7,23 @@ export interface Lesson {
   duration: string;
   objectives: string[];
   content: LessonContent[];
+  /** ISO datetime of last successful freshness audit (no issues). */
+  lastVerified?: string | null;
+  /** Open freshness warnings from the agent's weekly audit. */
+  freshnessWarnings?: FreshnessWarning[];
+  /** ISO datetime of most recent auto-patch from the agent. */
+  lastUpdatedByAgent?: string | null;
+}
+
+export interface FreshnessWarning {
+  /** Short human-readable explanation of what's stale. */
+  reason: string;
+  /** Source URL or research-report path that surfaced the staleness. */
+  source: string;
+  /** How impactful the staleness is. */
+  severity: 'low' | 'medium' | 'high';
+  /** ISO datetime when the warning was first detected. */
+  addedAt: string;
 }
 
 export interface LessonContent {

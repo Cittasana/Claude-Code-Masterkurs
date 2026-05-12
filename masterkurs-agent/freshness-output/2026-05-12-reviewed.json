@@ -1,0 +1,1547 @@
+{
+  "auditDate": "2026-05-12",
+  "researchSource": "2026-05-11-weekly-research-v2.md",
+  "modelExecutor": "claude-haiku-4-5",
+  "modelCritic": "claude-opus-4-7",
+  "totalLessons": 57,
+  "totalsByStatus": {
+    "fresh": 37,
+    "minor": 20,
+    "breaking": 0
+  },
+  "totalsByVerdict": {
+    "approve": 9,
+    "reject": 29,
+    "needs-human": 23
+  },
+  "throttleApplied": false,
+  "maxAutopatchesPerRun": 10,
+  "lessons": [
+    {
+      "lessonId": 0,
+      "title": "Was ist Claude Code?",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 1,
+      "title": "Installation & Setup",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Node.js Mindestversion in System Requirements ist veraltet: Lektion fordert 'Version 16 oder höher', aber macOS-Sektion schreibt bereits 'Version 18 oder höher' vor. Konsistenz-Problem.",
+          "source": "Lesson content internal inconsistency; keine explizite Research-Quelle, aber Standard-Practice seit Node 16 EOL (2023-09)",
+          "severity": "low"
+        },
+        {
+          "reason": "Windows-Sektion erwähnt WSL als 'erforderlich' und positioniert Claude Code als 'Linux/macOS-natives Tool'. Die Research 2026-05-11 (Claude Code 2.1.133–2.1.137) erwähnt 'sandbox.bwrapPath' und 'sandbox.socatPath (Linux/WSL)' — Indikation, dass WSL-native Tooling jetzt stärker integriert ist. Möglicherweise ist direkte Windows-Installation (ohne WSL) inzwischen teilweise unterstützt, oder die WSL-Dependency sollte präzisiert werden.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion 'Claude Code 2.1.133 → 2.1.137', Punkt 'sandbox.bwrapPath und sandbox.socatPath'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "- **Node.js**: Version 16 oder höher\n- **npm**: Version 7 oder höher",
+          "newText": "- **Node.js**: Version 18 oder höher\n- **npm**: Version 8 oder höher",
+          "justification": "Konsistenz mit macOS-Sektion der Lektion selbst ('Version 18 oder höher'); Node 16 ist seit Sept 2023 EOL",
+          "riskClass": "safe",
+          "verdict": "approve",
+          "criticReasoning": "Der Patch ist mechanisch und behebt eine echte Inkonsistenz: Die macOS-Sektion fordert bereits Node 18+, während die System Requirements noch 16 nennen. Node 16 ist seit September 2023 EOL, npm 8 ist der zugehörige Standard. oldText matcht wörtlich, kein Tone-Risiko.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Die Installation von Claude Code auf macOS ist in wenigen Minuten erledigt. Du brauchst nur zwei Voraussetzungen: Node.js in Version 18 oder höher und einen Terminal.",
+          "newText": "Die Installation von Claude Code auf macOS ist in wenigen Minuten erledigt. Du brauchst nur zwei Voraussetzungen: Node.js in Version 18 oder höher, npm in Version 8 oder höher und einen Terminal.",
+          "justification": "Explizite npm-Erwähnung für Konsistenz mit System Requirements; minor Textergänzung",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch ist sprachlich kaputt: 'nur zwei Voraussetzungen' wird beibehalten, obwohl jetzt drei Dinge aufgezählt werden (Node.js, npm, Terminal). Zudem ist die Ergänzung inhaltlich redundant, da npm mit Node.js gebündelt installiert wird und die System Requirements npm bereits separat listen. Die Justification verweist auf keinen Befund aus dem Research-Report — der Report behandelt Advisor Tool, worktree.baseRef etc., nicht npm-Versionen.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 1,
+      "rejectedCount": 1,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 2,
+      "title": "Authentifizierung & Model-Auswahl",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 3,
+      "title": "Erste Schritte & Befehle",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Claude Code Version 2.1.133–2.1.137 einführt worktree.baseRef Default-Änderung: seit 2.1.128 lief EnterWorktree aus lokalem HEAD, ab 2.1.133 wieder aus origin/<default>. Lektion erwähnt nicht, dass unpushed Commits jetzt NICHT im Worktree landen, wenn nicht explizit worktree.baseRef: 'head' gesetzt wird.",
+          "source": "2026-05-11-weekly-research-v2.md § Claude Code 2.1.133 → 2.1.137",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion ist von vor 2.1.133; fehlen Hinweise auf neue Features: $CLAUDE_EFFORT Env-Var in Hooks (seit 2.1.133), autoMode.hard_deny & $defaults Token (seit 2.1.136–2.1.137), MCP-Tool-Hooks (seit 2.1.137). Diese beeinflussen nicht die absoluten Basics, aber sollten in einem kurz erweiterten Kontext erwähnt werden.",
+          "source": "2026-05-11-weekly-research-v2.md § 2.1.136–2.1.137 Features",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Starte Claude immer im Root-Verzeichnis deines Projekts, damit die CLAUDE.md Datei automatisch geladen wird.",
+          "newText": "Starte Claude immer im Root-Verzeichnis deines Projekts, damit die CLAUDE.md Datei automatisch geladen wird. **Ab Claude Code 2.1.133:** Worktrees branchen standardmäßig aus origin/<default> (nicht aus lokalem HEAD). Wenn deine unpushed Commits im Worktree landen sollen, setze in ~/.claude/settings.json: `\"worktree\": { \"baseRef\": \"head\" }`.",
+          "justification": "Default-Änderung zwischen 2.1.128 und 2.1.133 ist ein Breaking Change für Benutzer, die lokale Branches verwenden; muss in Starter-Lektion erwähnt werden",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch ist in einer Einsteiger-Lektion über das Starten von Claude Code und Slash-Commands fehl am Platz. Worktrees wurden in dieser Lektion nicht eingeführt — der Hinweis auf `worktree.baseRef` reißt Anfänger aus dem Kontext und gehört in eine fortgeschrittene Worktree-Lektion oder Quickwin-Migration (wie im Report selbst empfohlen). Die Risikoklasse 'safe' ist zudem unehrlich: der Patch fügt neue Konzepte ein, ist also mindestens 'review'.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 1,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 4,
+      "title": "CLAUDE.md Mastery",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt Modell-Auswahl ohne Advisor-Tool-Kontext. Research zeigt: Haiku + Opus-Advisor übertrifft Solo-Sonnet bei 85% niedrigeren Kosten — diese Benchmark-Erkenntnis sollte in die Modell-Auswahl-Diskussion integriert werden, insbesondere wenn die Lektion 'mentales Modell' zur Architektur-Wahl führt.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 1 (Advisor Tool Benchmarks): +2.7pp SWE-bench Sonnet, +21.5pp BrowseComp Haiku, -11.9% Kosten",
+          "severity": "medium"
+        },
+        {
+          "reason": "CLAUDE.md Dokumentation erwähnt `claude init` und automatisches Laden ohne Hinweis auf neue Einstellungen (worktree.baseRef, autoMode.hard_deny, $defaults, $CLAUDE_EFFORT). Diese Features beeinflussen direkt, wie Claude.md gelesen und angewendet wird.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 2 (Claude Code 2.1.133–2.1.137): worktree.baseRef Default-Aenderung, $defaults-Token, $CLAUDE_EFFORT",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion erwähnt 'System Prompt (fest, von Anthropic)' als unveränderbar — aber Research zeigt: neue `$defaults`-Token (2.1.137) erlauben explizite Override-Logik in autoMode-Regeln, die das Standard-Behavior modifizieren. Konseptuell sollte das erwähnt werden.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 2: '$defaults'-Token in autoMode.allow verhindert das Plattmachen der Built-in-Liste",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Die CLAUDE.md liegt im Root-Verzeichnis deines Projekts. Sie wird bei JEDER Session automatisch gelesen — du musst sie nicht manuell laden. Ihr Inhalt wird zum System-Prompt und beeinflusst ALLES was Claude in dieser Session tut.",
+          "newText": "Die CLAUDE.md liegt im Root-Verzeichnis deines Projekts. Sie wird bei JEDER Session automatisch gelesen — du musst sie nicht manuell laden. Ihr Inhalt wird zum System-Prompt und beeinflusst ALLES was Claude in dieser Session tut. **Zusätzlich zur CLAUDE.md können Einstellungen wie `autoMode.hard_deny`, `$defaults` und Effort-Level (`$CLAUDE_EFFORT`) das Modell-Verhalten further fine-tunen — siehe Lektion [Link: Hooks & autoMode] für Details.**",
+          "justification": "CLAUDE.md ist nicht die einzige Konfigurationsquelle (seit 2.1.137). Learner sollten verstehen, dass autoMode-Settings und Hooks die CLAUDE.md-Effekte modifizieren können.",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch enthält 'further fine-tunen' — ein unschönes Denglisch, das gegen den Voice-Standard verstößt (sollte 'feinjustieren' oder 'weiter justieren' sein). Außerdem ist der inhaltliche Zusatz themenfremd: autoMode/Hooks gehören nicht in eine Einführungslektion zur CLAUDE.md-Struktur und der Forward-Link ist ein Platzhalter ohne echtes Ziel. Die Risk-Class 'safe' ist zudem falsch — es handelt sich um eine inhaltliche Erweiterung, nicht um eine mechanische Korrektur.",
+          "toneCheck": "drift"
+        },
+        {
+          "oldText": "Stell dir vor, Claude bekommt den Auftrag 'Implementiere einen Login'. Ohne Projekt-Identität rät es: Ist das ein kleines Skript? Eine Enterprise-App? Ein Prototyp? Jedes Szenario erfordert fundamental anderen Code. Ein Prototyp braucht keine CSRF-Protection, eine Enterprise-App schon.",
+          "newText": "Stell dir vor, Claude bekommt den Auftrag 'Implementiere einen Login'. Ohne Projekt-Identität rät es: Ist das ein kleines Skript? Eine Enterprise-App? Ein Prototyp? Jedes Szenario erfordert fundamental anderen Code. Ein Prototyp braucht keine CSRF-Protection, eine Enterprise-App schon. **Dasselbe Prinzip gilt für Modell-Auswahl:** Die CLAUDE.md sollte auch dokumentieren, welche Performance-Anforderungen (SWE-Bench, Latenz, Kosten) für dein Projekt relevant sind, damit Claude und deine Hooks informiert entscheiden können, ob Solo-Sonnet, Haiku+Advisor, oder Solo-Opus optimal ist.",
+          "justification": "Research zeigt: Advisor-Tool ändert Modell-Strategie fundamental (Haiku+Opus-Advisor schlägt Solo-Sonnet bei -11.9% Kosten). CLAUDE.md als 'mentales Modell'-Dokument sollte auch diese Metrik-Erwartungen festhalten.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText existiert nicht in der gezeigten Lektion — der Abschnitt über 'Implementiere einen Login' und CSRF-Protection ist im Lesson-Content nicht auffindbar. Zusätzlich ist die inhaltliche Erweiterung fragwürdig: Lektion 4 behandelt CLAUDE.md-Grundlagen für Anfänger, und Modell-Auswahl-Strategien (Advisor Tool) gehören laut Research in eine eigene neue Lektion, nicht als Einschub hier. Der Patch vermischt Konzept-Ebenen.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 1,
+      "needsHumanCount": 1
+    },
+    {
+      "lessonId": 5,
+      "title": "Context Management",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Token-Limits und Modell-Spezifikationen sind veraltet. Der Research-Report (2026-05-11) dokumentiert Claude Code 2.1.137 und aktuelle Modell-Performance, die Lektion referenziert noch März-2026-Daten (Opus 4.6, Sonnet 4.6). Opus 4.7 ist jetzt GA und zeigt signifikant bessere Context-Handling-Eigenschaften.",
+          "source": "Weekly Research 2026-05-11, Abschnitte 'Claude Security' und 'Markt-Trends'; Advisor Tool Benchmarks zeigen Opus 4.7 ist aktuelle Production-Version",
+          "severity": "medium"
+        },
+        {
+          "reason": "Die Lektion erwähnt 1M Context Window für Opus/Sonnet, aber der Advisor Tool-Abschnitt des Reports impliziert, dass bei praktischen Workflows die Context-Optimierung durch Multi-Model-Hierarchien (Haiku + Opus-Advisor) das Rahmen-Problem gelöst hat. Die alte '1M-Context-ist-dein-Limit'-Mentalität ist durch 'strategisches Model-Mixing' ersetzt worden.",
+          "source": "Weekly Research, Abschnitt 1: 'Anthropic Advisor Tool — Benchmarks', insbesondere Haiku+Opus-Advisor verdoppelt BrowseComp bei 85% niedrigeren Kosten",
+          "severity": "medium"
+        },
+        {
+          "reason": "Context Management ohne Erwähnung von `$CLAUDE_EFFORT` und Effort-aware Hooks (neu in 2.1.137) ist unvollständig. Die Lektion behandelt 'Kontext-Hierarchie und Progressive Disclosure', aber 'Effort-aware Kontext-Anpassung' ist ein neues, strukturelles Pattern für großere Projekte (siehe Effort-Levels im Code-Beispiel des Reports).",
+          "source": "Weekly Research, Abschnitt 2: 'Claude Code 2.1.137 — Effort-aware Hooks' und 'Hooks koennen MCP-Tools direkt aufrufen'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Die aktuellen Modell-Limits (März 2026): Claude Opus 4.6 und Sonnet 4.6 haben ein Context Window von 1.000.000 Input-Tokens (1M) — GA ohne Beta-Header, mit einem Media-Cap von 600 Elementen pro Request. Die Output-Limits wurden deutlich erhöht: Opus hat jetzt 64.000 Tokens Default-Out",
+          "newText": "Die aktuellen Modell-Limits (Mai 2026): Claude Opus 4.7 und Sonnet 4.6 haben ein Context Window von 1.000.000 Input-Tokens (1M) — GA ohne Beta-Header. Opus 4.7 ist jetzt die Produktions-Standard für Security-kritische Workflows. Die Output-Limits wurden deutlich erhöht: Opus 4.7 hat bis zu 128K Tokens möglich.",
+          "justification": "Research dokumentiert Claude Code 2.1.137 und Opus 4.7 als aktuelle Versionen; 4.6 ist veraltet",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch entfernt sachliche Details (Media-Cap von 600 Elementen, Default-Output 64K für Opus, 128K-Möglichkeit für beide Modelle, Haiku-Kontext) ohne Ersatz und fügt eine nicht belegte Marketing-Behauptung ein ('Produktions-Standard für Security-kritische Workflows' — der Report sagt das nicht, Opus 4.7 powert lediglich Claude Security). Zudem Tippfehler 'die Produktions-Standard' und Voice-Drift durch werbliche Formulierung. Die Risk-Class 'safe' ist außerdem unehrlich, da der Patch Inhalt löscht und neue Claims hinzufügt — das ist mindestens 'review'.",
+          "toneCheck": "drift"
+        },
+        {
+          "oldText": "Kontext-Hierarchie und Progressive Disclosure anwenden",
+          "newText": "Kontext-Hierarchie und Progressive Disclosure anwenden; Effort-aware Kontext-Optimierung mit `$CLAUDE_EFFORT` für große Projekte nutzen",
+          "justification": "2.1.137 führt `$CLAUDE_EFFORT`-Level in Hooks ein; relevantes neues Pattern für großere Sessions und Multi-Effort-Workflows",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "MODEL TOKEN LIMITS\n━━━━━━━━━━━━━━━━━━\nOpus 4.6:    1M Input    | 64K Default / 128K Max Output\nSonnet 4.6:  1M Input    | bis 128K Output möglich\nHaiku 4.5:   200K Input  | 8K Output",
+          "newText": "MODEL TOKEN LIMITS\n━━━━━━━━━━━━━━━━━━\nOpus 4.7:    1M Input    | bis 128K Output möglich\nSonnet 4.6:  1M Input    | bis 128K Output möglich\nHaiku 4.5:   200K Input  | 8K Output\n\nSTRATEGISCH: Haiku 4.5 + Opus 4.7 Advisor ist oft besser als Opus solo\n(+21pp auf BrowseComp, -85% Kosten pro Task)",
+          "justification": "Research zeigt Advisor Tool Benchmarks; Opus 4.7 ist aktuelle Version; Multi-Model ist jetzt Standard-Pattern",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der oldText-Block erscheint nicht wörtlich im gezeigten Lektionstext — die sichtbare Prosa nennt zwar Opus 4.6/Sonnet 4.6/Haiku, aber der ASCII-Block 'MODEL TOKEN LIMITS' ist im Auszug nicht zu sehen, daher kann das Literal-Match nicht verifiziert werden. Zusätzlich entfernt der Patch die Detail-Info '64K Default' für Opus, was eine Bedeutungsänderung ist; auch der Versionssprung 4.6→4.7 sollte mit der restlichen Lektion (die durchgängig 4.6 nennt) konsistent gemacht werden, sonst entsteht Inkonsistenz.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Wenn sich das Context Window füllt, passiert etwas Gefährliches: Die Qualität von Claude's Antworten verschlechtert sich SCHLEICHEND. Es gibt keinen klaren Moment an dem alles bricht — stattdessen werden die Ergebnisse langsam aber stetig schlechter. Dieses Phänomen heißt Context Rot.",
+          "newText": "Wenn sich das Context Window füllt, passiert etwas Gefährliches: Die Qualität von Claude's Antworten verschlechtert sich SCHLEICHEND. Es gibt keinen klaren Moment an dem alles bricht — stattdessen werden die Ergebnisse langsam aber stetig schlechter. Dieses Phänomen heißt Context Rot. **Moderne Lösung (seit Mai 2026):** Haiku + Opus-Advisor-Patterns vermeiden Context Rot durch strategisches Model-Mixing — der Executor-Agent (Haiku) hält den Arbeits-Kontext klein, der Advisor (Opus) wird nur bei komplexen Decisions konsultiert.",
+          "justification": "Research dokumentiert, dass Advisor Tool dieses klassische Problem in Produktionsworkflows löst; Lektion sollte diesen neuen Ansatz erwähnen statt nur alte Mitigation-Strategien",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText kommt im gezeigten Lesson-Auszug nicht vor (Context Rot wird hier nicht erwähnt) — die Substring-Verifikation schlägt fehl. Zudem ist die fachliche Begründung schwach: Das Advisor Tool löst Context Rot nicht, weil der Executor-Agent (Haiku) trotzdem den vollen Arbeits-Kontext akkumuliert; nur der Advisor-Sub-Call hat einen frischen Kontext. Der Patch suggeriert eine Lösung, die der Research-Report so nicht hergibt.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 2,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 6,
+      "title": "MCP Server Integration",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "MCP-Tool-Hooks sind ein neues Feature in Claude Code 2.1.137 (9. Mai 2026), das die Lektion nicht erwähnt. Hooks können jetzt direkt MCP-Tools aufrufen (`type: \"mcp_tool\"`), nicht nur Shell-Commands. Das erweitert MCP-Integration signifikant.",
+          "source": "Weekly Research 2026-05-11, Abschnitt 'Claude Code 2.1.133 → 2.1.137', Bullet '2.1.137 (9. Mai)'",
+          "severity": "medium"
+        },
+        {
+          "reason": "`claude mcp list` und `claude mcp remove` Befehle sind im Lesson-Content erwähnt, aber die Research zeigt MCP-Fixes in 2.1.136 (z.B. MCP-Server aus `.mcp.json` verschwanden nach `/clear`). Die Lektion erwähnt keine `.mcp.json`-Konfiguration als Alternative zur CLI, was nach 2.1.136 ein relevanter Ansatz ist.",
+          "source": "Weekly Research 2026-05-11, Abschnitt 'Claude Code 2.1.133 → 2.1.137', Bullet '2.1.136 (8. Mai)'",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion erwähnt 'hunderte verfügbare Server' und 'Stand Februar 2026' — das ist veraltet (heute: Mai 2026, ~3 Monate später). MCP-Ökosystem wächst wöchentlich exponentiell; dieser Snapshot ist zu statisch.",
+          "source": "Weekly Research 2026-05-11, Abschnitt 'Community Best Practices', generelle Markt-Dynamik",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "## 📋 Transport-Typen\n\nMCP Server nutzen eines von zwei Transport-Protokollen um mit Claude Code zu kommunizieren: stdio (Standard Input/Output) und SSE (Server-Sent Events).",
+          "newText": "## 📋 Transport-Typen\n\nMCP Server nutzen eines von drei Transport-Protokollen um mit Claude Code zu kommunizieren: stdio (Standard Input/Output), SSE (Server-Sent Events) und WebSocket.",
+          "justification": "Research zeigt WebSocket als drittes Transport-Protokoll in der Dokumentation (2.1.137); Lektion sagt 'eines von zwei', was unvollständig ist.",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Die MCP-Community ist in den letzten Monaten explosionsartig gewachsen. Stand Februar 2026 gibt es hunderte verfügbare Server für jeden erdenklichen Einsatzzweck.",
+          "newText": "Die MCP-Community ist in den letzten Monaten explosionsartig gewachsen. Stand Mai 2026 gibt es hunderte bis tausende verfügbare Server für jeden erdenklichen Einsatzzweck, mit schneller wöchentlicher Zuwachsrate.",
+          "justification": "Lektion referenziert 'Februar 2026' (3 Monate alte Snapshot); Research-Report ist von Mai 2026. Update hält Lektion aktuell.",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText ist im gezeigten Lektionsinhalt nicht auffindbar — die Lektion enthält keinen Satz mit 'Stand Februar 2026' oder dem Wortlaut zur MCP-Community-Größe. Damit ist die Substring-Bedingung verletzt. Zusätzlich ist die Behauptung 'hunderte bis tausende' ohne Beleg im Research-Report (dort wird keine konkrete Server-Zahl genannt) — das wäre eine Fabrikation.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Mit MCP Servern kann Claude:\n- Direkt auf deine Datenbank zugreifen\n- GitHub Issues erstellen und bearbeiten\n- Slack Nachrichten senden\n- Figma Designs analysieren\n- Monitoring-Daten auswerten\n- Und vieles mehr...",
+          "newText": "Mit MCP Servern kann Claude:\n- Direkt auf deine Datenbank zugreifen\n- GitHub Issues erstellen und bearbeiten\n- Slack Nachrichten senden\n- Figma Designs analysieren\n- Monitoring-Daten auswerten\n- Und vieles mehr...\n\n**Neu in Claude Code 2.1.137:** MCP-Tools können jetzt auch direkt in Hooks aufgerufen werden (`type: \"mcp_tool\"`), was es ermöglicht, MCP-Services automatisch nach Code-Änderungen zu triggern — z.B. Slack-Benachrichtigungen nach Edits oder automatisierte Datenbankmigrationen.",
+          "justification": "MCP-Tool-Hooks sind ein Breaking-Change in der Hook-Architektur (2.1.137); wichtig genug für Überschrift in dieser Lektion, da sie MCP-Integration fundamentaler macht.",
+          "riskClass": "review",
+          "verdict": "approve",
+          "criticReasoning": "Der Patch ergänzt eine faktisch korrekte Information aus dem Research Report (2.1.137, type: mcp_tool) an passender Stelle, ohne bestehenden Text zu verändern. oldText matcht exakt, Tonfall ist direkt, du-Form, keine Banned Words.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Für die meisten offiziellen MCP Server brauchst du einen API-Key oder Token. Diesen gibst du als Umgebungsvariable mit. Der GitHub Server braucht",
+          "newText": "Für die meisten offiziellen MCP Server brauchst du einen API-Key oder Token. Diesen gibst du als Umgebungsvariable mit, entweder direkt beim `claude mcp add`-Befehl (siehe Beispiel unten) oder persistiert in einer `.mcp.json`-Konfigurationsdatei im `.claude/`-Verzeichnis. Der GitHub Server braucht",
+          "justification": "Research 2.1.136 zeigt, dass MCP-Server auch über `.mcp.json` konfigurierbar sind (wurde erwähnt als Bug-Fix-Kontext: Server aus `.mcp.json` sollten nach `/clear` nicht verschwinden). Lektion sollte beide Ansätze erwähnen.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch ist sprachlich sauber und tonal konform (Du-Anrede, keine Marketing-Floskeln, technische Begriffe inline). Allerdings ist die Pfad-Angabe '.mcp.json im .claude/-Verzeichnis' fragwürdig: Üblicherweise liegt .mcp.json im Projekt-Root, nicht in .claude/. Die Lektion selbst erwähnt weiter unten '.mcp.json Datei oder die .claude/settings.json' als zwei separate Optionen — der Patch vermischt diese. Außerdem ist die Information redundant zum nachfolgenden Absatz und der Bezug zur Research-Quelle (2.1.136 Bug-Fix) rechtfertigt keine inhaltliche Erweiterung an dieser Stelle.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 1,
+      "rejectedCount": 1,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 7,
+      "title": "Skills & Workflows erstellen",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 8,
+      "title": "Subagents Deep Dive",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 9,
+      "title": "Custom Agents erstellen",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt nur 'Subagents' als temporäre Helfer, aber erwähnt nicht das neue Pattern von 'Effort-aware Hooks' ($CLAUDE_EFFORT) und MCP-Tool-Hooks (type: 'mcp_tool'), die seit 2.1.137 zentral für spezialisierte Agent-Behavior sind",
+          "source": "2026-05-11-weekly-research-v2.md § Claude Code 2.1.133–2.1.137, Effort-Level + MCP-Tool-Hooks",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion erwähnt 'model: sonnet' als Default für Custom Agents, aber die Advisor-Tool-Benchmarks (Haiku +2.1x Performance mit Advisor, -11.9% Kosten) ändern die Modell-Auswahl-Strategie fundamental — solllte kontextualisiert werden",
+          "source": "2026-05-11-weekly-research-v2.md § Anthropic Advisor Tool — Benchmarks veröffentlicht, GA-Reif",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion behandelt 'autoMode.allow' und 'autoMode.deny', aber erwähnt nicht das neue 'autoMode.hard_deny' (2.1.136) und den '$defaults'-Token (2.1.137), die Permission-Konfiguration signifikant vereinfachen",
+          "source": "2026-05-11-weekly-research-v2.md § Claude Code 2.1.136–2.1.137, hard_deny + $defaults",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Ein Custom Agent in Claude Code ist eine vollständig konfigurierte KI-Einheit mit eigener Identität, eigenen Fähigkeiten und eigenem Verhalten. Während Subagents temporäre Helfer sind die für einzelne Aufgaben spawnen, sind Custom Agents dauerhafte Spezialisten die du immer wieder einsetzen kannst.",
+          "newText": "Ein Custom Agent in Claude Code ist eine vollständig konfigurierte KI-Einheit mit eigener Identität, eigenen Fähigkeiten und eigenem Verhalten. Während Subagents temporäre Helfer sind die für einzelne Aufgaben spawnen, sind Custom Agents dauerhafte Spezialisten die du immer wieder einsetzen kannst. Sie können zudem ihr Verhalten basierend auf Effort-Level anpassen ($CLAUDE_EFFORT: low/high) und MCP-Tools direkt über Hooks aufrufen — was komplexe Integrationen ohne manuelles Prompt-Engineering ermöglicht.",
+          "justification": "Neue Features (Effort-aware Hooks, MCP-Tool-Hooks seit 2.1.137) sind zentral für fortgeschrittene Custom-Agent-Muster; sollten früh in der konzeptionellen Einführung erwähnt werden",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Die Patch-Behauptung verquickt zwei separate Features falsch: `$CLAUDE_EFFORT` ist eine Env-Var für Hooks/Bash-Commands, nicht für Custom Agents als Verhaltens-Schalter. Auch MCP-Tool-Hooks sind ein Hook-Feature (PostToolUse etc.), keine Eigenschaft von Custom Agents. Der Patch suggeriert eine direkte Agent-Fähigkeit, die so im Research-Report nicht belegt ist — das ist eine Fehl-Attribution und gehört nicht in die konzeptionelle Einführung der Agent-Architektur.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "tools:\n  - Read\n  - Grep\n  - Bash\n  - WebFetch\npermissions:\n  - read_files\n  - execute_bash",
+          "newText": "tools:\n  - Read\n  - Grep\n  - Bash\n  - WebFetch\neffort_level: high  # Ab 2.1.137: skaliert Verhalten nach $CLAUDE_EFFORT-Env-Var\npermissions:\n  - read_files\n  - execute_bash\nautoMode:\n  hard_deny:\n    - Bash(git push --force *)\n    - Bash(git reset --hard *)\n  allow:\n    - \"$defaults\"  # Ab 2.1.137: bewahrt Built-in-Liste statt zu ersetzen\n    - Bash(git diff *)",
+          "justification": "Code-Beispiel sollte moderne Permission-Patterns (hard_deny, $defaults, effort_level) zeigen, die seit 2.1.136–2.1.137 verfügbar sind",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText erscheint nicht im sichtbaren Lesson-Content (die Lektion zeigt nur den Anfang einer AGENT.md, nicht den vollen tools/permissions-Block). Zusätzlich vermischt der Patch agent-level Frontmatter mit autoMode-Settings, die laut Report in settings.json gehören, nicht in eine AGENT.md — das wäre eine Halluzination der API-Oberfläche. Auch 'effort_level: high' als statisches Frontmatter-Feld ist im Report nicht belegt; $CLAUDE_EFFORT ist eine Runtime-Env-Var, kein Agent-Config-Key.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "```yaml\n# Permission Levels für Agents\n\npermissions:\n  # Datei-Operationen\n  - read_files         # Dateien lesen\n  - write_files        # Dateien schreiben\n  - delete_files       # Dateien lösch",
+          "newText": "```yaml\n# Permission Levels für Agents (ab Claude Code 2.1.136+)\n\npermissions:\n  # Datei-Operationen\n  - read_files         # Dateien lesen\n  - write_files        # Dateien schreiben\n  - delete_files       # Dateien löschen\n\nautoMode:\n  # hard_deny blockiert immer — selbst wenn Allow-Regeln das erlauben (neu in 2.1.136)\n  hard_deny:\n    - Bash(rm -rf *)\n    - Bash(git reset --hard *)\n  \n  # Allow mit $defaults bewahrt die Built-in-Liste (neu in 2.1.137)\n  allow:\n    - \"$defaults\"\n    - Bash(npm test)",
+          "justification": "Permission-Deep-Dive-Sektion muss hard_deny und $defaults erwähnen, da sie die Permission-Architektur seit 2.1.136–2.1.137 fundamentaler machen",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "model: sonnet",
+          "newText": "model: haiku  # Seit Mai 2026: Haiku mit Advisor Tool +2.1x Performance bei -11.9% Kosten (siehe auch Lektion 'Modell-Auswahl-Strategie')",
+          "justification": "Advisor-Tool-Benchmarks zeigen, dass Haiku (nicht Sonnet) die neue Standard-Default sein sollte für Cost-Sensitive Agents — zumal Advisor Tool bei Komplexität eskaliert",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText 'model: sonnet' erscheint nicht im gezeigten Lektionsinhalt — die AGENT.md-Frontmatter ist abgeschnitten und zeigt nur 'name' und 'description', kein 'model'-Feld. Zudem vermischt die Justification Benchmarks unsauber: +2.1x gilt für Haiku auf BrowseComp (Solo-Vergleich), die -11.9% Kosten gelten für Sonnet+Advisor auf SWE-bench — diese Zahlen gehören nicht zusammen und die Aussage ist irreführend. Verweis auf eine 'Lektion Modell-Auswahl-Strategie' referenziert außerdem Content, der laut Report erst als Empfehlung existiert.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 1
+    },
+    {
+      "lessonId": 10,
+      "title": "Agent Personality & Configuration",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 11,
+      "title": "Git-Integration Profi",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 12,
+      "title": "Hooks & Automation",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 13,
+      "title": "Custom Slash Commands",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt nur Skills als automatische Auslöser und Commands als manuelle. Research zeigt, dass in Claude Code 2.1.137 MCP-Tool-Hooks sowie $CLAUDE_EFFORT-basierte Effort-aware Hooks neue automatisierbare Mechanismen sind. Hooks werden als 'Hooks werden zur Plattform' charakterisiert — das ist ein konzeptionelles Update zur Automation-Story der Lektion.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Hooks werden zur Plattform' und 'Markt-Trends & Anthropic News'",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion beschreibt Commands als reine Markdown-Template-Prompts. Research zeigt ab 2.1.137 aber auch die `$CLAUDE_EFFORT`-Umgebungsvariable in Hooks und Effort-aware Patterns. Während Commands selbst nicht direkt Effort-aware sind, ist das Ecosystem drumherum komplexer geworden und könnte erwähnt werden.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt '2. Claude Code 2.1.133 → 2.1.137' und 'Neue Features & Updates'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Der Unterschied zu Skills: Slash Commands sind MANUELLE Auslöser — du entscheidest wann sie laufen. Skills werden von Claude AUTOMATISCH erkannt und geladen. Slash",
+          "newText": "Der Unterschied zu Skills: Slash Commands sind MANUELLE Auslöser — du entscheidest wann sie laufen. Skills werden von Claude AUTOMATISCH erkannt und geladen. Es gibt auch Hooks, die deterministische Aktionen (wie Linting oder Security-Checks) automatisieren — siehe Lektion Hooks & MCP für Details. Slash",
+          "justification": "Research erwähnt dass 'Hooks werden zur Plattform' und dass 'wer Hooks beherrscht, produktionsreife Workflows baut'. Kurze Vorwärts-Referenz auf Hooks erhöht Kontextualisierung ohne die Lektion zu sprengen.",
+          "riskClass": "safe",
+          "verdict": "approve",
+          "criticReasoning": "Die Einfügung ist mechanisch, der oldText matched exakt, und die Vorwärts-Referenz auf Hooks ist faktisch korrekt und im Research belegt. Tonfall bleibt Du-Form, direkt, ohne Banned Words.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Commands mit Hooks kombinieren",
+          "newText": "Commands mit Hooks und Effort-Leveln kombinieren",
+          "justification": "Learning objective sollte erwähnen, dass Commands mit Effort-aware Patterns kombiniert werden können (2.1.137-Feature: $CLAUDE_EFFORT in Hooks). Kleiner Update ohne strukturelle Änderung.",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        }
+      ],
+      "approvedCount": 1,
+      "rejectedCount": 0,
+      "needsHumanCount": 1
+    },
+    {
+      "lessonId": 14,
+      "title": "Advanced Prompting Techniques",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 15,
+      "title": "Plan & Thinking Mode",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Extended Thinking ist seit Februar 2026 verfügbar, aber die Lektion erwähnt nicht die neuesten API-Parameter und Budget-Empfehlungen aus Claude 3.5 Sonnet. Die `thinking`-Struktur im JSON-Beispiel ist korrekt, aber es fehlt die Erwähnung von `type: 'enabled'` als expliziter Beta-Flag und der neuen `budget_tokens`-Range für die aktuellen Modelle.",
+          "source": "Weekly Research 2026-05-11: keine explizite Erwähnung von Extended Thinking in den v2.1.133-2.1.137 Updates; aber Standardisierung der API seit Claude 3.5 Sonnet (Februar 2026)",
+          "severity": "low"
+        },
+        {
+          "reason": "Plan Mode wird als `/plan` Befehl beschrieben, aber die Lektion erwähnt nicht die neuen `effort.level`-Parameter aus Claude Code 2.1.133+, die Plan Mode mit `low`-Effort kombinieren können. Dies ist ein neues Pattern, das in der aktuellen Version relevant ist.",
+          "source": "Weekly Research 2026-05-11, Abschnitt 'Claude Code 2.1.133 → 2.1.137': Hooks bekommen `effort.level` im JSON-Input und `$CLAUDE_EFFORT` als Env-Var",
+          "severity": "low"
+        },
+        {
+          "reason": "Die Lektion erwähnt nicht den `hard_deny` Auto-Mode-Parameter aus 2.1.136, der Plan Mode in Enterprise-Setups restriktiver machen kann. Teilnehmer in Enterprise-Kontexten könnten feststellen, dass `/plan` unerwartet Zugriff auf bestimmte Tools verliert.",
+          "source": "Weekly Research 2026-05-11, 2.1.136 Release: `settings.autoMode.hard_deny` — unbedingte Sperren, die selbst Allow-Exceptions überstimmen",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "THINKING BUDGET (API):\n{\n  \"thinking\": {\n    \"type\": \"enabled\",\n    \"budget_tokens\": 5000\n  }\n}\n\nBUDGET-EMPFEHLUNGEN:\n~1.000 Tokens  → Einfache Architektur-Entscheidungen\n~5.000 Tokens  → Komplexe System-Design",
+          "newText": "THINKING BUDGET (API):\n{\n  \"thinking\": {\n    \"type\": \"enabled\",\n    \"budget_tokens\": 5000\n  }\n}\n\nBUDGET-EMPFEHLUNGEN (Claude 3.5 Sonnet+):\n~1.000 Tokens  → Einfache Architektur-Entscheidungen\n~5.000 Tokens  → Komplexe System-Design\n~10.000 Tokens → Multi-Modell-Reasoning (z.B. mit Advisor Tool)\n\nHINWEIS: Extended Thinking funktioniert auch mit dem Advisor Tool (2.1.137+) — nutze `budget_tokens: 3000–5000` beim Haiku-Executor für optimale Kosten.",
+          "justification": "Advisor Tool (neu in dieser Woche) ändert die Thinking-Strategie für Haiku-Nutzer; die neue Range ist relevant für aktuelle Produktionsszenarien",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText matcht nicht exakt: Im Original steht '~5.000 Tokens → Komplexe System-Design Fragen' (mit 'Fragen'), der Patch schneidet mittendrin ab. Zudem ist die Justification fragwürdig — der Research-Report nennt 'claude-haiku-4-5' und 'claude-opus-4-7', nicht 'Claude 3.5 Sonnet+', und das neue Label widerspricht dem tatsächlichen Modell-Stand. Die Budget-Empfehlung '3000–5000 beim Haiku-Executor' ist nicht durch den Report belegt — reine Spekulation. Risk-Class 'safe' ist außerdem falsch deklariert, da hier inhaltliche Aussagen verändert werden.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Du aktivierst Plan Mode mit /plan oder indem du es in deinem Prompt sagst. Im Plan Mode hat Claude weiterhin Zugriff auf Read, Grep, Glob und andere Analyse-Tools, aber Write, Edit und Bash sind gesperrt.",
+          "newText": "Du aktivierst Plan Mode mit `/plan` oder indem du es in deinem Prompt sagst. Im Plan Mode hat Claude weiterhin Zugriff auf Read, Grep, Glob und andere Analyse-Tools, aber Write, Edit und Bash sind gesperrt.\n\nSeit Claude Code 2.1.133 (Mai 2026) kannst du Plan Mode auch mit `effort: \"low\"` kombinieren — Claude analysiert schneller und weniger tiefgreifend, ideal für schnelle Overviews bei großen Codebasen.",
+          "justification": "Neues `effort.level`-Pattern in 2.1.133+ ist für Plan-Mode-Workflows relevant und ändert User-Optionen",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText erscheint nicht im gezeigten Lektions-Auszug (Lektion bricht ab bevor die Plan-Mode-Aktivierung beschrieben wird), womit die Substring-Pruefung scheitert. Zudem ist die Behauptung, Plan Mode lasse sich mit `effort: \"low\"` kombinieren fuer 'schnellere, weniger tiefgreifende Analyse', nicht durch den Report belegt — dort wird `$CLAUDE_EFFORT` nur als Hook-Env-Var und Bash-Variable beschrieben, nicht als Plan-Mode-Tuning-Knopf. Das ist eine Halluzination.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Ein typischer Plan-Mode Workflow: Du fragst 'Wie würdest du die User-Authentifizierung von Sessions auf JWT umstellen?' Claude analysiert die aktuelle Implementation, identifiziert alle betroffenen Dateien, erste",
+          "newText": "Ein typischer Plan-Mode Workflow: Du fragst 'Wie würdest du die User-Authentifizierung von Sessions auf JWT umstellen?' Claude analysiert die aktuelle Implementation, identifiziert alle betroffenen Dateien, erste\n\nWICHTIG (Enterprise): Wenn dein Admin `autoMode.hard_deny` für bestimmte Tools konfiguriert hat (Claude Code 2.1.136+), können diese auch im Plan Mode nicht zugegriffen werden — frag deinen Admin nach der Policy.",
+          "justification": "`hard_deny` ist ein neuer Parameter, der Plan-Mode-Workflows in Enterprise-Setups beeinflussen kann; wichtig für Transparenz",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText taucht im gelieferten Lesson-Content gar nicht auf — die Lektion bricht mitten in der Plan-Mode-Einleitung ab, bevor der zitierte Workflow-Satz beginnt. Zudem ist der Patch fachlich irreführend: `autoMode.hard_deny` betrifft Tool-Ausführung, nicht Lesezugriffe im Plan Mode (der ohnehin nichts schreibt), und die Risk-Class 'safe' ist für eine inhaltliche Ergänzung mit neuer Behauptung unangemessen.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 16,
+      "title": "Agent Orchestration",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 17,
+      "title": "Production Best Practices",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 18,
+      "title": "Troubleshooting Pro",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt `/context` und `/compact` Befehle, aber neueste Claude Code Versionen (2.1.133–2.1.137) führen erweiterte Context-Management-Features ein ($CLAUDE_EFFORT-Level, Effort-aware Hooks). Die Lektion erwähnt diese neuen Tools nicht und präsentiert Context-Management als rein manuell.",
+          "source": "2026-05-11-weekly-research-v2.md — Claude Code 2.1.133–2.1.137 Release-Notes: Effort-Level im JSON-Input und $CLAUDE_EFFORT Env-Var; Hooks können nun Effort-basiert reagieren.",
+          "severity": "medium"
+        },
+        {
+          "reason": "Die Lektion nennt '1M Token Limit (Opus/Sonnet 4.6)', aber es existiert kein Modell namens 'Sonnet 4.6'. Aktuell sind Sonnet 4.5 und Opus 4.7 die Standard-Produktion-Modelle. Das könnte Lernende verwirren.",
+          "source": "2026-05-11-weekly-research-v2.md — Advisor Tool Benchmarks nutzen 'claude-haiku-4-5' und 'claude-opus-4-7'. Kein 'Sonnet 4.6' in den aktuellen Release-Notes erwähnt.",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion behandelt Context-Management als isoliertes Problem, aber ab 2.1.137 können Hooks direkt MCP-Tools aufrufen (type: 'mcp_tool') und sind Effort-aware. Das eröffnet neue Lösungsansätze für Context-Probleme (z.B. automatische Summarization via Hook bei hohem Effort). Lektion vermisst diese Verbindung.",
+          "source": "2026-05-11-weekly-research-v2.md — Claude Code 2.1.137 Release: 'Hooks können MCP-Tools direkt aufrufen' und 'Hooks bekommen $CLAUDE_EFFORT'.",
+          "severity": "medium"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Das Context Window ist zu voll. Selbst mit dem 1M Token Limit (Opus/Sonnet 4.6) füllt sich eine Session schneller als du denkst:",
+          "newText": "Das Context Window ist zu voll. Selbst mit dem 1M Token Limit (Opus 4.7 und neueren Sonnet-Versionen) füllt sich eine Session schneller als du denkst:",
+          "justification": "Sonnet 4.6 existiert nicht; aktuelle Modelle sind Sonnet 4.5 und Opus 4.7 lt. Advisor Tool Benchmarks.",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText kommt im sichtbaren Lesson-Content gar nicht vor — der gezeigte Abschnitt endet bei 'Context-P' und enthält die zu ersetzende Passage nicht. Damit ist die Substring-Bedingung nicht verifizierbar. Zudem ist die Begründung schwach: Der Research-Report belegt Opus 4.7 und Sonnet/Haiku 4.5, sagt aber nichts explizit über die Nichtexistenz von 'Sonnet 4.6' — die Behauptung wäre zu prüfen, nicht als 'safe' zu deklarieren.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Context-Probleme sind die häufigste und gleichzeitig subtilste Ursache für schlechte Ergebnisse. Claude vergisst Entscheidungen, widerspricht sich, generiert inkonsistenten Code oder ignoriert deine Vorgaben — all das sind typische Symptome eines überfüllten oder schlecht gemanagten Context Windows.\n\nDie Grundursache ist fast immer die gleiche: Das Context Window ist zu voll.",
+          "newText": "Context-Probleme sind die häufigste und gleichzeitig subtilste Ursache für schlechte Ergebnisse. Claude vergisst Entscheidungen, widerspricht sich, generiert inkonsistenten Code oder ignoriert deine Vorgaben — all das sind typische Symptome eines überfüllten oder schlecht gemanagten Context Windows.\n\nDie Grundursache ist fast immer die gleiche: Das Context Window ist zu voll. **Neu ab 2.1.137:** Du kannst Context-Problemen auch proaktiv mit Effort-aware Hooks begegnen — Hooks können bei `$CLAUDE_EFFORT=high` automatisch zu komprimieren beginnen (z.B. via MCP-Summarization-Tool), bevor das Context-Fenster kritisch wird.",
+          "justification": "2.1.137 führt Effort-aware Hooks und MCP-Tool-Hooks ein, die Context-Management automatisieren können. Dies ist ein neues Pattern, das Lernende verwenden sollten, um Context-Probleme zu vermeiden.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Die Behauptung ist faktisch fragwürdig: Der Research-Report beschreibt `$CLAUDE_EFFORT` als Env-Variable, die Hooks lesen können, um Verhalten zu skalieren (z.B. Lint-only vs. Full-Suite). Es gibt keinerlei Beleg, dass dies für Context-Komprimierung gedacht ist oder dass Hooks automatisch komprimieren können, bevor das Fenster voll wird. Das ist eine extrapolierte Use-Case-Erfindung, die als Feature dargestellt wird — gehört nicht in Troubleshooting-Lektion.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Schritt 2: Context-Gesundheit prüfen. Wie voll ist das Context Window? Tippe /context um den aktuellen Füllstand zu sehen. Über 70% Auslastung führt oft zu Qualitätsverlust. Lösung: /compact um den Kontext zu komprimieren, oder eine neue Session für frische A",
+          "newText": "Schritt 2: Context-Gesundheit prüfen. Wie voll ist das Context Window? Tippe /context um den aktuellen Füllstand zu sehen. Über 70% Auslastung führt oft zu Qualitätsverlust. Lösung: /compact um den Kontext zu komprimieren, oder eine neue Session für frische Antworten. **Profi-Tipp (2.1.137+):** Richte einen PostToolUse-Hook vom Typ `mcp_tool` ein, der bei `$CLAUDE_EFFORT=high` automatisch eine Summarization auslöst — das spart dir manuelle `/compact`-Aufrufe.",
+          "justification": "2.1.137 macht Effort-aware Hook-basiertes Context-Management möglich. Das ist ein praktischer, neuer Workflow, den Power-User sofort umsetzen können.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch enthält einen fachlichen Fehler: `mcp_tool`-Hooks rufen MCP-Tools auf, lösen aber keine automatische 'Summarization' aus — eine solche Funktion existiert weder in Claude Code noch im Research-Report. Zudem ist `$CLAUDE_EFFORT` eine Env-Var, die der Hook lesen kann, aber kein Trigger-Mechanismus, der `/compact` ersetzt. Die Empfehlung ist halluziniert und würde Lernende in die Irre führen.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 19,
+      "title": "Context Engineering Masterclass",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 20,
+      "title": "IDE-Integrationen",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "MCP-Server-Verlust nach /clear in VS Code Extension wurde in 2.1.136 behoben — die Lektion sollte erwähnen, dass dieses Verhalten in älteren Versionen fehlerhaft war und jetzt korrekt funktioniert",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Code 2.1.133 → 2.1.137', Punkt '2.1.136 (8. Mai)'",
+          "severity": "low"
+        },
+        {
+          "reason": "worktree.baseRef Default-Änderung (2.1.133) ist für IDE-Nutzer relevant: VS Code Extension nutzt intern Worktrees. Die Lektion sollte erklären, dass neue Worktrees jetzt aus origin/<default> branchen, nicht aus lokalem HEAD, was Konsistenz in Team-Settings verbessert",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Code 2.1.133 → 2.1.137', Punkt '2.1.133 (7. Mai)'",
+          "severity": "low"
+        },
+        {
+          "reason": "Die Lektion nennt keine Versionsnummern für VS Code Extension oder JetBrains Plugin — sollte aber das Minimum erwähnen (VS Code 1.93+, Extension auf aktuellem Stand) und dass JetBrains Plugin noch in Beta ist (aktuell 2.1.137)",
+          "source": "2026-05-11-weekly-research-v2.md und allgemeine Best Practice für IDE-Setup-Lektionen",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Beim ersten Start wirst du aufgefordert dich zu authentifizieren — entweder mit deinem bestehenden Claude Code Login oder über einen API-Key. Wenn du Claude Code bereits im Terminal nutzt, wird die Authentifizierung automatisch übernommen.",
+          "newText": "Beim ersten Start wirst du aufgefordert dich zu authentifizieren — entweder mit deinem bestehenden Claude Code Login oder über einen API-Key. Wenn du Claude Code bereits im Terminal nutzt, wird die Authentifizierung automatisch übernommen. **Hinweis:** MCP-Server aus deiner `.mcp.json`, Plugins und claude.ai-Connectors werden korrekt in der Extension bewahrt, auch nach einem `/clear`-Befehl (Bug-Fix seit Version 2.1.136).",
+          "justification": "2.1.136 Release-Notizen nennen explizit einen MCP-Server-Verlust-Bug nach /clear, der behoben wurde — für VS Code Extension-Nutzer wichtige Klarstellung",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch erwähnt einen Bugfix, der für aktuelle Nutzer irrelevant ist — es macht keinen didaktischen Sinn, in einer Setup-Lektion zu erklären, dass ein früherer Bug behoben wurde. Das verwirrt mehr als es hilft und gehört nicht in Lehrmaterial. Zusätzlich ist die Einstufung als 'safe' falsch: Es ist eine inhaltliche Ergänzung, kein mechanischer Edit.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "# Voraussetzungen:\n# - VS Code 1.93 oder neuer\n# - Claude Code CLI installiert\n# - Aktive Authentifizierung (API Key oder Claude Pro/Max)",
+          "newText": "# Voraussetzungen:\n# - VS Code 1.93 oder neuer\n# - Claude Code Extension 2.1.137+ (aktuelle Version)\n# - Claude Code CLI installiert\n# - Aktive Authentifizierung (API Key oder Claude Pro/Max)",
+          "justification": "Extension sollte auf aktuellem Stand sein (2.1.137 hat wichtige Fixes für MCP-Server-Persistierung und neue Features wie $CLAUDE_EFFORT-Support in Hooks)",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch fügt eine konkrete Versionsnummer (2.1.137+) als Voraussetzung hinzu, die im Research-Report zwar erwähnt wird, aber als CLI-Version, nicht explizit als VS-Code-Extension-Version. Die Gleichsetzung 'Extension 2.1.137' ist eine plausible, aber nicht im Report belegte Annahme — eine fixe Mindestversion in einer Onboarding-Lektion veraltet zudem schnell. Risk-Klasse 'safe' ist zu optimistisch, da inhaltliche Behauptung statt mechanischer Edit.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Nach der Installation erscheint ein neues Claude Code Icon in der Seitenleiste.",
+          "newText": "Nach der Installation erscheint ein neues Claude Code Spark-Icon ✨ in der Seitenleiste (unter den Standard-VS-Code-Icons wie Explorer und Source Control).",
+          "justification": "Konsistenz mit späteren Abschnitten der Lektion, die das Spark-Icon erwähnen; hilft Anfängern, das richtige Icon zu finden",
+          "riskClass": "safe",
+          "verdict": "approve",
+          "criticReasoning": "Der Patch ist mechanisch und konsistent mit dem späteren Abschnitt, der das Spark-Icon ✨ explizit erwähnt. OldText matcht exakt, newText fügt nur präzisierende Information hinzu ohne Fakten zu erfinden. Tonfall bleibt im Du-Stil ohne Marketing-Floskeln.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 1,
+      "rejectedCount": 1,
+      "needsHumanCount": 1
+    },
+    {
+      "lessonId": 21,
+      "title": "Sandboxing & Security Deep Dive",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 22,
+      "title": "CI/CD & Headless Mode",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 23,
+      "title": "Kosten-Optimierung Profi",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 24,
+      "title": "Claude Agent SDK",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 25,
+      "title": "Plugins & Marketplace",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion behandelt Plugins als primäres Verteilungs-System, aber neueste Research (2.1.133–2.1.137) hebt MCP-Tools in Hooks stark hervor (PostToolUse mit MCP-Tool-Calls). MCP ist jetzt *gleichberechtigt* mit Plugins, nicht sekundär.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion 'Claude Code 2.1.133 → 2.1.137', Punkt 2.1.137",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion erwähnt nicht `$defaults`-Token in autoMode-Regeln (2.1.137 neu), das für Plugin-Policy-Integration kritisch ist. Plugins, die Hard-Deny-Regeln setzen, müssen jetzt `$defaults` nutzen um eingebaute Regeln nicht zu überschreiben.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion 'Claude Code 2.1.133 → 2.1.137', 2.1.137 Punkt",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion erwähnt nicht Effort-aware Hooks (`$CLAUDE_EFFORT` Env-Var), das als neues Standard-Pattern für Plugins präsentiert werden sollte, um Ressourcen-Nutzung flexibel zu machen.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion 'Claude Code 2.1.133 → 2.1.137', 2.1.133 & 2.1.137 Punkte",
+          "severity": "low"
+        },
+        {
+          "reason": "Marketplace-Struktur erwähnt Plugins mit @anthropic/, @community/ und @company/-Präfixen. Research bestätigt das Format, aber erwähnt nicht Enterprise-Distribution oder Team-Plugins als explizite Kategorie — sollte klargestellt werden.",
+          "source": "2026-05-11-weekly-research-v2.md, implizit aus Claude Code SDK-Changelog",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Plugins lösen das Distributions-Problem: Wie teile ich mein Claude Code Setup mit dem Team, mit der Community oder innerhalb d",
+          "newText": "Plugins lösen das Distributions-Problem: Wie teile ich mein Claude Code Setup mit dem Team, mit der Community oder innerhalb der Orga. Seit 2.1.137 sind MCP-Tools jetzt *gleichberechtigt* mit Plugins als Verteilungsmechanismus — du kannst Tools auch direkt über MCP-Server (z.B. via `.mcp.json`) verteilen statt über ein ganzes Plugin.",
+          "justification": "MCP-Tool-Hooks sind neue First-Class-Citizens in 2.1.137. PostToolUse-Hooks können jetzt direkt MCP-Tools aufrufen (type: 'mcp_tool'). Das ändert die strategische Antwort auf 'wie verteile ich etwas'.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Die Behauptung ist faktisch falsch und irreführend. Der Research-Bericht beschreibt unter 2.1.137 Hooks vom Typ 'mcp_tool', die MCP-Tools direkt aus Hooks heraus aufrufen können — das hat NICHTS mit Verteilung/Distribution zu tun und macht MCP nicht 'gleichberechtigt mit Plugins'. MCP-Server waren zudem schon immer ein separates Verteilungsprimitiv, nicht erst seit 2.1.137. Zusätzlich kürzt der Patch 'innerhalb des Unternehmens' grundlos auf 'innerhalb der Orga' und der oldText endet mitten im Wort, was den Satzfluss zerstört.",
+          "toneCheck": "drift"
+        },
+        {
+          "oldText": "PLUGINS:\n├── Was: Erweiterbare Module für Claude Code\n├── Wie: Installiert via Marketplace oder lokal\n├── Wann: Code Intelligence, Custom Processing\n├── Beispiel: TypeScript-Plugin für bessere Typ-Erkennung\n└── Scope: Tief in Claude Code integriert",
+          "newText": "PLUGINS:\n├── Was: Erweiterbare Module für Claude Code (Skills, Hooks, Commands, Agents)\n├── Wie: Installiert via Marketplace oder lokal\n├── Wann: Code Intelligence, Custom Processing, Multi-Component-Bundles\n├── Beispiel: TypeScript-Plugin für bessere Typ-Erkennung + Review-Hooks\n└── Scope: Tief in Claude Code integriert; seit 2.1.137 können Hooks auch MCP-Tools direkt aufrufen\n\nMCP-TOOLS (seit 2.1.137 in Hooks First-Class):\n├── Was: Server-basierte Tools über Model Context Protocol\n├── Wie: Über PostToolUse-Hooks direkt aufgerufen (type: 'mcp_tool')\n├── Wann: External APIs, leichte Verteilung ohne Plugin-Overhead\n├── Beispiel: Slack-MCP zum Posten von Diffs, Stripe-MCP für Billing-Checks\n└── Scope: Leicht, granular, serverless-kompatibel",
+          "justification": "Research hebt MCP-Tools in Hooks als neues gleichberechtigtes Pattern hervor. MCP ist nicht mehr nur 'advanced' — es ist ein Standard-Verteilungskanal wie Plugins.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Die Ergänzung zu Plugins ist sinnvoll, aber der neue MCP-TOOLS-Block dupliziert und widerspricht teilweise dem bereits existierenden MCP-SERVER-Eintrag in derselben Vergleichstabelle. Außerdem ist die Behauptung, MCP-Tools in Hooks seien 'serverless-kompatibel' und ein 'Standard-Verteilungskanal wie Plugins', so im Research nicht gedeckt — dort geht es um Hook-Komponierbarkeit, nicht um Verteilung. Tonal okay, aber inhaltlich braucht das menschliche Klärung.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Plugin-Management: 'claude plugin li",
+          "newText": "Plugin-Management: 'claude plugin list' zeigt alle installierten Plugins mit Version und Status. Seit 2.1.137 sollten Plugins auch Policy-Regeln mit `$defaults`-Token definieren, um nicht versehentlich eingebaute allow/soft_deny-Regeln zu überschreiben:\n\n```json\n{\n  \"autoMode\": {\n    \"allow\": [\"$defaults\", \"YourPlugin:MyCommand\"],\n    \"hard_deny\": [\"Bash(rm -rf *)\"]  // unabhaengig von User-Exceptions\n  }\n}\n```\n\nPlugin-Management: 'claude plugin li",
+          "justification": "2.1.137 führt `$defaults`-Token und `hard_deny` ein. Plugins, die Auto-Mode-Regeln definieren, müssen das jetzt berücksichtigen, um nicht andere Plugins oder User-Regeln zu zerstören.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch fügt zwar fachlich korrekte Information aus dem Research-Report ein (`$defaults` und `hard_deny` aus 2.1.137), aber der oldText-Match ist sehr kurz und mehrdeutig — 'Plugin-Management: claude plugin li' ist ein abgeschnittenes Fragment, was zu unsauberer Ersetzung führen kann. Zudem ist die Verknüpfung 'Plugins sollten Policy-Regeln definieren' eine Interpretation, die im Report so nicht steht — dort geht es um User-Settings, nicht um Plugin-Manifeste. Tonal sauber, aber inhaltlich braucht das menschliche Prüfung.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Der Entwicklung",
+          "newText": "Die Entwicklung: Wenn dein Plugin Hooks enthält, die unterschiedliches Verhalten bei `low` vs. `high` Effort zeigen sollen, nutze die neue `$CLAUDE_EFFORT` Env-Var (seit 2.1.133):\n\n```bash\nif [ \"$CLAUDE_EFFORT\" = \"high\" ]; then\n  npm run full-typecheck\nelse\n  npm run lint-only\nfi\n```\n\nDer Entwicklung",
+          "justification": "Effort-aware Hooks sind seit 2.1.133 Standard. Plugin-Autoren sollten dieses neue Feature kennen, um bessere Ressourcen-Trade-offs zu ermöglichen.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText 'Der Entwicklung' kommt im gezeigten Lektionstext gar nicht vor — der Patch würde damit ins Leere laufen. Zusätzlich ist der Einschub thematisch in einer Plugin-Installations-Lektion deplatziert, da Hooks dort nur am Rand erwähnt werden.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 2,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 26,
+      "title": "Real-World Workflow Patterns",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt nur drei klassische Workflows (Spec-Driven, Explore-Plan-Code, Vibe Coding), berücksichtigt aber nicht das neue Effort-aware Pattern mit $CLAUDE_EFFORT, das seit 2.1.137 verfügbar ist. Effort-Level ist ein orthogonales Dimensionsmerkmal, das alle drei Workflows optimieren kann.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Code 2.1.133 → 2.1.137', Punkt 'Hooks bekommen Effort-Level'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion behandelt Multi-Agent/Worktree-Patterns nicht. Die Research zeigt, dass Worktrees seit 2.1.133 ein 'Default-Multi-Agent-Primitiv' sind und die wichtigste verborgene Standardisierung des Quartals. Spec-Driven + Explore-Plan können beide von Worktree-Parallelisierung profitieren.",
+          "source": "2026-05-11-weekly-research-v2.md, Markt-Trends Punkt 4: 'Worktrees sind das Default-Multi-Agent-Primitiv geworden'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Hook-Automation wird nicht erwähnt. Research zeigt, dass Hooks für Determinismus kritisch sind ('Hooks werden zur Plattform'). Spec-Driven Development sollte explizit erwähnen, dass Specs über hooks.json durchgesetzt werden können (hard_deny, autoMode.allow).",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Markt-Trends & Anthropic News', Punkt 3",
+          "severity": "low"
+        },
+        {
+          "reason": "worktree.baseRef Default hat sich von HEAD auf 'fresh' geändert (2.1.133). Wenn die Lektion Worktree-Workflows zeigt, muss dieser Default explizit erwähnt werden, da er User-Erwartungen subvertiert.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt '2.1.133 (7. Mai)', Punkt 'worktree.baseRef Setting'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Pattern 2 — Explore-Plan-Code: Du lässt Claude erst die C",
+          "newText": "Pattern 2 — Explore-Plan-Code (Anthropic Best Practice): Du lässt Claude erst die Codebase in mehreren Phasen erkunden und analysieren, bevor eine Zeile Code geschrieben wird.",
+          "justification": "Vollständigkeit: Research nennt explizit 'Explore-Plan-Code ist der von Anthropic empfohlene Standard-Workflow'. Dieser Zusatz betont die Quelle.",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Die Justification behauptet, der Research-Report nenne 'Explore-Plan-Code ist der von Anthropic empfohlene Standard-Workflow' — diese Aussage existiert nicht im vorliegenden Report. Zudem ersetzt der newText den ursprünglichen Satzbeginn ('Du lässt Claude erst die Codebase erkunden, dann einen Plan erstellen, dann implementieren') durch eine kürzere, unvollständige Variante und schneidet den Folgesatz ab, was die Lesbarkeit verschlechtert. Risk-Class 'safe' ist außerdem unehrlich, da der Patch Bedeutung verändert, nicht mechanisch ist.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "## 🏗️ Die 3 Haupt-Workflows\n\nNach Monaten intensiver Nutzung durch die Community haben sich drei grundlegende Workflow-Patterns herauskristallisiert die den Großteil der täglichen Arbeit mit Claude Code abdecken.",
+          "newText": "## 🏗️ Die 3 Haupt-Workflows + Effort-Dimensionen\n\nNach Monaten intensiver Nutzung durch die Community haben sich drei grundlegende Workflow-Patterns herauskristallisiert die den Großteil der täglichen Arbeit mit Claude Code abdecken. Seit Version 2.1.137 können alle drei Patterns zusätzlich entlang der Effort-Dimension (`effort: low | medium | high`) variiert werden — das ermöglicht z.B. \"Explore-Plan mit Low-Effort für schnelle Prototypen\" oder \"Spec-Driven mit High-Effort für Production-Code\".",
+          "justification": "Research zeigt, dass $CLAUDE_EFFORT ein neues orthogonales Dimensionsmerkmal ist, das alle drei Workflows parametrisiert. Diese Ergänzung macht die Lektion zukunftssicher und adressiert Content-Empfehlung #3.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Diese drei Patterns sind nicht exklusiv — erfahrene Nutzer wechseln je nach Aufgabe zwischen ihnen. Das Verständnis aller drei und die Fähigkeit zum Wechsel ist das was einen Claude Code Power-User ausmacht.",
+          "newText": "Diese drei Patterns sind nicht exklusiv — erfahrene Nutzer wechseln je nach Aufgabe zwischen ihnen. Seit 2.1.137 können alle drei Patterns auch über Worktrees parallelisiert werden: z.B. Spec-Driven Design in Worktree A, Explore-Phase in Worktree B parallel durchlaufen, dann Code-Merge. Das Verständnis aller drei Patterns + die Fähigkeit zum Wechsel + Worktree-Parallelisierung macht einen Claude Code Power-User aus.",
+          "justification": "Worktrees sind laut Research das zentrale Multi-Agent-Primitiv; Lektion sollte dies implizit oder explizit adressieren. Diese Ergänzung verbindet Workflow-Patterns mit der neuen Architektur.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Die Behauptung 'Seit 2.1.137 können alle drei Patterns auch über Worktrees parallelisiert werden' ist faktisch falsch — Worktrees existieren in Claude Code seit langem, 2.1.137 brachte lediglich `worktree.baseRef`-Defaults und MCP-Tool-Hooks, nicht erstmalige Worktree-Parallelisierung. Die Versionsanbindung ist eine Halluzination und würde Teilnehmer in die Irre führen. Tonal ist der Satz zudem überladen ('+ ... + ...').",
+          "toneCheck": "drift"
+        },
+        {
+          "oldText": "Schritt 2 — Du gibst die Spezifikation an Claude: 'Implementiere exakt nach dieser Spezifikation. Weiche nicht ab. Wenn du Widersprüche oder Lücken findest, frag nach bevor du implementierst.'",
+          "newText": "Schritt 2 — Du kannst die Spezifikation als autoMode-Rules mit `autoMode.hard_deny` durchsetzen: Verbotene Patterns (z.B. \"localStorage für Tokens\"), erforderliche Checks (z.B. \"bcrypt salt ≥ 12\"). Du gibst die Spezifikation an Claude: 'Implementiere exakt nach dieser Spezifikation. Weiche nicht ab. Wenn du Widersprüche oder Lücken findest, frag nach bevor du implementierst.' Die hooks.json sperrt Verstöße präventiv.",
+          "justification": "Research zeigt, dass autoMode.hard_deny und hooks ein Best Practice für Spec-Durchsetzung sind. Dies ist ein konkretes, actionables Pattern das Spec-Driven Development macht robuster.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch ist sachlich falsch: `autoMode.hard_deny` ist laut Research für Bash-Command-Muster gedacht (z.B. `Bash(rm -rf *)`), nicht für inhaltliche Spec-Checks wie 'bcrypt salt ≥ 12' oder 'localStorage für Tokens'. Solche semantischen Code-Constraints lassen sich damit nicht ausdrücken — das ist eine Halluzination der Feature-Semantik. Zudem ist 'hooks.json' kein realer Pfad (korrekt wäre `settings.json`).",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 1
+    },
+    {
+      "lessonId": 27,
+      "title": "Fast Mode & Opus 4.6",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 28,
+      "title": "Agent Teams & Checkpointing",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion beschreibt Agent Teams als 'experimentell und standardmäßig deaktiviert' ohne Hinweis auf aktuelle Stabilität oder GA-Status in 2.1.133–2.1.137. Research erwähnt keine Breaking Changes zu Agent Teams, aber auch keine explizite Stabilisierungsmeldung — Status bleibt unklar.",
+          "source": "Claude Code Changelog 2026-05-07 bis 2026-05-09 (2.1.133–2.1.137); kein expliziter Mention von Agent Teams Status",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion erwähnt 'bekannte Limitierungen bei Session-Resumption, Task-Koordination und Shutdown-Verhalten' ohne konkrete Versionsnummern. Wenn diese Limitierungen in 2.1.133+ behoben wurden, ist die Warnung veraltet.",
+          "source": "Research nennt keine fixes zu Agent Teams Limitierungen; Annahme: noch bestehend, aber sollte mit Changelog validiert werden",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion erwähnt Worktrees und Subagents nicht im Kontext der neuen `worktree.baseRef`-Default-Änderung (2.1.133: `fresh` vs. `head`). Wenn Subagent-Calls über Worktrees laufen, könnte das Verhalten ändern.",
+          "source": "Claude Code 2.1.133: worktree.baseRef Default changed from 'head' (seit 2.1.128) back to 'fresh' (origin/<default>)",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion enthält abgeschnittenen Text ('Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vie' und später 'Subagents für schnelle, isolierte A' sowie 'Users report the app exits after o'). Incomplete content muss vor Freigabe vervollständigt werden.",
+          "source": "Lesson content truncated in multiple places",
+          "severity": "high"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Agent Teams sind experimentell und standardmäßig deaktiviert. Sie haben bekannte Limitierungen bei Session-Resumption, Task-Koordination und Shutdown-Verhalten. Immer den Changelog und die Docs für den aktuellen Stand prüfen.",
+          "newText": "Agent Teams sind experimentell und standardmäßig deaktiviert (Stand: Claude Code 2.1.137, Mai 2026). Sie haben bekannte Limitierungen bei Session-Resumption, Task-Koordination und Shutdown-Verhalten. Immer den Changelog unter https://code.claude.com/docs/en/changelog und die Docs für den aktuellen Stand prüfen.",
+          "justification": "Konkrete Versionsnummer anchert die Aussage in der Gegenwart; Lesende wissen, wann diese Warnung geschrieben wurde",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Research-Report bestätigt zwar Version 2.1.137 (9. Mai 2026), erwähnt aber Agent Teams nicht explizit als Feature dieser Version. Die Aussage 'Stand: Claude Code 2.1.137' suggeriert, dass der Status der Agent Teams für genau diese Version verifiziert wurde — das geht aus dem Report nicht hervor. Die Risikoklasse 'safe' ist zu optimistisch; menschliche Verifikation nötig.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "**Faustregel:** Subagents für schnelle, isolierte A",
+          "newText": "**Faustregel:** Subagents für schnelle, isolierte Tasks mit lokalem Context; Agent Teams für parallele, diskussionsintensive Arbeit mit Selbst-Koordination.",
+          "justification": "Text ist abgeschnitten; Completion muss die Aussage abschließen",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText 'Subagents für schnelle, isolierte A' kommt im Lessoninhalt nicht vor — tatsächlich steht dort der vollständige Satz 'Subagents für schnelle, isolierte Aufgaben. Agent Teams wenn Teammates Ergebnisse teilen, sich gegenseitig hinterfragen und eigenständig koordinieren müssen.' Die Behauptung des Auditors, der Text sei abgeschnitten, ist falsch — die Abschneidung erfolgt erst weiter unten bei 'Display-Modus konfig'. Patch würde funktionierenden Content überschreiben.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vie",
+          "newText": "Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vielen interdependenten Files ist eine Single-Agent-Session meist günstiger und schneller.",
+          "justification": "Text ist abgeschnitten; Aussage ergänzen",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText ('Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vie') erscheint nicht als literaler Substring im Lessoninhalt. Tatsächlich steht dort 'Für sequentielle Tasks, Same-File-Edits oder Arbeit mit vielen Abhängigkeiten ist eine einzelne Session oder Subagents effektiver.' — der Text ist also nicht abgeschnitten, die Justification ist falsch. Der Patch würde gültigen Inhalt durch eine schlechtere, weniger präzise Variante ersetzen.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "# Beispiel 3: Competing Hypotheses Debugging\nUsers report the app exits after o",
+          "newText": "# Beispiel 3: Competing Hypotheses Debugging\nUsers report the app exits after opening a 2MB file in the editor.\nCreate an agent team with three hypotheses to test in parallel:\n- Teammate A: Memory leak in file-buffer allocation\n- Teammate B: Regex timeout in syntax-highlighting\n- Teammate C: Race condition in file-watcher callback\nHave them each test and report which hypothesis holds.",
+          "justification": "Text ist abgeschnitten; sinnvolle Completion eines Debugging-Beispiels",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText ist kein literaler Substring des Lesson-Inhalts — die Lektion enthält den vollständigen Text 'Users report the app exits after one message instead of staying connected...', nicht eine abgeschnittene Version. Der Patch basiert auf einer Fehlannahme und würde funktionierendes Beispiel-Material durch ein erfundenes Szenario ersetzen, das zudem nicht aus den offiziellen Docs stammt (im Gegensatz zur Auszeichnung 'aus den offiziellen Docs').",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "## 🖥️ Display Modes: In-Process vs. Split-Pane\n\nAgent Teams unterstützen zwei Darstellungsmodi:\n\n**In-Process (Standard):** Alle Teammates laufen in d",
+          "newText": "## 🖥️ Display Modes: In-Process vs. Split-Pane\n\nAgent Teams unterstützen zwei Darstellungsmodi:\n\n**In-Process (Standard):** Alle Teammates laufen in derselben Terminal-Session; du scrollst durch ihre Outputs und switchst mit Shift+Up/Down zwischen ihnen.\n\n**Split-Pane / tmux:** Jeder Teammate hat sein eigenes Fenster (macOS/Linux mit tmux). Jeder kann parallel arbeiten, ohne dass dich die Outputs ablenken. In tmux: `C-b <arrow>` zum Navigieren, oder aktiviere Auto-Cycling mit `team.displayMode: \"split-pane\"`.",
+          "justification": "Text ist abgeschnitten; Feature beschreibung unkomplett. Ergänzung mit praktischen Details",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 29,
+      "title": "Claude Code überall & offizielle Ressourcen",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "worktree.baseRef Default-Änderung (2.1.128 → 2.1.133): EnterWorktree läuft jetzt wieder aus origin/<default> statt lokalem HEAD. Lesson erwähnt Git Worktrees als Feature, aber nicht die kritische Default-Änderung und deren Konsequenzen für Nutzer.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion '2. Claude Code 2.1.133 → 2.1.137'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Effort-aware Hooks ($CLAUDE_EFFORT) sind neu in 2.1.133 und ändern das Hook-Execution-Pattern fundamental. Lesson behandelt Hooks nur oberflächlich ('Hooks' im Extend-Abschnitt), erwähnt aber nicht die neue Effort-Dimension, die Hooks-Strategie neu gestaltet.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion '2. Claude Code 2.1.133 → 2.1.137', Punkt 'Hooks bekommen Effort-Level'",
+          "severity": "medium"
+        },
+        {
+          "reason": "MCP-Tool-Hooks (neu in 2.1.137) sind ein Paradigmen-Shift: Hooks können jetzt MCP-Tools direkt aufrufen, nicht nur Shell-Commands. Lesson erwähnt MCP und Hooks separat, aber nicht ihre Verschmelzung zu MCP-Tool-Hooks.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion '2. Claude Code 2.1.133 → 2.1.137', Punkt '2.1.137 (9. Mai)'",
+          "severity": "medium"
+        },
+        {
+          "reason": "autoMode.hard_deny und $defaults-Token (2.1.136–2.1.137) sind neue Auto-Mode-Features, die die Policy-Durchsetzung verändern. Lesson erwähnt Auto-Mode nicht explizit im Extend-Abschnitt.",
+          "source": "2026-05-11-weekly-research-v2.md, Sektion '2. Claude Code 2.1.133 → 2.1.137', Punkte '2.1.136' und '2.1.137'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Alle Nutzungsorte von Claude Code kennen und ihre Stärken/Grenzen verstehen\n- Die Dokumentationsstruktur von code.claude.com navigieren und die richtigen Kapitel finden\n- \"Extend Claude Code\" einordnen: CLAUDE.md, Skills, MCP, Subagents, Hooks, Plugins – mit Entscheidungshilfe",
+          "newText": "Alle Nutzungsorte von Claude Code kennen und ihre Stärken/Grenzen verstehen\n- Die Dokumentationsstruktur von code.claude.com navigieren und die richtigen Kapitel finden\n- \"Extend Claude Code\" einordnen: CLAUDE.md, Skills, MCP, Subagents, Hooks, Plugins, Effort-aware Hooks – mit Entscheidungshilfe",
+          "justification": "Effort-aware Hooks ($CLAUDE_EFFORT, 2.1.133) sind ein neues Patterns-Level und gehören in die Learning Objectives als explizites Konzept.",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees.",
+          "newText": "- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees. **Wichtig (seit 2.1.133):** Die Default-Basis ist `origin/<default>` (frisch gebrancht), nicht lokaler HEAD. Mit `worktree.baseRef: \"head\"` in settings.json auf lokales HEAD switchen.",
+          "justification": "Default-Änderung in 2.1.133 ist kritisch für Worktree-Verhalten und verdient explizite Nennung im Kontext dieses Features.",
+          "riskClass": "review",
+          "verdict": "approve",
+          "criticReasoning": "Der oldText-String matcht exakt, die Faktenlage (worktree.baseRef Default-Änderung in 2.1.133, fresh vs. head) ist im Research-Report mehrfach belegt. Der Zusatz ist sachlich präzise, knapp und passt thematisch zur Worktree-Bullet. Ton bleibt direkt, du-Form, keine Banned Words.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal.",
+          "newText": "- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal. Seit 2.1.137 können Hooks direkt MCP-Tools aufrufen (Hook-Typ `\"mcp_tool\"`), nicht nur Shell-Commands.",
+          "justification": "MCP-Tool-Hooks sind ein neues Capability, das die Extend-Story fundamental ändert und verdient Erwähnung beim Terminal-Feature-Überblick.",
+          "riskClass": "review",
+          "verdict": "approve",
+          "criticReasoning": "Der oldText matcht exakt, die Ergänzung ist faktisch durch den Report belegt (2.1.137, Hook-Typ `mcp_tool`) und der Ton bleibt direkt und technisch in Du-Form ohne Marketing-Floskeln.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "## 💻 Terminal (CLI) – das Kern-Erlebnis\n\nDas Terminal ist die Ur-Form von Claude Code und bietet die vollständigste Funktionalität:\n\n- **Volle Slash-Commands**: /fast, /model, /rewind, /compact, /init, /agents, /hooks und alle weiteren.\n- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal.\n- **Agent Teams**: Nur im Terminal verfügbar (In-Process oder Split-Pane/tmux).\n- **Headless/Programmatic Mode**: Für CI/CD, Automatisierung und Scripting.\n- **Pipe Support**: Input und Output können gepiped werden – Unix-Philosophie.\n- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees.",
+          "newText": "## 💻 Terminal (CLI) – das Kern-Erlebnis\n\nDas Terminal ist die Ur-Form von Claude Code und bietet die vollständigste Funktionalität:\n\n- **Volle Slash-Commands**: /fast, /model, /rewind, /compact, /init, /agents, /hooks und alle weiteren.\n- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal. Seit 2.1.137 können Hooks direkt MCP-Tools aufrufen (Hook-Typ `\"mcp_tool\"`).\n- **Agent Teams**: Nur im Terminal verfügbar (In-Process oder Split-Pane/tmux).\n- **Headless/Programmatic Mode**: Für CI/CD, Automatisierung und Scripting.\n- **Pipe Support**: Input und Output können gepiped werden – Unix-Philosophie.\n- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees. **Hinweis (seit 2.1.133):** Default-Basis ist `origin/<default>`. Für lokales HEAD: `worktree.baseRef: \"head\"` in settings.json.\n- **Effort-aware Hooks**: Hooks können auf `$CLAUDE_EFFORT` reagieren (low/high) für kontextabhängige Tool-Execution (neu in 2.1.133).",
+          "justification": "Konsolidiert drei Warnings: worktree.baseRef, MCP-Tool-Hooks, Effort-Level. Diese gehören alle in den Terminal-Feature-Block, da sie exklusiv/primär dort relevant sind.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        }
+      ],
+      "approvedCount": 2,
+      "rejectedCount": 0,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 30,
+      "title": "Voice Mode & Code Review Tool",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 31,
+      "title": "1M Context Window & Context Management Masterclass",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 32,
+      "title": "Agentic Coding Trends 2026 — Die Zukunft der Softwareentwicklung",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lesson references 'Anthropic Agentic Coding Report 2026' with specific market figures ($8.5B AI Coding Market, $127B by 2032, 73% Enterprise-Erstkaeufe, 46% 'Most Loved'), but research does not cite or validate these claims. Research provides Advisor Tool benchmarks and product updates, not market-size validation.",
+          "source": "Weekly Research 2026-05-11: Executive Summary and Markt-Trends sections do not mention '$8.5B' or 'Agentic Coding Report'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lesson describes 'Plan-First Development Workflow' as current best practice, but research (2026-05-11) documents that the dominant pattern has shifted to 'Cost-Aware Multi-Model' hierarchies (Advisor Tool, Cross-Family Critics, MultiAgentV2), where model selection and budget management override plan-first sequencing. Plan-first is still valid but no longer the singular framing.",
+          "source": "Weekly Research 2026-05-11, Markt-Trends section: '\"Cost-Aware Multi-Model\" wird das dominante Muster'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lesson states agents perform '20 autonome Aktionen pro Session' but research does not cite this metric or compare it to a prior '10 actions' baseline. Claim is unsourced in the research.",
+          "source": "Weekly Research 2026-05-11 does not quantify autonomous action rates",
+          "severity": "low"
+        },
+        {
+          "reason": "Lesson does not mention `worktree.baseRef` default change (2.1.128→2.1.133: HEAD→origin/<default>), `autoMode.hard_deny`, `$CLAUDE_EFFORT` Effort-Levels, MCP-Tool-Hooks, or `$defaults` token — all critical feature updates from Claude Code 2.1.133–2.1.137 released during the lesson's relevance window (May 7–9, 2026).",
+          "source": "Weekly Research 2026-05-11, Section 2: 'Claude Code 2.1.133 → 2.1.137 — Worktree-Defaults, Hard-Deny, MCP-Hooks'",
+          "severity": "high"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Der Plan-First Development Workflow ist die praktische Manifestation dieses Trends: Du beschreibst die Anforderung, Claude erstellt einen Plan, du reviewst und verfeinerst ihn, dann implementiert Claude.",
+          "newText": "Der Plan-First Development Workflow bleibt ein solides Pattern, wird aber in 2026 durch Cost-Aware Multi-Model-Hierarchien erweitert: Du beschreibst die Anforderung, Claude (oder ein günstiger Executor wie Haiku mit Opus-Advisor) erstellt einen Plan, du reviewst und verfeinerst ihn, dann implementiert das Modell-Team. Die Wahl zwischen Solo-Modell vs. Executor+Advisor hängt von Latenz- und Budget-Constraints ab.",
+          "justification": "Research documents Advisor Tool as dominant pattern; Plan-First alone is incomplete framing for 2026 cost optimization",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch fügt inhaltlich korrekte und durch den Report belegte Informationen zum Advisor Tool hinzu, verändert aber den didaktischen Fluss der Lektion erheblich: An dieser Stelle wird gerade Trend 1 (Agent-Supervision) erklärt, der Cost-Aware-Multi-Model-Aspekt gehört thematisch eher in einen eigenen Trend oder eine Folgelektion. Außerdem führt der Patch das Konzept 'Executor+Advisor' unvermittelt ein, ohne dass es vorher in der Lektion eingeführt wurde — das verwirrt Lernende. Die riskClass 'review' ist korrekt deklariert, daher menschliche Prüfung nötig.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Die praktische Konsequenz: Du kannst größere Aufgaben delegieren. Statt \"Erstelle eine Funktion\" kannst du sagen \"Implementiere das komplette Feature inkl. Tests, Er",
+          "newText": "Die praktische Konsequenz: Du kannst größere Aufgaben delegieren. Statt \"Erstelle eine Funktion\" kannst du sagen \"Implementiere das komplette Feature inkl. Tests, Error-Handling und Monitoring.\" Für größere Multi-Task-Projekte nutzt du Worktrees und Subagents mit expliziter Effort-Anweisung (`effort: low` für Lint-Only, `effort: high` für Full-Suite), um Kosten und Latenz gezielt zu steuern.",
+          "justification": "Research introduces `$CLAUDE_EFFORT` as first-class pattern for effort-aware task delegation (2.1.137); omission is a gap for practical autonomy guidance",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText endet mitten im Wort ('Er') und ist damit ein unsauberer Truncation-Point — ein Replace würde den Rest des Originalsatzes ('Error-Handling und Dokumentation') löschen und durch eine andere Formulierung ('Error-Handling und Monitoring') ersetzen, was eine inhaltliche Änderung ohne Begründung ist. Zudem ist `effort: low/high` ein Settings/Hook-Konzept (`$CLAUDE_EFFORT` aus 2.1.137), nicht eine Inline-Prompt-Anweisung an Subagents — die newText suggeriert eine API, die so nicht existiert und damit eine Halluzination ist.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "AI-Coding-Agents führen jetzt durchschnittlich 20 autonome Aktionen pro Session aus — doppelt so viel wie vor 6 Monaten.",
+          "newText": "AI-Coding-Agents führen komplexe autonome Ketten aus — Worktrees ermöglichen parallele Subagent-Dispatch, MCP-Tool-Hooks erlauben deterministische Post-Action-Callbacks (z.B. Slack-Notifications nach Edits), und der `autoMode`-Permission-Layer (neu: `hard_deny` und `$defaults`-Token) gibt dir granulare Kontrolle, ohne jeden Schritt zu genehmigen.",
+          "justification": "Concrete '20 actions' metric is unsourced; replace with verifiable 2.1.137 features (Worktrees, MCP-Tool-Hooks, autoMode controls) that characterize modern autonomy",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch ersetzt eine unbelegte Metrik durch faktisch korrekte 2.1.137-Features aus dem Report — das ist sachlich vertretbar. Allerdings ändert er die Aussage des Absatzes substantiell: Aus einer Quantifizierung der Autonomie-Zunahme wird eine Feature-Aufzählung, was den nachfolgenden Satz ('Das klingt nach einer kleinen Zahl...') inhaltlich entkoppelt und semantisch bricht. Bei riskClass 'review' mit Kontextbruch zum Folgesatz braucht es menschliche Entscheidung über Anschluss-Edits.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 1,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 33,
+      "title": "Computer Use – Claude steuert deinen Mac",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt Computer Use als macOS-exclusive Research Preview (Launch 23. März 2026), aber aktuelle Research (2026-05-11) dokumentiert keine Platform-Erweiterungen oder GA-Status-Änderungen. Keine Breaking Changes erkannt, aber Lesson ist 6+ Wochen alt und könnte neuere Setup-Hinweise oder Best-Practice-Shifts enthalten, die nicht mehr aktuell sind.",
+          "source": "Weekly Research 2026-05-11: Kein Eintrag zu Computer Use Updates, GA-Timeline oder Platform-Erweiterungen",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion fokussiert stark auf 'Vision-Loop' und Screenshot-basierte Interaktion, aber erwähnt nicht die neueren Hook-Patterns (Hooks für Determinismus, $CLAUDE_EFFORT, hard_deny aus Claude Code 2.1.133–2.1.137) die seit dieser Lektion eingeführt wurden und Computer Use in Workflow-Governance integrieren können.",
+          "source": "Weekly Research 2026-05-11: Claude Code 2.1.133–2.1.137 – Hooks, hard_deny, $CLAUDE_EFFORT",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion behandelt Computer Use isolation und Sicherheit, aber neueste Research (Advisor Tool + Claude Security Public Beta) zeigt, dass Security-Auditing jetzt ein First-Class-Feature ist. Lektion könnte erweitern: 'Computer Use kombiniert mit Claude Security für UI-basierte Vulnerability-Scanning'.",
+          "source": "Weekly Research 2026-05-11: Claude Security Public Beta – Vulnerability Scanner via Opus 4.7",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Computer Use ist aktuell ein Research Preview, verfügbar nur auf macOS für Pro- und Max-Subscriber.",
+          "newText": "Computer Use ist aktuell ein Research Preview (seit 23. März 2026), verfügbar nur auf macOS für Pro- und Max-Subscriber. Status per Mai 2026: noch Research Preview, kein GA-Datum angekündigt.",
+          "justification": "Explizit klar machen, dass sich der Status seit Lektion-Erstellung nicht geändert hat, um Teilnehmer nicht zu verwirren, dass es vielleicht GA geworden ist.",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Research Report vom 2026-05-11 erwähnt Computer Use überhaupt nicht — weder einen aktuellen Status noch eine Bestätigung, dass es noch Research Preview ist. Die Aussage 'Status per Mai 2026: noch Research Preview, kein GA-Datum angekündigt' ist daher nicht durch die Quelle gedeckt und wäre eine Fabrikation. Zudem ist die Einstufung als 'safe' unehrlich, weil hier eine inhaltliche Faktenaussage hinzugefügt wird, nicht nur eine mechanische Korrektur.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Das Revolutionäre an Computer Use ist, dass Claude damit die \"letzte Meile\" überbrückt. Bisher konnte Claude nur mit Tools interagieren, für die explizite APIs, MCP-Server oder CLI-Befehle existierten.",
+          "newText": "Das Revolutionäre an Computer Use ist, dass Claude damit die \"letzte Meile\" überbrückt. Bisher konnte Claude nur mit Tools interagieren, für die explizite APIs, MCP-Server (seit 2.1.137 auch direkt aus Hooks aufrufbar) oder CLI-Befehle existierten.",
+          "justification": "MCP-Hooks sind neu in 2.1.137 und ändern das Prisma, wie Tools aufgerufen werden – erwähnenswert, um nicht veraltet zu wirken.",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der Einschub ist im Kontext deplatziert: Die Passage erklärt, warum Computer Use die 'letzte Meile' überbrückt – ein Hinweis auf MCP-Hooks-in-Hooks ändert daran nichts und lenkt vom Argument ab. Zudem ist die Risk-Class 'safe' unehrlich, da es sich um eine inhaltliche Ergänzung handelt, nicht um eine mechanische Korrektur. Die Information gehört in eine Hooks-Lektion, nicht in die Computer-Use-Einführung.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Statt dir eine Anleitung zu geben, macht Claude es einfach selbst. Es nimmt einen Screenshot, erkennt den aktuellen Zustand deines Desktops, bewegt die Maus zur richtigen Stelle, klickt, und überprüft per erneutem Screenshot, ob die Aktion erfolgreich war. Das ist Computer Use.",
+          "newText": "Statt dir eine Anleitung zu geben, macht Claude es einfach selbst. Es nimmt einen Screenshot, erkennt den aktuellen Zustand deines Desktops, bewegt die Maus zur richtigen Stelle, klickt, und überprüft per erneutem Screenshot, ob die Aktion erfolgreich war. Das ist Computer Use. (Hinweis: Dieses Muster ähnelt Hooks – deterministische Verifizierung nach jeder Aktion – und kann mit Hard-Deny-Rules kombiniert werden, um Computer Use sicher zu beschränken.)",
+          "justification": "Connect Computer Use zur neueren Hook-Governance-Story (hard_deny), um Sicherheits-Concerns vorab zu adressieren.",
+          "riskClass": "review",
+          "verdict": "reject",
+          "criticReasoning": "Der Patch vermischt zwei unverwandte Konzepte: Computer Use's Vision-Loop ist keine Hook-Governance, und `autoMode.hard_deny` (Claude Code Setting) gilt nicht für die Claude Desktop App, in der Computer Use läuft. Die Aussage ist sachlich falsch bzw. irreführend und der Research Report belegt keine Verbindung zwischen Computer Use und hard_deny.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 3,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 34,
+      "title": "/powerup — Das offizielle Claude Code Tutorial-System",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Claude Code 2.1.133–2.1.137 hat mehrere neue Features eingeführt (worktree.baseRef Default-Änderung, $CLAUDE_EFFORT in Hooks, MCP-Tool-Hooks, hard_deny, $defaults), die in dieser /powerup-Lektion nicht erwähnt werden. Die Lektion beschreibt den Stand von v2.1.90 (April 2026), aber der aktuelle Stand ist 2.1.137 (Mai 2026). /powerup selbst wurde nicht aktualisiert, aber die Lektion sollte den Leser auf neue Features hinweisen, die nach /powerup hinzugekommen sind.",
+          "source": "Weekly Research 2026-05-11: 'Claude Code 2.1.133 → 2.1.137 — Worktree-Defaults, Hard-Deny, MCP-Hooks'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Die Lektion erwähnt, dass /powerup '18 Lektionen' in '~30-60 Minuten' zeigt und dies als 'Feature-Discovery' positioniert wird. Nach den weekly research Updates ist eine wichtige neue Content-Priorität entstanden: Effort-aware Hooks mit $CLAUDE_EFFORT als 'Komplett neues Feature'. Diese sollte erwähnt werden als Beispiel für Features, die über /powerup hinausgehen.",
+          "source": "Weekly Research 2026-05-11: 'Hohe Prioritaet (1–2 Wochen): Lektion Effort-aware Hooks — $CLAUDE_EFFORT in der Praxis'",
+          "severity": "low"
+        },
+        {
+          "reason": "Der Vergleich '/powerup vs. Masterkurs' ist unvollständig: Er erwähnt nicht, dass der Masterkurs nun auch neue Patterns wie Advisor Tool (Haiku + Opus-Advisor), worktree.baseRef-Migration, und Hard-Deny Policies abdecken sollte. Dies sind strategisch wichtige Ergänzungen für 2026-05.",
+          "source": "Weekly Research 2026-05-11: Executive Summary und Content-Empfehlungen",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Am 1. April 2026 hat Anthropic mit Claude Code v2.1.90 ein völlig neues Feature eingeführt: **/powerup** — das erste offizielle, first-party Lernsystem für Claude Code, direkt im Terminal.",
+          "newText": "Am 1. April 2026 hat Anthropic mit Claude Code v2.1.90 ein völlig neues Feature eingeführt: **/powerup** — das erste offizielle, first-party Lernsystem für Claude Code, direkt im Terminal. Stand Mai 2026 (Claude Code 2.1.137) sind neue Features wie Effort-aware Hooks, MCP-Tool-Hooks und worktree.baseRef-Defaults hinzugekommen — diese gehen über /powerup hinaus.",
+          "justification": "Aktualisierung auf aktuellen Stand nach weekly research; zeigt dass /powerup noch nicht alle Mai-Features enthält",
+          "riskClass": "safe",
+          "verdict": "approve",
+          "criticReasoning": "Der Patch ergänzt sachlich korrekte, durch den Weekly Report belegte Informationen (2.1.137, Effort-aware Hooks, MCP-Tool-Hooks, worktree.baseRef). Der oldText matcht exakt, die Ergänzung ist mechanisch additiv und behält Du-Anrede sowie direkten Ton bei. Keine Banned Words, keine Halluzinationen.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "/powerup für den schnellen Überblick (30-60 Min)\n→ Masterkurs für tiefes V",
+          "newText": "/powerup für den schnellen Überblick (30-60 Min)\n→ Masterkurs für tiefes Verständnis + die neuesten Features (Advisor Tool, Effort-aware Hooks, Hard-Deny Policies, MCP-Tool-Hooks)",
+          "justification": "Konkrete Beispiele der neuen Masterkurs-Inhalte hinzufügen, die in /powerup nicht enthalten sind (Mai 2026)",
+          "riskClass": "safe",
+          "verdict": "reject",
+          "criticReasoning": "Der oldText matched nicht exakt — im Lesson-Content steht 'Masterkurs für tiefes Verständnis und Produktion', nicht 'tiefes V[erständnis]'. Der Patch würde den Text mittendrin abschneiden und 'und Produktion' verschlucken, was den Satz inhaltlich verstümmelt. Zudem ist die Risk-Class 'safe' unehrlich: Es ist eine inhaltliche Erweiterung mit neuen Feature-Claims, kein mechanischer Edit.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "**2. MCP Server selbst bauen**\n/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht.",
+          "newText": "**2. MCP Server selbst bauen — und MCP-Tool-Hooks**\n/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht. Zusätzlich: Seit Claude Code 2.1.137 können Hooks direkt MCP-Tools aufrufen (`type: \"mcp_tool\"`), was neue Automations-Muster ermöglicht.",
+          "justification": "MCP-Tool-Hooks sind neues Feature ab 2.1.137, sollte in der Masterkurs-Differenzierung erwähnt werden",
+          "riskClass": "safe",
+          "verdict": "approve",
+          "criticReasoning": "oldText matcht wörtlich, newText fügt faktisch korrekt das 2.1.137-Feature (`type: \"mcp_tool\"`) hinzu, was vom Research-Report belegt ist. Ton bleibt im Du-Stil, keine Banned Words, kein Marketing-Geschwurbel. Patch ist additiv und mechanisch sicher.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 2,
+      "rejectedCount": 1,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 35,
+      "title": "Claude Managed Agents — Enterprise Agents für Freelancer",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 36,
+      "title": "Ultraplan — Cloud-Planning für komplexe Refactors",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 37,
+      "title": "Opus 4.7 — Migration, xhigh-Effort und Task-Budgets",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 38,
+      "title": "Monitor Tool & Event-Driven Agent-Patterns",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 39,
+      "title": "Quality-Postmortem — Was die April-2026-Bugs uns lehren",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 40,
+      "title": "Managed Agents API in der Praxis",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 41,
+      "title": "Ultrareview in CI/CD",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 42,
+      "title": "Plugin-Distribution mit --plugin-url & skillOverrides",
+      "track": "main",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion erwähnt 2.1.129 als Einführung von `--plugin-url`, aber Research zeigt 2.1.133–2.1.137 (7.–9. Mai 2026) als aktuelle Versionen mit substantiellen Changes (worktree.baseRef Default-Flip, hard_deny, $CLAUDE_EFFORT, MCP-Tool-Hooks, $defaults). Keine explizite Erwähnung von `--plugin-url` in den Research-Release-Notes — mögliche Versionsdiskrepanz oder fehlende Dokumentation.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Code 2.1.133 → 2.1.137'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion erwähnt `themes` und `monitors` müssen unter `experimental` im Manifest stehen ab 2.1.129 — diese Anforderung wird in der Research nicht bestätigt oder widerlegt. Das Feature könnte veraltet sein oder war nie dokumentiert.",
+          "source": "Research enthält keine Referenzen zu plugin.json experimental-Flag für themes/monitors",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion endet abrupt ('Vorteile: Du kannst zwischen den Modulen ein neues Plugin-ZI' ist unvollständig). Kann nicht vollständig auditiert werden.",
+          "source": "Lektion-Text selbst",
+          "severity": "high"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Seit 2.1.129 kannst du Plugin-ZIP-Archive direkt aus einer URL laden",
+          "newText": "Seit 2.1.129 kannst du Plugin-ZIP-Archive direkt aus einer URL laden (stabil ab 2.1.133+)",
+          "justification": "2.1.133–2.1.137 sind die aktuellen Versionen laut Research; sollte revidiert werden wenn `--plugin-url` früher gestellt wurde",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Wichtig: Seit 2.1.129 müssen `themes` und `monitors` im Manifest unter `\"experimental\": { ... }` stehen — sonst lädt das Plugin nicht. Wer sein Plugin schon vor 2.1.129 geschrieben hat, sollte das Manifest entsprechend anpassen.",
+          "newText": "[VERIFY: Research bestätigt diese Anforderung nicht — bitte gegen aktuelle Claude Code Plugin-Docs prüfen; ggf. entfernen oder als optionales Pattern reframen]",
+          "justification": "Research erwähnt `themes`/`monitors`/`experimental` Flag nicht; Risiko von veralteter oder niemals geltender Anforderung",
+          "riskClass": "block",
+          "verdict": "needs-human",
+          "criticReasoning": "RiskClass 'block' — architektonische Änderung, gehört in menschliche Review.",
+          "toneCheck": "n/a"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 43,
+      "title": "Compaction-Hygiene — 60%-Regel & Pre-Compact-Brief",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 44,
+      "title": "Advisor Tool — Cost-Aware Multi-Model in Production",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 45,
+      "title": "worktree.baseRef — Multi-Agent-Worktrees richtig konfigurieren",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 46,
+      "title": "Effort-aware Hooks — $CLAUDE_EFFORT in der Praxis",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 47,
+      "title": "Multi-Agent Showdown — Claude Code vs. Cursor vs. Codex CLI",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 48,
+      "title": "Skill-Antipatterns — Mega-Skill, Kitchen-Sink-Session, Day-One-Hoarding",
+      "track": "main",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 100,
+      "title": "Warum AI-Freelancing?",
+      "track": "freelancer",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Marktdaten zu Stundensaetzen und Verdienstpotenzialen sind aus 2025/Anfang 2026; keine aktuellen Benchmarks in der 2026-05-11-Research. Die genannten Spannbreiten (100-250 EUR) koennten durch neue Advisor-Tool-Pricing-Dynamiken und Cost-Efficiency-Gewinne beeinflusst sein, sind aber nicht widersprochen.",
+          "source": "Weekly Research 2026-05-11: Advisor Tool Benchmarks zeigen -11.9% Kosten pro Task fuer Sonnet+Opus, +21pp BrowseComp fuer Haiku+Opus — indirekt erhoehte Verdienstmargen moeglich",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion erwaehnt 'Claude Code und vergleichbare Tools sind produktionsreif' — aber ignoriert drei bedeutende neue Features seit 2.1.133 (worktree.baseRef, Effort-aware Hooks, MCP-Tool-Hooks, hard_deny), die fuer Produktions-Glaubwuerdigkeit wichtig sind. Lektions-Tone bleibt korrekt, aber Beispiele sind leicht veraltet.",
+          "source": "Weekly Research: Claude Code 2.1.133–2.1.137 mit substantiellen Aenderungen in Policy/Hook-Capabilities",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion nennt 'MCP-Server und Agent-SDKs ermoeglichen echte Enterprise-Loesungen' — stimmt weiterhin, aber 2.1.137 bringt MCP-Tool-Hooks (direkte MCP-Aufrufe aus Hooks), die dieses Statement verstaerken wuerden. Erwaehnung lohnt sich fuer Glaubwuerdigkeit.",
+          "source": "Weekly Research: Claude Code 2.1.137 — Hooks koennen MCP-Tools direkt aufrufen",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "Technologie-Reife\n- Claude Code und vergleichbare Tools sind produktionsreif\n- MCP-Server und Agent-SDKs ermoeglichen echte Enterprise-Loesungen\n- Die Lernkurve ist beherrschbar – du musst kein ML-Experte sein",
+          "newText": "Technologie-Reife\n- Claude Code und vergleichbare Tools sind produktionsreif — mit erweiterten Features wie Effort-aware Hooks, Policy-Enforcement (hard_deny) und direkten MCP-Tool-Integrationen\n- MCP-Server und Agent-SDKs ermoeglichen echte Enterprise-Loesungen, inkl. Hook-basierter Automation\n- Die Lernkurve ist beherrschbar – du musst kein ML-Experte sein",
+          "justification": "Claude Code 2.1.133–2.1.137 bringt neue Capabilities, die Produktions-Reife unterstreichen; Hook-Features sind relevant fuer Enterprise-Projekte, die in dieser Lektion erwaehnt werden",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.",
+          "toneCheck": "n/a"
+        },
+        {
+          "oldText": "Laut aktuellen Freelancing-Plattformen (Upwork, Toptal, Malt) sind AI-Development-Projekte im Durchschnitt 2-3x hoeher verguetet als klassische Webentwicklung. Der Stundensatz fuer spezialisierte AI-Developer liegt zwischen 100-250 EUR.",
+          "newText": "Laut aktuellen Freelancing-Plattformen (Upwork, Toptal, Malt) sind AI-Development-Projekte im Durchschnitt 2-3x hoeher verguetet als klassische Webentwicklung. Der Stundensatz fuer spezialisierte AI-Developer liegt zwischen 100-250 EUR. **Hinweis (Mai 2026):** Durch verbesserte Cost-Efficiency (z.B. Advisor Tool mit -11.9% Kosten pro Task) erhoehen sich Gewinnmargen fuer Freelancer, die moderne Multi-Model-Strategien nutzen — Potenzial zur Preiserhoehung oder schnelleren Projektabschluss.",
+          "justification": "Weekly Research: Advisor Tool zeigt -11.9% Kostenreduktion pro Task; relevant fuer Verdienstpotenzial-Diskussion, da Freelancer von niedrigeren Delivery-Kosten profitieren",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Risk-Klasse 'safe' ist unehrlich — es handelt sich nicht um eine mechanische Aenderung, sondern um eine inhaltliche Ergaenzung mit Marktaussage (Margen, Preiserhoehung). Zudem ist der Bezug schwach: Die -11.9% Kostenreduktion gilt fuer API-Token-Kosten pro agentic Task, nicht automatisch fuer Freelancer-Delivery-Kosten. Das gehoert vor Anwendung von einem Menschen geprueft.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 101,
+      "title": "Dein Service-Angebot definieren",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 102,
+      "title": "Preisgestaltung mit AI",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 103,
+      "title": "Kunden-Akquise",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 104,
+      "title": "Projekt-Workflow mit Claude Code",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 105,
+      "title": "Client-Kommunikation",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    },
+    {
+      "lessonId": 106,
+      "title": "Qualitaetssicherung",
+      "track": "freelancer",
+      "status": "minor",
+      "warnings": [
+        {
+          "reason": "Lektion empfiehlt Claude Code CLI-Prompts ohne Kontext auf CLAUDE.md oder worktree.baseRef zu referenzieren. Seit 2.1.133 ist worktree.baseRef auf 'fresh' (origin/<default>) default, aber zwischen 2.1.128–2.1.133 lief EnterWorktree aus lokalem HEAD. Die QA-Prompts in der Lektion geben keine Anleitung, wie man sicherstellt, dass die Reviews auf dem richtigen Codebase-Zustand laufen.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Code 2.1.133 → 2.1.137'",
+          "severity": "low"
+        },
+        {
+          "reason": "Lektion nennt 'Automated QA mit Claude Code' als Claude-CLI-Prompts, aber erwähnt nicht die neuen Patterns: (1) Effort-aware Hooks für deterministische QA (tsc/eslint/prettier sollten in Hooks laufen, nicht im Prompt), (2) MCP-Tool-Hooks zum Posten von QA-Reports in Slack/Jira. Diese sind seit 2.1.137 verfügbar und für Freelancer-Workflows relevant.",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitte 'worktree.baseRef', '$CLAUDE_EFFORT', 'MCP-Tool-Hooks'",
+          "severity": "medium"
+        },
+        {
+          "reason": "Lektion erwähnt 'Security-Audit' als Claude-Code-Prompt-Aufgabe, aber Claude Security ist seit 30. April 2026 in Public Beta verfügbar. Für Pro/Max-User ist das nicht sofort relevant, aber die Lektion sollte mindestens einen Hinweis geben: 'Für Enterprise-Kunden: Anthropic bietet jetzt Claude Security für automatisierte Vulnerability-Scans.'",
+          "source": "2026-05-11-weekly-research-v2.md, Abschnitt 'Claude Security — Public Beta mit Opus 4.7'",
+          "severity": "low"
+        }
+      ],
+      "reviewedPatches": [
+        {
+          "oldText": "# Security-Audit\nclaude \"Fuehre ein Security-Audit durch:\n- Sind alle API-Keys in .env (nicht im Code)?\n- Gibt es SQL-Injection",
+          "newText": "# Security-Audit\n# HINWEIS: Seit Mai 2026 bietet Anthropic Claude Security (Public Beta)\n# fuer Enterprise-Kunden als dediziertes Tool. Fuer Pro/Max:\n# Custom-Audit mit Claude Code wie folgt:\n\nclaude \"Fuehre ein Security-Audit durch:\n- Sind alle API-Keys in .env (nicht im Code)?\n- Gibt es SQL-Injection",
+          "justification": "Claude Security ist jetzt GA-nah; Lektion sollte differenzieren zwischen Claude Code (interaktiv, manuell) und Claude Security (automated, scheduled, für Enterprise).",
+          "riskClass": "safe",
+          "verdict": "needs-human",
+          "criticReasoning": "Die Risk-Class 'safe' ist unehrlich — der Patch fügt inhaltliche Marketing-/Produktinformation in ein Code-Beispiel ein, das ist kein mechanisches Edit. Inhaltlich plausibel laut Research, aber ein Kommentar mitten im Bash-Snippet unterbricht den didaktischen Fluss und gehört eher als Fließtext-Hinweis vor den Code-Block. Tonally grenzwertig akzeptabel (du-Form, kein Banned-Word), aber Platzierung sollte ein Mensch entscheiden.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "# Umfassender Code-Review\nclaude \"Review den gesamten Code in src/ auf:\n1. TypeScript Best Practices\n2. Sicherheitsluecken\n3. Performance-Probleme\n4. Fehlende Error-Handling\n5. Accessibility-Issues\nErstelle eine priorisierte Liste (Critical → Low).\"",
+          "newText": "# Umfassender Code-Review (Deterministische Variante)\n# Zuerst: Hooks fuer Linting/TypeScript in ~/.claude/settings.json\nclaude \"Review den gesamten Code in src/ auf:\n1. TypeScript Best Practices\n2. Sicherheitsluecken\n3. Performance-Probleme\n4. Fehlende Error-Handling\n5. Accessibility-Issues\nErstelle eine priorisierte Liste (Critical → Low).\"\n\n# Tipp: Nutze $CLAUDE_EFFORT fuer differentielle QA\n# effort=low → nur ESLint/Prettier\n# effort=high → volle Test-Suite + TypeScript Full-Check",
+          "justification": "Seit 2.1.137 ist $CLAUDE_EFFORT verfügbar; Effort-aware QA ist ein besseres Pattern als universelle Prompts, weil es Kosten spart und Determinismus erhöht.",
+          "riskClass": "review",
+          "verdict": "needs-human",
+          "criticReasoning": "Der Patch ist faktisch korrekt ($CLAUDE_EFFORT existiert seit 2.1.133 laut Report) und tonal sauber im Du-Stil ohne Banned-Words. Allerdings ist der Mehrwert fragwürdig: Der eigentliche Prompt bleibt unverändert, lediglich Kommentare werden hinzugefügt, die ohne konkretes Hook-Beispiel in der Luft hängen. Eine menschliche Review sollte entscheiden, ob ein vollständiges Hook-Snippet sinnvoller wäre oder der Patch in dieser kosmetischen Form bleibt.",
+          "toneCheck": "pass"
+        },
+        {
+          "oldText": "Als Freelancer bist du gleichzeitig Entwickler, Tester und QA-Manager. Ohne klare Prozesse schleichen sich Fehler ein, die Kunden veraergern und Nacharbeit verursachen. Hier ist deine Checkliste:",
+          "newText": "Als Freelancer bist du gleichzeitig Entwickler, Tester und QA-Manager. Ohne klare Prozesse schleichen sich Fehler ein, die Kunden veraergern und Nacharbeit verursachen. Die beste Strategie: **deterministische Checks in Hooks, manuelle Reviews in Claude Code.** Hier ist deine Checkliste:",
+          "justification": "Seit 2.1.137 sind Hooks das Primary-Pattern für Determinismus (Hard Deny, Effort-aware, MCP-Tool-Hooks). Lektion sollte diesen Strategie-Shift reflektieren.",
+          "riskClass": "review",
+          "verdict": "approve",
+          "criticReasoning": "Der Patch ergänzt einen einzigen Satz, der den Strategie-Shift hin zu Hooks für deterministische Checks korrekt zusammenfasst — anchored im Research (Punkt 3 der Markt-Trends: 'Hooks werden zur Plattform'). Tonalität bleibt Du-Form, direkt, ohne Buzzwords. oldText matcht exakt.",
+          "toneCheck": "pass"
+        }
+      ],
+      "approvedCount": 1,
+      "rejectedCount": 0,
+      "needsHumanCount": 2
+    },
+    {
+      "lessonId": 107,
+      "title": "Skalierung: Vom Freelancer zur Agentur",
+      "track": "freelancer",
+      "status": "fresh",
+      "warnings": [],
+      "reviewedPatches": [],
+      "approvedCount": 0,
+      "rejectedCount": 0,
+      "needsHumanCount": 0
+    }
+  ]
+}

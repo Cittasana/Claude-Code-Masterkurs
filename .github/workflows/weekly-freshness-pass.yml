@@ -82,6 +82,17 @@ jobs:
             echo "has_changes=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Ensure auto-content label exists (idempotent)
+        if: steps.changes.outputs.has_changes == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          gh label create auto-content \
+            --color "F4845F" \
+            --description "Automated content updates from the weekly freshness pass" \
+            || echo "Label already exists, continuing."
+
       - name: Create branch + PR with audit results
         if: steps.changes.outputs.has_changes == 'true'
         env:
@@ -100,27 +111,33 @@ jobs:
           git push origin "$BRANCH"
 
           REPORT_FILE="masterkurs-agent/freshness-reports/$DATE-applied.md"
-          gh pr create \
+
+          # Body in a tmpfile keeps quoting sane and avoids heredoc-in-heredoc traps.
+          BODY_FILE="$(mktemp)"
+          {
+            echo "## Weekly Freshness Pass — $DATE"
+            echo ""
+            echo "Auto-generated audit + critic-reviewed patches against the latest weekly research report."
+            echo "Patches with verdict \`approve\` were applied to \`lessons.ts\` and \`LessonConfig\` metadata was synced to the Railway DB."
+            echo "Patches marked \`needs-human\` were escalated as warnings and are visible in the LessonView freshness banner."
+            echo ""
+            echo "See full report in \`$REPORT_FILE\`."
+            echo ""
+            echo "---"
+            echo ""
+            cat "$REPORT_FILE"
+          } > "$BODY_FILE"
+
+          # gh pr create without --label first (label is best-effort, added after).
+          PR_URL=$(gh pr create \
             --base main \
             --head "$BRANCH" \
             --title "chore(content): weekly freshness pass $DATE" \
-            --label "auto-content" \
-            --body "$(cat <<EOF
-          ## Weekly Freshness Pass — $DATE
+            --body-file "$BODY_FILE")
+          echo "Opened PR: $PR_URL"
 
-          Auto-generated audit + critic-reviewed patches against the latest weekly
-          research report. Patches with verdict \\\`approve\\\` were applied to
-          \\\`lessons.ts\\\` and \\\`LessonConfig\\\` metadata was synced to the
-          Railway DB. Patches marked \\\`needs-human\\\` were escalated as
-          warnings and are visible in the LessonView freshness banner.
-
-          See full report in \\\`$REPORT_FILE\\\`.
-
-          ---
-
-          $(cat "$REPORT_FILE")
-          EOF
-          )"
+          # Best-effort label add — don't fail the workflow if it errors.
+          gh pr edit "$PR_URL" --add-label "auto-content" || echo "Could not add label, continuing."
 
       - name: Summary on idle weeks
         if: steps.changes.outputs.has_changes == 'false'

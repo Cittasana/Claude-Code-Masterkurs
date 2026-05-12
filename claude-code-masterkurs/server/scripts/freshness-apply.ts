@@ -20,6 +20,10 @@ import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { lessons } from '../../src/data/lessons.js';
+import { freelancerModules } from '../../src/data/freelancerTrack.js';
+import type { Lesson } from '../../src/types/index.js';
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..', '..');
 const FRONTEND_LESSONS_TS = join(REPO_ROOT, 'src', 'data', 'lessons.ts');
@@ -41,6 +45,8 @@ interface ProposedWarning {
   severity: Severity;
 }
 
+type ToneCheck = 'pass' | 'drift' | 'n/a';
+
 interface ReviewedPatch {
   oldText: string;
   newText: string;
@@ -48,6 +54,7 @@ interface ReviewedPatch {
   riskClass: RiskClass;
   verdict: Verdict;
   criticReasoning: string;
+  toneCheck?: ToneCheck;
 }
 
 interface ReviewedLessonAudit {
@@ -133,29 +140,147 @@ async function applyApprovedPatches(reviewed: ReviewedOutput): Promise<number> {
   return applied;
 }
 
+// ──────────────────────────────────────────────────────────────
+// Cross-Lesson Coherence Pass
+// ──────────────────────────────────────────────────────────────
+/**
+ * Extract "fact-anchor" tokens from a patch's oldText — the kinds of
+ * substrings that would appear identically across multiple lessons if
+ * the underlying topic is the same.
+ *
+ * Heuristic patterns (intentionally conservative):
+ *   - Version numbers:        2.1.137, v3.15.0
+ *   - Slash commands:         /clear, /compact, /fast, /powerup
+ *   - CLI flags:              --plan-mode, --plugin-url, -p
+ *   - Settings keys:          autoMode.hard_deny, worktree.baseRef
+ *   - Identifier files:       CLAUDE.md, .mcp.json, settings.json
+ *   - Model IDs:              claude-haiku-4-5, claude-opus-4-7
+ *   - Beta headers:           advisor-tool-2026-03-01
+ */
+function extractFactAnchors(text: string): string[] {
+  const anchors = new Set<string>();
+  const patterns: RegExp[] = [
+    /\b\d+\.\d+\.\d+\b/g,                                    // 2.1.137
+    /\bv\d+\.\d+(\.\d+)?\b/g,                                // v3.15.0
+    /(?<![A-Za-z])\/[a-z][a-z0-9-]+/g,                       // /clear, /compact
+    /(?<![A-Za-z])--[a-z][a-z0-9-]+/g,                       // --plan-mode
+    /\b[a-zA-Z]+\.[a-z_][a-zA-Z_]+\b/g,                      // autoMode.hard_deny, worktree.baseRef
+    /\bCLAUDE\.md\b|\b\.mcp\.json\b|\bsettings\.json\b/g,    // identifier files
+    /\bclaude-(?:haiku|sonnet|opus)-\d+(?:-\d+)?\b/g,        // model IDs
+    /\b[a-z][a-z-]+-tool-\d{4}-\d{2}-\d{2}\b/g,              // beta headers like advisor-tool-2026-03-01
+  ];
+  for (const re of patterns) {
+    const matches = text.match(re);
+    if (matches) {
+      for (const m of matches) {
+        // Filter out trivial noise.
+        if (m.length < 3) continue;
+        anchors.add(m);
+      }
+    }
+  }
+  return Array.from(anchors);
+}
+
+interface CoherenceFinding {
+  lessonId: number;
+  matchedAnchor: string;
+  sourceLessonId: number;
+  sourceJustification: string;
+}
+
+/**
+ * After patches have been applied, scan all OTHER lessons for fact-anchor
+ * tokens that appear in any approved patch. The lessons containing those
+ * tokens get a coherence warning so the author knows they may need a
+ * sync-update even though they were not directly flagged by the audit.
+ */
+function findCoherenceWarnings(
+  reviewed: ReviewedOutput,
+): Map<number, CoherenceFinding[]> {
+  const findings = new Map<number, CoherenceFinding[]>();
+  const allLessons: Lesson[] = [...lessons, ...freelancerModules];
+
+  for (const la of reviewed.lessons) {
+    for (const patch of la.reviewedPatches) {
+      if (patch.verdict !== 'approve') continue;
+      const anchors = extractFactAnchors(patch.oldText);
+      if (anchors.length === 0) continue;
+
+      for (const otherLesson of allLessons) {
+        if (otherLesson.id === la.lessonId) continue;
+        const text = otherLesson.content
+          .map((b) => b.content)
+          .join('\n');
+        for (const anchor of anchors) {
+          if (text.includes(anchor)) {
+            const list = findings.get(otherLesson.id) ?? [];
+            list.push({
+              lessonId: otherLesson.id,
+              matchedAnchor: anchor,
+              sourceLessonId: la.lessonId,
+              sourceJustification: patch.justification,
+            });
+            findings.set(otherLesson.id, list);
+          }
+        }
+      }
+    }
+  }
+
+  return findings;
+}
+
 /** Write freshness metadata directly to the LessonConfig table. */
-async function syncFreshnessToDb(reviewed: ReviewedOutput): Promise<void> {
+async function syncFreshnessToDb(
+  reviewed: ReviewedOutput,
+  coherenceFindings: Map<number, CoherenceFinding[]>,
+): Promise<{ written: number; coherenceTouched: number }> {
   const prisma = new PrismaClient();
   const today = new Date();
-  try {
-    for (const la of reviewed.lessons) {
-      // Reject patches: not relevant for warnings. needs-human patches → become warnings.
-      // Executor warnings (la.warnings) remain warnings unless lesson was "fresh".
-      const isFresh = la.status === 'fresh';
-      const carryWarnings: ProposedWarning[] = isFresh ? [] : la.warnings;
-      const escalatedAsWarnings: ProposedWarning[] = la.reviewedPatches
-        .filter((p) => p.verdict === 'needs-human')
-        .map((p) => ({
-          reason: p.justification,
-          source: `reviewed-${reviewed.auditDate}: ${p.criticReasoning.slice(0, 120)}`,
-          severity:
-            p.riskClass === 'block' ? ('high' as const) :
-            p.riskClass === 'review' ? ('medium' as const) :
-            ('low' as const),
-        }));
+  let written = 0;
+  let coherenceTouched = 0;
 
-      const combined = [...carryWarnings, ...escalatedAsWarnings];
-      const anyApproved = la.reviewedPatches.some((p) => p.verdict === 'approve');
+  // Union of all lesson IDs we may need to write: direct audits + coherence-flagged.
+  const allLessonIds = new Set<number>();
+  for (const la of reviewed.lessons) allLessonIds.add(la.lessonId);
+  for (const id of coherenceFindings.keys()) allLessonIds.add(id);
+
+  try {
+    for (const lessonId of allLessonIds) {
+      const la = reviewed.lessons.find((l) => l.lessonId === lessonId);
+      const coherence = coherenceFindings.get(lessonId) ?? [];
+      const isFresh = la?.status === 'fresh';
+
+      // Direct audit warnings (carry forward unless lesson is fresh).
+      const carryWarnings: ProposedWarning[] = isFresh ? [] : (la?.warnings ?? []);
+
+      // Patches that need human review → annotate as warning.
+      const escalatedAsWarnings: ProposedWarning[] =
+        la?.reviewedPatches
+          .filter((p) => p.verdict === 'needs-human')
+          .map((p) => ({
+            reason: p.justification,
+            source: `reviewed-${reviewed.auditDate}: ${p.criticReasoning.slice(0, 120)}`,
+            severity:
+              p.riskClass === 'block' ? ('high' as const)
+              : p.riskClass === 'review' ? ('medium' as const)
+              : ('low' as const),
+          })) ?? [];
+
+      // Cross-lesson coherence warnings — low-severity by default, group by source lesson.
+      const coherenceWarnings: ProposedWarning[] = coherence.length > 0
+        ? [
+            {
+              reason: `Sync-Update prüfen: ${coherence.length} Konzept-Anker wurden in anderer Lektion gepatcht (${[...new Set(coherence.map((c) => `L${c.sourceLessonId}`))].join(', ')}). Betroffene Tokens: ${[...new Set(coherence.map((c) => c.matchedAnchor))].slice(0, 5).join(', ')}.`,
+              source: `coherence-${reviewed.auditDate}`,
+              severity: 'low' as const,
+            },
+          ]
+        : [];
+
+      const combined = [...carryWarnings, ...escalatedAsWarnings, ...coherenceWarnings];
+      const anyApproved = la?.reviewedPatches.some((p) => p.verdict === 'approve') ?? false;
 
       const freshnessWarnings = combined.map((w) => ({
         reason: w.reason,
@@ -166,18 +291,20 @@ async function syncFreshnessToDb(reviewed: ReviewedOutput): Promise<void> {
 
       try {
         await prisma.lessonConfig.update({
-          where: { lessonId: la.lessonId },
+          where: { lessonId },
           data: {
-            lastVerified: isFresh ? today : undefined,
+            // Only mark fresh when (a) directly audited AND (b) no coherence findings.
+            lastVerified: isFresh && coherence.length === 0 ? today : undefined,
             freshnessWarnings,
             lastUpdatedByAgent: anyApproved ? today : undefined,
           },
         });
+        written++;
+        if (coherence.length > 0) coherenceTouched++;
       } catch (err) {
         const code = (err as { code?: string }).code;
         if (code === 'P2025') {
-          // Lesson row not in DB yet (e.g. brand-new lesson, seed hasn't run since adding it).
-          console.log(`   ⚠ L${la.lessonId}: not in DB yet, skipped metadata sync.`);
+          console.log(`   ⚠ L${lessonId}: not in DB yet, skipped metadata sync.`);
           continue;
         }
         throw err;
@@ -186,9 +313,22 @@ async function syncFreshnessToDb(reviewed: ReviewedOutput): Promise<void> {
   } finally {
     await prisma.$disconnect();
   }
+
+  return { written, coherenceTouched };
 }
 
-function renderAppliedReport(reviewed: ReviewedOutput, appliedCount: number): string {
+interface ReportExtras {
+  coherenceFindings: Map<number, CoherenceFinding[]>;
+  totalCoherenceWarnings: number;
+  toneDriftCount: number;
+  dbSync: { written: number; coherenceTouched: number };
+}
+
+function renderAppliedReport(
+  reviewed: ReviewedOutput,
+  appliedCount: number,
+  extras: ReportExtras,
+): string {
   const lines: string[] = [];
   lines.push(`# Freshness Apply — ${reviewed.auditDate}`);
   lines.push('');
@@ -204,39 +344,61 @@ function renderAppliedReport(reviewed: ReviewedOutput, appliedCount: number): st
   lines.push(`- reject: **${reviewed.totalsByVerdict.reject}**`);
   lines.push(`- needs-human: **${reviewed.totalsByVerdict['needs-human']}**`);
   lines.push('');
-  lines.push(`## Applied to lessons.ts: **${appliedCount}** patches`);
+  lines.push(`## Quality gates`);
+  lines.push('');
+  lines.push(`- Patches applied to lessons.ts: **${appliedCount}**`);
+  lines.push(`- Tone-drift demotions: **${extras.toneDriftCount}** (auto-demoted to needs-human despite factual correctness)`);
+  lines.push(`- Cross-lesson coherence warnings: **${extras.totalCoherenceWarnings}** across **${extras.coherenceFindings.size}** lessons`);
+  lines.push(`- LessonConfig rows touched: **${extras.dbSync.written}**`);
   lines.push('');
 
   const interesting = reviewed.lessons.filter(
     (l) => l.approvedCount + l.needsHumanCount > 0 || l.warnings.length > 0,
   );
-  if (interesting.length === 0) {
+  if (interesting.length === 0 && extras.coherenceFindings.size === 0) {
     lines.push('No actionable findings this week.');
     return lines.join('\n');
   }
 
-  lines.push('## Details');
-  lines.push('');
-  for (const l of interesting) {
-    lines.push(`### L${l.lessonId} — ${l.title} *(${l.track})*`);
-    lines.push(`status: \`${l.status}\` · approved: ${l.approvedCount} · needs-human: ${l.needsHumanCount} · rejected: ${l.rejectedCount}`);
+  if (interesting.length > 0) {
+    lines.push('## Direct audit details');
     lines.push('');
-    if (l.warnings.length > 0) {
-      lines.push('Warnings:');
-      for (const w of l.warnings) {
-        lines.push(`- [\`${w.severity}\`] ${w.reason} · source: ${w.source}`);
-      }
+    for (const l of interesting) {
+      lines.push(`### L${l.lessonId} — ${l.title} *(${l.track})*`);
+      lines.push(`status: \`${l.status}\` · approved: ${l.approvedCount} · needs-human: ${l.needsHumanCount} · rejected: ${l.rejectedCount}`);
       lines.push('');
-    }
-    if (l.reviewedPatches.length > 0) {
-      lines.push('Patches:');
-      for (const p of l.reviewedPatches) {
-        lines.push(`- *(verdict: ${p.verdict}, risk: ${p.riskClass})* ${p.justification}`);
-        lines.push(`  > Critic: ${p.criticReasoning}`);
+      if (l.warnings.length > 0) {
+        lines.push('Warnings:');
+        for (const w of l.warnings) {
+          lines.push(`- [\`${w.severity}\`] ${w.reason} · source: ${w.source}`);
+        }
+        lines.push('');
       }
-      lines.push('');
+      if (l.reviewedPatches.length > 0) {
+        lines.push('Patches:');
+        for (const p of l.reviewedPatches) {
+          const tone = p.toneCheck ? ` · tone: ${p.toneCheck}` : '';
+          lines.push(`- *(verdict: ${p.verdict}, risk: ${p.riskClass}${tone})* ${p.justification}`);
+          lines.push(`  > Critic: ${p.criticReasoning}`);
+        }
+        lines.push('');
+      }
     }
   }
+
+  if (extras.coherenceFindings.size > 0) {
+    lines.push('## Cross-lesson coherence findings');
+    lines.push('');
+    lines.push('Lektionen, in denen fact-anchor-Tokens (Versionsnummern, Slash-Commands, Settings-Keys etc.) eines gepatchten Konzepts noch unverändert vorkommen. Banner in der UI markiert die Lektionen automatisch.');
+    lines.push('');
+    for (const [lessonId, findings] of extras.coherenceFindings) {
+      const sources = [...new Set(findings.map((f) => f.sourceLessonId))].map((id) => `L${id}`);
+      const tokens = [...new Set(findings.map((f) => f.matchedAnchor))];
+      lines.push(`- **L${lessonId}** ← Tokens: \`${tokens.slice(0, 6).join('`, `')}\` (von ${sources.join(', ')})`);
+    }
+    lines.push('');
+  }
+
   return lines.join('\n');
 }
 
@@ -250,25 +412,47 @@ async function main() {
 
   const appliedCount = await applyApprovedPatches(reviewed.data);
 
+  // Cross-lesson coherence pass — fact-anchor tokens from approved patches
+  // surface as low-severity warnings on every other lesson that contains them.
+  console.log('   Cross-lesson coherence pass...');
+  const coherenceFindings = findCoherenceWarnings(reviewed.data);
+  const totalCoherenceWarnings = Array.from(coherenceFindings.values()).reduce((a, b) => a + b.length, 0);
+  console.log(`   Coherence findings: ${totalCoherenceWarnings} (across ${coherenceFindings.size} other lessons)`);
+
+  let dbSync = { written: 0, coherenceTouched: 0 };
   if (process.env.DATABASE_URL) {
     console.log('   Syncing freshness metadata to LessonConfig...');
-    await syncFreshnessToDb(reviewed.data);
+    dbSync = await syncFreshnessToDb(reviewed.data, coherenceFindings);
   } else {
     console.log('   DATABASE_URL not set — skipping DB metadata sync. (lessons.ts edits still applied.)');
   }
 
+  // Tone-drift telemetry — these would have been auto-approved but were demoted by the gate.
+  const toneDriftCount = reviewed.data.lessons.reduce(
+    (acc, l) => acc + l.reviewedPatches.filter((p) => p.toneCheck === 'drift').length,
+    0,
+  );
+
   const reportPath = join(AUDIT_REPORT_DIR, `${reviewed.data.auditDate}-applied.md`);
-  await writeFile(reportPath, renderAppliedReport(reviewed.data, appliedCount), 'utf-8');
+  await writeFile(reportPath, renderAppliedReport(reviewed.data, appliedCount, {
+    coherenceFindings,
+    totalCoherenceWarnings,
+    toneDriftCount,
+    dbSync,
+  }), 'utf-8');
 
   console.log('');
   console.log('🔧 Freshness apply done.');
   console.log(`   Patches applied to lessons.ts: ${appliedCount}`);
+  console.log(`   Coherence warnings written: ${totalCoherenceWarnings}`);
+  console.log(`   Tone-drift demotions: ${toneDriftCount}`);
+  console.log(`   Lessons touched in DB: ${dbSync.written}`);
   console.log(`   Report: ${reportPath}`);
 
   // Print GitHub-Action-friendly summary on stdout for PR body.
   if (process.env.GITHUB_ACTIONS) {
-    console.log(`::set-output name=applied_count::${appliedCount}`);
-    console.log(`::set-output name=report_path::${reportPath}`);
+    console.log(`applied_count=${appliedCount}`);
+    console.log(`report_path=${reportPath}`);
   }
 }
 

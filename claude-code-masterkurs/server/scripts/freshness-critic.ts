@@ -45,6 +45,7 @@ type Severity = 'low' | 'medium' | 'high';
 type Status = 'fresh' | 'minor' | 'breaking';
 type RiskClass = 'safe' | 'review' | 'block';
 type Verdict = 'approve' | 'reject' | 'needs-human';
+type ToneCheck = 'pass' | 'drift' | 'n/a';
 
 interface ProposedWarning {
   reason: string;
@@ -62,6 +63,7 @@ interface ProposedPatch {
 interface ReviewedPatch extends ProposedPatch {
   verdict: Verdict;
   criticReasoning: string;
+  toneCheck: ToneCheck;
 }
 
 interface LessonAudit {
@@ -140,26 +142,44 @@ function lessonContentText(lesson: Lesson): string {
 // ──────────────────────────────────────────────────────────────
 // Critic prompt
 // ──────────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You are an independent critic for proposed content patches in the Claude Code Masterkurs.
+const SYSTEM_PROMPT = `You are an independent critic for proposed content patches in the Cittasana "Claude Code Masterkurs".
 
 A first-pass auditor has flagged a course lesson and proposed a specific text patch. Your job is to scrutinise that patch BEFORE it gets applied.
 
-You must verify:
+=== CITTASANA BRAND VOICE (mandatory) ===
+Course content MUST stay in this voice. Patches that drift FAIL the tone check even when factually correct:
+- German prevails. English only for technical proper nouns (Claude Code, Hooks, Skills, MCP, Plan Mode, /clear, CLAUDE.md, worktree, ScrollTrigger, etc.) and inline code.
+- "Du"-Anrede always. NEVER "Sie".
+- Direct, premium-technical, hands-on tone. Active voice.
+- Assume the reader is a junior-to-mid developer who wants substance, not marketing.
+- BANNED words/phrases (AI-cliché markers): "Elevate", "Seamless", "Unleash", "Game-changer", "Delve", "Tapestry", "In the world of...", "powerful" as filler, "robust" as filler, "leverage" as filler, exclamation marks mid-sentence, breathless German equivalents like "kraftvoll", "wegweisend", "revolutionär".
+- No corporate hedging: avoid "ggf.", "unter Umständen", "möglicherweise" unless factually required.
+- Code examples stay in English (variable names, comments) — only narration is German.
+
+=== VERIFICATION CHECKS ===
 1. The 'oldText' actually appears in the lesson content (literal substring).
 2. The 'newText' does not introduce new errors, fabricated facts, or hallucinated APIs.
 3. The 'justification' is anchored in a real claim from the research report.
 4. The declared 'riskClass' is honest — a 'safe' patch should be mechanical (version bumps, renamed flags); 'review' is for meaning-altering edits; 'block' is for architectural rewrites.
+5. The 'newText' preserves Cittasana voice per the spec above.
 
-Output STRICTLY this JSON:
+Output STRICTLY this JSON (no preamble, no markdown fence):
 {
   "verdict": "approve" | "reject" | "needs-human",
-  "criticReasoning": "1-3 sentence explanation in German preferred"
+  "criticReasoning": "1-3 sentence explanation in German preferred",
+  "toneCheck": "pass" | "drift" | "n/a"
 }
 
-Verdict rules:
-- "approve"      → safe and accurate, ready for auto-apply
-- "reject"       → patch is wrong, hallucinated, or makes lesson worse — drop it
-- "needs-human"  → patch is plausibly correct but riskClass demands review, OR oldText doesn't match exactly`;
+Verdict rules (apply in order):
+- toneCheck === "drift"                    → verdict MUST be "needs-human" (even if facts pass)
+- Patch is mechanical and correct          → "approve"
+- Patch is wrong, hallucinated, or worse   → "reject"
+- Patch is plausibly right, risk-class demands review, OR oldText doesn't match exactly → "needs-human"
+
+toneCheck values:
+- "pass"  → newText fully respects the brand voice
+- "drift" → newText violates ≥ 1 voice rule (banned word, formal Sie-form, English-when-German, exclamation in middle of sentence, marketing-style adjectives, etc.)
+- "n/a"   → patch is pure code/identifier/number with no prose — voice not testable`;
 
 // ──────────────────────────────────────────────────────────────
 // Anthropic client + critique
@@ -179,6 +199,7 @@ async function critiquePatch(
       ...patch,
       verdict: 'needs-human',
       criticReasoning: `Pre-check failed: 'oldText' substring nicht im Lektion-Content gefunden — kann nicht sauber auto-patched werden.`,
+      toneCheck: 'n/a',
     };
   }
 
@@ -219,7 +240,7 @@ Apply the verification rules from the system prompt. Output strict JSON.`;
       .join('');
 
     const cleaned = text.replace(/^```(?:json)?\n?/i, '').replace(/\n?```\s*$/i, '').trim();
-    let parsed: { verdict: Verdict; criticReasoning: string };
+    let parsed: { verdict: Verdict; criticReasoning: string; toneCheck?: ToneCheck };
     try {
       parsed = JSON.parse(cleaned);
     } catch {
@@ -227,15 +248,28 @@ Apply the verification rules from the system prompt. Output strict JSON.`;
         ...patch,
         verdict: 'needs-human',
         criticReasoning: `Critic JSON-Parse fehlgeschlagen; eskaliert zu menschlicher Review.`,
+        toneCheck: 'n/a',
       };
     }
 
-    return { ...patch, verdict: parsed.verdict, criticReasoning: parsed.criticReasoning };
+    const toneCheck: ToneCheck = parsed.toneCheck ?? 'n/a';
+
+    // Enforce the tone-drift gate at runtime — even if the model contradicts itself,
+    // a "drift" flag must NEVER yield an "approve" verdict.
+    let verdict: Verdict = parsed.verdict;
+    let reasoning = parsed.criticReasoning;
+    if (toneCheck === 'drift' && verdict === 'approve') {
+      verdict = 'needs-human';
+      reasoning = `${reasoning} (Auto-demoted: toneCheck=drift kann nicht auto-approved werden.)`;
+    }
+
+    return { ...patch, verdict, criticReasoning: reasoning, toneCheck };
   } catch (err) {
     return {
       ...patch,
       verdict: 'needs-human',
       criticReasoning: `API-Fehler im Critic-Lauf: ${(err as Error).message}. Eskaliert.`,
+      toneCheck: 'n/a',
     };
   }
 }
@@ -287,6 +321,7 @@ async function main() {
         ...patch,
         verdict: 'needs-human',
         criticReasoning: `RiskClass 'block' — architektonische Änderung, gehört in menschliche Review.`,
+        toneCheck: 'n/a',
       };
     } else {
       reviewed = await critiquePatch(lesson, patch, researchContent);

@@ -6,8 +6,25 @@ name: Seed Production Content
 on:
   push:
     branches: [main]
+    # M2: Only re-seed when content that prisma/seed.ts actually imports
+    # has changed. Previously this triggered on any src/data/** edit, so
+    # adjacent files (tools/**, patterns.ts, leaderboardSeed.ts) that
+    # seed.ts does NOT read would still pay the cost of a full Railway
+    # reseed. Keep this list in sync with the imports at the top of
+    # claude-code-masterkurs/server/prisma/seed.ts.
     paths:
-      - 'claude-code-masterkurs/src/data/**'
+      - 'claude-code-masterkurs/src/data/lessons.ts'
+      - 'claude-code-masterkurs/src/data/quizzes.ts'
+      - 'claude-code-masterkurs/src/data/projects.ts'
+      - 'claude-code-masterkurs/src/data/freelancerTrack.ts'
+      - 'claude-code-masterkurs/src/data/capstoneProjects.ts'
+      - 'claude-code-masterkurs/src/data/challenges.ts'
+      - 'claude-code-masterkurs/src/data/liveCodingChallenges.ts'
+      - 'claude-code-masterkurs/src/data/projectTemplates.ts'
+      - 'claude-code-masterkurs/src/data/playgroundTasks.ts'
+      - 'claude-code-masterkurs/src/data/features.ts'
+      - 'claude-code-masterkurs/src/data/forumCategories.ts'
+      - 'claude-code-masterkurs/src/data/officialDocs.ts'
       - 'claude-code-masterkurs/server/prisma/seed.ts'
       - 'claude-code-masterkurs/server/prisma/schema.prisma'
       - '.github/workflows/seed-content.yml'

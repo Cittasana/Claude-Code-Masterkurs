@@ -67,6 +67,20 @@ jobs:
           DATABASE_URL: ${{ secrets.RAILWAY_DATABASE_URL }}
         run: npm run audit:apply
 
+      # M1: Pre-merge structural check.
+      # The applier writes raw model output into a TypeScript template literal
+      # in lessons.ts. A bad escape (or any other patch defect) breaks parsing
+      # and would cascade through into the prod seed on merge. Compile the
+      # frontend before opening the PR so any TS error fails the workflow
+      # instead of landing in a green-looking PR.
+      - name: Install frontend deps
+        working-directory: claude-code-masterkurs
+        run: npm ci
+
+      - name: Type-check frontend after patches
+        working-directory: claude-code-masterkurs
+        run: npx tsc -b
+
       - name: Configure git for PR
         run: |
           git config user.name "freshness-bot"

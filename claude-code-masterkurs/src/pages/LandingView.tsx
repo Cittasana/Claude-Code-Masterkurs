@@ -11,7 +11,7 @@ import SourcesHubSection from '../components/Landing/SourcesHubSection';
 import TestimonialSection from '../components/Landing/TestimonialSection';
 import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
 import { contentApi } from '../lib/api';
-import type { AdminLessonConfig } from '../lib/api';
+import type { AdminLessonConfig, AdminQuiz, AdminProjectConfig } from '../lib/api';
 import { gsap } from '../lib/gsap';
 
 const FEATURES = [
@@ -56,23 +56,36 @@ const LandingView = () => {
 
   // ── Live content from CMS ─────────────────────────────────
   const [lessons, setLessons] = useState<AdminLessonConfig[]>([]);
+  const [quizzes, setQuizzes] = useState<AdminQuiz[]>([]);
+  const [projects, setProjects] = useState<AdminProjectConfig[]>([]);
 
   useEffect(() => {
     let cancelled = false;
-    contentApi
-      .getLessons({ track: 'main' })
-      .then((res) => {
-        if (!cancelled && Array.isArray(res.data)) setLessons(res.data);
-      })
-      .catch(() => {
-        /* offline / cold start — leave lessons empty, UI falls back gracefully */
-      });
+    Promise.allSettled([
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getProjects(),
+    ]).then(([lessonsRes, quizzesRes, projectsRes]) => {
+      if (cancelled) return;
+      if (lessonsRes.status === 'fulfilled' && Array.isArray(lessonsRes.value.data)) {
+        setLessons(lessonsRes.value.data);
+      }
+      if (quizzesRes.status === 'fulfilled' && Array.isArray(quizzesRes.value.data)) {
+        setQuizzes(quizzesRes.value.data);
+      }
+      if (projectsRes.status === 'fulfilled' && Array.isArray(projectsRes.value.data)) {
+        setProjects(projectsRes.value.data);
+      }
+      /* offline / cold start — leave whichever didn't resolve empty, UI falls back gracefully */
+    });
     return () => {
       cancelled = true;
     };
   }, []);
 
   const totalLessons = lessons.length;
+  const totalQuizzes = quizzes.length;
+  const totalProjects = projects.length;
 
   /** 4 most recently touched lessons, sorted by updatedAt desc. */
   const recentLessons = useMemo(
@@ -98,10 +111,10 @@ const LandingView = () => {
     () => [
       { key: 'statsLessons', value: totalLessons > 0 ? `${totalLessons}` : '...' },
       { key: 'statsLevels', value: '3' },
-      { key: 'statsQuizzes', value: totalLessons > 0 ? `${totalLessons}` : '...' },
-      { key: 'statsProjects', value: '6+' },
+      { key: 'statsQuizzes', value: totalQuizzes > 0 ? `${totalQuizzes}` : '...' },
+      { key: 'statsProjects', value: totalProjects > 0 ? `${totalProjects}` : '...' },
     ],
-    [totalLessons]
+    [totalLessons, totalQuizzes, totalProjects]
   );
 
   useEffect(() => {

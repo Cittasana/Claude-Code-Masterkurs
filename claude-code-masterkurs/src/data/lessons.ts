@@ -2576,7 +2576,7 @@ Ein Wort der Warnung: Jeder aktive MCP Server verbraucht Platz im Context Window
 - Monitoring-Daten auswerten
 - Und vieles mehr...
 
-**Neu in Claude Code 2.1.137:** MCP-Tools können jetzt auch direkt in Hooks aufgerufen werden (`type: "mcp_tool"`), was es ermöglicht, MCP-Services automatisch nach Code-Änderungen zu triggern — z.B. Slack-Benachrichtigungen nach Edits oder automatisierte Datenbankmigrationen.`,
+**Neu in Claude Code 2.1.137:** MCP-Tools können jetzt auch direkt in Hooks aufgerufen werden (\`type: "mcp_tool"\`), was es ermöglicht, MCP-Services automatisch nach Code-Änderungen zu triggern — z.B. Slack-Benachrichtigungen nach Edits oder automatisierte Datenbankmigrationen.`,
       },
       {
         type: 'heading',
@@ -12631,11 +12631,11 @@ EMPFEHLUNG:
         content: `Das Terminal ist die Ur-Form von Claude Code und bietet die vollständigste Funktionalität:
 
 - **Volle Slash-Commands**: /fast, /model, /rewind, /compact, /init, /agents, /hooks und alle weiteren.
-- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal. Seit 2.1.137 können Hooks direkt MCP-Tools aufrufen (Hook-Typ `"mcp_tool"`), nicht nur Shell-Commands.
+- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal. Seit 2.1.137 können Hooks direkt MCP-Tools aufrufen (Hook-Typ \`"mcp_tool"\`), nicht nur Shell-Commands.
 - **Agent Teams**: Nur im Terminal verfügbar (In-Process oder Split-Pane/tmux).
 - **Headless/Programmatic Mode**: Für CI/CD, Automatisierung und Scripting.
 - **Pipe Support**: Input und Output können gepiped werden – Unix-Philosophie.
-- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees. **Wichtig (seit 2.1.133):** Die Default-Basis ist `origin/<default>` (frisch gebrancht), nicht lokaler HEAD. Mit `worktree.baseRef: "head"` in settings.json auf lokales HEAD switchen.
+- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees. **Wichtig (seit 2.1.133):** Die Default-Basis ist \`origin/<default>\` (frisch gebrancht), nicht lokaler HEAD. Mit \`worktree.baseRef: "head"\` in settings.json auf lokales HEAD switchen.
 
 **Wann Terminal?** Immer wenn du die volle Kontrolle brauchst, mit Agent Teams arbeitest, in CI/CD-Pipelines oder bei fortgeschrittener Automatisierung.`,
       },
@@ -15758,7 +15758,7 @@ EMPFEHLUNG:
 /powerup zeigt Hooks. Der Masterkurs zeigt wie du Hooks für Production-Automation baust: Security-Hooks, Auto-Formatter, und das neue Defer-Pattern das headless Agents bei kritischen Operationen pausiert und auf Human-in-the-Loop wartet.
 
 **2. MCP Server selbst bauen — und MCP-Tool-Hooks**
-/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht. Zusätzlich: Seit Claude Code 2.1.137 können Hooks direkt MCP-Tools aufrufen (`type: "mcp_tool"`), was neue Automations-Muster ermöglicht.
+/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht. Zusätzlich: Seit Claude Code 2.1.137 können Hooks direkt MCP-Tools aufrufen (\`type: "mcp_tool"\`), was neue Automations-Muster ermöglicht.
 
 **3. Claude Managed Agents (Enterprise)**
 /powerup erwähnt keine Managed Agents. Der Masterkurs erklärt die $0.08/Stunde Enterprise-Plattform, wann du sie brauchst, und wie du deinen ersten Managed Agent deployest.

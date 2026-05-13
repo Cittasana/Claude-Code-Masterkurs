@@ -205,13 +205,22 @@ Decide: fresh / minor / breaking. Output strict JSON per system spec. Research s
     try {
       parsed = JSON.parse(cleaned);
     } catch (parseError) {
-      console.warn(`  Lesson ${lesson.id}: failed to parse model output, treating as fresh.`);
+      console.warn(`  Lesson ${lesson.id}: failed to parse model output — flagging for manual review.`);
       return {
         lessonId: lesson.id,
         title: lesson.title,
         track,
-        status: 'fresh',
-        warnings: [],
+        // Default to 'minor' (not 'fresh') so a malformed model response never
+        // silently certifies a lesson as up-to-date. The warning routes the
+        // lesson into the needs-human path downstream.
+        status: 'minor',
+        warnings: [
+          {
+            severity: 'low',
+            reason: `Freshness audit failed to parse model JSON output — manual review needed. First 200 chars: ${text.slice(0, 200).replace(/\s+/g, ' ').trim()}`,
+            source: 'freshness-audit parse-error fallback',
+          },
+        ],
         proposedPatches: [],
         rawResponse: text.slice(0, 400),
       };
@@ -226,13 +235,23 @@ Decide: fresh / minor / breaking. Output strict JSON per system spec. Research s
       proposedPatches: parsed.proposedPatches ?? [],
     };
   } catch (apiError) {
-    console.error(`  Lesson ${lesson.id}: API error — ${(apiError as Error).message}`);
+    const msg = (apiError as Error).message;
+    console.error(`  Lesson ${lesson.id}: API error — ${msg}`);
     return {
       lessonId: lesson.id,
       title: lesson.title,
       track,
-      status: 'fresh',
-      warnings: [],
+      // Default to 'minor' (not 'fresh') so transient API failures never
+      // silently certify a lesson as up-to-date. The warning routes the
+      // lesson into the needs-human path downstream.
+      status: 'minor',
+      warnings: [
+        {
+          severity: 'low',
+          reason: `Freshness audit API call failed — manual review needed. Error: ${msg}`,
+          source: 'freshness-audit api-error fallback',
+        },
+      ],
       proposedPatches: [],
     };
   }

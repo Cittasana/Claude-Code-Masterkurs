@@ -262,8 +262,8 @@ Alles in < 2 Minuten!`,
       },
       {
         type: 'list',
-        content: `- **Node.js**: Version 16 oder höher
-- **npm**: Version 7 oder höher
+        content: `- **Node.js**: Version 18 oder höher
+- **npm**: Version 8 oder höher
 - **RAM**: Mindestens 8GB (16GB empfohlen)
 - **Internet**: Stabile Verbindung für API-Calls
 - **Terminal**: Bash, Zsh oder PowerShell
@@ -2574,7 +2574,9 @@ Ein Wort der Warnung: Jeder aktive MCP Server verbraucht Platz im Context Window
 - Slack Nachrichten senden
 - Figma Designs analysieren
 - Monitoring-Daten auswerten
-- Und vieles mehr...`,
+- Und vieles mehr...
+
+**Neu in Claude Code 2.1.137:** MCP-Tools können jetzt auch direkt in Hooks aufgerufen werden (\`type: "mcp_tool"\`), was es ermöglicht, MCP-Services automatisch nach Code-Änderungen zu triggern — z.B. Slack-Benachrichtigungen nach Edits oder automatisierte Datenbankmigrationen.`,
       },
       {
         type: 'heading',
@@ -5523,7 +5525,7 @@ exit 0  # Alle anderen Befehle erlauben`,
 
 Stell dir vor, du machst jeden Tag Code-Reviews und jedes Mal tippst du: 'Prüfe den Code auf Bugs, Security-Probleme, Performance-Issues, Code-Style-Verstöße und fehlende Tests. Strukturiere das Review nach Schweregrad.' Das sind 30 Sekunden Tippen die du dir sparen kannst. Als Slash Command tippst du nur /project:review und der gesamte Prompt wird automatisch ausgeführt.
 
-Der Unterschied zu Skills: Slash Commands sind MANUELLE Auslöser — du entscheidest wann sie laufen. Skills werden von Claude AUTOMATISCH erkannt und geladen. Slash Commands sind wie Buttons die du drückst, Skills sind wie Wissen das Claude selbst abruft.
+Der Unterschied zu Skills: Slash Commands sind MANUELLE Auslöser — du entscheidest wann sie laufen. Skills werden von Claude AUTOMATISCH erkannt und geladen. Es gibt auch Hooks, die deterministische Aktionen (wie Linting oder Security-Checks) automatisieren — siehe Lektion Hooks & MCP für Details. Slash Commands sind wie Buttons die du drückst, Skills sind wie Wissen das Claude selbst abruft.
 
 Die Erstellung ist denkbar einfach: Du legst eine Markdown-Datei in einem bestimmten Verzeichnis ab, und schon ist der Command verfügbar. Der Inhalt der Datei ist der Prompt den Claude ausführen soll. Du kannst Variablen, Frontmatter und komplexe Anweisungen nutzen.
 
@@ -8801,7 +8803,7 @@ In dieser Lektion lernst du jede Integration im Detail kennen: Setup, Features, 
         type: 'text',
         content: `Die offizielle VS Code Extension bringt Claude Code direkt in deinen Editor. Du bekommst ein Chat-Panel, Inline-Code-Vorschläge und nahtlose Integration mit dem Terminal — alles ohne zwischen Fenstern wechseln zu müssen. Die Installation dauert weniger als eine Minute.
 
-Der Setup-Prozess: Öffne VS Code, gehe zum Extensions Marketplace (Ctrl+Shift+X), suche nach 'Claude Code', und installiere die offizielle Extension von Anthropic. Nach der Installation erscheint ein neues Claude Code Icon in der Seitenleiste.
+Der Setup-Prozess: Öffne VS Code, gehe zum Extensions Marketplace (Ctrl+Shift+X), suche nach 'Claude Code', und installiere die offizielle Extension von Anthropic. Nach der Installation erscheint ein neues Claude Code Spark-Icon ✨ in der Seitenleiste (unter den Standard-VS-Code-Icons wie Explorer und Source Control).
 
 Beim ersten Start wirst du aufgefordert dich zu authentifizieren — entweder mit deinem bestehenden Claude Code Login oder über einen API-Key. Wenn du Claude Code bereits im Terminal nutzt, wird die Authentifizierung automatisch übernommen.
 
@@ -12629,11 +12631,11 @@ EMPFEHLUNG:
         content: `Das Terminal ist die Ur-Form von Claude Code und bietet die vollständigste Funktionalität:
 
 - **Volle Slash-Commands**: /fast, /model, /rewind, /compact, /init, /agents, /hooks und alle weiteren.
-- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal.
+- **MCP-Server**: Alle MCP-Verbindungen (HTTP, SSE, stdio) funktionieren im Terminal. Seit 2.1.137 können Hooks direkt MCP-Tools aufrufen (Hook-Typ \`"mcp_tool"\`), nicht nur Shell-Commands.
 - **Agent Teams**: Nur im Terminal verfügbar (In-Process oder Split-Pane/tmux).
 - **Headless/Programmatic Mode**: Für CI/CD, Automatisierung und Scripting.
 - **Pipe Support**: Input und Output können gepiped werden – Unix-Philosophie.
-- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees.
+- **Git Worktrees**: Mehrere parallele Sessions in verschiedenen Worktrees. **Wichtig (seit 2.1.133):** Die Default-Basis ist \`origin/<default>\` (frisch gebrancht), nicht lokaler HEAD. Mit \`worktree.baseRef: "head"\` in settings.json auf lokales HEAD switchen.
 
 **Wann Terminal?** Immer wenn du die volle Kontrolle brauchst, mit Agent Teams arbeitest, in CI/CD-Pipelines oder bei fortgeschrittener Automatisierung.`,
       },
@@ -15659,7 +15661,7 @@ Voraussetzung: Eine lokale Web-App auf localhost
       },
       {
         type: 'text',
-        content: `Am 1. April 2026 hat Anthropic mit Claude Code v2.1.90 ein völlig neues Feature eingeführt: **/powerup** — das erste offizielle, first-party Lernsystem für Claude Code, direkt im Terminal.
+        content: `Am 1. April 2026 hat Anthropic mit Claude Code v2.1.90 ein völlig neues Feature eingeführt: **/powerup** — das erste offizielle, first-party Lernsystem für Claude Code, direkt im Terminal. Stand Mai 2026 (Claude Code 2.1.137) sind neue Features wie Effort-aware Hooks, MCP-Tool-Hooks und worktree.baseRef-Defaults hinzugekommen — diese gehen über /powerup hinaus.
 
 Statt die Dokumentation im Browser zu öffnen und Beispiele dort zu lesen, lernst du mit /powerup genau in dem Tool mit dem du arbeitest: Das Terminal zeigt animierte Feature-Demos live in deiner Session. Du siehst nicht nur Code — du siehst Claude in Aktion.
 
@@ -15755,8 +15757,8 @@ EMPFEHLUNG:
 **1. Enterprise-Hooks und Defer-Pattern (Exit 3)**
 /powerup zeigt Hooks. Der Masterkurs zeigt wie du Hooks für Production-Automation baust: Security-Hooks, Auto-Formatter, und das neue Defer-Pattern das headless Agents bei kritischen Operationen pausiert und auf Human-in-the-Loop wartet.
 
-**2. MCP Server selbst bauen**
-/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht.
+**2. MCP Server selbst bauen — und MCP-Tool-Hooks**
+/powerup zeigt wie du bestehende MCP Server installierst. Der Masterkurs zeigt wie du eigene MCP Server für deine spezifischen Workflows baust — zum Beispiel einen Server der deine proprietäre interne API für Claude zugänglich macht. Zusätzlich: Seit Claude Code 2.1.137 können Hooks direkt MCP-Tools aufrufen (\`type: "mcp_tool"\`), was neue Automations-Muster ermöglicht.
 
 **3. Claude Managed Agents (Enterprise)**
 /powerup erwähnt keine Managed Agents. Der Masterkurs erklärt die $0.08/Stunde Enterprise-Plattform, wann du sie brauchst, und wie du deinen ersten Managed Agent deployest.

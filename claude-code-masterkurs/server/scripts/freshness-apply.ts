@@ -101,6 +101,31 @@ async function findLatestReviewedJson(): Promise<{ path: string; data: ReviewedO
 }
 
 /**
+ * Escape `newText` so it survives injection into a TypeScript template
+ * literal in lessons.ts. The critic emits Markdown content that often
+ * contains inline-code spans (`...`) and occasionally `${...}` — both
+ * would terminate the surrounding template literal if left raw and
+ * cascade into a parse-error storm (see freshness/2026-05-12, fixed in
+ * commit 96b5087). Already-escaped sequences are left alone so re-runs
+ * stay idempotent.
+ */
+function escapeForTemplateLiteral(text: string): string {
+  let out = '';
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const prevEscaped = i > 0 && text[i - 1] === '\\';
+    if (ch === '`' && !prevEscaped) {
+      out += '\\`';
+    } else if (ch === '$' && text[i + 1] === '{' && !prevEscaped) {
+      out += '\\$';
+    } else {
+      out += ch;
+    }
+  }
+  return out;
+}
+
+/**
  * Apply approved patches to lessons.ts via literal find-and-replace.
  * Conservative: only first match per patch, only if oldText is unique enough.
  * Returns the number of patches actually written.
@@ -123,7 +148,7 @@ async function applyApprovedPatches(reviewed: ReviewedOutput): Promise<number> {
         skipped.push(`L${lessonAudit.lessonId}: oldText ambiguous (${matches} matches) — skipped to avoid collateral edits.`);
         continue;
       }
-      source = source.replace(patch.oldText, patch.newText);
+      source = source.replace(patch.oldText, escapeForTemplateLiteral(patch.newText));
       applied++;
       console.log(`   ✓ L${lessonAudit.lessonId}: applied patch — ${patch.justification.slice(0, 80)}`);
     }

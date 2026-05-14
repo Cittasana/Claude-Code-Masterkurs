@@ -5,11 +5,15 @@ import { MessageCircle, Pin, ChevronRight, Plus } from 'lucide-react';
 import { contentApi } from '../lib/api';
 import type { AdminForumCategory } from '../lib/api';
 import { useForumStore } from '../store/forumStore';
+import { useTrackStore } from '../store/useTrackStore';
+import { TRACKS } from '../data/tracks';
 import type { ForumCategoryId } from '../types';
 
 const ForumView = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const currentTrack = useTrackStore((s) => s.currentTrack);
+  const trackDef = TRACKS[currentTrack];
   const [forumCategories, setForumCategories] = useState<AdminForumCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<ForumCategoryId | null>(null);
@@ -64,7 +68,28 @@ const ForumView = () => {
       {/* Header — Ethereal */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6 mb-10">
         <div>
-          <div className="eyebrow mb-4"><span className="pulse" />Community</div>
+          <div className="eyebrow mb-4 flex items-center gap-3">
+            <span className="pulse" />
+            <span>Community</span>
+            {/* Phase 1 W2c: track-context badge. Forum threads aren't
+                track-categorized yet (deferred to a later phase) — for
+                now we just surface which track the user is currently on. */}
+            <span
+              className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full border text-[10px] font-mono uppercase tracking-[0.06em]"
+              style={{
+                background: `${trackDef.color}14`,
+                borderColor: `${trackDef.color}40`,
+                color: trackDef.color,
+              }}
+            >
+              <span
+                aria-hidden="true"
+                className="w-1.5 h-1.5 rounded-full"
+                style={{ background: trackDef.color }}
+              />
+              Track: {trackDef.label}
+            </span>
+          </div>
           <h1 className="text-[clamp(36px,5vw,64px)] font-semibold text-apple-text tracking-[-0.038em] leading-[1.04]">
             <em className="italic-serif">Forum</em>
           </h1>

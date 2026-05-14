@@ -1,16 +1,19 @@
 import { useMemo, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, CheckCircle2, Clock, Trophy, TrendingUp, BarChart3, Repeat, Activity, Zap, Layers, Search, FolderGit2, Briefcase, Wrench, ArrowRight, Sparkles } from 'lucide-react';
 import { useUserProgress } from '../store/userProgress';
 import { useSRSStore } from '../store/srsStore';
 import { useLeaderboardStore } from '../store/leaderboardStore';
+import { useTrackStore } from '../store/useTrackStore';
 import { contentApi } from '../lib/api';
 import type { AdminLessonConfig, AdminQuiz, AdminProjectTemplate, AdminCapstoneConfig } from '../lib/api';
 import { useChallengeStore } from '../store/challengeStore';
 import DiscordWidget from '../components/DiscordWidget';
+import TrackSwitcher from '../components/TrackSwitcher';
 import { allTools } from '../data/tools';
+import { trackKeyFromSlug } from '../data/tracks';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 import { DashboardSkeleton } from '../components/UI/Skeleton';
 
@@ -61,6 +64,25 @@ const DashboardView = () => {
     return Object.values(srsItems).filter((item) => item.nextReviewAt <= iso).length;
   }, [srsItems]);
 
+  // ── Multi-track (Phase 1 W2b) ───────────────────────────────
+  // currentTrack drives both the data load (via track-aware getLessons)
+  // and what the user sees in the UI. URL ?track=<slug> deep-links from
+  // LandingView's track-cards switch the store before data loads.
+  const currentTrack = useTrackStore((s) => s.currentTrack);
+  const setCurrentTrack = useTrackStore((s) => s.setCurrentTrack);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const slug = searchParams.get('track');
+    if (!slug) return;
+    const key = trackKeyFromSlug(slug);
+    if (key) setCurrentTrack(key);
+    // Strip the param after applying so a refresh doesn't re-trigger.
+    const next = new URLSearchParams(searchParams);
+    next.delete('track');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams, setCurrentTrack]);
+
   // ── API data state ──────────────────────────────────────────
   const [lessons, setLessons] = useState<DashLessonItem[]>([]);
   const [quizzes, setQuizzes] = useState<AdminQuiz[]>([]);
@@ -71,8 +93,9 @@ const DashboardView = () => {
   const [contentLoading, setContentLoading] = useState(true);
 
   useEffect(() => {
+    setContentLoading(true);
     Promise.all([
-      contentApi.getLessons({ track: 'main' }),
+      contentApi.getLessons({ track: currentTrack }),
       contentApi.getQuizzes(),
       contentApi.getChallenges(),
       contentApi.getProjectTemplates(),
@@ -100,7 +123,8 @@ const DashboardView = () => {
       setFreelancerModules(freelancerRes.data.map((l: AdminLessonConfig) => ({ id: l.lessonId, level: l.level, title: l.title })));
       setContentLoading(false);
     }).catch(() => setContentLoading(false));
-  }, []);
+    // Re-load on track-switch so the lessons strip reflects the chosen track.
+  }, [currentTrack]);
 
   // Leaderboard integration
   const lbInit = useLeaderboardStore((s) => s.init);
@@ -180,6 +204,12 @@ const DashboardView = () => {
         <p className="text-apple-textSecondary text-lg max-w-md mx-auto leading-relaxed">
           {t('dashboard.subtitle')}
         </p>
+      </div>
+
+      {/* TrackSwitcher (Phase 1 W2b) — only renders when ≥2 tracks
+            entitled. Phase 1 default: claude-code + freelancer both visible. */}
+      <div className="flex justify-end mb-6">
+        <TrackSwitcher />
       </div>
 
       {/* Overall Progress — italic-serif numeral */}

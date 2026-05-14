@@ -1,23 +1,86 @@
 ---
 name: masterkurs-email-sequence
 description: |
-  Erstelle Email-Kampagnen für verschiedene User-Segmente (Onboarding, Engagement, Winback). Nutze IMMER wenn User "Email-Serie", "Onboarding-Emails", "Newsletter-Sequenz" erwähnt.
+  Erstelle track-spezifische Email-Kampagnen (Onboarding, Engagement, Winback, Tutor-Pro-Cutoff) für die Masterkurs Multi-Track-Plattform. Nutze IMMER wenn User "Email-Serie", "Onboarding-Emails", "Newsletter-Sequenz", "Winback-Sequenz", "Tutor-Pro-Cutoff", "freelancer onboarding emails", "codex track winback sequence", "local-llm engagement", "claude-desktop welcome series" erwähnt. Akzeptiert `--track <key>` (claude-code | claude-desktop | codex | local-llm | freelancer).
 compatibility:
-  required_tools: [Write]
+  required_tools: [Write, Read]
 ---
 
-# Masterkurs Email Sequence
+# Masterkurs Email Sequence (Multi-Track)
 
-Erstellt Email-Kampagnen automatisch.
+Erstellt Email-Kampagnen automatisch — **track-aware** seit Phase 2.
+
+## Argumente (CLI-Style)
+
+```
+--track <key>      Track-Key. Default: claude-code
+                   Erlaubt: claude-code | claude-desktop | codex | local-llm | freelancer
+--sequence <type>  Sequenz-Typ. Default: onboarding
+                   Erlaubt: onboarding | engagement | winback | tutor-pro-cutoff
+--segment <s>      Optional Segment-Override (free | paid | churned | trial | lifetime).
+                   Default leitet sich aus Sequenz-Typ ab (siehe Mapping).
+--length <n>       Optional. Default: kanonische Länge pro Sequenz-Typ
+                   (onboarding=5, engagement=3, winback=7, tutor-pro-cutoff=3).
+```
+
+**Track ↔ Default-Tonality Mapping** (geladen aus `track-configs/<track>/email-positioning.md`):
+
+| Track-Key | Subject-Voice | CTA-Stil |
+|---|---|---|
+| `claude-code` | technisch-curious | "Lektion 44 starten →" |
+| `claude-desktop` | produktivitäts-/App-zentrisch | "Workflow in Claude Desktop testen →" |
+| `codex` | enterprise-confident, EN-first | "Open lesson →" / "Lektion starten →" |
+| `local-llm` | souveränitäts-/Compliance-fokussiert | "Hardware-Tier checken →" |
+| `freelancer` | business-direkt, ROI-fokussiert | "Jetzt Akquise-Plan holen →" |
+
+**Sequence-Type ↔ Default-Segment Mapping**:
+
+| Sequence-Type | Default-Segment | Standard-Länge | Use-Case |
+|---|---|---|---|
+| `onboarding` | free | 5 Emails | Welcome → First Lesson → First Quiz → First Project → Community |
+| `engagement` | paid | 3 Emails | Track-spezifische Milestone-Reminder |
+| `winback` | churned | 7 Emails | Track-Value-Prop + Special Offer |
+| `tutor-pro-cutoff` | lifetime | 3 Emails | Tag-0 / Tag-7 / Tag-13 vor 14-Tage-Hard-Cutoff |
 
 ## Input
-- **Segment**: Free/Paid/Churned User
-- **Ziel**: Onboarding/Engagement/Upsell/Winback
-- **Länge**: 3/5/7 Emails
 
-## Template-Struktur
+- **Track** (`--track`): Pflicht-Routing-Parameter; Default `claude-code`.
+- **Sequence-Type** (`--sequence`): siehe Tabelle oben.
+- **Segment**: optional; Default aus Sequence-Type-Mapping.
+- **Länge**: optional; Default pro Sequenz-Typ.
 
-Speichere in: `/masterkurs-agent/email-campaigns/[segment]-[ziel]/`
+## Track-Positioning laden (Pflicht-Schritt)
+
+**Bevor** Email-Drafts geschrieben werden, lädt der Skill IMMER zuerst:
+
+```
+masterkurs-agent/track-configs/<track>/email-positioning.md
+```
+
+Daraus zieht der Skill für jede Email der Sequenz:
+
+1. **Subject-Line Voice** (Tonality, Hook-Pattern, Emoji-Politik)
+2. **Opener Style** (1-2 Beispiel-Opener als Tonalitäts-Anker)
+3. **CTA Tone** (Wording-Pattern für alle Buttons)
+4. **3 Key Value-Prop Bullets** (recyclebar als Body-Bausteine)
+
+Falls die Datei fehlt → STOP und melde "Track-Config fehlt für `<track>`. Lege `masterkurs-agent/track-configs/<track>/email-positioning.md` an oder wähle einen anderen `--track`."
+
+## Output-Pfad-Konvention
+
+Drafts landen unter:
+
+```
+masterkurs-agent/email-campaigns/<track>/<sequence-type>/email-<n>.md
+masterkurs-agent/email-campaigns/<track>/<sequence-type>/sequence.json
+```
+
+**Beispiele**:
+- `masterkurs-agent/email-campaigns/claude-code/onboarding/email-1.md`
+- `masterkurs-agent/email-campaigns/freelancer/winback/email-3.md`
+- `masterkurs-agent/email-campaigns/codex/tutor-pro-cutoff/email-2.md`
+
+(Legacy `[segment]-[ziel]/`-Layout aus Phase-1-Pre-Multi-Track wird **nicht mehr** verwendet — neue Sequenzen IMMER ins `<track>/<sequence-type>/`-Namespace.)
 
 ```
 ├── sequence.json (Metadaten)
@@ -93,24 +156,83 @@ Cosmo
 - Conversion Ziel: Z%
 ```
 
-## Standard-Sequenzen
+## Standard-Sequenzen (track-aware)
 
-### 1. Free User Onboarding (5 Emails, 14 Tage)
-Day 0: Willkommen
-Day 2: Erste Lektion abschließen
-Day 5: Community vorstellen
-Day 10: Erfolgsgeschichte teilen
-Day 14: Upgrade-Angebot (20% Rabatt)
+Alle Sequenzen werden **pro Track** mit den geladenen Positioning-Bausteinen
+(Subject-Voice, Opener-Style, CTA-Tone, 3 Value-Props) personalisiert.
+Der Skeleton bleibt konstant — nur die Tonalität, Beispiele und CTA-Wording
+unterscheiden sich pro Track.
 
-### 2. Paid User Engagement (3 Emails/Woche)
-Wöchentlich: Tutorial-Highlight
-Wöchentlich: Community-Spotlight
-Wöchentlich: Claude Code Tips
+### 1. Onboarding — 5 Emails (14 Tage)
 
-### 3. Churned User Winback (3 Emails, 21 Tage)
-Day 0: "We miss you"
-Day 7: "Was hat gefehlt?" (Survey)
-Day 14: Special Comeback-Offer (50% Rabatt)
+Universeller 5-Email-Bogen pro Track:
+
+| # | Day | Goal | Track-spezifischer Anker |
+|---|-----|------|--------------------------|
+| 1 | 0 | **Welcome** + Erwartungs-Setting | Track-Hook aus Value-Prop-Bullet 1 |
+| 2 | 2 | **First Lesson** vollständig durchgespielt | Konkrete Lektions-ID des Tracks (z. B. CC L1, Codex L1) |
+| 3 | 5 | **First Quiz** bestanden (Activation-KPI) | Quiz-CTA mit Track-CTA-Tone |
+| 4 | 9 | **First Project** / Capstone-Mini gestartet | Track-spezifisches Capstone-Beispiel |
+| 5 | 14 | **Community** + Forum-Onboarding (Discord ist out, Forum ist in) | Track-Forum-Kategorie (siehe `forumCategories.ts`) |
+
+### 2. Engagement — 3 Emails (Track-Milestone-Trigger)
+
+Track-spezifische Aktivierungs-Sequenz, ausgelöst von Verhaltens-Triggern
+(z. B. 14 Tage inaktiv, neue Lektion im Track verfügbar, Quiz-Streak):
+
+| # | Trigger | Goal | Inhalt |
+|---|---------|------|--------|
+| 1 | New-Track-Content live | **Update** zur jüngsten Track-Erweiterung | Aus `masterkurs-research`-Output (track-gefiltert) |
+| 2 | 7 Tage inaktiv | **Re-engagement** ohne Begging | Pick eine offene Lektion / Quiz-Lücke |
+| 3 | Quiz-Streak / Project-Done | **Milestone-Celebration** + Next-Step | Recommendation-Engine: nächste Lektion im Track |
+
+### 3. Winback — 7 Emails (30 Tage)
+
+Track-Wert-Erinnerung mit Special-Offer am Ende:
+
+| # | Day | Goal | Hinweis |
+|---|-----|------|---------|
+| 1 | 0 | "Wir vermissen dich" — sanft, kein Hard-Sell | Track-Specific (`<track>` als Reason-to-Stay) |
+| 2 | 3 | Was du im `<track>`-Track verpasst hast | Liste der seither erschienenen Lektionen |
+| 3 | 7 | Track-Value-Prop-Reminder (Bullet 1) | Aus `email-positioning.md` |
+| 4 | 12 | Survey: "Was hat gefehlt?" | Typeform-Integration |
+| 5 | 17 | Track-Value-Prop-Reminder (Bullet 2) | Aus `email-positioning.md` |
+| 6 | 24 | Track-Value-Prop-Reminder (Bullet 3) | Aus `email-positioning.md` |
+| 7 | 30 | **Special Comeback-Offer** (50% auf Track-Single oder Bundle-Upgrade) | Track-/Bundle-spezifisch |
+
+### 4. Tutor-Pro-Cutoff — 3 Emails (14 Tage Hard-Cutoff)
+
+> **Quelle**: Master-Plan Locked Decision #2 (`~/.claude/plans/abstract-moseying-sutton.md`).
+>
+> Existing Lifetime-Käufer:innen bekommen kostenlos **All-Access-Lifetime** (4 Tracks).
+> Tutor-Pro-Upgrade (Opus 4.7, unbegrenzt im Soft-Cap-Rahmen) für **+€300** —
+> aber nur mit **hartem 14-Tage-Cutoff**. Danach kein Tutor-Pro-Upgrade
+> mehr für Bestand. Urgency-Hebel ist intentional.
+
+**Default-Segment**: `lifetime`
+**Default-Track**: `claude-code` (User können `--track freelancer` o. ä. wählen,
+falls sie segment-spezifische Tonalität wollen — z. B. Freelancer-Argumentation
+"Tutor-Pro pays for itself with one extra Klient:innen-Hour").
+
+| # | Day | Goal | Subject-Pattern | CTA |
+|---|-----|------|-----------------|-----|
+| 1 | 0 | **Announcement** des Gnaden-Upgrades + Tutor-Pro-Option | "Geschenk: All-Access ist deins. Plus eine Option mit Countdown." | `Tutor-Pro für €300 sichern (14 Tage)` |
+| 2 | 7 | **Halftime-Reminder** (kein Hardsell, Wert-Reframe) | "Tag 7 von 14 — Tutor-Pro Window" | `Was Opus 4.7 wirklich anders macht →` |
+| 3 | 13 | **Final-Call** (Tag-13, expliziter Countdown) | "Morgen schließt das Tutor-Pro-Fenster für dich" | `Letzte Chance: Tutor-Pro für €300 →` |
+
+**Implementations-Hinweise** (für die generierten Emails):
+
+- ⏰ **Countdown im Body** (Tage + Stunden, dynamisch via `{{cutoff_days_remaining}}`-Merge-Tag)
+- 🚫 **Keine Verlängerung** anbieten — der Hard-Cutoff IST der Pitch
+- 💸 **Preis prominent**: €300 fix, kein Earlybird, kein "Limited Spots"-Theater
+- 🎁 **All-Access-Geschenk explizit framen** als unconditional ("ist schon deins")
+- 📊 **3 Wert-Vergleichs-Punkte** Sonnet-4.6 vs Opus-4.7 (Reasoning-Tiefe, Tool-Calling-Latency, Long-Context-Stabilität) — aus Track-Tonality lesen
+- ⚠️ **GDPR**: Lifetime-User haben transactional-Mail-Consent durch Käufervertrag — auch wenn sie Marketing-Newsletter abbestellt haben, ist diese Cutoff-Sequenz transactional-class. Footer-Wording entsprechend ("Du erhältst diese Email, weil du Lifetime-Käufer bist und das einmalige Upgrade-Fenster betrifft.")
+
+**Track-Variation am Beispiel**:
+- `--track claude-code`: Email 2 zeigt Opus-4.7-Tutor-Output bei einem Hook-Debug aus Lektion 46
+- `--track freelancer`: Email 2 zeigt Opus-4.7-Tutor-Output bei einem Pricing-Script-Review (Modul 4)
+- `--track local-llm`: Tutor-Pro-Pitch entfällt für `--track local-llm`-Tonality, da Local-LLM-Track per Definition lokales Modell nutzt — Skill warnt: "Tutor-Pro-Cutoff ist nicht für `local-llm` sinnvoll. Wähle `claude-code` (Default) oder `freelancer`."
 
 ## Tone Guidelines
 - Du-Form, freundlich
@@ -1256,4 +1378,9 @@ FRIDAY = Quick Tips (3 Pro-Tips, 5-Min Read)
 - ❌ Conversion unter Target → Offer testen (30% statt 20%)
 ```
 
-Speichere IMMER in: `/masterkurs-agent/email-campaigns/`
+Speichere IMMER in: `masterkurs-agent/email-campaigns/<track>/<sequence-type>/`
+
+Beispiel-Pfade:
+- `masterkurs-agent/email-campaigns/claude-code/onboarding/email-1.md`
+- `masterkurs-agent/email-campaigns/freelancer/winback/email-3.md`
+- `masterkurs-agent/email-campaigns/codex/tutor-pro-cutoff/email-2.md`

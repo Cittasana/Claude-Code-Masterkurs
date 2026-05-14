@@ -1,40 +1,105 @@
 ---
 name: masterkurs-social-media
 description: |
-  Erstelle 30-Tage Social Media Content-Kalender für LinkedIn/Twitter/Instagram. Nutze wenn User "Social Media Content", "30-Tage-Plan", "LinkedIn Posts" erwähnt.
+  Erstelle 30-Tage Social Media Content-Kalender für LinkedIn/Twitter/Instagram, jetzt track-aware für Multi-Track Plattform.
+  Nutze wenn User "Social Media Content", "30-Tage-Plan", "LinkedIn Posts", "codex social calendar",
+  "freelancer LinkedIn posts", "local-llm twitter thread", "claude-desktop instagram carousel" oder einen track-spezifischen
+  Marketing-Launch (Codex Wochen 1-6, Local-LLM Wochen 7-12, Claude Desktop Wochen 13-18) erwähnt.
 compatibility:
   required_tools: [Write]
 ---
 
-# Masterkurs Social Media
+# Masterkurs Social Media (Multi-Track)
 
-Erstellt 30-Tage Content-Kalender.
+Erstellt 30-Tage Content-Kalender, parametrisiert pro Lerntrack der Multi-Track Plattform.
 
-## Input
-- **Platform**: LinkedIn/Twitter/Instagram
-- **Thema**: Launch/Tips/Success Stories
-- **Frequenz**: täglich/3x Woche/wöchentlich
+## Arguments
+
+| Argument | Default | Werte | Beschreibung |
+|---|---|---|---|
+| `--track <key>` | `claude-code` | `claude-code` · `claude-desktop` · `codex` · `local-llm` · `freelancer` | Track-Key — bestimmt Voice, Hashtags, Content-Pillars und Output-Namespace. |
+| `--platform` | (alle aus Track-Mix) | `linkedin` · `twitter` · `instagram` | Optional Platform-Filter (sonst Track-Default-Mix). |
+| `--month` | aktuelles Jahr-Monat | `YYYY-MM` | Monat für den der Kalender erstellt wird. |
+| `--frequency` | `daily` | `daily` · `3x-week` · `weekly` | Posting-Frequenz. |
+
+### Trigger-Phrasen (Multi-Track)
+- `"Social Media Content für [track]"` · `"30-Tage-Plan für [track]"` · `"[track] LinkedIn Posts"`
+- `"codex social calendar"` · `"freelancer LinkedIn posts"` · `"local-llm twitter thread"`
+- `"claude-desktop instagram carousel"` · `"launch staggering content"` (-> nimmt aktuellen Launch-Track aus Phase-6-Plan)
+
+### Wo der Skill den Track-Voice liest
+Vor jedem Generation-Run liest der Skill **zwingend**:
+```
+masterkurs-agent/track-configs/<track-key>/social-voice.md
+```
+Daraus ziehen wir Hashtags, Hook-Templates, Content-Pillars, Tone-Notes und Kanal-Defaults.
+Fehlt die Datei → Skill bricht mit `ERROR: track-config nicht gefunden` ab und schlägt vor, sie neu anzulegen.
+
+## Track-aware Platform Mix
+
+Welche Plattform pro Track *primär* bzw. *sekundär* befüllt wird (entspricht Phase-6-Launch-Plan):
+
+| Track | Primary Platforms | Secondary Platform | Format-Schwerpunkt |
+|---|---|---|---|
+| `claude-code` | LinkedIn + Twitter/X | Instagram | technische Threads, Code-Snippets, Terminal-Recordings |
+| `claude-desktop` | LinkedIn + Twitter/X | Instagram | Projects/Artifacts-Screenshots, UI-Walkthroughs |
+| `codex` | LinkedIn + Twitter/X | Instagram | CLI-Recordings, Multi-Agent-Tree-Vergleiche |
+| `local-llm` | LinkedIn + Twitter/X | Instagram | Hardware-Benchmarks, Quantization-Tabellen, Setup-Reels |
+| `freelancer` | LinkedIn + Instagram | Twitter/X | Case-Studies, Founder-Story, Pricing-Story-Threads |
+
+> Tech-Tracks (`claude-code`, `claude-desktop`, `codex`, `local-llm`) priorisieren LinkedIn + Twitter (Devs lesen dort Code).
+> `freelancer` priorisiert LinkedIn + Instagram (Business-Audience + Personal-Brand-Carousels), Twitter ist sekundär.
+
+## Track-aware Content Mix
+
+| Track-Gruppe | Educational | News | Community | Case-Study | Positioning |
+|---|---|---|---|---|---|
+| Tech-Tracks (`claude-code`, `claude-desktop`, `codex`, `local-llm`) | **60%** | **20%** | **20%** | — | — |
+| `freelancer` | **30%** | — | — | **50%** | **20%** |
+
+**Tech-Track-Definition:**
+- *Educational* — Workflows, Skills, Tutorials, Quick-Tips (siehe `social-voice.md` content-pillars).
+- *News* — Releases, Versions-Updates, Skill-Marketplace-News, Modell-Releases.
+- *Community* — User-Showcases, Setup-Vergleiche, Challenge-Recaps.
+
+**Freelancer-Track-Definition:**
+- *Case-Study* — Echte Mandate, Pricing-Diskussionen, Vorher/Nachher-Cases (anonymisiert).
+- *Educational* — Akquise-Frameworks, Pricing-Modelle, Tool-Stacks für Solo-Consultants.
+- *Positioning* — Personal-Brand, Founder-Story, Industry-Takes.
+
+> Falls der User explizit eine andere Mix-Verteilung möchte, override via `--mix educational=50,news=30,community=20`.
 
 ## Output
 
-Speichere in: `/masterkurs-agent/social-media/[platform]-[monat]/`
+Speichere in: `masterkurs-agent/social-media/<track>/<YYYY-MM>-calendar.md`
+
+Pro Generation-Run entsteht ein Track-Namespace:
 
 ```
-├── content-calendar.json
+masterkurs-agent/social-media/<track>/
+├── <YYYY-MM>-calendar.md           # menschenlesbarer 30-Tage-Plan
+├── <YYYY-MM>-content-calendar.json # Maschinen-lesbar (Buffer/Hootsuite-kompatibel)
 ├── posts/
-│   ├── 2026-02-11-post-1.md
-│   ├── 2026-02-12-post-2.md
+│   ├── <YYYY-MM-DD>-post-01-[platform]-[type].md
+│   ├── <YYYY-MM-DD>-post-02-[platform]-[type].md
 │   └── ...
-└── assets/ (wenn Grafiken nötig)
+└── assets/ (optional: Grafiken/Screenshots/Reel-Storyboards)
 ```
+
+**Beispiele konkret:**
+- `masterkurs-agent/social-media/codex/2026-06-calendar.md` (Codex-Launch Woche 1-4)
+- `masterkurs-agent/social-media/local-llm/2026-08-calendar.md` (Local-LLM-Launch Woche 7-10)
+- `masterkurs-agent/social-media/freelancer/2026-09-calendar.md` (Freelancer-Track Evergreen)
 
 ## Post Template
 
 ```markdown
 ---
 date: 2026-02-11
+track: claude-code
 platform: linkedin
-post_type: educational
+post_type: educational         # tech: educational|news|community  ·  freelancer: case-study|educational|positioning
+content_pillar: workflows      # aus track-configs/<track>/social-voice.md
 scheduled_time: "09:00"
 ---
 
@@ -42,9 +107,9 @@ scheduled_time: "09:00"
 
 ## Copy
 
-[Hier der Post-Text]
+[Hier der Post-Text — Hook aus track-configs/<track>/social-voice.md]
 
-**Hashtags**: #ClaudeCode #AICoding #Programming
+**Hashtags**: [aus track-configs/<track>/social-voice.md, max. Platform-Limit]
 
 ## Visuals
 - Type: Screenshot/Graphic/Video
@@ -63,55 +128,66 @@ scheduled_time: "09:00"
 [Text]
 ```
 
-## Platform-Guidelines
+## Platform-Guidelines (Cross-Track-Defaults)
+
+> Diese Defaults gelten plattformweit. Track-spezifische Overrides (Tone, Hashtag-Set, Hook-Stil) kommen
+> aus `track-configs/<track>/social-voice.md` und gewinnen immer.
 
 ### LinkedIn (Professional)
-- **Länge**: Max 1300 Zeichen
-- **Tone**: Professionell, lehrreich
+- **Länge**: Max 1300 Zeichen (Sweet-Spot 1100-1300)
+- **Tone**: Professionell, lehrreich (Tech-Tracks) · erfolgsorientiert-direkt (Freelancer)
 - **Best Time**: Di-Do 09:00-11:00
-- **Hashtags**: 3-5 relevante
-- **Format**: Text + Screenshot oder Code-Snippet
-
-**Content-Mix**:
-- 60% Educational (Tutorials, Tips)
-- 20% Inspirational (Success Stories)
-- 20% Promotional (Kurs-Features)
+- **Hashtags**: 3-5 (aus `social-voice.md`)
+- **Format**: Text + Screenshot/Code-Snippet (Tech) · Story + Carousel (Freelancer)
 
 ### Twitter/X (Short & Punchy)
-- **Länge**: Max 280 Zeichen (Thread 3-5 Tweets)
-- **Tone**: Casual, direkt
+- **Länge**: Max 280 Zeichen (Thread 3-7 Tweets)
+- **Tone**: Casual, direkt (Tech) · pointiert-kollegial (Freelancer)
 - **Best Time**: Täglich 08:00, 13:00, 18:00
-- **Hashtags**: 1-2 pro Tweet
-- **Format**: Thread mit Code-Snippets
-
-**Content-Mix**:
-- 70% Quick Tips & Tricks
-- 20% Community-Interaktion
-- 10% Promotional
+- **Hashtags**: 1-2 pro Tweet (aus `social-voice.md`)
+- **Format**: Thread mit Code-Snippets/CLI-Recordings (Tech) · Pricing-/Akquise-Threads (Freelancer)
 
 ### Instagram (Visual)
 - **Caption**: Max 2200 Zeichen
-- **Tone**: Freundlich, visuell
+- **Tone**: Freundlich, visuell · für Freelancer: Personal-Brand, Founder-First-Person
 - **Best Time**: Mo-Fr 18:00-20:00
-- **Hashtags**: 10-15 relevante
-- **Format**: Carousel (5-10 Slides) oder Reels (15-30 Sek)
+- **Hashtags**: 10-15 (aus `social-voice.md` + Long-Tail)
+- **Format**:
+  - Tech-Tracks: Terminal-Recordings, Screenshot-Carousels, MCP/Setup-Reels (15-30 Sek)
+  - Freelancer: Story-Carousels (8-10 Slides), Founder-Talking-Head-Reels (30 Sek)
 
-**Content-Mix**:
-- 50% Code-Transformations (Before/After)
-- 30% Behind-the-Scenes
-- 20% Tips & Tricks
+### Wo der track-spezifische Mix herkommt
+Die **prozentualen Content-Mix-Werte** stehen *nicht* mehr platform-bezogen hier, sondern track-bezogen (siehe Section
+"Track-aware Content Mix" oben). Tech-Tracks: 60/20/20. Freelancer: 50/30/20.
 
-## 30-Tage Beispiel-Plan
+## 30-Tage Beispiel-Plan (Tech-Track Vorlage)
 
 ### Woche 1: Launch-Phase
-- Tag 1: Ankündigung
-- Tag 2: Feature-Highlight 1
-- Tag 3: User-Testimonial
-- Tag 4: Behind-the-Scenes
-- Tag 5: Tutorial-Snippet
-- Tag 6-7: Community-Posts
+- Tag 1: Ankündigung (track-spezifisch, Hook 1 aus `social-voice.md`)
+- Tag 2: Feature-Highlight 1 (Pillar 1)
+- Tag 3: User-Testimonial / Community-Showcase
+- Tag 4: Behind-the-Scenes / Setup-Walkthrough
+- Tag 5: Tutorial-Snippet (Pillar 2)
+- Tag 6-7: News-Update + Community-Q&A
 
-### Woche 2-4: [Struktur wiederholt]
+### Woche 2-4: [Struktur wiederholt, rotierende Pillars]
+
+> **Freelancer-Track** nutzt eine andere Wochenstruktur:
+> Tag 1 Case-Study · Tag 2 Pricing-Take · Tag 3 Akquise-Tip · Tag 4 Founder-Story-Slice
+> Tag 5 Client-Management-Frame · Tag 6-7 Behind-the-Scenes / Q&A.
+
+## Phase-6 Launch-Staggering Mapping
+
+Phase-6 des Multi-Track-Plans staffelt die Marketing-Launches über 18 Wochen. Dieser Skill liefert pro Launch-Fenster
+einen Track-spezifischen 30-Tage-Kalender:
+
+| Wochen | Track | Skill-Aufruf |
+|---|---|---|
+| 1-6 | `codex` | `--track codex --month <launch-monat>` |
+| 7-12 | `local-llm` | `--track local-llm --month <launch-monat>` |
+| 13-18 | `claude-desktop` | `--track claude-desktop --month <launch-monat>` |
+| Evergreen | `claude-code` | `--track claude-code --month <monat>` |
+| Evergreen | `freelancer` | `--track freelancer --month <monat>` |
 
 ## Automatisierung
 - **Scheduling**: Buffer/Hootsuite-kompatibel
@@ -513,40 +589,48 @@ USER-GENERATED CONTENT:
 - [ ] Hashtags relevant (#ClaudeCode, nicht #Coding)
 ```
 
-## Beispiel-Output: 30-Tage LinkedIn-Kalender
+## Beispiel-Output: 30-Tage Codex-Track-Kalender (LinkedIn + Twitter Primary)
 
 ```
-./social-media/linkedin-2026-02/
-├── content-calendar.json (30 Posts)
+./social-media/codex/
+├── 2026-06-calendar.md                            # menschenlesbarer Plan
+├── 2026-06-content-calendar.json                  # Maschinen-lesbar
 ├── posts/
-│   ├── 2026-02-11-post-1-launch-announcement.md
-│   ├── 2026-02-12-post-2-useState-tutorial.md
-│   ├── 2026-02-13-post-3-user-testimonial.md
-│   ├── ... (bis post-30)
-└── analytics-template.xlsx
+│   ├── 2026-06-01-post-01-linkedin-educational.md
+│   ├── 2026-06-01-post-02-twitter-educational.md  # gleicher Tag, andere Plattform
+│   ├── 2026-06-02-post-03-linkedin-news.md
+│   ├── ... (bis post-NN)
+└── assets/
+    ├── codex-cli-vs-claude-code.png
+    └── multi-agent-tree-recording.mp4
 ```
 
-**Excerpt content-calendar.json**:
+**Excerpt 2026-06-content-calendar.json**:
 ```json
 {
-  "month": "2026-02",
-  "platform": "linkedin",
+  "track": "codex",
+  "month": "2026-06",
+  "primary_platforms": ["linkedin", "twitter"],
+  "secondary_platforms": ["instagram"],
   "posting_frequency": "daily",
   "content_mix": {
     "educational": 60,
-    "inspirational": 20,
-    "promotional": 20
+    "news": 20,
+    "community": 20
   },
+  "voice_source": "masterkurs-agent/track-configs/codex/social-voice.md",
   "posts": [
     {
-      "date": "2026-02-11",
+      "date": "2026-06-01",
       "post_id": 1,
-      "type": "promotional",
-      "title": "Launch Announcement",
+      "platform": "linkedin",
+      "type": "educational",
+      "content_pillar": "cli-workflows",
+      "title": "Codex CLI Approval-Modes erklärt",
       "scheduled_time": "09:00",
-      "hashtags": ["#ClaudeCode", "#AICoding", "#LaunchDay"],
-      "expected_engagement_rate": 0.05,
-      "cta": "Check out the course"
+      "hashtags": ["#OpenAICodex", "#CodexCLI", "#GPT5"],
+      "expected_engagement_rate": 0.04,
+      "cta": "Voller Workflow in Lektion 12 des Codex-Tracks"
     }
   ]
 }
@@ -594,4 +678,14 @@ Link in den Comments 👇
 - Click-Through-Rate: [TBD]
 ```
 
-Speichere IMMER in: `/masterkurs-agent/social-media/`
+Speichere IMMER in: `masterkurs-agent/social-media/<track>/` (track-namespaced — flacher Output ist deprecated).
+
+## Validation-Checklist (vor Calendar-Output)
+
+- [ ] `--track <key>` aufgelöst und gegen Whitelist (`claude-code` · `claude-desktop` · `codex` · `local-llm` · `freelancer`) geprüft
+- [ ] `track-configs/<track>/social-voice.md` gelesen (sonst hard-fail)
+- [ ] Hashtags, Hook-Templates, Content-Pillars, Tone aus Track-Voice gezogen — keine Cross-Track-Vermischung
+- [ ] Platform-Mix entsprechend Track-Tabelle gewählt (Tech: LinkedIn+Twitter primary, Freelancer: LinkedIn+Instagram primary)
+- [ ] Content-Mix-Verteilung korrekt: Tech 60/20/20, Freelancer 50/30/20
+- [ ] Output-Pfad ist `masterkurs-agent/social-media/<track>/<YYYY-MM>-calendar.md`
+- [ ] CTA verlinkt auf track-spezifische Lektions-URL (siehe `social-voice.md` CTA-Default)

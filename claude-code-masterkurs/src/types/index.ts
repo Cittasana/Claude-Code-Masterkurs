@@ -2,7 +2,12 @@
 // One TrackKey per learning track. Add a new value here, then register
 // it in src/data/tracks.ts and add a Stripe product mapping in
 // src/lib/stripe.ts before exposing it in the UI.
-export type TrackKey = 'claude-code' | 'claude-desktop' | 'codex' | 'local-llm';
+export type TrackKey =
+  | 'claude-code'
+  | 'claude-desktop'
+  | 'codex'
+  | 'local-llm'
+  | 'freelancer';
 
 // Lesson Types
 export interface Lesson {

@@ -15,17 +15,17 @@ datasource db {
 // ── Users & Auth ─────────────────────────────────────────────
 
 model User {
-  id            String   @id @default(cuid())
-  email         String   @unique
-  passwordHash  String   @map("password_hash")
-  displayName   String   @default("Lernender")
-  avatarEmoji   String   @default("🧑‍💻") @map("avatar_emoji")
-  role          String   @default("user") // 'user' | 'admin'
-  emailVerified    Boolean  @default(false) @map("email_verified")
-  discordId        String?  @unique @map("discord_id")
-  discordUsername   String?  @map("discord_username")
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id              String   @id @default(cuid())
+  email           String   @unique
+  passwordHash    String   @map("password_hash")
+  displayName     String   @default("Lernender")
+  avatarEmoji     String   @default("🧑‍💻") @map("avatar_emoji")
+  role            String   @default("user") // 'user' | 'admin'
+  emailVerified   Boolean  @default(false) @map("email_verified")
+  discordId       String?  @unique @map("discord_id")
+  discordUsername String?  @map("discord_username")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   // Relations
   progress           UserProgress?
@@ -41,9 +41,10 @@ model User {
   emailVerifications EmailVerification[]
   subscription       Subscription?
   showcaseEntries    ShowcaseEntry[]
-  lektionen          Lektion[]          @relation("LektionAutor")
-  researchHistory    ResearchHistory[]  @relation("ResearchHistoryUser")
+  lektionen          Lektion[]           @relation("LektionAutor")
+  researchHistory    ResearchHistory[]   @relation("ResearchHistoryUser")
   supportTickets     SupportTicket[]
+  tutorSessions      TutorSession[]
 
   @@map("users")
 }
@@ -51,14 +52,14 @@ model User {
 // ── Password Reset Tokens ────────────────────────────────────────
 
 model PasswordReset {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  token     String   @unique
-  expiresAt DateTime @map("expires_at")
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
   usedAt    DateTime? @map("used_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@index([token])
   @@index([userId])
@@ -68,14 +69,14 @@ model PasswordReset {
 // ── Email Verification Tokens ────────────────────────────────────
 
 model EmailVerification {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  token     String   @unique
-  expiresAt DateTime @map("expires_at")
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  token     String    @unique
+  expiresAt DateTime  @map("expires_at")
   usedAt    DateTime? @map("used_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
   @@index([token])
   @@index([userId])
@@ -86,17 +87,17 @@ model EmailVerification {
 // Maps to: UserProgress interface + SkillProgress
 
 model UserProgress {
-  id                String   @id @default(cuid())
-  userId            String   @unique @map("user_id")
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  lessonsCompleted  Int[]    @default([]) @map("lessons_completed")
-  currentLesson     Int      @default(0) @map("current_lesson")
-  totalPoints       Int      @default(0) @map("total_points")
-  streak            Int      @default(0)
-  lastSessionDate   DateTime @default(now()) @map("last_session_date")
-  timeInvested      Int      @default(0) @map("time_invested") // minutes
-  videosWatched     Json     @default("{}") @map("videos_watched") // Record<string, boolean>
+  lessonsCompleted Int[]    @default([]) @map("lessons_completed")
+  currentLesson    Int      @default(0) @map("current_lesson")
+  totalPoints      Int      @default(0) @map("total_points")
+  streak           Int      @default(0)
+  lastSessionDate  DateTime @default(now()) @map("last_session_date")
+  timeInvested     Int      @default(0) @map("time_invested") // minutes
+  videosWatched    Json     @default("{}") @map("videos_watched") // Record<string, boolean>
 
   // Skill Progress (flattened from SkillProgress interface)
   skillInstallation    Int @default(0) @map("skill_installation")
@@ -114,9 +115,9 @@ model UserProgress {
 // Maps to: QuizResult interface
 
 model QuizResult {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   quizId    String   @map("quiz_id")
   lessonId  Int      @map("lesson_id")
@@ -133,9 +134,9 @@ model QuizResult {
 // Maps to: ProjectResult interface
 
 model ProjectResult {
-  id                String   @id @default(cuid())
-  userId            String   @map("user_id")
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   projectId         String   @map("project_id")
   completed         Boolean  @default(false)
@@ -152,16 +153,16 @@ model ProjectResult {
 // Maps to: ChallengeResult interface
 
 model ChallengeResult {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  challengeId String   @map("challenge_id")
-  completed   Boolean  @default(false)
-  score       Int      @default(0)
-  maxScore    Int      @default(0) @map("max_score")
-  timeUsed    Int      @default(0) @map("time_used") // seconds
-  attempts    Int      @default(1)
+  challengeId String    @map("challenge_id")
+  completed   Boolean   @default(false)
+  score       Int       @default(0)
+  maxScore    Int       @default(0) @map("max_score")
+  timeUsed    Int       @default(0) @map("time_used") // seconds
+  attempts    Int       @default(1)
   completedAt DateTime? @map("completed_at")
 
   @@unique([userId, challengeId])
@@ -190,13 +191,13 @@ model ForumThread {
 }
 
 model ForumReply {
-  id        String   @id @default(cuid())
-  threadId  String   @map("thread_id")
+  id        String      @id @default(cuid())
+  threadId  String      @map("thread_id")
   thread    ForumThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
   body      String
-  authorId  String   @map("author_id")
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
+  authorId  String      @map("author_id")
+  author    User        @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now()) @map("created_at")
 
   @@index([threadId])
   @@map("forum_replies")
@@ -209,7 +210,7 @@ model CommunityPattern {
   id          String   @id @default(cuid())
   title       String
   description String
-  category    String   // 'Prompts' | 'CLAUDE.md' | 'Workflows' | 'MCP' | 'Skills' | 'Sonstige'
+  category    String // 'Prompts' | 'CLAUDE.md' | 'Workflows' | 'MCP' | 'Skills' | 'Sonstige'
   authorId    String   @map("author_id")
   author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   snippet     String
@@ -226,15 +227,15 @@ model CommunityPattern {
 // Maps to: SRSItem interface
 
 model SRSItem {
-  id             String   @id @default(cuid())
-  userId         String   @map("user_id")
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  lessonId       Int      @map("lesson_id")
-  nextReviewAt   DateTime @map("next_review_at")
-  intervalIndex  Int      @default(0) @map("interval_index") // 0..3 → [1, 3, 7, 14] days
+  lessonId       Int       @map("lesson_id")
+  nextReviewAt   DateTime  @map("next_review_at")
+  intervalIndex  Int       @default(0) @map("interval_index") // 0..3 → [1, 3, 7, 14] days
   lastReviewedAt DateTime? @map("last_reviewed_at")
-  timesReviewed  Int      @default(0) @map("times_reviewed")
+  timesReviewed  Int       @default(0) @map("times_reviewed")
 
   @@unique([userId, lessonId])
   @@map("srs_items")
@@ -244,13 +245,13 @@ model SRSItem {
 // Maps to: ActivityEvent interface from analyticsStore
 
 model AnalyticsEvent {
-  id        String   @id @default(cuid())
-  userId    String   @map("user_id")
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type      String   // 'lesson_complete' | 'quiz_complete' | 'project_complete' | 'session_start' | 'review_complete'
+  type      String // 'lesson_complete' | 'quiz_complete' | 'project_complete' | 'session_start' | 'review_complete'
   timestamp DateTime @default(now())
-  metadata  Json?    // { lessonId?, quizId?, projectId?, score?, duration? }
+  metadata  Json? // { lessonId?, quizId?, projectId?, score?, duration? }
 
   @@index([userId, timestamp])
   @@index([type])
@@ -261,29 +262,41 @@ model AnalyticsEvent {
 // Manages user subscriptions with Stripe integration
 
 model Subscription {
-  id                   String    @id @default(cuid())
-  userId               String    @unique @map("user_id")
-  user                 User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @unique @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  stripeCustomerId     String    @unique @map("stripe_customer_id")
-  stripeSubscriptionId String?   @unique @map("stripe_subscription_id")
-  stripePriceId        String?   @map("stripe_price_id")
-  
-  status               String    @default("incomplete") // 'incomplete' | 'active' | 'canceled' | 'past_due' | 'trialing' | 'paused' | 'lifetime'
-  isLifetime           Boolean   @default(false) @map("is_lifetime") // Lifetime Access gekauft?
-  lifetimePurchasedAt  DateTime? @map("lifetime_purchased_at")
-  
-  currentPeriodStart   DateTime? @map("current_period_start")
-  currentPeriodEnd     DateTime? @map("current_period_end")
-  cancelAtPeriodEnd    Boolean   @default(false) @map("cancel_at_period_end")
-  
-  promoCodeId          String?   @map("promo_code_id")
-  promoCode            PromoCode? @relation(fields: [promoCodeId], references: [id])
-  promoAppliedAt       DateTime? @map("promo_applied_at")
-  promoExpiresAt       DateTime? @map("promo_expires_at")
-  
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
+  stripeCustomerId     String  @unique @map("stripe_customer_id")
+  stripeSubscriptionId String? @unique @map("stripe_subscription_id")
+  stripePriceId        String? @map("stripe_price_id")
+
+  status              String    @default("incomplete") // 'incomplete' | 'active' | 'canceled' | 'past_due' | 'trialing' | 'paused' | 'lifetime'
+  isLifetime          Boolean   @default(false) @map("is_lifetime") // Lifetime Access gekauft?
+  lifetimePurchasedAt DateTime? @map("lifetime_purchased_at")
+
+  currentPeriodStart DateTime? @map("current_period_start")
+  currentPeriodEnd   DateTime? @map("current_period_end")
+  cancelAtPeriodEnd  Boolean   @default(false) @map("cancel_at_period_end")
+
+  promoCodeId    String?    @map("promo_code_id")
+  promoCode      PromoCode? @relation(fields: [promoCodeId], references: [id])
+  promoAppliedAt DateTime?  @map("promo_applied_at")
+  promoExpiresAt DateTime?  @map("promo_expires_at")
+
+  // ── Multi-track entitlements (Phase 0 of Multi-Track plan) ──
+  /// Tracks the user has paid access to. Empty for legacy single-track
+  /// subscriptions (existing Lifetime users get backfilled via the
+  /// Gnaden-Upgrade migration script — see plan §Locked Decisions #2).
+  /// Valid values mirror TrackKey in src/types/index.ts:
+  /// 'claude-code' | 'claude-desktop' | 'codex' | 'local-llm'
+  entitledTracks String[] @default([]) @map("entitled_tracks")
+
+  /// Tutor model tier. 'standard' = Sonnet 4.6, 'pro' = Opus 4.7.
+  /// Local-LLM track ignores this (always uses on-device Ollama).
+  tutorTier String @default("standard") @map("tutor_tier")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([status])
   @@index([stripeCustomerId])
@@ -295,22 +308,22 @@ model Subscription {
 // Newsletter subscribers with double-opt-in
 
 model NewsletterSubscriber {
-  id              String    @id @default(cuid())
-  email           String    @unique
-  displayName     String?   @map("display_name")
+  id          String  @id @default(cuid())
+  email       String  @unique
+  displayName String? @map("display_name")
 
-  status          String    @default("pending") // 'pending' | 'active' | 'unsubscribed'
-  source          String    @default("website") // 'website' | 'footer' | 'signup' | 'landing'
+  status String @default("pending") // 'pending' | 'active' | 'unsubscribed'
+  source String @default("website") // 'website' | 'footer' | 'signup' | 'landing'
 
-  confirmToken    String?   @unique @map("confirm_token")
-  unsubscribeToken String   @unique @map("unsubscribe_token")
+  confirmToken     String? @unique @map("confirm_token")
+  unsubscribeToken String  @unique @map("unsubscribe_token")
 
-  subscribedAt    DateTime  @default(now()) @map("subscribed_at")
-  confirmedAt     DateTime? @map("confirmed_at")
-  unsubscribedAt  DateTime? @map("unsubscribed_at")
+  subscribedAt   DateTime  @default(now()) @map("subscribed_at")
+  confirmedAt    DateTime? @map("confirmed_at")
+  unsubscribedAt DateTime? @map("unsubscribed_at")
 
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([email])
   @@index([status])
@@ -323,20 +336,20 @@ model NewsletterSubscriber {
 // Promo codes that can provide free subscription periods
 
 model PromoCode {
-  id            String   @id @default(cuid())
-  code          String   @unique
-  description   String?
-  
-  durationMonths Int     @default(6) @map("duration_months") // How many months of free access
-  maxUses       Int?    @map("max_uses") // null = unlimited
-  timesUsed     Int     @default(0) @map("times_used")
-  
-  active        Boolean  @default(true)
-  expiresAt     DateTime? @map("expires_at")
-  
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  
+  id          String  @id @default(cuid())
+  code        String  @unique
+  description String?
+
+  durationMonths Int  @default(6) @map("duration_months") // How many months of free access
+  maxUses        Int? @map("max_uses") // null = unlimited
+  timesUsed      Int  @default(0) @map("times_used")
+
+  active    Boolean   @default(true)
+  expiresAt DateTime? @map("expires_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
   subscriptions Subscription[]
 
   @@index([code])
@@ -348,9 +361,9 @@ model PromoCode {
 // Student project showcase gallery (moderation required)
 
 model ShowcaseEntry {
-  id          String   @id @default(cuid())
-  userId      String   @map("user_id")
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   projectId   String?  @map("project_id")
   title       String
@@ -369,21 +382,21 @@ model ShowcaseEntry {
 // ── Admin CMS: Lektionen (Content Management) ─────────────────
 
 model Lektion {
-  id            String    @id @default(cuid())
-  titel         String
-  slug          String    @unique
-  beschreibung  String?
-  content       String    @db.Text
-  kategorie     String    @default("basics") // 'basics' | 'fortgeschritten' | 'experten' | 'tools'
-  reihenfolge   Int       @default(0)
-  status        String    @default("draft") // 'draft' | 'published'
-  publishedAt   DateTime? @map("published_at")
+  id           String    @id @default(cuid())
+  titel        String
+  slug         String    @unique
+  beschreibung String?
+  content      String    @db.Text
+  kategorie    String    @default("basics") // 'basics' | 'fortgeschritten' | 'experten' | 'tools'
+  reihenfolge  Int       @default(0)
+  status       String    @default("draft") // 'draft' | 'published'
+  publishedAt  DateTime? @map("published_at")
 
-  autorId       String    @map("autor_id")
-  autor         User      @relation("LektionAutor", fields: [autorId], references: [id])
+  autorId String @map("autor_id")
+  autor   User   @relation("LektionAutor", fields: [autorId], references: [id])
 
-  createdAt     DateTime  @default(now()) @map("created_at")
-  updatedAt     DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([kategorie])
   @@index([status])
@@ -394,18 +407,18 @@ model Lektion {
 // ── Admin CMS: Tools & Extensions ──────────────────────────────
 
 model Tool {
-  id            String   @id @default(cuid())
-  name          String
-  slug          String   @unique
-  beschreibung  String?
-  content       String?  @db.Text
-  kategorie     String   @default("anfaenger") // 'anfaenger' | 'fortgeschritten' | 'experten' | 'mcp'
-  icon          String   @default("Terminal")
-  reihenfolge   Int      @default(0)
-  status        String   @default("published") // 'draft' | 'published'
+  id           String  @id @default(cuid())
+  name         String
+  slug         String  @unique
+  beschreibung String?
+  content      String? @db.Text
+  kategorie    String  @default("anfaenger") // 'anfaenger' | 'fortgeschritten' | 'experten' | 'mcp'
+  icon         String  @default("Terminal")
+  reihenfolge  Int     @default(0)
+  status       String  @default("published") // 'draft' | 'published'
 
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([kategorie])
   @@index([slug])
@@ -415,19 +428,22 @@ model Tool {
 // ── Admin CMS: Agent Runs (Monitoring) ──────────────────────────
 
 model AgentRun {
-  id              String   @id @default(cuid())
-  status          String   @default("running") // running | completed | failed
-  trigger         String   @default("cron")    // cron | manual
-  startedAt       DateTime @default(now()) @map("started_at")
+  id              String    @id @default(cuid())
+  status          String    @default("running") // running | completed | failed
+  trigger         String    @default("cron") // cron | manual
+  /// Track the agent run targets. Pre-multi-track all rows were 'claude-code'
+  /// (migrated via prisma migration 20260514_multi_track_foundation).
+  track           String    @default("claude-code")
+  startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
-  durationSeconds Int?     @map("duration_seconds")
+  durationSeconds Int?      @map("duration_seconds")
 
   // Quality Metrics
-  qualityScore    Float?   @map("quality_score")
-  sourcesTotal    Int      @default(0) @map("sources_total")
-  sourcesTier1    Int      @default(0) @map("sources_tier1")
-  sourcesTier2    Int      @default(0) @map("sources_tier2")
-  sourcesTier3    Int      @default(0) @map("sources_tier3")
+  qualityScore Float? @map("quality_score")
+  sourcesTotal Int    @default(0) @map("sources_total")
+  sourcesTier1 Int    @default(0) @map("sources_tier1")
+  sourcesTier2 Int    @default(0) @map("sources_tier2")
+  sourcesTier3 Int    @default(0) @map("sources_tier3")
 
   // Content Output
   lessonsCreated     Int      @default(0) @map("lessons_created")
@@ -436,27 +452,28 @@ model AgentRun {
   researchTopics     String[] @default([]) @map("research_topics")
 
   // Raw Data
-  summary         String?  @db.Text
-  errorLog        String?  @db.Text @map("error_log")
-  rawOutput       String?  @db.Text @map("raw_output")
+  summary   String? @db.Text
+  errorLog  String? @map("error_log") @db.Text
+  rawOutput String? @map("raw_output") @db.Text
 
-  createdAt       DateTime @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   @@index([status])
   @@index([startedAt])
+  @@index([track])
   @@map("agent_runs")
 }
 
 // ── Admin CMS: Research History ────────────────────────────────
 
 model ResearchHistory {
-  id        String   @id @default(cuid())
-  topic     String
-  quelle    String   // 'web' | 'github' | 'stackoverflow' | 'docs'
-  ergebnis  Json     @default("[]")
+  id       String @id @default(cuid())
+  topic    String
+  quelle   String // 'web' | 'github' | 'stackoverflow' | 'docs'
+  ergebnis Json   @default("[]")
 
-  userId    String   @map("user_id")
-  user      User     @relation("ResearchHistoryUser", fields: [userId], references: [id])
+  userId String @map("user_id")
+  user   User   @relation("ResearchHistoryUser", fields: [userId], references: [id])
 
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -542,26 +559,26 @@ model QuizConfig {
 // ── Content Configs: Challenges ─────────────────────────────────
 
 model ChallengeConfig {
-  id            String   @id @default(cuid())
-  challengeId   String   @unique @map("challenge_id")
-  title         String
-  description   String   @db.Text
-  category      String
-  source        String   @default("claude-code")
-  difficulty    String
-  timeLimit     Int      @default(0) @map("time_limit")
-  points        Int      @default(100)
-  instruction   String   @db.Text
-  starterCode   String   @db.Text @map("starter_code")
-  language      String   @default("typescript")
-  hints         Json     @default("[]")
-  validations   Json     @default("[]")
-  solution      String   @db.Text
-  relatedLessons Json    @default("[]") @map("related_lessons")
-  sortOrder     Int      @default(0) @map("sort_order")
-  status        String   @default("published")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  challengeId    String   @unique @map("challenge_id")
+  title          String
+  description    String   @db.Text
+  category       String
+  source         String   @default("claude-code")
+  difficulty     String
+  timeLimit      Int      @default(0) @map("time_limit")
+  points         Int      @default(100)
+  instruction    String   @db.Text
+  starterCode    String   @map("starter_code") @db.Text
+  language       String   @default("typescript")
+  hints          Json     @default("[]")
+  validations    Json     @default("[]")
+  solution       String   @db.Text
+  relatedLessons Json     @default("[]") @map("related_lessons")
+  sortOrder      Int      @default(0) @map("sort_order")
+  status         String   @default("published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@index([category])
   @@index([source])
@@ -571,27 +588,30 @@ model ChallengeConfig {
 // ── Content Configs: Lesson Configs ─────────────────────────────
 
 model LessonConfig {
-  id          String   @id @default(cuid())
-  lessonId    Int      @unique @map("lesson_id")
-  level       Int      @default(1)
-  title       String
-  description String   @db.Text
-  duration    String
-  objectives  Json     @default("[]")
-  content     Json
-  track       String   @default("main")
-  sortOrder   Int      @default(0) @map("sort_order")
-  status      String   @default("published")
+  id                 String    @id @default(cuid())
+  lessonId           Int       @unique @map("lesson_id")
+  level              Int       @default(1)
+  title              String
+  description        String    @db.Text
+  duration           String
+  objectives         Json      @default("[]")
+  content            Json
+  /// Multi-track key — 'main' was the single-track legacy default; the
+  /// 20260514_multi_track_foundation migration backfills all existing
+  /// rows to 'claude-code' and changes the column default accordingly.
+  track              String    @default("claude-code")
+  sortOrder          Int       @default(0) @map("sort_order")
+  status             String    @default("published")
   // ── Freshness metadata (maintained by masterkurs-agent weekly pass) ──
   /// ISO datetime of the last successful freshness audit that found no issues.
-  lastVerified        DateTime?  @map("last_verified")
+  lastVerified       DateTime? @map("last_verified")
   /// List of currently-open freshness warnings from the agent's audit.
   /// Shape: [{ reason: string, source: string, severity: 'low'|'medium'|'high', addedAt: string }]
-  freshnessWarnings   Json       @default("[]") @map("freshness_warnings")
+  freshnessWarnings  Json      @default("[]") @map("freshness_warnings")
   /// ISO datetime of the most recent auto-patch the agent applied.
-  lastUpdatedByAgent  DateTime?  @map("last_updated_by_agent")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  lastUpdatedByAgent DateTime? @map("last_updated_by_agent")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
 
   @@index([level])
   @@index([track])
@@ -601,23 +621,23 @@ model LessonConfig {
 // ── Content Configs: Projects ───────────────────────────────────
 
 model ProjectConfig {
-  id            String   @id @default(cuid())
-  projectId     String   @unique @map("project_id")
-  level         Int      @default(1)
-  title         String
-  description   String   @db.Text
-  difficulty    String
-  duration      String
-  requirements  Json     @default("[]")
-  starterCode   String?  @db.Text @map("starter_code")
-  hints         Json     @default("[]")
-  solution      String?  @db.Text
-  resources     Json     @default("[]")
-  validationMeta Json    @default("{}") @map("validation_meta")
-  sortOrder     Int      @default(0) @map("sort_order")
-  status        String   @default("published")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  projectId      String   @unique @map("project_id")
+  level          Int      @default(1)
+  title          String
+  description    String   @db.Text
+  difficulty     String
+  duration       String
+  requirements   Json     @default("[]")
+  starterCode    String?  @map("starter_code") @db.Text
+  hints          Json     @default("[]")
+  solution       String?  @db.Text
+  resources      Json     @default("[]")
+  validationMeta Json     @default("{}") @map("validation_meta")
+  sortOrder      Int      @default(0) @map("sort_order")
+  status         String   @default("published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@index([level])
   @@map("project_configs")
@@ -626,20 +646,20 @@ model ProjectConfig {
 // ── Content Configs: Capstone Projects ──────────────────────────
 
 model CapstoneConfig {
-  id          String   @id @default(cuid())
-  capstoneId  String   @unique @map("capstone_id")
-  title       String
-  description String   @db.Text
-  difficulty  Int      @default(1)
-  estimatedHours Int   @default(4) @map("estimated_hours")
-  techStack   Json     @default("[]") @map("tech_stack")
-  requirements Json    @default("[]")
-  steps       Json     @default("[]")
-  thumbnailEmoji String? @map("thumbnail_emoji")
-  sortOrder   Int      @default(0) @map("sort_order")
-  status      String   @default("published")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  capstoneId     String   @unique @map("capstone_id")
+  title          String
+  description    String   @db.Text
+  difficulty     Int      @default(1)
+  estimatedHours Int      @default(4) @map("estimated_hours")
+  techStack      Json     @default("[]") @map("tech_stack")
+  requirements   Json     @default("[]")
+  steps          Json     @default("[]")
+  thumbnailEmoji String?  @map("thumbnail_emoji")
+  sortOrder      Int      @default(0) @map("sort_order")
+  status         String   @default("published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("capstone_configs")
 }
@@ -647,22 +667,22 @@ model CapstoneConfig {
 // ── Content Configs: Project Templates ──────────────────────────
 
 model ProjectTemplateConfig {
-  id              String   @id @default(cuid())
-  templateId      String   @unique @map("template_id")
-  title           String
-  description     String   @db.Text
-  difficulty      Int      @default(1)
-  estimatedHours  Int      @default(4) @map("estimated_hours")
-  techStack       Json     @default("[]") @map("tech_stack")
-  features        Json     @default("[]")
-  claudeMd        String   @db.Text @map("claude_md")
-  fileStructure   String?  @db.Text @map("file_structure")
-  steps           Json     @default("[]")
-  githubUrl       String?  @map("github_url")
-  sortOrder       Int      @default(0) @map("sort_order")
-  status          String   @default("published")
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(cuid())
+  templateId     String   @unique @map("template_id")
+  title          String
+  description    String   @db.Text
+  difficulty     Int      @default(1)
+  estimatedHours Int      @default(4) @map("estimated_hours")
+  techStack      Json     @default("[]") @map("tech_stack")
+  features       Json     @default("[]")
+  claudeMd       String   @map("claude_md") @db.Text
+  fileStructure  String?  @map("file_structure") @db.Text
+  steps          Json     @default("[]")
+  githubUrl      String?  @map("github_url")
+  sortOrder      Int      @default(0) @map("sort_order")
+  status         String   @default("published")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   @@map("project_template_configs")
 }
@@ -670,21 +690,21 @@ model ProjectTemplateConfig {
 // ── Content Configs: Playground Tasks ───────────────────────────
 
 model PlaygroundTaskConfig {
-  id            String   @id @default(cuid())
-  taskId        String   @unique @map("task_id")
-  projectId     String   @map("project_id")
-  title         String
-  description   String   @db.Text
-  instruction   String   @db.Text
-  requirements  Json     @default("[]")
-  mode          String   @default("editor")
-  language      String   @default("typescript")
-  starterCode   String   @db.Text @map("starter_code")
-  hints         Json     @default("[]")
-  validationMeta Json    @default("[]") @map("validation_meta")
-  scenarioMeta   Json?   @map("scenario_meta")
-  sortOrder      Int     @default(0) @map("sort_order")
-  status         String  @default("published")
+  id             String   @id @default(cuid())
+  taskId         String   @unique @map("task_id")
+  projectId      String   @map("project_id")
+  title          String
+  description    String   @db.Text
+  instruction    String   @db.Text
+  requirements   Json     @default("[]")
+  mode           String   @default("editor")
+  language       String   @default("typescript")
+  starterCode    String   @map("starter_code") @db.Text
+  hints          Json     @default("[]")
+  validationMeta Json     @default("[]") @map("validation_meta")
+  scenarioMeta   Json?    @map("scenario_meta")
+  sortOrder      Int      @default(0) @map("sort_order")
+  status         String   @default("published")
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -696,19 +716,88 @@ model PlaygroundTaskConfig {
 // Discord-integrated support ticketing system
 
 model SupportTicket {
-  id              String   @id @default(cuid())
-  userId          String   @map("user_id")
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  discordThreadId String?  @unique @map("discord_thread_id")
+  discordThreadId String? @unique @map("discord_thread_id")
   subject         String
-  status          String   @default("open") // 'open' | 'in_progress' | 'resolved' | 'closed'
-  priority        String   @default("normal") // 'low' | 'normal' | 'high' | 'urgent'
+  status          String  @default("open") // 'open' | 'in_progress' | 'resolved' | 'closed'
+  priority        String  @default("normal") // 'low' | 'normal' | 'high' | 'urgent'
 
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@index([userId])
   @@index([status])
   @@map("support_tickets")
+}
+
+// ── Multi-Track Foundation (Phase 0) ─────────────────────────────
+// Three new models added by 20260514_multi_track_foundation. See
+// /Users/cosmograef/.claude/plans/abstract-moseying-sutton.md for the
+// full design.
+
+/// One in-app tutor conversation. Either generic (lessonId null) or
+/// scoped to a specific lesson view. The chosen tutor model is
+/// determined at session-start from Subscription.tutorTier.
+model TutorSession {
+  id     String @id @default(cuid())
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// One of TrackKey: 'claude-code' | 'claude-desktop' | 'codex' | 'local-llm'
+  track    String
+  /// Optional lesson context. Null = freeform tutor session from Dashboard.
+  lessonId Int?   @map("lesson_id")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  messages TutorMessage[]
+
+  @@index([userId, createdAt])
+  @@index([track])
+  @@map("tutor_sessions")
+}
+
+/// Individual message in a TutorSession. Plaintext content + token cost
+/// for billing/audit. Local-LLM-track sessions store content here too,
+/// but never the prompt — only the assistant turn (privacy boundary
+/// enforced client-side).
+model TutorMessage {
+  id        String       @id @default(cuid())
+  sessionId String       @map("session_id")
+  session   TutorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  /// 'user' | 'assistant' | 'system'
+  role       String
+  content    String @db.Text
+  /// Approximate token count for cost-tracking. Null for local-LLM track.
+  tokenCount Int?   @map("token_count")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([sessionId, createdAt])
+  @@map("tutor_messages")
+}
+
+/// Idempotency log for inbound webhooks (Stripe primarily; extensible to
+/// Discord/GitHub later). Required because Stripe re-delivers events under
+/// 5xx and we must not double-grant entitledTracks. Unique constraint on
+/// externalEventId is the dedup key.
+model WebhookEvent {
+  id              String    @id @default(cuid())
+  /// 'stripe' | 'discord' | 'github' | ...
+  source          String
+  /// Provider's own unique event ID (Stripe: evt_*, Discord: snowflake)
+  externalEventId String    @unique @map("external_event_id")
+  payload         Json
+  /// When the handler finished processing successfully. Null = received
+  /// but not yet (or never) processed. Used to retry hung deliveries.
+  processedAt     DateTime? @map("processed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([source, processedAt])
+  @@map("webhook_events")
 }

@@ -811,5 +811,11 @@
     "dashboardTitle": "Outils & Extensions",
     "dashboardDesc": "Maitriser les outils CLI et serveurs MCP",
     "dashboardProgress": "{{completed}}/{{total}} termines"
+  },
+  "tracks": {
+    "sectionTitle": "Choisissez votre parcours",
+    "sectionSubtitle": "Quatre specialisations, une plateforme.",
+    "ctaExplore": "Explorer le parcours",
+    "comingSoon": "Bientot disponible"
   }
 }

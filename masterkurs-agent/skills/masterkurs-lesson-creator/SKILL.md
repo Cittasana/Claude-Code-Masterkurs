@@ -1,17 +1,51 @@
-# Masterkurs Lesson Creator v2.0 - Multi-MCP Content Creation
+# Masterkurs Lesson Creator v2.1 - Multi-MCP + Multi-Track Content Creation
 
 ---
 name: masterkurs-lesson-creator
-version: 2.0.0
+version: 2.1.0
 description: |
   Erstellt hochwertige Kurs-Lektionen mit Multi-MCP Integration für maximale Qualität.
-  **NEU v2.0**: 3-Tier Content-Creation mit Official Docs + Code Examples + Explanations!
+  **v2.0**: 3-Tier Content-Creation mit Official Docs + Code Examples + Explanations.
+  **v2.1 (Phase 2)**: Track-aware (`--track`), Quiz-Stub-Gate, ID-Range-Enforcement.
 triggers:
   - "erstelle lektion"
   - "neue lektion"
   - "lesson creator"
   - "create lesson"
   - "update lektion"
+  # Multi-track triggers (Phase 2)
+  - "new claude-code lesson"
+  - "new claude-desktop lesson"
+  - "new codex lesson"
+  - "create codex lesson"
+  - "new local-llm lesson"
+  - "new freelancer lesson"
+  - "create freelancer module"
+  - "neue lektion claude-desktop"
+  - "neue lektion codex"
+  - "neue lektion local-llm"
+  - "neue lektion freelancer"
+arguments:
+  - name: track
+    type: string
+    default: claude-code
+    accepted:
+      - claude-code
+      - claude-desktop
+      - codex
+      - local-llm
+      - freelancer
+    description: |
+      Welcher Multi-Track-Plattform-Track die Lesson zugeordnet ist.
+      Bestimmt Lesson-ID-Range, Output-Pfad und Style-Konvention
+      (siehe `masterkurs-agent/track-configs/<track>/lesson-style.md`).
+  - name: skip-quiz
+    type: boolean
+    default: false
+    description: |
+      Wenn `true`: Skill erstellt KEINEN Quiz-Stub und loggt die Lesson-ID
+      in `masterkurs-agent/missing-quizzes.md`. Standard ist `false`
+      (Quiz-Stub wird immer erzeugt — siehe Quiz-Stub-Gate unten).
 dependencies:
   required:
     - code-research  # Stack Overflow + MDN + GitHub (ERKLÄRENDER TEXT!)
@@ -32,8 +66,116 @@ output_format: markdown
 tags:
   - lesson-creation
   - multi-mcp
+  - multi-track
   - content-quality
   - educational-content
+---
+
+## 🛤️ PHASE 2: Multi-Track Mode (v2.1)
+
+Die Multi-Track-Plattform betreibt **5 parallele Tracks** mit unterschiedlichen Zielgruppen und Tonalitäten. Dieser Skill ist track-aware: über das `--track`-Argument wählst du den Ziel-Track, und alle Folge-Schritte (ID-Vergabe, Output-Pfad, Style-Konventionen, Pflicht-Sektionen) richten sich danach.
+
+### Akzeptierte Track-Werte
+
+| Track-Key | Lesson-ID-Range | Aktueller Stand | Style-Datei |
+|-----------|-----------------|-----------------|-------------|
+| `claude-code` (default) | `0` – `999` | 0–48 belegt | `track-configs/claude-code/lesson-style.md` |
+| `claude-desktop` | `1000` – `1999` | leer (neuer Track) | `track-configs/claude-desktop/lesson-style.md` |
+| `codex` | `2000` – `2999` | leer (neuer Track) | `track-configs/codex/lesson-style.md` |
+| `local-llm` | `3000` – `3999` | leer (neuer Track) | `track-configs/local-llm/lesson-style.md` |
+| `freelancer` | `100` – `999` | leer (neuer Track, existierende Konvention) | `track-configs/freelancer/lesson-style.md` |
+
+> ⚠️ **Range-Konflikt-Hinweis**: Die `freelancer`-Range `100–999` überschneidet sich mit `claude-code` `0–999`. Phase-2-Stand: `claude-code` belegt nur 0–48, `freelancer` startet bei 100. Sobald `claude-code` die ID 99 erreicht, muss eine erneute Range-Diskussion stattfinden (geplant für Phase 4 der Multi-Track-Roadmap).
+
+### `--track` benutzen
+
+```bash
+# Default: claude-code
+masterkurs-lesson-creator --topic "Hooks v2"
+
+# Anderer Track:
+masterkurs-lesson-creator --topic "MCP über Desktop-Config" --track claude-desktop
+masterkurs-lesson-creator --topic "Codex CLI Sandbox-Modi" --track codex
+masterkurs-lesson-creator --topic "Ollama 70B Setup" --track local-llm
+masterkurs-lesson-creator --topic "Stundensatz vs. Festpreis" --track freelancer
+```
+
+### ID-Range-Enforcement (PFLICHT)
+
+Bevor der Skill die Lesson schreibt, MUSS er:
+
+1. Die **nächste freie ID innerhalb der Track-Range** bestimmen (`MAX(existing_id_in_range) + 1`).
+2. Prüfen, dass die ID **nicht außerhalb der Range** fällt — andernfalls ABBRUCH mit Fehler:
+   ```
+   ERROR: Track <track-key> ist voll belegt (Range <min>-<max> ausgeschöpft).
+   Multi-Track-Roadmap konsultieren bevor Range erweitert wird.
+   ```
+3. Prüfen, dass die ID **noch nicht existiert** (kein Überschreiben). Bei Kollision ABBRUCH mit Fehler:
+   ```
+   ERROR: Lesson ID <id> existiert bereits in Track <track-key>.
+   Nutze MAX-Scan oder gib explizite freie ID an.
+   ```
+4. Den Track-spezifischen `track-configs/<track>/lesson-style.md` einlesen und dessen **Pflicht-Sektionen** und **Tonalitäts-Vorgaben** in das Lesson-Template einarbeiten.
+
+### Output-Pfad (track-namespaced)
+
+Lessons landen ab v2.1 in track-spezifischen Unterordnern:
+
+```
+masterkurs-agent/lessons/<track>/lesson-<id>.md
+```
+
+Beispiele:
+- `masterkurs-agent/lessons/claude-code/lesson-49.md`
+- `masterkurs-agent/lessons/claude-desktop/lesson-1000.md`
+- `masterkurs-agent/lessons/codex/lesson-2000.md`
+- `masterkurs-agent/lessons/local-llm/lesson-3000.md`
+- `masterkurs-agent/lessons/freelancer/lesson-100.md`
+
+> 📦 **Migration vorhandener Drafts**: Pre-v2.1-Drafts liegen flach unter `masterkurs-agent/lessons/lesson-XX.md` oder `lesson-XX.ts`. Beim ersten Touch eines Drafts in v2.1 verschiebt der Skill ihn proaktiv in den `claude-code/`-Unterordner (sofern keine `--track`-Override vorgegeben ist).
+
+### Quiz-Stub-Gate (PFLICHT, NEU in v2.1)
+
+**Hintergrund**: Der bug-hunter-Audit vom 2026-05-13 hat in der existierenden `claude-code`-Spur **7 Lessons ohne Quiz** gefunden (IDs 30, 31, 44, 45, 46, 47, 48). Phase 2 schließt diese Lücke, indem das Erstellen eines Quiz-Stubs zur Pflicht wird.
+
+**Regel**: Für **jede neue Lesson**, die der Skill erzeugt, MUSS er zusätzlich einen Quiz-Stub in `claude-code-masterkurs/src/data/quizzes.ts` anlegen. Der Stub enthält mindestens:
+
+```typescript
+{
+  lessonId: <id>,            // Track-eindeutige Lesson-ID
+  questions: [
+    {
+      question: "[TODO: Frage formulieren]",
+      options: ["[TODO]", "[TODO]", "[TODO]", "[TODO]"],
+      correctIndex: 0,
+      explanation: "[TODO: Warum ist das richtig?]"
+    }
+    // mind. 1 Frage; 5 Fragen sind das Long-Term-Ziel
+  ]
+}
+```
+
+**Gate-Verhalten**:
+
+| User-Input | Skill-Verhalten |
+|------------|-----------------|
+| Default (kein `--skip-quiz`) | Quiz-Stub wird **immer** erzeugt. Skill schreibt einen warnungsfreien Erfolgs-Log. |
+| `--skip-quiz=true` | Skill **erzeugt keinen Stub**, gibt aber: (a) eine **Warnung** auf stdout aus, **und** (b) hängt eine Zeile mit `lessonId`, `track`, Datum, User-Begründung an `masterkurs-agent/missing-quizzes.md` an. |
+| Quiz-Stub-Write schlägt fehl | Skill **bricht ab** mit Fehler. Lesson-MD wird nicht committed; missing-quizzes.md erhält einen Eintrag mit Status `BLOCKED`. |
+
+**Track-Note für `freelancer`**: Der freelancer-Track ersetzt den Code-Quiz inhaltlich durch einen **Business-Case-Quiz** (z.B. "Welcher Stundensatz ist für Discovery-Call angemessen?"), strukturell bleibt das Schema aber identisch.
+
+### Phase-2-Validation-Checklist
+
+Bevor der Skill `success` zurückgibt, MUSS er prüfen:
+
+- [ ] `--track`-Wert ist in der whitelist
+- [ ] Lesson-ID liegt in der Track-Range
+- [ ] Lesson-ID kollidiert nicht mit existierender Lesson
+- [ ] Output-Pfad ist `masterkurs-agent/lessons/<track>/lesson-<id>.md`
+- [ ] `track-configs/<track>/lesson-style.md` wurde gelesen und Pflicht-Sektionen sind im MD enthalten
+- [ ] Quiz-Stub ist entweder geschrieben (Default) oder Lesson-ID ist in `missing-quizzes.md` getrackt (`--skip-quiz`)
+
 ---
 
 ## 🎯 Mission: High-Quality Lesson Creation
@@ -571,15 +713,18 @@ async function createLessonV2(topic: string, level: string, duration: string) {
 - **Level**: Beginner/Intermediate/Expert
 - **Dauer**: 15/30/45 Min
 
-### Output-Struktur
+### Output-Struktur (v2.1 track-namespaced)
 ```
-/lessons/[nummer]-[slug]/
+masterkurs-agent/lessons/<track>/lesson-<id>.md   # ← v2.1 default path (track-aware!)
+masterkurs-agent/lessons/<track>/lesson-<id>/     # ← optional folder if multi-file
 ├── lesson.md (Haupt-Script)
 ├── starter-code/ (Leer-Vorlage für User)
 ├── solution/ (Fertige Lösung)
-├── quiz.json (5 Fragen)
+├── quiz.json (5 Fragen — separat zur Quiz-Stub-Datei in claude-code-masterkurs/src/data/quizzes.ts)
 └── video-script.md
 ```
+
+> **Wichtig**: Der Quiz-Stub für die Plattform-App geht IMMER in `claude-code-masterkurs/src/data/quizzes.ts` (siehe Quiz-Stub-Gate oben). Die hier optionale `quiz.json` ist nur für Draft-/Vorbereitungs-Zwecke innerhalb des Lesson-Drafts.
 
 ### Step 1: Context & Requirements Analysis
 
@@ -631,18 +776,46 @@ EXPERT (45+ Min):
 └── Recap: 5%
 ```
 
-### Step 3: Folder & File Structure Creation
+### Step 3: Folder & File Structure Creation (v2.1 track-aware)
 
 ```bash
-# Automatisch bestimmen: nächste Nummer
-NEXT_NUMBER=$(ls ./lessons/ | grep -E '^[0-9]+' | sort -n | tail -1 | cut -d'-' -f1)
-NEXT_NUMBER=$((NEXT_NUMBER + 1))
+# v2.1: Track wird per --track gesetzt (default: claude-code)
+TRACK="${TRACK:-claude-code}"
+
+# Track → ID-Range (siehe Phase-2-Tabelle oben)
+case "$TRACK" in
+  claude-code)    MIN_ID=0;    MAX_ID=999  ;;
+  claude-desktop) MIN_ID=1000; MAX_ID=1999 ;;
+  codex)          MIN_ID=2000; MAX_ID=2999 ;;
+  local-llm)      MIN_ID=3000; MAX_ID=3999 ;;
+  freelancer)     MIN_ID=100;  MAX_ID=999  ;;
+  *) echo "ERROR: unknown track $TRACK"; exit 1 ;;
+esac
+
+# Track-Verzeichnis sicherstellen
+mkdir -p "./lessons/${TRACK}"
+
+# Nächste freie ID innerhalb der Range bestimmen
+EXISTING_MAX=$(ls "./lessons/${TRACK}/" 2>/dev/null \
+  | grep -oE 'lesson-[0-9]+' \
+  | grep -oE '[0-9]+' \
+  | awk -v min="$MIN_ID" -v max="$MAX_ID" '$1>=min && $1<=max' \
+  | sort -n | tail -1)
+NEXT_ID=${EXISTING_MAX:-$MIN_ID}
+[ -n "$EXISTING_MAX" ] && NEXT_ID=$((EXISTING_MAX + 1))
+
+# Range-Check
+if [ "$NEXT_ID" -gt "$MAX_ID" ]; then
+  echo "ERROR: Track $TRACK ist voll (${MIN_ID}-${MAX_ID} ausgeschöpft)"; exit 1
+fi
 
 # Slug erstellen
 SLUG=$(echo "$TITEL" | tr '[:upper:]' '[:lower:]' | tr ' ' '-' | tr -cd '[:alnum:]-')
 
-# Ordner erstellen
-mkdir -p "./lessons/${NEXT_NUMBER}-${SLUG}"/{starter-code,solution}
+# Lesson-Ordner erstellen (optional, für Multi-File-Lessons)
+mkdir -p "./lessons/${TRACK}/lesson-${NEXT_ID}"/{starter-code,solution}
+
+echo "Track: $TRACK | Lesson-ID: $NEXT_ID | Slug: $SLUG"
 ```
 
 ### Step 4-8: Detailed File Creation
@@ -815,9 +988,16 @@ async function checkMCPAvailability() {
 
 ---
 
-**Version**: 2.0.0
+**Version**: 2.1.0
 **Created**: 2026-02-14
-**Last Updated**: 2026-02-14
+**Last Updated**: 2026-05-14 (Phase 2 — Multi-Track Plattform)
 **Dependencies**: code-research, microsoft-learn, docs, github, brave-search, perplexity, exa, websearch
 **Quality**: 🟢 HIGH (9.3/10)
 **Major Changes from v1.0**: Multi-MCP Integration, 3-Tier Content Architecture, 400% more explanations
+**Major Changes in v2.1 (Phase 2)**:
+- `--track` argument (claude-code | claude-desktop | codex | local-llm | freelancer)
+- Lesson-ID-Range-Enforcement per Track (0-999 / 1000-1999 / 2000-2999 / 3000-3999 / 100-999)
+- Quiz-Stub-Gate (PFLICHT-Erstellung in `quizzes.ts`, opt-out via `--skip-quiz` mit Tracking in `missing-quizzes.md`)
+- Output-Pfad-Namespacing: `lessons/<track>/lesson-<id>.md`
+- Per-Track Style-Konventionen via `track-configs/<track>/lesson-style.md`
+- Schließt 7 ungedeckte Lessons aus dem bug-hunter-Audit (2026-05-13) als systemisches Issue

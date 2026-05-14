@@ -16,6 +16,7 @@
 
 import type { Lesson, TrackKey } from '../types';
 import { lessons as claudeCodeLessons } from './lessons';
+import { freelancerModules } from './freelancerTrack';
 
 export interface TrackDef {
   /** Stable URL slug (e.g. /tracks/claude-code) — never change after launch. */
@@ -85,6 +86,19 @@ export const TRACKS: Record<TrackKey, TrackDef> = {
     lessonsLoader: () => [],
     tutorPersonaPath: 'track-configs/local-llm/tutor-persona.md',
     isPublic: false,
+  },
+  // Freelancer is the 5th track: the existing "Business-Modul" track
+  // (lesson IDs 100+, see freelancerTrack.ts). Keeps it isolated from
+  // the 4 technology tracks above — its tutor persona and Stripe
+  // entitlement are independent.
+  freelancer: {
+    slug: 'freelancer',
+    label: 'AI-Freelancing',
+    marketingHook: 'Business-Modul: Pricing, Akquise, Pipeline, Kunden-Verhandlung als AI-Developer.',
+    color: '#34D399', // emerald
+    lessonsLoader: () => freelancerModules,
+    tutorPersonaPath: 'track-configs/freelancer/tutor-persona.md',
+    isPublic: true,
   },
 };
 

@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import {
@@ -18,6 +18,7 @@ import { contentApi } from '../lib/api';
 import { useUserProgress } from '../store/userProgress';
 import { useAuthStore } from '../store/authStore';
 import { useSRSStore } from '../store/srsStore';
+import { useTrackStore } from '../store/useTrackStore';
 import LessonContent from '../components/Lessons/LessonContent';
 import QuizComponent from '../components/Quiz/QuizComponent';
 import PaywallOverlay from '../components/Paywall/PaywallOverlay';
@@ -26,6 +27,7 @@ import FreshnessBanner from '../components/Lessons/FreshnessBanner';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
 import { useLearningTimer } from '../hooks/useLearningTimer';
+import { trackKeyFromSlug } from '../data/tracks';
 import type { Lesson, Quiz, LessonContent as LessonContentType, Question } from '../types';
 
 const LessonView = () => {
@@ -43,6 +45,25 @@ const LessonView = () => {
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
   const contentRef = useRef<HTMLDivElement>(null);
 
+  // ── Multi-track (Phase 1 W2b) ─────────────────────────────
+  // currentTrack drives the lesson-fetch query so users on the
+  // freelancer track see the right lesson set. URL ?track=<slug>
+  // deep-links from external surfaces (LandingView track-cards,
+  // marketing emails) pre-set the track before fetch fires.
+  const currentTrack = useTrackStore((s) => s.currentTrack);
+  const setCurrentTrack = useTrackStore((s) => s.setCurrentTrack);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    const slug = searchParams.get('track');
+    if (!slug) return;
+    const key = trackKeyFromSlug(slug);
+    if (key) setCurrentTrack(key);
+    const next = new URLSearchParams(searchParams);
+    next.delete('track');
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams, setCurrentTrack]);
+
   // ── API Data Loading ──────────────────────────────────────
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -50,8 +71,9 @@ const LessonView = () => {
 
   useEffect(() => {
     let cancelled = false;
+    setDataLoading(true);
     Promise.all([
-      contentApi.getLessons({ track: 'main' }),
+      contentApi.getLessons({ track: currentTrack }),
       contentApi.getQuizzes(),
     ])
       .then(([lessonsRes, quizzesRes]) => {
@@ -91,7 +113,7 @@ const LessonView = () => {
         if (!cancelled) setDataLoading(false);
       });
     return () => { cancelled = true; };
-  }, []);
+  }, [currentTrack]);
 
   const lessonId = parseInt(id || '0');
   const lesson = lessons.find((l) => l.id === lessonId);

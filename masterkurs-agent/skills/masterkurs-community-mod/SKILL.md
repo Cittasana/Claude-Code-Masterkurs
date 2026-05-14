@@ -1,64 +1,184 @@
 ---
 name: masterkurs-community-mod
 description: |
-  Discord/Slack Community-Management: Regeln, Moderation-Workflows, Engagement-Strategie. Nutze wenn User "Community setup", "Discord moderieren", "Engagement-Strategie" erwähnt.
+  Forum/Discord/Slack Community-Management pro Track: Regeln, Moderation-Workflows, Engagement-Strategie.
+  Heute operiert dieser Skill auf dem Forum (mit track-context Badge per Phase 1 W2c). Discord ist initial deferred (Locked Decision #6 im Multi-Track-Plan: "Discord aus initial-6-Phasen-Scope raus. Forum + Email-Sequenzen tragen den Community-Layer."). Die Track-Parametrisierung ist forward-kompatibel und wird ohne Schema-Änderung greifen, sobald Discord ausgerollt wird.
+  Nutze wenn User "Community setup", "Forum moderieren", "Discord moderieren", "Engagement-Strategie", "freelancer community guidelines", "codex moderation rules", "local-llm community", "claude-desktop forum rules" erwähnt.
+arguments:
+  - name: --track
+    description: Track-Key — bestimmt aus welcher track-configs/<key>/community-rules.md die Welcome-Message, Off-Topic-Schwelle, Spam-Patterns und Cadence geladen werden.
+    type: string
+    required: false
+    default: claude-code
+    accepted_values: [claude-code, claude-desktop, codex, local-llm, freelancer]
+trigger_phrases:
+  - "community setup"
+  - "forum moderieren"
+  - "discord moderieren"
+  - "engagement-strategie"
+  - "freelancer community guidelines"
+  - "codex moderation rules"
+  - "local-llm community"
+  - "claude-desktop forum rules"
+  - "community rules <track>"
 compatibility:
-  required_tools: [Write, mcp__3aa8d81d-6572-4220-b566-57c5cbf089df__*]
+  required_tools: [Read, Write, mcp__3aa8d81d-6572-4220-b566-57c5cbf089df__*]
 ---
 
-# Masterkurs Community Moderator
+# Masterkurs Community Moderator (Multi-Track)
 
-Community-Management & Engagement-Strategien.
+Track-bewusstes Forum-/Community-Management & Engagement-Strategien.
+
+## Deferred-Discord-Kontext (WICHTIG zuerst lesen)
+
+Per **Locked Decision #6** im Multi-Track-Plan (`~/.claude/plans/abstract-moseying-sutton.md`):
+
+> "Discord: Aus initial-6-Phasen-Scope raus. Forum + Email-Sequenzen tragen den Community-Layer; Discord wenn Bedarf konkret wird. `masterkurs-community-mod`-Skill bleibt im Codebase aber unangetastet in Phase 2."
+
+Phase 2 hat den Skill jetzt **parametrisiert** (nicht implementiert): Track-Argument + Per-Track-Rule-Sources sind aktiv, Output-Pfade sind track-namespaced, und sämtliche Welcome/Engagement/Spam-Definitionen sind aus dem hardcodierten Block raus in `track-configs/<track>/community-rules.md`. Das macht die Skill-Logik **heute fürs Forum nutzbar** (forum-context per Phase 1 W2c) und **morgen für Discord wiederverwendbar**, sobald die Locked Decision aufgehoben wird — ohne Skill-Refactor.
+
+**Heute (aktiv):** Forum mit track-context Badge. Welcome-DMs als Auto-Reply auf erste Forum-Posts; Engagement-Cadence als geplante Forum-Posts; Spam-Detection auf Forum-Threads.
+**Später (deferred bis Bedarf):** Discord-Server (gemeinsam, mit Track-Kanälen empfohlen — siehe Plan §"Out-of-Scope"); Slack-Alternative bei Enterprise-Bedarf.
 
 ## Input
-- **Platform**: Discord/Slack
-- **Größe**: 10-50 / 50-200 / 200+ Members
-- **Problem**: Spam/Inaktivität/Off-Topic/Konflikte
+
+- **Track** (`--track <key>`, default `claude-code`): einer von `claude-code | claude-desktop | codex | local-llm | freelancer`
+- **Surface** (heute): Forum (track-gebadgt). Discord/Slack-Surfaces sind Forward-Compat-Pfade.
+- **Größe**: 10-50 / 50-200 / 200+ Members (skaliert Mod-Strategien siehe unten)
+- **Problem**: Spam / Inaktivität / Off-Topic / Konflikte (track-spezifisch geflaggt — siehe Per-Track Rules)
+
+## Per-Track Rule Sources (Single Source of Truth)
+
+Track-spezifische Regeln werden zur Laufzeit aus diesen Dateien geladen — **niemals hardcoden**:
+
+```
+masterkurs-agent/track-configs/<track>/community-rules.md
+```
+
+Jede dieser Dateien definiert pro Track:
+
+1. **Welcome-Message** — track-spezifischer Tonfall (claude-code: CLI-Power-User; freelancer: Business-Mindset; codex: EN-first; local-llm: Hardware-aware; claude-desktop: GUI-Workflow)
+2. **Allowed Topics** — was thematisch in den Track gehört
+3. **Off-Topic-Schwelle** — `strict` (claude-code), `moderate` (claude-desktop, codex, local-llm), `flexible` (freelancer)
+4. **Spam-Patterns** — track-spezifische Keywords/Heuristiken die geflaggt werden
+5. **Engagement-Cadence** — Wochentage + Uhrzeiten + Prompt-Format (Mo/Mi/Fr default für claude-code/claude-desktop; Mo/Mi/Fr-Variante mit Codex-EN für codex; Di/Do/Sa für local-llm; Di/Do/So für freelancer-B2B)
+6. **Escalation Policy** — wann Auto-Action, wann Mod, wann Founder
+
+**Lade-Pattern** (im Skill-Run):
+
+```
+1. Resolve $TRACK = --track || "claude-code"
+2. Validate $TRACK ∈ {claude-code, claude-desktop, codex, local-llm, freelancer} sonst FAIL mit klarer Fehlermeldung
+3. Read masterkurs-agent/track-configs/$TRACK/community-rules.md
+4. Apply Welcome-Message-Template, Off-Topic-Schwelle, Spam-Patterns, Engagement-Cadence, Escalation Policy aus dieser Datei
+5. Generiere Output (siehe unten) im track-namespaced Pfad
+```
+
+Wenn die track-config-Datei fehlt → STOP und fordere `track-configs/<track>/community-rules.md` zur Erstellung an. **Nicht** auf Defaults zurückfallen.
 
 ## Output
 
-Speichere in: `/masterkurs-agent/community/`
+Alle generierten Artefakte landen track-namespaced in:
 
 ```
-├── community-rules.md
+masterkurs-agent/community/<track>/
+├── community-rules.md            (rendered für aktuellen Surface — heute Forum)
 ├── moderation-guide.md
 ├── engagement-strategy.md
-└── templates/
-    ├── welcome-message.md
-    ├── weekly-challenge.md
-    └── showcase-template.md
+├── templates/
+│   ├── welcome-message.md
+│   ├── weekly-challenge.md
+│   └── showcase-template.md
+└── <YYYY-Wxx>-summary.md         (Wochen-Report — siehe "Weekly Summary" unten)
 ```
 
-## Community Rules Template
+**Beispiele:**
+- `masterkurs-agent/community/claude-code/2026-W20-summary.md`
+- `masterkurs-agent/community/freelancer/2026-W20-summary.md`
+- `masterkurs-agent/community/codex/templates/welcome-message.md`
+
+## Weekly Summary Report
+
+Wöchentlicher Mod-Report pro Track, abgelegt unter:
+
+```
+masterkurs-agent/community/<track>/<YYYY-Wxx>-summary.md
+```
+
+Format (Auszug):
 
 ```markdown
-# Claude Code Masterkurs - Community-Regeln
+# Weekly Community Summary — Track: <track> — <ISO-Week>
 
-## 🎯 Unsere Mission
-Diese Community ist für alle, die mit Claude Code programmieren lernen wollen.
+## Stats
+- New Members: X
+- Active Members (≥1 Post): Y
+- Messages: Z
+- Mod-Actions: A (delete: B, warn: C, timeout: D, ban: E)
 
-## ✅ Erwünscht
+## Engagement-Cadence-Hits
+- <Day>: <Prompt-Type> — <Submissions> Einreichungen
+- ...
+
+## Spam-Pattern-Triggers
+- Pattern "<x>": N hits → action: <auto-delete / mod-review>
+
+## Escalations
+- <#thread>: <kurz-summary> → resolved by <mod/founder>
+
+## Track-Health-Signal
+- Sentiment: GOOD / WARNING / CRITICAL
+- Off-Topic-Quote: X% (vs Schwelle des Tracks)
+- Unresolved Reports: N
+
+## Recommendations
+- ...
+```
+
+## Community Rules Template (Track-aware)
+
+> Der Track-spezifische Inhalt (Mission, Welcome, Allowed Topics, Off-Topic, Spam, Cadence, Escalation) wird zur Laufzeit aus `track-configs/<track>/community-rules.md` geladen. Dieses Template definiert nur die universellen Block-Slots und die Konsequenz-/Reporting-Standards, die über alle Tracks identisch sind.
+
+```markdown
+# Claude Code Masterkurs - Community-Regeln — Track: {{track}}
+
+## Mission
+{{from track-configs/{{track}}/community-rules.md → Welcome-Message-Kontext}}
+
+## Erwünscht (universell)
 - Fragen stellen (keine dumme Frage!)
 - Projekte teilen
 - Anderen helfen
 - Konstruktives Feedback
 - Code-Reviews
 
-## ❌ Nicht erwünscht
+## Erwünscht (track-spezifisch)
+{{from track-configs/{{track}}/community-rules.md → "Allowed Topics"}}
+
+## Nicht erwünscht (universell)
 - Spam oder Werbung
-- Beleidigungen
-- Off-Topic (Politik, Religion)
+- Beleidigungen / Toxicity
+- Politik, Religion, persönliche Konflikte
 - Code ohne Kontext posten
 - DM-Spam an Members
 
-## 🚨 Konsequenzen
+## Off-Topic-Schwelle (track-spezifisch)
+{{from track-configs/{{track}}/community-rules.md → "Off-Topic" Block + Schwelle}}
+
+## Spam-Patterns (track-spezifisch)
+{{from track-configs/{{track}}/community-rules.md → "Spam-Patterns"}}
+
+## Konsequenzen (universell)
 1. Warnung
-2. Temporärer Mute (24h)
-3. Kick
+2. Temporärer Mute / Read-Only (24h)
+3. Kick / Account-Lock
 4. Permanent Ban
 
-## 📝 Reporting
-→ @mods mit #report Tag
+## Reporting
+→ `#report`-Tag im Forum-Thread (oder `@mods` sobald Discord ausgerollt ist — Locked Decision #6)
+
+## Escalation Policy (track-spezifisch)
+{{from track-configs/{{track}}/community-rules.md → "Escalation Policy"}}
 ```
 
 ## Moderation-Workflows
@@ -82,15 +202,26 @@ Diese Community ist für alle, die mit Claude Code programmieren lernen wollen.
 
 ## Engagement-Strategien
 
-### Wöchentliche Prompts
-**Montag**: "Show Your Project Monday"
-→ Members teilen ihre Wochenend-Projekte
+### Wöchentliche Prompts (track-spezifische Cadence)
 
-**Mittwoch**: "Claude Code Challenge Wednesday"
-→ Kleine Coding-Challenge, 24h Zeit
+> **Quelle**: `track-configs/<track>/community-rules.md` → Sektion "Engagement-Cadence". Lade diese Datei zur Laufzeit.
 
-**Freitag**: "Feedback Friday"
-→ Code-Review von Community
+**Default-Patterns je Track:**
+
+| Track | Cadence | Begründung |
+|-------|---------|------------|
+| `claude-code` | Mo / Mi / Fr | Standard-Dev-Rhythmus |
+| `claude-desktop` | Mo / Mi / Fr | Wie claude-code, GUI-Fokus |
+| `codex` | Mo / Mi / Fr (EN-first) | Standard-Rhythmus, EN-Locale |
+| `local-llm` | Di / Do / Sa | Hardware-Audience experimentiert am WE |
+| `freelancer` | Di / Do / So | B2B-Audience, Mo+Fr blockiert durch Kund:innen-Wochenstart/-abschluss |
+
+**Beispiel `claude-code`-Track** (default):
+- **Montag**: "Show Your Project Monday" → Members teilen Wochenend-Projekte
+- **Mittwoch**: "Claude Code Challenge Wednesday" → Kleine Coding-Challenge, 24h Zeit
+- **Freitag**: "Feedback Friday" → Code-Review von Community
+
+Konkrete Prompt-Texte stehen in der jeweiligen `community-rules.md` jedes Tracks.
 
 ### Gamification
 - **Rollen-System**:
@@ -158,29 +289,53 @@ Track MONTHLY:
 - ⚠️ >20% Moderation Actions → Rules zu locker?
 - ⚠️ Immer die gleichen 5 Leute antworten → Onboarding verbessern
 
-## Welcome-Bot Message
+## Welcome-Bot Message (track-spezifisch)
+
+> **Quelle**: `track-configs/<track>/community-rules.md` → Sektion "Welcome-Message". Lade pro Track. **Niemals hardcoden.**
+
+**Wrapper-Template** (umgibt den track-spezifischen Welcome-Text):
 
 ```markdown
-Hey {{username}}! 👋
+{{from track-configs/{{track}}/community-rules.md → Welcome-Message}}
 
-Willkommen im Claude Code Masterkurs!
-
-**Quick Start**:
-1. Stelle dich in #introductions vor
-2. Check die #rules
-3. Frag in #questions alles was du willst
+**Quick Start (universell)**:
+1. Stelle dich kurz vor
+2. Check die Community-Regeln deines Tracks
+3. Stell deine erste Frage — keine ist zu klein
 
 **Resources**:
-- Kurs: https://claude-code-masterkurs.de
-- Docs: #resources
-- Challenges: #weekly-challenge
+- Plattform: https://akademie.cittasana.de/de/{{track}}  (claude-code-masterkurs.de 301 → akademie.cittasana.de/de/claude-code per Phase 5 Domain-Cutover)
+- Forum: track-context Badge zeigt deinen aktiven Track
+- Email-Sequenzen: tragen den Community-Layer mit (Locked Decision #6 — Discord deferred)
 
-Viel Erfolg beim Lernen! 🚀
+Viel Erfolg beim Lernen!
+```
+
+**Beispiel-Output für Track `freelancer`**:
+
+```markdown
+Hey {{username}}! Willkommen im **Freelancer Track** — Business-Modul für Solo-Devs ...
+[Rest aus track-configs/freelancer/community-rules.md]
 ```
 
 ## Platform-spezifische Setup-Guides
 
-### Discord Setup (EMPFOHLEN)
+> **Status:** Heute aktiv = **Forum** (mit track-context Badge per Phase 1 W2c). Discord/Slack-Sektionen unten sind **Forward-Compat-Referenz** für den Tag, an dem Locked Decision #6 aufgehoben wird ("Discord wenn Bedarf konkret wird"). Bei Discord-Rollout wird empfohlen: **ein gemeinsamer Server mit Track-Kanälen** (Cross-Track-Network-Effekte) — siehe Plan §"Out-of-Scope".
+
+### Forum Setup (HEUTE AKTIV)
+
+**Charakteristik:**
+- Track-context Badge auf jedem Thread (Phase 1 W2c)
+- Eventuell track-kategorisiert (Roadmap)
+- Welcome-Auto-Reply auf erstem Post je User
+- Mod-Aktionen über bestehende Forum-Tools
+- Engagement-Cadence als geplante Sticky-Posts pro Track
+
+**Pro Track ein "Track-Context"** statt separater Channels:
+- Filter im Frontend (`useTrackStore` aus Phase 1 W1)
+- Cross-Track-Threads sind erlaubt aber müssen den primären Track im Badge tragen
+
+### Discord Setup (DEFERRED — Locked Decision #6)
 
 **Vorteile**:
 - Voice Channels für Live-Coding
@@ -248,7 +403,7 @@ SPECIAL ROLES:
 └── Early Supporter (erste 100 Members)
 ```
 
-### Slack Setup (Alternative)
+### Slack Setup (Alternative — ebenfalls deferred)
 
 **Vorteile**:
 - Professionelleres Feeling
@@ -1005,6 +1160,11 @@ PREVENTION:
 
 ---
 
-**Version**: 1.0.0 (Production-Ready)
-**Last Updated**: Februar 2026
+**Version**: 2.0.0 (Phase-2 Multi-Track Parametrization)
+**Last Updated**: 2026-05-14
 **Maintenance**: Review quarterly für Best-Practice-Updates
+**Tracks unterstützt**: `claude-code` (default), `claude-desktop`, `codex`, `local-llm`, `freelancer`
+**Aktive Surface**: Forum (track-context Badge per Phase 1 W2c)
+**Deferred Surfaces**: Discord, Slack (Locked Decision #6 — wird parametrisierbar zugeschaltet sobald Bedarf konkret)
+**Track-Config-Pfad**: `masterkurs-agent/track-configs/<track>/community-rules.md`
+**Output-Pfad**: `masterkurs-agent/community/<track>/`

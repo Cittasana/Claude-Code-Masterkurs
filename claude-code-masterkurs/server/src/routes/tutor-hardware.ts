@@ -2,30 +2,16 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { prisma, logger } from '../index.js';
 import { requireAuth } from '../middleware/auth.js';
-
-// ── Tier types & classifier ──────────────────────────────────
-// NOTE: This file's single source of truth for `TierKey` and
-// `classifyTier()` lives in Lane A's `../lib/local-llm-tier-catalog.js`.
-// At the time this lane was implemented, Lane A's file may not yet exist
-// in the merged tree. The import below resolves post-merge. The local
-// type alias below is a duplicate-of (kept in sync with) Lane A's export
-// and exists ONLY so the route-file type-checks in isolation.
-//
-// duplicate of local-llm-tier-catalog.ts (Lane A) — single source of truth post-merge
-export type TierKey = 'tier-s' | 'tier-m' | 'tier-l' | 'unsupported' | 'unknown';
-
-// Imported from Lane A. The TS-build will report a missing-module error
-// here until Lane A merges; this is documented in the task contract and
-// will be resolved by the merge.
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore -- Lane A merge brings this module; see comment above.
-import { classifyTier } from '../lib/local-llm-tier-catalog.js';
+import {
+  classifyTier,
+  TIER_CATALOG,
+  type TierKey,
+} from '../lib/local-llm-tier-catalog.js';
 
 // ── Router ───────────────────────────────────────────────────
 
 export const tutorHardwareRouter = Router();
 
-// All hardware-probe endpoints require auth.
 tutorHardwareRouter.use(requireAuth);
 
 // ── Shared helpers ───────────────────────────────────────────
@@ -33,8 +19,6 @@ tutorHardwareRouter.use(requireAuth);
 const TIER_KEYS = ['tier-s', 'tier-m', 'tier-l', 'unsupported', 'unknown'] as const;
 const tierKeySchema = z.enum(TIER_KEYS);
 
-// Tier ordering for downgrade-detection. Higher index = stronger tier.
-// `unknown` is treated as "no opinion" and never triggers a downgrade.
 const TIER_RANK: Record<TierKey, number> = {
   'unsupported': 0,
   'tier-s': 1,
@@ -48,33 +32,56 @@ function isDowngrade(prev: TierKey | null | undefined, next: TierKey): boolean {
   return TIER_RANK[next] < TIER_RANK[prev];
 }
 
-// Recommended model per tier (kept inline for now; can be moved to Lane A
-// catalog if/when the catalog grows a model-mapping table).
 function recommendedModelFor(tier: TierKey): string {
-  switch (tier) {
-    case 'tier-l':
-      return 'llama3.1:70b-instruct-q4_K_M';
-    case 'tier-m':
-      return 'llama3.1:8b-instruct-q5_K_M';
-    case 'tier-s':
-      return 'llama3.2:3b-instruct-q4_K_M';
-    case 'unsupported':
-    case 'unknown':
-    default:
-      return 'none';
+  if (tier === 'unknown' || tier === 'unsupported') return 'none';
+  return TIER_CATALOG[tier].recommendedModel;
+}
+
+/**
+ * Benchmark-time re-classification.
+ *
+ * The static probe already classified the user against RAM+VRAM floors. The
+ * benchmark then measures actual throughput on the chosen model. We do NOT
+ * reclassify based on a hypothetical `totalRamGB = peakRamGB` — peakRamGB is
+ * the model's footprint (e.g. ~4.5 GB for a 7B), not system memory. Instead
+ * we confirm the stored static tier holds against measured `tokensPerSec`,
+ * stepping down one tier at a time until the throughput floor is satisfied.
+ */
+function reclassifyAgainstTokensPerSec(
+  staticTier: TierKey,
+  tokensPerSec: number,
+): TierKey {
+  if (staticTier === 'unknown' || staticTier === 'unsupported') return staticTier;
+
+  const ladder = ['tier-l', 'tier-m', 'tier-s'] as const;
+  const startIdx = ladder.indexOf(staticTier as (typeof ladder)[number]);
+  if (startIdx === -1) return 'unsupported';
+
+  for (let i = startIdx; i < ladder.length; i++) {
+    const cand = ladder[i];
+    if (tokensPerSec >= TIER_CATALOG[cand].minTokPerSec) return cand;
   }
+  return 'unsupported';
 }
 
 // ── POST /api/tutor/probe/static ─────────────────────────────
-// Client sends static hardware info (RAM, GPU vendor/VRAM, CPU, arch)
-// gathered from `navigator` / `gpu` APIs. We classify and persist.
+// Client sends what the browser actually can detect: `deviceMemoryGb`
+// (navigator.deviceMemory, Chrome-only, capped at 8) and hardware concurrency.
+// Optional GPU/CPU/UA fields are recorded for telemetry but not used in tier
+// classification today (TIER_CATALOG requires VRAM data we can't reliably read
+// cross-browser).
 
 const staticProbeSchema = z.object({
-  totalRamGB: z.number().positive().max(2048),
+  // Accept either of the two conventions: Lane E sent `deviceMemoryGb`,
+  // the original spec used `totalRamGB`. Map to a single internal value.
+  deviceMemoryGb: z.number().positive().max(2048).optional(),
+  totalRamGB: z.number().positive().max(2048).optional(),
   gpuVendor: z.string().min(1).max(64).optional(),
   gpuVramGB: z.number().nonnegative().max(512).optional(),
   cpuModel: z.string().min(1).max(128).optional(),
   osArch: z.string().min(1).max(32).optional(),
+  hardwareConcurrency: z.number().int().nonnegative().max(1024).optional(),
+  userAgent: z.string().max(512).optional(),
 });
 
 tutorHardwareRouter.post('/probe/static', async (req, res) => {
@@ -82,28 +89,45 @@ tutorHardwareRouter.post('/probe/static', async (req, res) => {
     const data = staticProbeSchema.parse(req.body);
     const userId = req.user!.userId;
 
+    const totalRamGB = data.totalRamGB ?? data.deviceMemoryGb;
+
+    // No usable RAM signal → unknown (rather than guessing or rejecting).
+    if (totalRamGB == null) {
+      await prisma.user.update({
+        where: { id: userId },
+        data: {
+          localLlmTutorTier: 'unknown',
+          localLlmLastProbeAt: new Date(),
+        },
+      });
+      res.json({
+        tier: 'unknown',
+        reason:
+          'Browser kann RAM nicht melden (navigator.deviceMemory ist nicht in allen Browsern verfügbar). Der Benchmark-Schritt klärt die Tier-Zuweisung.',
+      });
+      return;
+    }
+
     const tier: TierKey = classifyTier({
-      totalRamGB: data.totalRamGB,
+      totalRamGB,
       gpuVramGB: data.gpuVramGB,
     });
-
-    // Validate the classifier output (defensive: Lane A could regress).
     const safeTier = tierKeySchema.parse(tier);
 
-    const now = new Date();
     await prisma.user.update({
       where: { id: userId },
       data: {
         localLlmTutorTier: safeTier,
-        localLlmLastProbeAt: now,
+        localLlmLastProbeAt: new Date(),
       },
     });
 
     res.json({
       tier: safeTier,
-      reason: safeTier === 'unsupported'
-        ? 'RAM/GPU below minimum requirements for local LLM tutor'
-        : undefined,
+      reason:
+        safeTier === 'unsupported'
+          ? 'RAM/GPU unter dem Tier-S-Floor (16 GB RAM / 8 GB VRAM optional). Lokaler Tutor nicht empfohlen.'
+          : undefined,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -116,13 +140,19 @@ tutorHardwareRouter.post('/probe/static', async (req, res) => {
 });
 
 // ── POST /api/tutor/probe/benchmark ──────────────────────────
-// Client measured tokens/sec by running a short prompt through local
-// Ollama. We re-classify with the actual throughput data and persist.
+// Client measured tokens/sec on local Ollama. We confirm the static tier
+// holds against measured throughput, stepping down one tier at a time if
+// the floor isn't met. `peakRamGB` is accepted-but-ignored — it's the
+// model's footprint, not system memory, so it can't drive classification.
 
 const benchmarkProbeSchema = z.object({
   tokensPerSec: z.number().nonnegative().max(10000),
   timeToFirstTokenMs: z.number().nonnegative().max(600_000),
-  peakRamGB: z.number().nonnegative().max(2048),
+  // Optional metadata for telemetry / logging — not used in classification.
+  peakRamGB: z.number().nonnegative().max(2048).optional(),
+  totalRamGB: z.number().positive().max(2048).optional(),
+  model: z.string().min(1).max(128).optional(),
+  evalCount: z.number().int().nonnegative().max(1_000_000).optional(),
 });
 
 tutorHardwareRouter.post('/probe/benchmark', async (req, res) => {
@@ -130,38 +160,39 @@ tutorHardwareRouter.post('/probe/benchmark', async (req, res) => {
     const data = benchmarkProbeSchema.parse(req.body);
     const userId = req.user!.userId;
 
-    // Load the most recent static probe so the classifier has RAM context.
     const currentUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        localLlmTutorTier: true,
-      },
+      select: { localLlmTutorTier: true },
     });
+    const staticTier = (currentUser?.localLlmTutorTier ?? 'unknown') as TierKey;
 
-    const tier: TierKey = classifyTier({
-      totalRamGB: data.peakRamGB,
-      tokensPerSec: data.tokensPerSec,
-    });
-    const safeTier = tierKeySchema.parse(tier);
+    const safeNext = tierKeySchema.parse(
+      reclassifyAgainstTokensPerSec(staticTier, data.tokensPerSec),
+    );
 
-    const now = new Date();
     await prisma.user.update({
       where: { id: userId },
       data: {
-        localLlmTutorTier: safeTier,
-        localLlmLastProbeAt: now,
+        localLlmTutorTier: safeNext,
+        localLlmLastProbeAt: new Date(),
         localLlmLastTokPerSec: data.tokensPerSec,
       },
     });
 
     logger.info(
-      { userId, prev: currentUser?.localLlmTutorTier ?? null, next: safeTier, tokensPerSec: data.tokensPerSec },
-      'Benchmark probe classified'
+      {
+        userId,
+        prev: staticTier,
+        next: safeNext,
+        tokensPerSec: data.tokensPerSec,
+        model: data.model,
+      },
+      'Benchmark probe classified',
     );
 
     res.json({
-      tier: safeTier,
-      recommendedModel: recommendedModelFor(safeTier),
+      tier: safeNext,
+      recommendedModel: recommendedModelFor(safeNext),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -174,17 +205,26 @@ tutorHardwareRouter.post('/probe/benchmark', async (req, res) => {
 });
 
 // ── POST /api/tutor/probe/telemetry ──────────────────────────
-// Live in-session telemetry, posted ~every 30s. We re-classify with the
-// current tokensPerSec; if the new tier ranks below the stored tier we
-// signal a downgrade (SSE-event 'tier-downgrade' is wired up on the
-// chat-route by Lane B). If `unsupported`, we signal a session close.
+// Live in-session telemetry, posted ~every 5s from TutorChatPanel during a
+// local-llm streaming response. We re-classify based on measured tokensPerSec
+// against the *stored* tier. If the new tier is lower, signal a downgrade;
+// if unsupported, signal a session close.
+//
+// Accepts the actual payload TutorChatPanel emits (`sessionId`, `lessonId`,
+// `tokenCount`, `tokensPerSec?`, `errorCode?`) plus optional `peakRamGB` /
+// `thermalState` for richer telemetry.
 
-const telemetrySchema = z.object({
-  sessionId: z.string().min(1).max(128),
-  tokensPerSec: z.number().nonnegative().max(10000),
-  peakRamGB: z.number().nonnegative().max(2048),
-  thermalState: z.enum(['nominal', 'fair', 'serious', 'critical']).optional(),
-});
+const telemetrySchema = z
+  .object({
+    sessionId: z.string().min(1).max(128).nullable().optional(),
+    lessonId: z.number().int().nullable().optional(),
+    tokenCount: z.number().int().nonnegative().max(1_000_000).optional(),
+    tokensPerSec: z.number().nonnegative().max(10000).optional(),
+    errorCode: z.string().min(1).max(64).optional(),
+    peakRamGB: z.number().nonnegative().max(2048).optional(),
+    thermalState: z.enum(['nominal', 'fair', 'serious', 'critical']).optional(),
+  })
+  .passthrough();
 
 type TelemetryAction = 'continue' | 'downgrade' | 'close';
 
@@ -195,53 +235,56 @@ tutorHardwareRouter.post('/probe/telemetry', async (req, res) => {
 
     const currentUser = await prisma.user.findUnique({
       where: { id: userId },
-      select: {
-        localLlmTutorTier: true,
-      },
+      select: { localLlmTutorTier: true },
     });
-
     const prevTier = (currentUser?.localLlmTutorTier ?? null) as TierKey | null;
 
-    const nextTier: TierKey = classifyTier({
-      totalRamGB: data.peakRamGB,
-      tokensPerSec: data.tokensPerSec,
-    });
-    const safeNext = tierKeySchema.parse(nextTier);
-
-    // Decide action.
     let action: TelemetryAction = 'continue';
-    let returnNewTier: TierKey | undefined = undefined;
+    let safeNext: TierKey = prevTier ?? 'unknown';
 
-    if (safeNext === 'unsupported') {
-      action = 'close';
-      returnNewTier = safeNext;
-    } else if (isDowngrade(prevTier, safeNext)) {
-      action = 'downgrade';
-      returnNewTier = safeNext;
+    // Only re-classify if we have a fresh throughput measurement.
+    if (typeof data.tokensPerSec === 'number' && prevTier && prevTier !== 'unknown') {
+      safeNext = tierKeySchema.parse(
+        reclassifyAgainstTokensPerSec(prevTier, data.tokensPerSec),
+      );
+
+      if (safeNext === 'unsupported') {
+        action = 'close';
+      } else if (isDowngrade(prevTier, safeNext)) {
+        action = 'downgrade';
+      }
     }
 
-    // Persist if the tier changed OR on every telemetry write to keep
-    // lastProbeAt + lastTokPerSec fresh (cheap update, single row).
+    // Always refresh probe metadata (cheap single-row update).
     await prisma.user.update({
       where: { id: userId },
       data: {
         localLlmTutorTier: safeNext,
         localLlmLastProbeAt: new Date(),
-        localLlmLastTokPerSec: data.tokensPerSec,
+        ...(typeof data.tokensPerSec === 'number'
+          ? { localLlmLastTokPerSec: data.tokensPerSec }
+          : {}),
       },
     });
 
     if (action !== 'continue') {
       logger.warn(
-        { userId, sessionId: data.sessionId, prev: prevTier, next: safeNext, action, thermalState: data.thermalState },
-        'Tier action triggered by telemetry'
+        {
+          userId,
+          sessionId: data.sessionId ?? null,
+          prev: prevTier,
+          next: safeNext,
+          action,
+          thermalState: data.thermalState,
+        },
+        'Tier action triggered by telemetry',
       );
     }
 
     res.json({
       tier: safeNext,
       action,
-      ...(returnNewTier ? { newTier: returnNewTier } : {}),
+      ...(action !== 'continue' ? { newTier: safeNext } : {}),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

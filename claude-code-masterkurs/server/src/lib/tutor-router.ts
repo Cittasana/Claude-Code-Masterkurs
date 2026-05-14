@@ -24,11 +24,8 @@ import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// ── Local re-declare of TierKey (source-of-truth in Lane A's
-//    `server/src/lib/local-llm-tier-catalog.ts`). We intentionally do NOT
-//    import the catalog here to keep this file buildable in isolation
-//    pre-merge. Post-merge: prefer the canonical import in any new code.
-export type TierKey = 'tier-s' | 'tier-m' | 'tier-l' | 'unsupported' | 'unknown';
+// Re-export TierKey from Lane A's catalog (canonical source of truth).
+export type { TierKey } from './local-llm-tier-catalog.js';
 
 // ── Public Types ──────────────────────────────────────────────────────────
 
@@ -51,13 +48,23 @@ export interface TutorRouteInput {
   lessonId?: number | null;
   userMessage: string;
   history: TutorHistoryMessage[];
+  /** For local-llm track: which Ollama model the browser should run.
+   *  Resolved by the route handler from User.localLlmTutorTier → TIER_CATALOG. */
+  localLlmModel?: string;
 }
 
 /** Generic SSE event the route emits. The caller (`/api/tutor/chat`)
  *  serialises these to the response stream. */
 export type TutorStreamEvent =
   | { type: 'token'; value: string }
-  | { type: 'prompt-ready'; systemPrompt: string; history: TutorHistoryMessage[]; userMessage: string }
+  | {
+      type: 'prompt-ready';
+      systemPrompt: string;
+      history: TutorHistoryMessage[];
+      userMessage: string;
+      /** Ollama model identifier the browser must use. */
+      model: string;
+    }
   | { type: 'done'; totalTokens: number; assistantContent: string }
   | { type: 'error'; code: string; message: string; hint?: string };
 
@@ -136,11 +143,16 @@ export async function* route(
   //   Server NEVER opens a socket to the user's Ollama instance — this is
   //   the explicit privacy boundary in the multi-track plan.
   if (input.track === 'local-llm') {
+    // Fallback model if the caller didn't resolve one from the user's tier
+    // (e.g. user hasn't completed the onboarding wizard yet). Tier-S default
+    // is the smallest viable model and matches Lane A's catalog.
+    const model = input.localLlmModel ?? 'qwen2.5-coder:3b';
     yield {
       type: 'prompt-ready',
       systemPrompt,
       history: input.history,
       userMessage: input.userMessage,
+      model,
     };
     // The assistant turn is persisted by the client via a follow-up
     // POST (out of scope for this route function — see /api/tutor/chat).

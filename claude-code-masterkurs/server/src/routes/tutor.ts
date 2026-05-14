@@ -20,6 +20,7 @@ import {
   type TutorHistoryMessage,
   type TutorStreamEvent,
 } from '../lib/tutor-router.js';
+import { TIER_CATALOG, type TierKey } from '../lib/local-llm-tier-catalog.js';
 
 export const tutorRouter = Router();
 
@@ -156,7 +157,22 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
     sseWrite(res, 'rate-limit-warning', rateInfo.softCapWarning);
   }
 
-  // ── 6. Stream events from the router.
+  // ── 6. For local-llm: resolve the Ollama model from the user's stored tier
+  //      so the prompt-ready event can carry it. Browser cannot guess.
+  let localLlmModel: string | undefined;
+  if (parsed.track === 'local-llm') {
+    const u = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { localLlmTutorTier: true },
+    });
+    const tier = (u?.localLlmTutorTier ?? null) as TierKey | null;
+    if (tier && tier !== 'unknown' && tier !== 'unsupported') {
+      localLlmModel = TIER_CATALOG[tier].recommendedModel;
+    }
+    // Else: tutor-router's route() applies its default fallback model.
+  }
+
+  // ── 7. Stream events from the router.
   let assistantContent = '';
   let totalTokens = 0;
   let errored = false;
@@ -168,6 +184,7 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
       lessonId: parsed.lessonId ?? null,
       userMessage: parsed.message,
       history,
+      localLlmModel,
     });
 
     for await (const ev of generator as AsyncGenerator<TutorStreamEvent>) {
@@ -178,6 +195,7 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
           systemPrompt: ev.systemPrompt,
           history: ev.history,
           userMessage: ev.userMessage,
+          model: ev.model,
           sessionId: session.id,
         });
       } else if (ev.type === 'done') {

@@ -318,6 +318,9 @@ const LocalLlmTutorOnboarding = ({
       const benchRes = await api.post<BenchmarkResponse>('/api/tutor/probe/benchmark', {
         tokensPerSec,
         timeToFirstTokenMs: ttfbMs,
+        // Pass the user's reported deviceMemory so the server can refresh
+        // its tier classification with a fresh RAM signal if needed.
+        ...(typeof deviceMemory === 'number' ? { totalRamGB: deviceMemory } : {}),
         model: recommended.name,
         evalCount,
       });

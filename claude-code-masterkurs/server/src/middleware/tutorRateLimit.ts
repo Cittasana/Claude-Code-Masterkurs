@@ -17,6 +17,16 @@
 //
 // The track is read from the request body (`track`). If absent we default
 // to cloud-paying-user behaviour (which is the safer side).
+//
+// KNOWN LIMITATION (M2 in 2026-05-14 audit): the count-then-insert pattern
+// is non-atomic. Two concurrent free-tier requests arriving at used=19/20
+// will both pass the cap-check and both insert, ending at 21 messages —
+// one over the cap. Acceptable trade-off today: Railway runs a single Node
+// instance + the frontend disables the Send button while a stream is in
+// flight, so the realistic blast radius is ~+1 message per spam-clicker.
+// If this becomes a revenue issue, replace the count with a per-user
+// mutex (in-memory Map<userId, Promise>) or move to an atomic Redis
+// INCR + TTL counter.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { Request, Response, NextFunction } from 'express';

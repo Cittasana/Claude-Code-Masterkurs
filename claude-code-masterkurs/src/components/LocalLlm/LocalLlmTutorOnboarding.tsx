@@ -235,10 +235,11 @@ const LocalLlmTutorOnboarding = ({
     setCorsChecking(true);
     setCorsError(null);
     try {
-      // Browser will block this if Ollama doesn't return matching CORS headers
-      const res = await fetch('http://localhost:11434/api/version', {
-        headers: { Origin: origin },
-      });
+      // The browser auto-sends `Origin: <page-origin>` — `Origin` is on the
+      // Forbidden Header Names list and is silently stripped if we set it
+      // manually, so we don't bother. CORS succeeds iff Ollama's
+      // OLLAMA_ORIGINS env allows our page origin.
+      const res = await fetch('http://localhost:11434/api/version');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       setCorsVerified(true);
     } catch (err) {
@@ -250,7 +251,7 @@ const LocalLlmTutorOnboarding = ({
     } finally {
       setCorsChecking(false);
     }
-  }, [origin]);
+  }, []);
 
   const verifyModelInstalled = useCallback(async () => {
     setModelChecking(true);

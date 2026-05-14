@@ -3,10 +3,50 @@ import {
   useRef,
   useEffect,
   useCallback,
-  useMemo,
+  lazy,
+  Suspense,
   type FormEvent,
 } from 'react';
 import { Send, MessageSquare, AlertTriangle, Loader2, X } from 'lucide-react';
+import {
+  LocalLlmTutorHealthBadge,
+  type TierKey as LocalLlmTierKey,
+} from '../LocalLlm';
+
+const LocalLlmTutorOnboarding = lazy(() =>
+  import('../LocalLlm').then((m) => ({ default: m.LocalLlmTutorOnboarding })),
+);
+
+const LOCAL_LLM_TIER_STORAGE_KEY = 'claude-code-masterkurs.local-llm-tier';
+
+interface PersistedLocalLlmTier {
+  tier: LocalLlmTierKey;
+  recommendedModel: string;
+  tokensPerSec: number;
+}
+
+function loadPersistedLocalLlmTier(): PersistedLocalLlmTier | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(LOCAL_LLM_TIER_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as PersistedLocalLlmTier) : null;
+  } catch {
+    return null;
+  }
+}
+
+function persistLocalLlmTier(value: PersistedLocalLlmTier | null): void {
+  if (typeof window === 'undefined') return;
+  try {
+    if (value) {
+      window.localStorage.setItem(LOCAL_LLM_TIER_STORAGE_KEY, JSON.stringify(value));
+    } else {
+      window.localStorage.removeItem(LOCAL_LLM_TIER_STORAGE_KEY);
+    }
+  } catch {
+    /* ignore quota / disabled storage */
+  }
+}
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css';
 import 'prismjs/components/prism-bash';
@@ -211,17 +251,15 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
   const streamingMsgIdRef = useRef<string | null>(null);
   const rafScheduledRef = useRef<boolean>(false);
 
-  // Local-llm onboarding-ready check (Lane E builds the real selector;
-  // we stub it here so this lane builds independently).
-  // Always render the slot; show a placeholder if currentTrack is
-  // local-llm and the (future) onboarding flag is not set.
-  const localLlmOnboardingReady = useMemo(() => {
-    // Phase-3 stub: assume the user has not completed local-llm onboarding
-    // yet. Lane E will replace this with a real `useTutorReady()` hook
-    // pulling tier from useTrackStore (or a sibling store).
-    return false;
-  }, []);
+  // Local-llm onboarding state — persists tier + recommended model + benchmark
+  // result in localStorage so the wizard runs once per device.
+  const [localLlmTier, setLocalLlmTier] = useState<PersistedLocalLlmTier | null>(
+    () => loadPersistedLocalLlmTier(),
+  );
+  const [liveTokensPerSec, setLiveTokensPerSec] = useState<number | undefined>(undefined);
 
+  const localLlmOnboardingReady =
+    localLlmTier !== null && localLlmTier.tier !== 'unsupported' && localLlmTier.tier !== 'unknown';
   const showOnboardingSlot =
     currentTrack === 'local-llm' && !localLlmOnboardingReady;
 
@@ -667,6 +705,14 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
           <span className="text-[10px] font-mono text-apple-muted px-2 py-0.5 rounded-full border border-apple-border/40">
             {currentTrack}
           </span>
+          {currentTrack === 'local-llm' && localLlmTier && (
+            <LocalLlmTutorHealthBadge
+              tier={localLlmTier.tier}
+              tokensPerSec={liveTokensPerSec ?? localLlmTier.tokensPerSec}
+              onDegrade={({ message }) => setErrorBanner(message)}
+              compact
+            />
+          )}
         </div>
         <button
           type="button"
@@ -699,15 +745,33 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
         </div>
       )}
 
-      {/* Onboarding placeholder for local-llm track */}
+      {/* Local-LLM onboarding wizard (Lane E) — lazy-loaded so other tracks pay no cost */}
       {showOnboardingSlot && (
         <div
           data-testid="local-llm-onboarding-slot"
-          className="px-4 py-3 bg-apple-info/[0.06] border-b border-apple-info/20"
+          className="border-b border-apple-border/40"
         >
-          <p className="text-[12px] text-apple-textSecondary leading-relaxed">
-            Lokaler Tutor noch nicht eingerichtet — Onboarding folgt …
-          </p>
+          <Suspense
+            fallback={
+              <div className="px-4 py-3 flex items-center gap-2 text-apple-muted">
+                <Loader2 size={14} className="animate-spin" />
+                <span className="text-[12px]">Onboarding lädt …</span>
+              </div>
+            }
+          >
+            <LocalLlmTutorOnboarding
+              onComplete={(result) => {
+                const persisted: PersistedLocalLlmTier = {
+                  tier: result.tier,
+                  recommendedModel: result.recommendedModel,
+                  tokensPerSec: result.tokensPerSec,
+                };
+                persistLocalLlmTier(persisted);
+                setLocalLlmTier(persisted);
+                setLiveTokensPerSec(result.tokensPerSec);
+              }}
+            />
+          </Suspense>
         </div>
       )}
 

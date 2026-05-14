@@ -20,6 +20,7 @@ import { adminRouter } from './routes/admin.js';
 import { contentRouter } from './routes/content.js';
 import { ticketsRouter } from './routes/tickets.js';
 import { tutorRouter } from './routes/tutor.js';
+import { tutorHardwareRouter } from './routes/tutor-hardware.js';
 import { globalRateLimit } from './middleware/rateLimit.js';
 import { initSentry, Sentry } from './lib/sentry.js';
 import { startDiscordBot, stopDiscordBot } from './lib/discord-bot.js';
@@ -139,6 +140,7 @@ app.use('/api/admin', adminRouter);
 app.use('/api/content', contentRouter);
 app.use('/api/tickets', ticketsRouter);
 app.use('/api/tutor', tutorRouter);
+app.use('/api/tutor', tutorHardwareRouter);
 
 // ── 404 Handler ──────────────────────────────────────────────
 app.use((_req, res) => {

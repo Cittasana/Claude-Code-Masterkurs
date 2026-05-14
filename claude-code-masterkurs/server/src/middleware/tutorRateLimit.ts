@@ -45,6 +45,9 @@ export interface TutorRateLimitInfo {
   isPaid: boolean;
   used: number;
   cap: number;
+  /** Soft-cap warning when the user is approaching the paid monthly cap.
+   *  `percent` is an integer 0–100 (NOT a 0–1 ratio) so the frontend can
+   *  display it directly: `${percent}%`. TutorChatPanel checks `percent >= 80`. */
   softCapWarning?: { used: number; cap: number; percent: number };
 }
 
@@ -181,7 +184,11 @@ export async function tutorRateLimit(
       info.softCapWarning = {
         used,
         cap: PAID_MONTHLY_CAP,
-        percent: Math.round((used / PAID_MONTHLY_CAP) * 100) / 100,
+        // Integer percent 0–100 so the frontend banner condition
+        // `percent >= 80` and display `${percent}%` both work directly.
+        // Previously this was `/ 100`-ed into a 0–1 ratio, which made the
+        // banner condition never fire and the display read `1%`.
+        percent: Math.round((used / PAID_MONTHLY_CAP) * 100),
       };
     }
 

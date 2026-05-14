@@ -27,6 +27,13 @@ model User {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
+  // Local-LLM tutor tier tracking (Phase 3 — Multi-Track)
+  // Tier classification result from hardware probing (static + benchmark + telemetry).
+  // Allowed values: 'tier-s' | 'tier-m' | 'tier-l' | 'unsupported'
+  localLlmTutorTier     String?   @map("local_llm_tutor_tier")
+  localLlmLastProbeAt   DateTime? @map("local_llm_last_probe_at")
+  localLlmLastTokPerSec Float?    @map("local_llm_last_tok_per_sec")
+
   // Relations
   progress           UserProgress?
   quizResults        QuizResult[]

@@ -24,6 +24,7 @@ import QuizComponent from '../components/Quiz/QuizComponent';
 import PaywallOverlay from '../components/Paywall/PaywallOverlay';
 import { LessonSkeleton } from '../components/UI/Skeleton';
 import FreshnessBanner from '../components/Lessons/FreshnessBanner';
+import { TutorChatPanel } from '../components/Tutor';
 import { isFreeTierLesson } from '../lib/lessons-config';
 import { lessonAccessApi } from '../lib/api';
 import { useLearningTimer } from '../hooks/useLearningTimer';
@@ -533,6 +534,11 @@ const LessonView = () => {
                 </div>
               </div>
             )}
+
+            {/* Tutor Chat Panel — collapsible AI tutor sidebar (Phase 3) */}
+            <div className="mb-10">
+              <TutorChatPanel lessonId={lessonId} />
+            </div>
 
             {/* Navigation */}
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 sm:gap-0 py-6 sm:py-8 border-t border-apple-border/40">

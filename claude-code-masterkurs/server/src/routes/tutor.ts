@@ -88,9 +88,13 @@ const TRACK_VALUES = [
 
 const chatSchema = z.object({
   track: z.enum(TRACK_VALUES),
-  lessonId: z.number().int().optional(),
+  // Accept `null` from clients that initialize state as `null` and forget
+  // to strip it before POSTing. zod's plain `.optional()` rejects explicit
+  // `null`, which produced a 400 on the very first chat turn (sessionId
+  // was `null` until the SSE `done` event populated it).
+  lessonId: z.number().int().nullable().optional(),
   message: z.string().min(1).max(8000),
-  sessionId: z.string().optional(),
+  sessionId: z.string().nullable().optional(),
 });
 
 tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {

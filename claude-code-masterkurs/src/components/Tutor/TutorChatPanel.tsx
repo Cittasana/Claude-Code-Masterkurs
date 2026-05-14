@@ -543,11 +543,18 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
             Accept: 'text/event-stream',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
+          // Omit `lessonId` if undefined and `sessionId` if null — the server's
+          // zod schema uses `.optional()` which accepts missing keys but
+          // rejects explicit nulls. JSON.stringify drops `undefined` values
+          // automatically, but `null` would be serialized as `"key": null`
+          // and trigger a 400.
           body: JSON.stringify({
             track: currentTrack,
-            lessonId,
+            ...(typeof lessonId === 'number' && !Number.isNaN(lessonId)
+              ? { lessonId }
+              : {}),
             message: trimmed,
-            sessionId,
+            ...(sessionId ? { sessionId } : {}),
           }),
           signal: ctl.signal,
         });

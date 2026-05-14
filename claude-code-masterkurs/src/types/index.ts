@@ -1,3 +1,9 @@
+// ── Multi-Track Foundation (Phase 0b) ─────────────────────────────
+// One TrackKey per learning track. Add a new value here, then register
+// it in src/data/tracks.ts and add a Stripe product mapping in
+// src/lib/stripe.ts before exposing it in the UI.
+export type TrackKey = 'claude-code' | 'claude-desktop' | 'codex' | 'local-llm';
+
 // Lesson Types
 export interface Lesson {
   id: number;
@@ -7,6 +13,12 @@ export interface Lesson {
   duration: string;
   objectives: string[];
   content: LessonContent[];
+  /**
+   * Which learning track this lesson belongs to. Optional during the
+   * Phase 0/1 transition — code defaults to 'claude-code' when missing
+   * (the legacy single-track value). Made required after Phase 1 ships.
+   */
+  track?: TrackKey;
   /** ISO datetime of last successful freshness audit (no issues). */
   lastVerified?: string | null;
   /** Open freshness warnings from the agent's weekly audit. */

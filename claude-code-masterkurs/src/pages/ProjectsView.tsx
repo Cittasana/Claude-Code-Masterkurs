@@ -18,6 +18,8 @@ import type { CapstoneProject } from '../data/capstoneProjects';
 import { contentApi } from '../lib/api';
 import type { AdminCapstoneConfig } from '../lib/api';
 import { useProjectHubStore } from '../store/projectHubStore';
+import { useTrackStore } from '../store/useTrackStore';
+import { TRACKS } from '../data/tracks';
 
 /** Map API capstone config to the local CapstoneProject shape */
 function toCapstoneProject(c: AdminCapstoneConfig): CapstoneProject {
@@ -75,11 +77,16 @@ function ProjectOverview({ capstoneProjects }: { capstoneProjects: CapstoneProje
   const { t } = useTranslation();
   const [filterDifficulty, setFilterDifficulty] = useState<number | null>(null);
   const { completedSteps } = useProjectHubStore();
+  const currentTrack = useTrackStore((s) => s.currentTrack);
 
+  // Phase 1 W2c: track-aware. Capstone projects have no track field
+  // yet — they're all claude-code. Show empty state on other tracks.
+  const trackHasProjects = currentTrack === 'claude-code';
   const filtered = useMemo(() => {
+    if (!trackHasProjects) return [];
     if (filterDifficulty === null) return capstoneProjects;
     return capstoneProjects.filter((p) => p.difficulty === filterDifficulty);
-  }, [filterDifficulty, capstoneProjects]);
+  }, [filterDifficulty, capstoneProjects, trackHasProjects]);
 
   const getDifficultyLabel = (d: 1 | 2 | 3) => t(getCapstoneProjectDifficultyKey(d));
 
@@ -277,7 +284,9 @@ function ProjectOverview({ capstoneProjects }: { capstoneProjects: CapstoneProje
         <div className="apple-card text-center py-16">
           <FolderOpen size={40} className="text-apple-muted mx-auto mb-3" />
           <p className="text-apple-textSecondary">
-            {t('projects.noProjects')}
+            {trackHasProjects
+              ? t('projects.noProjects')
+              : `Noch keine Projekte für ${TRACKS[currentTrack].label} verfügbar.`}
           </p>
         </div>
       )}

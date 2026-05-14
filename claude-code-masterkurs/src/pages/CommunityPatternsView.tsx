@@ -15,6 +15,8 @@ import {
   Zap,
 } from 'lucide-react';
 import { patterns, patternCategories } from '../data/patterns';
+import { useTrackStore } from '../store/useTrackStore';
+import { TRACKS } from '../data/tracks';
 
 const CommunityPatternsView = () => {
   const { t } = useTranslation();
@@ -22,13 +24,18 @@ const CommunityPatternsView = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const currentTrack = useTrackStore((s) => s.currentTrack);
 
   const lastUpdatePatterns = useMemo(
     () => patterns.filter((p) => p.lastUpdate === true),
     []
   );
 
+  // Phase 1 W2c: track-aware. Existing patterns are all claude-code.
+  const trackHasPatterns = currentTrack === 'claude-code';
+
   const filteredPatterns = useMemo(() => {
+    if (!trackHasPatterns) return [];
     return patterns.filter((p) => {
       const matchesSearch =
         !searchTerm ||
@@ -40,7 +47,7 @@ const CommunityPatternsView = () => {
       const matchesCategory = !selectedCategory || p.category === selectedCategory;
       return matchesSearch && matchesCategory;
     });
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, trackHasPatterns]);
 
   const groupedPatterns = useMemo(() => {
     const groups: Record<string, typeof patterns> = {};
@@ -306,10 +313,12 @@ const CommunityPatternsView = () => {
         <div className="text-center py-16">
           <Search size={40} className="text-apple-muted mx-auto mb-4" />
           <p className="text-apple-text text-lg font-medium mb-2">
-            Keine Patterns gefunden
+            {trackHasPatterns
+              ? 'Keine Patterns gefunden'
+              : `Noch keine Patterns für ${TRACKS[currentTrack].label} verfügbar.`}
           </p>
           <p className="text-apple-textSecondary text-sm">
-            {t('patterns.tryOtherSearch')}
+            {trackHasPatterns ? t('patterns.tryOtherSearch') : ''}
           </p>
           <button
             onClick={() => {

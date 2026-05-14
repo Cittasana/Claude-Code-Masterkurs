@@ -21,7 +21,9 @@ import {
 import { contentApi } from '../lib/api';
 import { useTranslation } from 'react-i18next';
 import { useChallengeStore } from '../store/challengeStore';
+import { useTrackStore } from '../store/useTrackStore';
 import { getCategoryI18nKey } from '../utils/challengeI18n';
+import { TRACKS } from '../data/tracks';
 import type { CodingChallenge, ChallengeResult, ChallengeValidation } from '../types';
 import { useLearningTimer } from '../hooks/useLearningTimer';
 
@@ -45,6 +47,7 @@ const ChallengesView = () => {
   const [filterCategory, setFilterCategory] = useState<string>('Alle');
   const [filterSource, setFilterSource] = useState<SourceFilter>('all');
   const { results, isCompleted } = useChallengeStore();
+  const currentTrack = useTrackStore((s) => s.currentTrack);
 
   // ── API Data Loading ──────────────────────────────────────
   const [allChallenges, setAllChallenges] = useState<CodingChallenge[]>([]);
@@ -98,7 +101,13 @@ const ChallengesView = () => {
   const completedCount = Object.values(results).filter((r) => r.completed).length;
   const totalPoints = Object.values(results).reduce((s, r) => s + r.score, 0);
 
+  // Phase 1 W2c: track-aware. Existing challenge data has a 'source'
+  // field (claude-code | live-coding) — both belong to the claude-code
+  // track. Other tracks (freelancer, codex, etc.) don't have challenges
+  // yet, so we render an empty-state for them.
+  const trackHasChallenges = currentTrack === 'claude-code';
   const filtered = useMemo(() => {
+    if (!trackHasChallenges) return [];
     return allChallenges.filter((ch) => {
       if (filterSource !== 'all') {
         const source = ch.source ?? 'claude-code';
@@ -108,7 +117,7 @@ const ChallengesView = () => {
       if (filterCategory !== 'Alle' && ch.category !== filterCategory) return false;
       return true;
     });
-  }, [allChallenges, filterDifficulty, filterCategory, filterSource]);
+  }, [allChallenges, filterDifficulty, filterCategory, filterSource, trackHasChallenges]);
 
   if (loading) {
     return (
@@ -330,7 +339,9 @@ const ChallengesView = () => {
         <div className="apple-card text-center py-16">
           <Zap size={40} className="text-apple-muted mx-auto mb-3" />
           <p className="text-apple-textSecondary">
-            {t('challenges.noChallenges')}
+            {trackHasChallenges
+              ? t('challenges.noChallenges')
+              : `Noch keine Challenges für ${TRACKS[currentTrack].label} verfügbar.`}
           </p>
         </div>
       )}

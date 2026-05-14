@@ -35,10 +35,46 @@ function sseWrite(
 ): void {
   res.write(`event: ${event}\n`);
   res.write(`data: ${JSON.stringify(data)}\n\n`);
+  // Force-flush per event so buffering proxies (Cloudflare, nginx) don't
+  // hold the stream until a write-buffer fills. Without flush the user sees
+  // chunked-but-late tokens; with it, true token-by-token streaming.
+  // `flush` exists when compression middleware is in the pipe; optional-chain
+  // handles raw-stream responses.
+  (res as { flush?: () => void }).flush?.();
 }
 
 function hashContent(content: string): string {
   return createHash('sha256').update(content).digest('hex');
+}
+
+/**
+ * In-memory idempotency cache for the /chat endpoint.
+ *
+ * Maps `sessionId` → `{hash, ts}` of the most recent user message. The chat
+ * route consults this cache BEFORE doing the DB findFirst → create dance.
+ * That makes the dedupe atomic on a single Node process (Railway runs this
+ * server as a single instance today; if we ever scale to multi-instance,
+ * swap this for a Redis SETNX with TTL).
+ *
+ * Entries auto-expire after `IDEMPOTENCY_WINDOW_MS`. We also lazy-GC on
+ * every check so the Map can't grow unbounded.
+ */
+const IDEMPOTENCY_WINDOW_MS = 5_000;
+const recentMessages = new Map<string, { hash: string; ts: number }>();
+
+function checkIdempotency(sessionId: string, hash: string): boolean {
+  const now = Date.now();
+  // Lazy GC: drop expired entries on each call. Cheap because the Map is
+  // bounded by the count of concurrent live tutor sessions.
+  for (const [key, entry] of recentMessages) {
+    if (now - entry.ts > IDEMPOTENCY_WINDOW_MS) recentMessages.delete(key);
+  }
+  const prev = recentMessages.get(sessionId);
+  return !!prev && prev.hash === hash && now - prev.ts <= IDEMPOTENCY_WINDOW_MS;
+}
+
+function markIdempotency(sessionId: string, hash: string): void {
+  recentMessages.set(sessionId, { hash, ts: Date.now() });
 }
 
 const TRACK_VALUES = [
@@ -95,16 +131,12 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
   // ── 2. Idempotency: same user content within the last 5s on the same
   //      session is treated as a retry — we don't re-insert, and we
   //      return a short-circuit SSE that closes the connection cleanly.
-  const recentUserMsg = await prisma.tutorMessage.findFirst({
-    where: {
-      sessionId: session.id,
-      role: 'user',
-      createdAt: { gte: new Date(Date.now() - 5_000) },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-
+  //
+  //      Atomic check via in-memory Map (`checkIdempotency`) — eliminates
+  //      the find+create race that a DB-only check would have. Concurrent
+  //      double-fire of identical content is collapsed to a single insert.
   const incomingHash = hashContent(parsed.message);
+  const isDuplicate = checkIdempotency(session.id, incomingHash);
 
   // Begin SSE headers up front so any subsequent error is delivered via SSE.
   res.setHeader('Content-Type', 'text/event-stream');
@@ -113,7 +145,7 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
   res.setHeader('X-Accel-Buffering', 'no');
   res.flushHeaders?.();
 
-  if (recentUserMsg && hashContent(recentUserMsg.content) === incomingHash) {
+  if (isDuplicate) {
     sseWrite(res, 'done', {
       sessionId: session.id,
       totalTokens: 0,
@@ -124,6 +156,9 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
   }
 
   // ── 3. Persist user message (counts toward rate limit next time).
+  // Mark idempotency BEFORE the await so a concurrent second request
+  // sees the in-memory entry even if the DB insert is still in flight.
+  markIdempotency(session.id, incomingHash);
   await prisma.tutorMessage.create({
     data: {
       sessionId: session.id,
@@ -132,19 +167,18 @@ tutorRouter.post('/chat', tutorRateLimit, async (req, res) => {
     },
   });
 
-  // ── 4. Build history for the model (exclude the just-added user msg —
-  //      it goes in as the trailing `userMessage` for the router).
+  // ── 4. Build history for the model. The most-recently-inserted row is
+  //      the user message from step 3 — `.slice(0, -1)` drops it so the
+  //      router doesn't see it twice (router prepends `userMessage`
+  //      explicitly).
   const priorMessages = await prisma.tutorMessage.findMany({
     where: {
       sessionId: session.id,
       role: { in: ['user', 'assistant'] },
-      createdAt: { lt: new Date() },
     },
     orderBy: { createdAt: 'asc' },
   });
 
-  // The last message in priorMessages is the user message we just inserted;
-  // drop it so we don't double-count.
   const history: TutorHistoryMessage[] = priorMessages
     .slice(0, -1)
     .map((m) => ({

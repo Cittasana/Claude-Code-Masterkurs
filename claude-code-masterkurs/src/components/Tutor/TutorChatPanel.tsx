@@ -237,6 +237,11 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
   const [input, setInput] = useState('');
   const [connState, setConnState] = useState<ConnState>('idle');
   const [errorBanner, setErrorBanner] = useState<string | null>(null);
+  /** Toast-style banner for non-fatal tier degradations (Lane E health badge
+   *  fires `onDegrade` when the live tok/s drops below the stored tier's
+   *  floor). Auto-dismisses after 6s so it behaves like a warning toast
+   *  instead of permanently occupying the panel. */
+  const [degradeBanner, setDegradeBanner] = useState<string | null>(null);
   const [rateLimit, setRateLimit] = useState<RateLimitWarning | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
 
@@ -294,6 +299,13 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages.length]);
+
+  // Auto-dismiss the degrade banner after 6s so it behaves like a toast.
+  useEffect(() => {
+    if (!degradeBanner) return;
+    const t = setTimeout(() => setDegradeBanner(null), 6_000);
+    return () => clearTimeout(t);
+  }, [degradeBanner]);
 
   // Highlight code blocks after every assistant message reaches `done`.
   useEffect(() => {
@@ -728,7 +740,7 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
             <LocalLlmTutorHealthBadge
               tier={localLlmTier.tier}
               tokensPerSec={liveTokensPerSec ?? localLlmTier.tokensPerSec}
-              onDegrade={({ message }) => setErrorBanner(message)}
+              onDegrade={({ message }) => setDegradeBanner(message)}
               compact
             />
           )}
@@ -744,6 +756,30 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
           <X size={14} />
         </button>
       </header>
+
+      {/* Tier-downgrade toast (auto-dismisses after 6s).
+          Warning-toned, NOT error-toned — degradation is informational, not a crash. */}
+      {degradeBanner && (
+        <div
+          data-testid="local-llm-degrade-toast"
+          className="px-4 py-2 bg-apple-warning/10 border-b border-apple-warning/30 flex items-start gap-2"
+          role="status"
+          aria-live="polite"
+        >
+          <AlertTriangle size={13} className="text-apple-warning mt-0.5 flex-shrink-0" />
+          <p className="text-[12px] text-apple-warning leading-snug flex-1">
+            {degradeBanner}
+          </p>
+          <button
+            type="button"
+            onClick={() => setDegradeBanner(null)}
+            aria-label="Toast schließen"
+            className="text-apple-warning hover:text-apple-text transition-colors -mt-0.5"
+          >
+            <X size={12} />
+          </button>
+        </div>
+      )}
 
       {/* Rate-limit warning */}
       {rateLimit && rateLimit.percent >= 80 && (

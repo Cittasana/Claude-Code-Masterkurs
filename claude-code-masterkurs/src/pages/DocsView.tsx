@@ -23,7 +23,7 @@ import {
 } from 'lucide-react';
 import ClaudeCodeLogo from '../components/UI/ClaudeCodeLogo';
 import { contentApi } from '../lib/api';
-import type { AdminOfficialDoc } from '../lib/api';
+import type { AdminOfficialDoc, AdminLessonConfig, AdminQuiz, AdminProjectConfig } from '../lib/api';
 
 const officialDocsIndexUrl = 'https://code.claude.com/docs/llms.txt';
 
@@ -32,11 +32,15 @@ const officialDocsIndexUrl = 'https://code.claude.com/docs/llms.txt';
 // Erklärt warum der Masterkurs wichtig ist und was er bietet
 // ─────────────────────────────────────────────────────────────
 
-const STATS = [
-  { value: '30', label: 'Lektionen', icon: BookOpen },
-  { value: '3', label: 'Schwierigkeitsstufen', icon: Layers },
-  { value: '30', label: 'Praxis-Quizzes', icon: Brain },
-  { value: '6+', label: 'Projekte', icon: Code2 },
+// Static labels for the stats strip — values are filled at runtime from
+// the CMS so the displayed numbers can never drift from the source of truth.
+// Levels stays hardcoded ('3') because adding a 4th level is a curriculum
+// decision, not an automated content change.
+const STAT_DEFS: { key: 'lessons' | 'levels' | 'quizzes' | 'projects'; label: string; icon: typeof BookOpen }[] = [
+  { key: 'lessons', label: 'Lektionen', icon: BookOpen },
+  { key: 'levels', label: 'Schwierigkeitsstufen', icon: Layers },
+  { key: 'quizzes', label: 'Praxis-Quizzes', icon: Brain },
+  { key: 'projects', label: 'Projekte', icon: Code2 },
 ];
 
 const LEVELS = [
@@ -198,11 +202,40 @@ function DocsCtaSection() {
 
 const DocsView = () => {
   const [allDocs, setAllDocs] = useState<AdminOfficialDoc[]>([]);
+  const [lessons, setLessons] = useState<AdminLessonConfig[]>([]);
+  const [quizzes, setQuizzes] = useState<AdminQuiz[]>([]);
+  const [projects, setProjects] = useState<AdminProjectConfig[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    contentApi.getOfficialDocs().then(res => setAllDocs(res.data)).catch(() => {}).finally(() => setLoading(false));
+    let cancelled = false;
+    Promise.allSettled([
+      contentApi.getOfficialDocs(),
+      contentApi.getLessons({ track: 'main' }),
+      contentApi.getQuizzes(),
+      contentApi.getProjects(),
+    ])
+      .then(([docsRes, lessonsRes, quizzesRes, projectsRes]) => {
+        if (cancelled) return;
+        if (docsRes.status === 'fulfilled' && Array.isArray(docsRes.value.data)) setAllDocs(docsRes.value.data);
+        if (lessonsRes.status === 'fulfilled' && Array.isArray(lessonsRes.value.data)) setLessons(lessonsRes.value.data);
+        if (quizzesRes.status === 'fulfilled' && Array.isArray(quizzesRes.value.data)) setQuizzes(quizzesRes.value.data);
+        if (projectsRes.status === 'fulfilled' && Array.isArray(projectsRes.value.data)) setProjects(projectsRes.value.data);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
+
+  const statValues: Record<'lessons' | 'levels' | 'quizzes' | 'projects', string> = {
+    lessons: lessons.length > 0 ? `${lessons.length}` : '...',
+    levels: '3',
+    quizzes: quizzes.length > 0 ? `${quizzes.length}` : '...',
+    projects: projects.length > 0 ? `${projects.length}` : '...',
+  };
 
   const officialDocsOverview = allDocs.filter(d => d.category === 'overview');
   const officialDocsCore = allDocs.filter(d => d.category === 'core');
@@ -262,15 +295,15 @@ const DocsView = () => {
       {/* ── Stats Bar ──────────────────────────────────── */}
       <section className="mb-16">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {STATS.map((stat) => {
+          {STAT_DEFS.map((stat) => {
             const Icon = stat.icon;
             return (
               <div
-                key={stat.label}
+                key={stat.key}
                 className="apple-card text-center py-6"
               >
                 <Icon size={22} className="mx-auto mb-3 text-apple-accent" />
-                <p className="num-serif text-[clamp(28px,3vw,40px)] leading-none">{stat.value}</p>
+                <p className="num-serif text-[clamp(28px,3vw,40px)] leading-none">{statValues[stat.key]}</p>
                 <p className="text-[11px] text-apple-muted mt-2 font-mono uppercase tracking-[0.06em]">{stat.label}</p>
               </div>
             );
@@ -350,7 +383,7 @@ const DocsView = () => {
             Der Lehrplan
           </h2>
           <p className="text-apple-muted max-w-lg mx-auto">
-            49 Lektionen in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
+            {statValues.lessons === '...' ? 'Lektionen' : `${statValues.lessons} Lektionen`} in 3 Schwierigkeitsstufen — vom Einsteiger zum Experten.
           </p>
         </div>
 

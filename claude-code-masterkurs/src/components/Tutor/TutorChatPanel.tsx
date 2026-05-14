@@ -258,10 +258,29 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
   );
   const [liveTokensPerSec, setLiveTokensPerSec] = useState<number | undefined>(undefined);
 
-  const localLlmOnboardingReady =
+  // The wizard has run at least once iff we have a persisted tier (any tier,
+  // including `unsupported` / `unknown`). We do NOT re-trigger the wizard on
+  // subsequent panel opens — the user explicitly went through it and got an
+  // outcome. For unsupported / unknown we show a locked-state banner instead;
+  // the user can opt back into the wizard via the "Onboarding wiederholen" button.
+  const localLlmWizardCompletedOnce = localLlmTier !== null;
+  const localLlmTierUsable =
     localLlmTier !== null && localLlmTier.tier !== 'unsupported' && localLlmTier.tier !== 'unknown';
-  const showOnboardingSlot =
-    currentTrack === 'local-llm' && !localLlmOnboardingReady;
+
+  const showOnboardingWizard =
+    currentTrack === 'local-llm' && !localLlmWizardCompletedOnce;
+  const showOnboardingLockedBanner =
+    currentTrack === 'local-llm' && localLlmWizardCompletedOnce && !localLlmTierUsable;
+  /** True while the user can't actually chat on the local-llm track —
+   *  either the wizard is open or the locked-banner is shown. Used to
+   *  disable the textarea + send button. */
+  const localLlmChatBlocked = showOnboardingWizard || showOnboardingLockedBanner;
+
+  const restartOnboarding = useCallback(() => {
+    persistLocalLlmTier(null);
+    setLocalLlmTier(null);
+    setLiveTokensPerSec(undefined);
+  }, []);
 
   // ── Cleanup pending streams on unmount ─────────────────────
   useEffect(() => {
@@ -745,8 +764,11 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
         </div>
       )}
 
-      {/* Local-LLM onboarding wizard (Lane E) — lazy-loaded so other tracks pay no cost */}
-      {showOnboardingSlot && (
+      {/* Local-LLM onboarding wizard (Lane E) — lazy-loaded; renders only on
+          the FIRST open per device. After completion (any tier) we never
+          re-render the wizard automatically; the locked-state banner below
+          takes over for unsupported/unknown outcomes. */}
+      {showOnboardingWizard && (
         <div
           data-testid="local-llm-onboarding-slot"
           className="border-b border-apple-border/40"
@@ -772,6 +794,49 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
               }}
             />
           </Suspense>
+        </div>
+      )}
+
+      {/* Locked-state banner for unsupported / unknown tier outcomes —
+          shown instead of the wizard so users who already ran the wizard
+          and got "your hardware doesn't qualify" aren't perpetually nagged. */}
+      {showOnboardingLockedBanner && localLlmTier && (
+        <div
+          data-testid="local-llm-locked-banner"
+          className="px-4 py-3 border-b border-apple-border/40 bg-apple-warning/[0.08]"
+        >
+          <div className="flex items-start gap-2">
+            <AlertTriangle
+              size={14}
+              className="text-apple-warning mt-0.5 flex-shrink-0"
+              aria-hidden="true"
+            />
+            <div className="flex-1 space-y-2">
+              <p className="text-[12px] text-apple-text leading-relaxed">
+                {localLlmTier.tier === 'unsupported' ? (
+                  <>
+                    <strong>Lokaler Tutor nicht verfügbar.</strong> Deine
+                    Hardware liegt unter dem Tier-S-Floor. Lektionen + Übungen
+                    funktionieren weiter — nur der Live-Tutor pausiert.
+                  </>
+                ) : (
+                  <>
+                    <strong>Hardware konnte nicht erkannt werden.</strong> Dein
+                    Browser meldet keine RAM-Information. Starte das Onboarding
+                    erneut, um den Tutor manuell zu aktivieren.
+                  </>
+                )}
+              </p>
+              <button
+                type="button"
+                onClick={restartOnboarding}
+                className="text-[11px] font-mono uppercase tracking-wide text-apple-accent hover:text-apple-accentHover transition-colors"
+                aria-label="Onboarding erneut starten"
+              >
+                Onboarding wiederholen
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -842,11 +907,11 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
           }}
           rows={1}
           placeholder={
-            showOnboardingSlot
+            localLlmChatBlocked
               ? 'Onboarding abschließen, um den lokalen Tutor zu nutzen …'
               : 'Frage stellen — Enter zum Senden, Shift+Enter für Zeilenumbruch'
           }
-          disabled={showOnboardingSlot || connState === 'streaming' || connState === 'sending'}
+          disabled={localLlmChatBlocked || connState === 'streaming' || connState === 'sending'}
           className="flex-1 resize-none bg-apple-bg/60 border border-apple-border/50 rounded-apple px-3 py-2 text-sm text-apple-text placeholder:text-apple-muted focus:outline-none focus:ring-2 focus:ring-apple-accent/50 focus:border-apple-accent disabled:opacity-50 disabled:cursor-not-allowed font-mono"
           aria-label="Nachricht an Tutor"
         />
@@ -863,7 +928,7 @@ const TutorChatPanel = ({ lessonId, className = '' }: TutorChatPanelProps) => {
         ) : (
           <button
             type="submit"
-            disabled={!input.trim() || showOnboardingSlot}
+            disabled={!input.trim() || localLlmChatBlocked}
             className="px-3 py-2 rounded-apple bg-apple-accent text-white hover:bg-apple-accentHover transition-all disabled:opacity-50 disabled:cursor-not-allowed min-h-[40px] inline-flex items-center gap-1.5"
             aria-label="Frage senden"
           >

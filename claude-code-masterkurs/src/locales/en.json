@@ -856,5 +856,11 @@
     "dashboardTitle": "Tools & Extensions",
     "dashboardDesc": "Master CLI tools and MCP servers",
     "dashboardProgress": "{{completed}}/{{total}} completed"
+  },
+  "tracks": {
+    "sectionTitle": "Choose your track",
+    "sectionSubtitle": "Four specializations, one platform.",
+    "ctaExplore": "Explore track",
+    "comingSoon": "Coming soon"
   }
 }

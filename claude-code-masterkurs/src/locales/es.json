@@ -811,5 +811,11 @@
     "dashboardTitle": "Herramientas & Extensiones",
     "dashboardDesc": "Dominar herramientas CLI y servidores MCP",
     "dashboardProgress": "{{completed}}/{{total}} completados"
+  },
+  "tracks": {
+    "sectionTitle": "Elige tu pista",
+    "sectionSubtitle": "Cuatro especializaciones, una plataforma.",
+    "ctaExplore": "Explorar pista",
+    "comingSoon": "Proximamente"
   }
 }

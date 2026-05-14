@@ -13,6 +13,7 @@ import NewsletterSignup from '../components/Newsletter/NewsletterSignup';
 import { contentApi } from '../lib/api';
 import type { AdminLessonConfig, AdminQuiz, AdminProjectConfig } from '../lib/api';
 import { gsap } from '../lib/gsap';
+import { TRACKS, TRACK_KEYS } from '../data/tracks';
 
 const FEATURES = [
   { icon: BookOpen, titleKey: 'landing.featureLessons', descKey: 'landing.featureLessonsDesc' },
@@ -202,6 +203,111 @@ const LandingView = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Wähle deinen Track — multi-track marketing surface (Phase 1 W2a).
+            Renders all TRACK_KEYS so users see what's live AND what's coming.
+            Public tracks are interactive; non-public show a "coming soon" badge
+            and a disabled CTA. Labels/hooks/colors come from the TRACKS registry
+            (single source of truth) — only frame strings are i18n'd. */}
+      <section id="tracks" className="py-20 sm:py-28">
+        <div className="max-w-6xl mx-auto px-4">
+          <div className="reveal flex flex-col items-center text-center gap-6 mb-12">
+            <div className="eyebrow"><span className="pulse" />{t('tracks.sectionTitle')}</div>
+            <h2 className="text-[clamp(32px,4.2vw,52px)] font-semibold tracking-[-0.032em] leading-[1.04] text-apple-text">
+              {t('tracks.sectionTitle')}
+            </h2>
+            <p className="text-apple-textSecondary leading-relaxed max-w-2xl">
+              {t('tracks.sectionSubtitle')}
+            </p>
+          </div>
+          <div className="stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {TRACK_KEYS.map((trackKey) => {
+              const track = TRACKS[trackKey];
+              const isPublic = track.isPublic;
+              return (
+                <div
+                  key={trackKey}
+                  className="shell group relative overflow-hidden transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"
+                  style={{
+                    /* Per-track border-glow accent (very subtle by default, brightens on hover). */
+                    boxShadow: `inset 0 0 0 1px ${track.color}1f`,
+                  }}
+                >
+                  {/* Soft per-track radial accent in the upper-left corner. */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 rounded-[2rem] opacity-40 transition-opacity duration-500 pointer-events-none group-hover:opacity-80"
+                    style={{
+                      background: `radial-gradient(ellipse 60% 50% at 15% 0%, ${track.color}24, transparent 65%)`,
+                    }}
+                  />
+                  <div className="inner relative p-7 h-full flex flex-col">
+                    <div className="flex items-center justify-between mb-5">
+                      {/* Track color dot */}
+                      <span
+                        aria-hidden="true"
+                        className="inline-block w-2.5 h-2.5 rounded-full"
+                        style={{
+                          background: track.color,
+                          boxShadow: `0 0 14px ${track.color}80`,
+                        }}
+                      />
+                      {!isPublic && (
+                        <span
+                          className="text-[10px] font-mono uppercase tracking-[0.08em] px-2 py-1 rounded-full border"
+                          style={{
+                            background: 'rgba(255,255,255,0.04)',
+                            borderColor: 'rgba(255,255,255,0.12)',
+                            color: 'rgba(255,255,255,0.55)',
+                          }}
+                        >
+                          {t('tracks.comingSoon')}
+                        </span>
+                      )}
+                    </div>
+                    <h3
+                      className="font-medium text-apple-text text-[20px] leading-[1.2] mb-3 tracking-tight transition-colors"
+                      style={isPublic ? undefined : { color: 'rgba(255,255,255,0.75)' }}
+                    >
+                      {track.label}
+                    </h3>
+                    <p className="text-sm text-apple-textSecondary leading-relaxed flex-1 mb-6">
+                      {track.marketingHook}
+                    </p>
+                    {isPublic ? (
+                      <Link
+                        to={`/dashboard?track=${track.slug}`}
+                        className="inline-flex items-center gap-2 self-start text-[12px] font-mono uppercase tracking-[0.08em] px-3 py-2 rounded-full border transition-colors"
+                        style={{
+                          color: track.color,
+                          borderColor: `${track.color}66`,
+                          background: `${track.color}10`,
+                        }}
+                      >
+                        {t('tracks.ctaExplore')}
+                        <ArrowRight size={12} />
+                      </Link>
+                    ) : (
+                      <span
+                        aria-disabled="true"
+                        className="inline-flex items-center gap-2 self-start text-[12px] font-mono uppercase tracking-[0.08em] px-3 py-2 rounded-full border cursor-not-allowed"
+                        style={{
+                          color: 'rgba(255,255,255,0.4)',
+                          borderColor: 'rgba(255,255,255,0.1)',
+                          background: 'rgba(255,255,255,0.02)',
+                        }}
+                      >
+                        {t('tracks.ctaExplore')}
+                        <ArrowRight size={12} />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

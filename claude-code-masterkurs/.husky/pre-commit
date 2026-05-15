@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+# Pre-commit gate: only run the lesson-consistency lint when one of the
+# per-track lessons files is staged. Keeps the hook fast for commits that
+# don't touch content.
+
+if git diff --cached --name-only | grep -q 'src/data/lessons-'; then
+  echo "[husky] Lesson file(s) staged — running lesson-consistency lint..."
+  npm run --silent lint:lessons || exit 1
+fi

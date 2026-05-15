@@ -9,13 +9,7 @@ The bug-hunter audit on the `claude-code` track surfaced **7 lessons without any
 
 | Lesson ID | Track | Reason | Status |
 |-----------|-------|--------|--------|
-| 30 | claude-code | Imported pre-quiz-gate | Open |
-| 31 | claude-code | Imported pre-quiz-gate | Open |
-| 44 | claude-code | Imported pre-quiz-gate | Open |
-| 45 | claude-code | Imported pre-quiz-gate | Open |
-| 46 | claude-code | Imported pre-quiz-gate | Open |
-| 47 | claude-code | Imported pre-quiz-gate | Open |
-| 48 | claude-code | Imported pre-quiz-gate | Open |
+| _(none currently open — all 7 pre-existing gaps backfilled on 2026-05-15)_ | | | |
 
 ## How entries land here
 
@@ -32,4 +26,17 @@ When a quiz is later added for a tracked lesson:
 
 ## Closed entries
 
-_(none yet — will populate as quizzes are backfilled)_
+### Closed (2026-05-15)
+
+Backfilled in one batch via `feat(quizzes): backfill 7 missing quizzes for IDs 30/31/44-48`.
+TypeScript build (`tsc -b --noEmit`) passes clean. Total quiz count: 42 → 49.
+
+| Lesson ID | Track | Reason | Status | Quiz Entry |
+|-----------|-------|--------|--------|------------|
+| 30 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-30` — Voice Mode & Code Review Tool (6 Fragen) |
+| 31 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-31` — 1M Context Window & Context Management (6 Fragen) |
+| 44 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-44` — Advisor Tool — Cost-Aware Multi-Model (6 Fragen) |
+| 45 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-45` — worktree.baseRef — Multi-Agent-Worktrees (5 Fragen) |
+| 46 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-46` — Effort-aware Hooks (5 Fragen) |
+| 47 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-47` — Multi-Agent Showdown (6 Fragen) |
+| 48 | claude-code | Imported pre-quiz-gate | Closed (2026-05-15) | `quiz-48` — Skill-Antipatterns (5 Fragen) |

@@ -16,6 +16,7 @@
 
 import type { Lesson, TrackKey } from '../types';
 import { lessons as claudeCodeLessons } from './lessons';
+import { lessons as codexLessons } from './lessons-codex';
 import { freelancerModules } from './freelancerTrack';
 
 export interface TrackDef {
@@ -74,7 +75,7 @@ export const TRACKS: Record<TrackKey, TrackDef> = {
     label: 'OpenAI Codex',
     marketingHook: 'Codex CLI, Cloud, JetBrains, ChatGPT-Integration — GPT-5.5-Klasse für Profis.',
     color: '#10A37F', // openai green
-    lessonsLoader: () => [],
+    lessonsLoader: () => codexLessons,
     tutorPersonaPath: 'track-configs/codex/tutor-persona.md',
     isPublic: false,
   },

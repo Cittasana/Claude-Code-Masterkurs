@@ -1,0 +1,56 @@
+# ─────────────────────────────────────────────────────────────
+# Lesson-Consistency Lint
+# Phase-4-prerequisite content-validation gate:
+#   • Frontmatter schema
+#   • Code-block language tags
+#   • Markdown-syntax sanity
+#   • Heading hierarchy
+#   • Internal /lesson/N link validity
+#   • Per-track persona-voice bleed
+# Skips missing per-track files gracefully so it works pre- and
+# post-Phase-4 content seeding.
+# ─────────────────────────────────────────────────────────────
+
+name: Lesson Consistency
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'claude-code-masterkurs/src/data/lessons-*.ts'
+      - 'claude-code-masterkurs/scripts/lesson-consistency-lint.ts'
+      - 'masterkurs-agent/track-configs/**/tutor-persona.md'
+  pull_request:
+    paths:
+      - 'claude-code-masterkurs/src/data/lessons-*.ts'
+      - 'claude-code-masterkurs/scripts/lesson-consistency-lint.ts'
+      - 'masterkurs-agent/track-configs/**/tutor-persona.md'
+
+concurrency:
+  group: lesson-consistency-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-lessons:
+    name: Lint Lesson Consistency
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: claude-code-masterkurs
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: claude-code-masterkurs/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint Lessons
+        run: npm run lint:lessons
